@@ -13,7 +13,9 @@
 import type { Metadata } from "next";
 import { Inter, Literata } from "next/font/google";
 import Link from "next/link";
+import { Suspense } from "react";
 
+import { SignInLink, UserMenu } from "@/components/layout/user-menu";
 import { getDictionary } from "@/i18n";
 import { APP_NAME, APP_URL } from "@/lib/config";
 
@@ -50,7 +52,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </Link>
             <ul className="flex items-center gap-4 text-sm text-texte-doux">
               <li>{t.nav.catalog}</li>
-              <li>{t.nav.signIn}</li>
+              <li>
+                {/* Session lue en flux : l'en-tête reste statique et instantané */}
+                <Suspense fallback={<SignInLink />}>
+                  <UserMenu />
+                </Suspense>
+              </li>
             </ul>
           </nav>
         </header>
