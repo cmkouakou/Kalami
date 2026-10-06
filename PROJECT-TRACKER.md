@@ -9,6 +9,7 @@ Version actuelle : v0.1.0 | Statut : 🟡 En cours (Sprint 0)
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
-- [ ] Sprint 0 — projet Supabase de développement relié, déploiement Vercel
+- [x] Sprint 0 — projet Supabase « Kalami » relié (whzwodxfymvfufzfhhkv)
+- [ ] Sprint 0 — import Vercel + variables d'environnement (par l'utilisateur)
 - [ ] Sprint 1 — comptes et rôles
 - [ ] Sprints 2 à 11 — voir [docs/SPRINTS.md](docs/SPRINTS.md)
