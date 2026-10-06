@@ -1,0 +1,65 @@
+/*
+=============================================================
+  Fichier    : globals.css
+  Projet     : Kalami
+  Description: Styles globaux, jetons de couleur (clair / sombre) et thème Tailwind.
+  Auteur     : Claude Marcel
+  Version    : 1.0
+  Date       : 2026-10-06
+  Dépend de  : Tailwind CSS 4
+=============================================================
+*/
+
+@import "tailwindcss";
+
+/* ==================== VARIABLES GLOBALES ==================== */
+
+:root {
+  --couleur-fond: #fbf8f3;
+  --couleur-surface: #ffffff;
+  --couleur-texte: #1f1b16;
+  --couleur-texte-doux: #5c554c;
+  --couleur-bordure: #e6dfd3;
+  --couleur-principale: #8a3b12;
+  --couleur-principale-texte: #ffffff;
+  --couleur-accent: #c8902e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --couleur-fond: #16130f;
+    --couleur-surface: #211d18;
+    --couleur-texte: #efe9df;
+    --couleur-texte-doux: #b4ab9e;
+    --couleur-bordure: #3a332b;
+    --couleur-principale: #e08a55;
+    --couleur-principale-texte: #16130f;
+    --couleur-accent: #e2b45c;
+  }
+}
+
+/* ==================== THÈME TAILWIND ==================== */
+
+@theme inline {
+  --color-fond: var(--couleur-fond);
+  --color-surface: var(--couleur-surface);
+  --color-texte: var(--couleur-texte);
+  --color-texte-doux: var(--couleur-texte-doux);
+  --color-bordure: var(--couleur-bordure);
+  --color-principale: var(--couleur-principale);
+  --color-principale-texte: var(--couleur-principale-texte);
+  --color-accent: var(--couleur-accent);
+  --font-sans: var(--police-interface), Arial, sans-serif;
+  --font-serif: var(--police-lecture), Georgia, serif;
+}
+
+/* ==================== RESET & BASE ==================== */
+
+body {
+  background: var(--couleur-fond);
+  color: var(--couleur-texte);
+}
+
+img {
+  max-width: 100%;
+}

@@ -1,0 +1,41 @@
+# =============================================================
+#  Fichier    : ci.yml
+#  Projet     : Kalami
+#  Description: Intégration continue — lint, types, tests unitaires et build à chaque push / PR.
+#  Auteur     : Claude Marcel
+#  Version    : 1.0
+#  Date       : 2026-10-06
+# =============================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Vérification des types
+        run: npm run typecheck
+
+      - name: Tests unitaires
+        run: npm test
+
+      - name: Build
+        run: npm run build

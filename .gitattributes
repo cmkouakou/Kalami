@@ -1,0 +1,5 @@
+# Fins de ligne normalisées (LF) pour tous les fichiers texte
+* text=auto eol=lf
+*.ico binary
+*.png binary
+*.jpg binary
