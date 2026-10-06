@@ -13,6 +13,7 @@ Version actuelle : v0.2.0 | Statut : 🟡 En cours (Sprint 1)
 - [x] Sprint 0 — projet Supabase « Kalami » relié (whzwodxfymvfufzfhhkv)
 - [ ] Sprint 0 — import Vercel + variables d'environnement (par l'utilisateur)
 - [x] Sprint 1 — code des comptes et rôles (v0.2.0)
-- [ ] Sprint 1 — migration appliquée sur Supabase + tests RLS (clé secrète et mot de passe DB)
+- [x] Sprint 1 — migration appliquée sur Supabase + tests RLS (20/20)
+- [ ] Sprint 1 — inscription de l'utilisateur puis promotion administrateur
 - [ ] Sprint 1 — tableau de bord Supabase : URL du site, URLs de redirection, fournisseur Google
 - [ ] Sprints 2 à 11 — voir [docs/SPRINTS.md](docs/SPRINTS.md)
