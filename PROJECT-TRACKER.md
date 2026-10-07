@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.4.0 | Statut : 🟡 En cours (Sprint 3 terminé, migration à appliquer)
+Version actuelle : v0.4.0 | Statut : 🟡 En cours (Sprint 3 terminé, migration appliquée)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -23,6 +23,6 @@ Version actuelle : v0.4.0 | Statut : 🟡 En cours (Sprint 3 terminé, migration
 - [ ] Sprint 2 — test de l'administration connecté avec MFA (par l'utilisateur)
 - [ ] CI — variables GitHub NEXT_PUBLIC_SUPABASE_URL / _PUBLISHABLE_KEY
 - [x] Sprint 3 — contenu protégé : conversion, extrait, API 403/429, droits (v0.4.0)
-- [ ] Sprint 3 — migration `20261008120000_content.sql` à appliquer (par l'utilisateur)
+- [x] Sprint 3 — migration `20261008120000_content.sql` appliquée, tests d'intégration 85/85
 - [ ] Sprint 3 — essai réel : dépôt d'un DOCX et d'un EPUB en administration
 - [ ] Sprints 4 à 11 — voir [docs/SPRINTS.md](docs/SPRINTS.md)
