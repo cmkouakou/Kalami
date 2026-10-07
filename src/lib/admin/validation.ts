@@ -3,10 +3,10 @@
  *  Fichier    : validation.ts
  *  Projet     : Kalami
  *  Description: Validation des formulaires d'administration du catalogue (catégories,
- *               auteurs, livres et prix). Fonctions pures : la base applique en plus ses
- *               propres contraintes (CHECK, RLS).
+ *               auteurs, livres, prix, extrait gratuit et droits de lecture). Fonctions
+ *               pures : la base applique en plus ses propres contraintes (CHECK, RLS).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-07
  *  Dépendances: lib/slug.ts, lib/currency.ts, i18n
  * =============================================================
@@ -234,4 +234,60 @@ function parsePrices(fd: FormData): PriceInput {
     prices[currency] = minor;
   }
   return prices;
+}
+
+// ==================== CONTENU DU LIVRE ====================
+
+/** Règles de l'extrait gratuit (colonnes de books). */
+export type PreviewRuleInput = { preview_chapters: number; preview_cut_block: number | null };
+
+/** Droit de lecture accordé manuellement. */
+export type GrantInput = { email: string; note: string | null };
+
+/** Chapitre du sommaire, tel qu'utile à la validation de la coupure. */
+type TocBlocks = { chapter_position: number; block_count: number };
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Valide les règles de l'extrait.
+ * @param fd  - Champs preview_chapters, preview_cut_block
+ * @param toc - Sommaire converti (vide si aucun manuscrit : seules les bornes sont vérifiées)
+ * @returns Règles prêtes à enregistrer, ou message d'erreur
+ *
+ * La coupure n'a de sens que dans le dernier chapitre de l'extrait, et doit laisser au
+ * moins un bloc payant dans ce chapitre.
+ */
+export function parsePreviewRule(fd: FormData, toc: TocBlocks[]): ParseResult<PreviewRuleInput> {
+  const l = t.admin.content;
+  return attempt(() => {
+    const chapters = optionalInt(fd, "preview_chapters", l.previewChapters, 0, 1000);
+    if (chapters === null) {
+      throw new InvalidField(interpolate(e.required, { field: l.previewChapters }));
+    }
+    if (toc.length && chapters > toc.length) {
+      throw new InvalidField(interpolate(e.invalidNumber, { field: l.previewChapters }));
+    }
+
+    const cut =
+      chapters === 0 ? null : optionalInt(fd, "preview_cut_block", l.previewCut, 1, 20_000);
+    const last = toc.find((entry) => entry.chapter_position === chapters);
+    if (cut !== null && last && cut >= last.block_count) {
+      throw new InvalidField(l.errors.previewCutTooHigh);
+    }
+    return { preview_chapters: chapters, preview_cut_block: cut };
+  });
+}
+
+/**
+ * Valide l'octroi manuel d'un droit de lecture.
+ * @param fd - Champs email, note
+ */
+export function parseGrant(fd: FormData): ParseResult<GrantInput> {
+  const l = t.admin.content;
+  return attempt(() => {
+    const email = requiredText(fd, "email", l.grantEmail, 320).toLowerCase();
+    if (!EMAIL_PATTERN.test(email)) throw new InvalidField(t.auth.errors.invalidEmail);
+    return { email, note: optionalText(fd, "note", l.grantNote, 500) };
+  });
 }

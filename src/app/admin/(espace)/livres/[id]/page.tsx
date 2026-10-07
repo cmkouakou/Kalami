@@ -3,10 +3,10 @@
  *  Fichier    : page.tsx (admin/livres/[id])
  *  Projet     : Kalami
  *  Description: Fiche d'un livre en administration : informations, prix, statut de
- *               publication et couverture.
+ *               publication, couverture, puis contenu (manuscrit, extrait, droits de lecture).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *  Version    : 1.1
+ *  Date       : 2026-10-08
  *  Dépendances: lib/auth/dal.ts, lib/admin/catalog-queries.ts, components/admin
  * =============================================================
  */
@@ -16,10 +16,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { BookContentSection } from "@/components/admin/book-content-section";
 import { BookForm } from "@/components/admin/book-form";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { getDictionary } from "@/i18n";
 import { getBookAdmin, getBookFormOptions } from "@/lib/admin/catalog-queries";
+import { getBookContentAdmin } from "@/lib/admin/content-queries";
 import { isUuid } from "@/lib/admin/validation";
 import { requireAdmin } from "@/lib/auth/dal";
 
@@ -45,11 +47,12 @@ async function BookContent({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
   if (!isUuid(id)) notFound();
-  const [book, { authors, categories }] = await Promise.all([
+  const [book, { authors, categories }, content] = await Promise.all([
     getBookAdmin(id),
     getBookFormOptions(),
+    getBookContentAdmin(id),
   ]);
-  if (!book) notFound();
+  if (!book || !content) notFound();
 
   return (
     <>
@@ -70,6 +73,7 @@ async function BookContent({ params }: { params: Promise<{ id: string }> }) {
           currentPath={book.cover_path}
         />
       </div>
+      <BookContentSection bookId={book.id} content={content} />
     </>
   );
 }

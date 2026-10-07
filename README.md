@@ -17,7 +17,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4
 - Supabase (Postgres + RLS, Auth, Storage)
 - Stripe, Resend, Vercel
-- Vitest (tests unitaires)
+- mammoth, JSZip, sanitize-html (conversion DOCX/EPUB en chapitres nettoyés)
+- Vitest (tests unitaires et d'intégration)
 
 ## 📁 Structure des fichiers
 ```
@@ -34,6 +35,7 @@ kalami/
 │   ├── lib/              → configuration, clients Supabase, logique métier
 │   └── proxy.ts          → traitement avant requête (redirections 301, session)
 ├── tests/unit/           → tests unitaires
+├── tests/integration/    → tests RLS sur la base de développement
 ├── .env.example          → variables d'environnement à définir
 ├── CHANGELOG.md  PROJECT-TRACKER.md
 ```
@@ -63,6 +65,8 @@ kalami/
 - Aucun secret dans le code : tout passe par les variables d'environnement.
 - `SUPABASE_SECRET_KEY` contourne la RLS : uniquement côté serveur (`src/lib/supabase/admin.ts`).
 - Next.js 16 : l'ancien `middleware.ts` s'appelle désormais `proxy.ts`.
+- Le texte des livres n'est servi que par `/api/livres/{id}/chapitres/{n}` (clé serveur) :
+  la table `chapters` est illisible par les clients ; le seau `manuscripts` est privé.
 
 ## 📅 Historique des versions
 Voir [CHANGELOG.md](CHANGELOG.md).

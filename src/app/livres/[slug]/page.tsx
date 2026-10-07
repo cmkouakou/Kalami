@@ -3,10 +3,10 @@
  *  Fichier    : page.tsx (livres/[slug])
  *  Projet     : Kalami
  *  Description: Fiche publique d'un livre : couverture, auteur, prix, informations, résumé.
- *               Le sommaire et l'extrait arrivent au Sprint 3, l'achat au Sprint 5.
+ *               Sommaire avec extrait gratuit ; liseuse au Sprint 4, achat au Sprint 5.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *  Version    : 1.1
+ *  Date       : 2026-10-08
  *  Dépendances: lib/catalog/queries.ts, components/catalog
  * =============================================================
  */
@@ -18,11 +18,12 @@ import { type ReactNode, Suspense } from "react";
 
 import { BookCover } from "@/components/catalog/book-cover";
 import { PriceTag } from "@/components/catalog/price-tag";
-import { getDictionary } from "@/i18n";
-import { getBookBySlug } from "@/lib/catalog/queries";
-import type { BookDetail } from "@/lib/catalog/types";
+import { getDictionary, interpolate } from "@/i18n";
+import { getBookBySlug, getBookToc } from "@/lib/catalog/queries";
+import type { BookDetail, TocEntry } from "@/lib/catalog/types";
 
 const t = getDictionary();
+const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
 
 /** Longueur maximale de la description pour les moteurs de recherche. */
 const META_DESCRIPTION_LENGTH = 160;
@@ -61,6 +62,7 @@ async function BookContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const book = await getBookBySlug(slug);
   if (!book) notFound();
+  const toc = await getBookToc(book.id);
 
   return (
     <article className="flex flex-col gap-10">
@@ -89,12 +91,7 @@ async function BookContent({ params }: { params: Promise<{ slug: string }> }) {
         </section>
       )}
 
-      <section aria-labelledby="titre-sommaire" className="flex flex-col gap-3">
-        <h2 id="titre-sommaire" className="font-serif text-2xl font-semibold">
-          {t.catalog.book.toc}
-        </h2>
-        <p className="text-texte-doux">{t.catalog.book.tocSoon}</p>
-      </section>
+      <BookToc toc={toc} />
 
       {book.author.bio && (
         <section aria-labelledby="titre-auteur" className="flex flex-col gap-3">
@@ -149,6 +146,43 @@ function BookHeader({ book }: { book: BookDetail }) {
       </div>
       <p className="text-sm text-texte-doux">{t.catalog.book.soon}</p>
     </header>
+  );
+}
+
+/** Sommaire public : titres, longueur et chapitres compris dans l'extrait gratuit. */
+function BookToc({ toc }: { toc: TocEntry[] }) {
+  return (
+    <section aria-labelledby="titre-sommaire" className="flex flex-col gap-3">
+      <h2 id="titre-sommaire" className="font-serif text-2xl font-semibold">
+        {t.catalog.book.toc}
+      </h2>
+      {toc.length === 0 ? (
+        <p className="text-texte-doux">{t.catalog.book.tocSoon}</p>
+      ) : (
+        <ol className="flex max-w-2xl flex-col divide-y divide-bordure">
+          {toc.map((entry) => (
+            <li
+              key={entry.chapter_position}
+              className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2"
+            >
+              <span>
+                <span className="text-texte-doux">{entry.chapter_position}.</span> {entry.title}
+              </span>
+              <span className="flex items-baseline gap-3 text-sm text-texte-doux">
+                {entry.is_preview && (
+                  <span className="rounded-full bg-accent/15 px-2 py-0.5 font-medium text-texte">
+                    {t.catalog.book.freeExcerpt}
+                  </span>
+                )}
+                {interpolate(t.catalog.book.words, {
+                  count: NUMBER_FORMAT.format(entry.word_count),
+                })}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
   );
 }
 

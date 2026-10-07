@@ -8,7 +8,7 @@ démarre après la v1.0.0 de la plateforme de lecture.
 | 0 | Fondations : Next.js, Supabase, config, redirections 301, CI, docs | v0.1.0 | 🟡 en cours |
 | 1 | Comptes et rôles : courriel, Google, profils, MFA admin, RLS | v0.2.0 | ✅ (Google à configurer) |
 | 2 | Catalogue : catégories, accueil, fiches, auteurs, recherche, prix par devise | v0.3.0 | ✅ |
-| 3 | Contenu protégé : conversion DOCX/EPUB, extrait, API chapitres (403), débit | v0.4.0 | ⬜ |
+| 3 | Contenu protégé : conversion DOCX/EPUB, extrait, API chapitres (403), débit | v0.4.0 | ✅ (migration à appliquer) |
 | 4 | Liseuse : page tournée, défilement, réglages, marque-page, protection, filigrane | v0.5.0 | ⬜ |
 | 5 | Paiement carte : commandes, Stripe + Stripe Tax, webhook, droits, promos, reçus | v0.6.0 | ⬜ |
 | 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.7.0 | ⬜ |

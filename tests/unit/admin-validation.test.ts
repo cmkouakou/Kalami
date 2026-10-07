@@ -1,14 +1,21 @@
 /**
  * Fichier    : admin-validation.test.ts
  * Projet     : Kalami
- * Description: Tests de la validation des formulaires d'administration du catalogue.
+ * Description: Tests de la validation des formulaires d'administration du catalogue et du
+ *              contenu (extrait gratuit, droits de lecture).
  * Auteur     : Claude Marcel
  * Date       : 2026-10-07
  */
 
 import { describe, expect, it } from "vitest";
 
-import { parseAuthor, parseBook, parseCategory } from "@/lib/admin/validation";
+import {
+  parseAuthor,
+  parseBook,
+  parseCategory,
+  parseGrant,
+  parsePreviewRule,
+} from "@/lib/admin/validation";
 
 const AUTHOR_ID = "6f1c2a8e-3b4d-4e5f-8a9b-0c1d2e3f4a5b";
 
@@ -105,5 +112,44 @@ describe("parseBook", () => {
     expect(parseBook(form({ ...withAuthor, price_EUR: "9,999" })).ok).toBe(false);
     expect(parseBook(form({ ...withAuthor, price_XOF: "gratuit" })).ok).toBe(false);
     expect(parseBook(form({ ...withAuthor, publication_year: "1850" })).ok).toBe(false);
+  });
+});
+
+describe("parsePreviewRule", () => {
+  const toc = [
+    { chapter_position: 1, block_count: 12 },
+    { chapter_position: 2, block_count: 5 },
+  ];
+
+  it("accepte deux chapitres coupés au 3e bloc", () => {
+    expect(parsePreviewRule(form({ preview_chapters: "2", preview_cut_block: "3" }), toc)).toEqual(
+      { ok: true, value: { preview_chapters: 2, preview_cut_block: 3 } },
+    );
+  });
+
+  it("ignore la coupure quand l'extrait est désactivé (0 chapitre)", () => {
+    const result = parsePreviewRule(form({ preview_chapters: "0", preview_cut_block: "4" }), toc);
+    expect(result).toEqual({ ok: true, value: { preview_chapters: 0, preview_cut_block: null } });
+  });
+
+  it("refuse plus de chapitres que le sommaire, ou une coupure trop loin", () => {
+    expect(parsePreviewRule(form({ preview_chapters: "3" }), toc).ok).toBe(false);
+    expect(parsePreviewRule(form({ preview_chapters: "" }), toc).ok).toBe(false);
+    const tooFar = form({ preview_chapters: "2", preview_cut_block: "5" });
+    expect(parsePreviewRule(tooFar, toc).ok).toBe(false);
+  });
+});
+
+describe("parseGrant", () => {
+  it("met le courriel en minuscules et garde la note", () => {
+    expect(parseGrant(form({ email: " Lecteur@Exemple.COM ", note: "Relecture" }))).toEqual({
+      ok: true,
+      value: { email: "lecteur@exemple.com", note: "Relecture" },
+    });
+  });
+
+  it("refuse un courriel absent ou invalide", () => {
+    expect(parseGrant(form({ email: "" })).ok).toBe(false);
+    expect(parseGrant(form({ email: "pas-un-courriel" })).ok).toBe(false);
   });
 });

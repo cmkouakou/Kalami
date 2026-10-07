@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## [v0.4.0] - 2026-10-08 — Sprint 3 : contenu protégé
+### Ajouté
+- Migration `content` : versions converties (`book_versions`), chapitres en blocs HTML
+  (`chapters`, illisibles par les clients), droits de lecture (`entitlements`), journal
+  d'accès (`content_access_log`), règles de l'extrait sur `books`, seau privé `manuscripts`.
+- Fonctions SQL : sommaire public `get_book_toc`, enregistrement atomique d'une conversion,
+  octroi / retrait / liste des droits par l'administrateur, limitation de débit
+  `register_content_access` (30 chapitres/min, audit des dépassements et des rafales).
+- Conversion des manuscrits : DOCX (mammoth, un chapitre par « Titre 1 ») et EPUB (spine +
+  table des matières), nettoyage par liste blanche, limites de taille (archive, chapitres).
+- API `GET /api/livres/{id}/chapitres/{n}` : 403 hors extrait sans droit, 404, 429, jamais
+  mise en cache.
+- Administration : dépôt du manuscrit, sommaire converti, règles de l'extrait (nombre de
+  chapitres, coupure facultative), droits de lecture manuels.
+- Fiche livre : sommaire public avec badge « Extrait gratuit » et nombre de mots.
+- Tests : règles d'accès, conversion DOCX/EPUB, validation, route (chapitre 2 → 403) ;
+  intégration RLS du contenu (ignorée tant que la migration n'est pas appliquée).
+
+### Modifié
+- `audit()` partagé dans `lib/admin/audit.ts` ; `DeleteButton` accepte des libellés.
+
 ## [v0.3.0] - 2026-10-07 — Sprint 2 : catalogue
 ### Ajouté
 - Migration `catalog` : catégories (celles du cahier), auteurs, livres, prix par devise

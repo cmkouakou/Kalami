@@ -72,3 +72,14 @@ export type BookSearch = {
   maxPriceMinor?: number;
   page?: number;
 };
+
+/** Entrée du sommaire d'un livre (sans contenu), renvoyée par get_book_toc. */
+export type TocEntry = {
+  chapter_position: number;
+  title: string;
+  word_count: number;
+  /** Nombre de blocs (paragraphes, intertitres…) : sert à régler la coupure de l'extrait. */
+  block_count: number;
+  /** Chapitre lisible gratuitement (en tout ou en partie). */
+  is_preview: boolean;
+};

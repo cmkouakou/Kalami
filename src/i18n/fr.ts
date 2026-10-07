@@ -49,7 +49,9 @@ const fr = {
       language: "Langue",
       summary: "Résumé",
       toc: "Sommaire",
-      tocSoon: "Le sommaire et l'extrait gratuit seront bientôt disponibles.",
+      tocSoon: "Le sommaire de ce livre sera bientôt disponible.",
+      freeExcerpt: "Extrait gratuit",
+      words: "{count} mots",
       readExcerpt: "Lire l'extrait",
       buy: "Acheter",
       soon: "Bientôt disponible",
@@ -74,6 +76,15 @@ const fr = {
   },
   footer: {
     rights: "Tous droits réservés.",
+  },
+  content: {
+    openingTitle: "Début de l'ouvrage",
+    chapterTitle: "Chapitre {n}",
+    api: {
+      locked: "Ce chapitre est réservé aux lecteurs qui ont acheté le livre.",
+      notFound: "Chapitre introuvable.",
+      tooManyRequests: "Trop de chapitres demandés en peu de temps. Réessayez dans une minute.",
+    },
   },
   auth: {
     email: "Adresse courriel",
@@ -215,6 +226,51 @@ const fr = {
       invalidType: "Format refusé : JPEG, PNG ou WebP uniquement.",
       tooLarge: "Image trop lourde (5 Mo maximum).",
       failed: "L'envoi a échoué. Réessayez.",
+    },
+    content: {
+      title: "Contenu du livre",
+      manuscript: "Manuscrit",
+      choose: "Choisir un fichier DOCX ou EPUB (20 Mo max.)",
+      help:
+        "DOCX : chaque « Titre 1 » ouvre un chapitre. EPUB : les chapitres suivent la table " +
+        "des matières. Les images ne sont pas conservées pour l'instant.",
+      uploading: "Envoi du fichier…",
+      converting: "Conversion en cours…",
+      converted: "Conversion réussie : {count} chapitres.",
+      invalidType: "Format refusé : DOCX ou EPUB uniquement.",
+      tooLarge: "Fichier trop lourd (20 Mo maximum).",
+      noVersion: "Aucun manuscrit converti pour le moment.",
+      currentVersion: "Version {number} ({format}) — {chapters} chapitres, {words} mots",
+      toc: "Sommaire converti",
+      preview: "Extrait gratuit",
+      previewChapters: "Nombre de chapitres de l'extrait",
+      previewCut: "Coupure dans le dernier chapitre (nombre de blocs, vide = chapitre entier)",
+      previewHelp:
+        "Un bloc = un paragraphe, un intertitre, une liste ou un tableau. 0 chapitre = aucun " +
+        "extrait.",
+      blocks: "{count} blocs",
+      entitlements: "Droits de lecture",
+      entitlementsHelp:
+        "Les achats accorderont ces droits automatiquement (Sprints 5 et 6). Ici : accès " +
+        "manuel, par exemple pour un relecteur.",
+      grantEmail: "Courriel du lecteur",
+      grantNote: "Note (facultative)",
+      grant: "Accorder l'accès",
+      granted: "Accès accordé.",
+      revoke: "Retirer",
+      revoked: "Accès retiré.",
+      revokeConfirm: "Confirmer le retrait",
+      noEntitlements: "Aucun droit de lecture.",
+      sources: { purchase: "Achat", admin_grant: "Accès manuel" },
+      errors: {
+        invalid_file: "Fichier illisible : ce n'est pas un DOCX ou un EPUB valide.",
+        empty: "Aucun texte trouvé dans le fichier.",
+        too_large: "Livre trop volumineux pour être converti.",
+        too_many_chapters: "Trop de chapitres (500 maximum).",
+        userNotFound: "Aucun compte n'utilise cette adresse.",
+        alreadyGranted: "Ce lecteur a déjà accès au livre.",
+        previewCutTooHigh: "La coupure doit être inférieure au nombre de blocs du chapitre.",
+      },
     },
     errors: {
       required: "Champ obligatoire manquant : {field}.",

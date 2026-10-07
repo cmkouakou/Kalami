@@ -17,7 +17,7 @@ import { cacheLife, cacheTag } from "next/cache";
 
 import { createPublicClient } from "@/lib/supabase/public";
 
-import type { Author, BookCard, BookDetail, BookSearch, Category } from "./types";
+import type { Author, BookCard, BookDetail, BookSearch, Category, TocEntry } from "./types";
 
 // ==================== CONSTANTES ====================
 
@@ -149,6 +149,21 @@ export async function getBookBySlug(slug: string): Promise<BookDetail | null> {
     .maybeSingle();
   if (error) throw new Error(`Lecture du livre impossible : ${error.message}`);
   return data as unknown as BookDetail | null;
+}
+
+/**
+ * Sommaire public d'un livre publié (titres seulement, jamais le contenu).
+ * @param bookId - Identifiant du livre
+ * @returns Entrées du sommaire, vide si aucun manuscrit n'est converti
+ */
+export async function getBookToc(bookId: string): Promise<TocEntry[]> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CATALOG_TAG);
+
+  const { data, error } = await createPublicClient().rpc("get_book_toc", { p_book_id: bookId });
+  if (error) throw new Error(`Lecture du sommaire impossible : ${error.message}`);
+  return (data ?? []) as TocEntry[];
 }
 
 // ==================== AUTEURS ====================

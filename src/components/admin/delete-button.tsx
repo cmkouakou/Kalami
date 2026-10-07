@@ -5,7 +5,7 @@
  *  Description: Bouton de suppression en deux temps (« Supprimer » puis « Confirmer »),
  *               sans boîte de dialogue du navigateur. Affiche l'erreur éventuelle.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-07
  *  Dépendances: components/ui/form.tsx
  * =============================================================
@@ -23,8 +23,21 @@ const t = getDictionary();
 
 const BUTTON_CLASS = "min-h-11 rounded-md px-4 text-sm font-medium disabled:opacity-60";
 
-/** Suppression confirmée par un second clic. */
-export function DeleteButton({ action }: { action: () => Promise<FormState> }) {
+/**
+ * Suppression (ou retrait) confirmée par un second clic.
+ * @param action       - Action serveur liée à l'élément
+ * @param label        - Libellé du premier bouton (« Supprimer » par défaut)
+ * @param confirmLabel - Libellé du bouton de confirmation
+ */
+export function DeleteButton({
+  action,
+  label = t.admin.common.delete,
+  confirmLabel = t.admin.common.confirmDelete,
+}: {
+  action: () => Promise<FormState>;
+  label?: string;
+  confirmLabel?: string;
+}) {
   const [confirming, setConfirming] = useState(false);
   const [state, formAction, pending] = useActionState(action, undefined);
 
@@ -37,7 +50,7 @@ export function DeleteButton({ action }: { action: () => Promise<FormState> }) {
             disabled={pending}
             className={`${BUTTON_CLASS} bg-red-700 text-white hover:bg-red-800`}
           >
-            {t.admin.common.confirmDelete}
+            {confirmLabel}
           </button>
           <button
             type="button"
@@ -53,7 +66,7 @@ export function DeleteButton({ action }: { action: () => Promise<FormState> }) {
           onClick={() => setConfirming(true)}
           className={`${BUTTON_CLASS} w-fit border border-red-300 text-red-800 hover:bg-red-50`}
         >
-          {t.admin.common.delete}
+          {label}
         </button>
       )}
       <FormMessage {...state} />

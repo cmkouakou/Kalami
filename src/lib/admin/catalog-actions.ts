@@ -7,9 +7,9 @@
  *               administrateur) → journal d'audit → invalidation du cache « catalogue ».
  *               Toute fonction exportée ici est une action publique : arguments vérifiés.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-07
- *  Dépendances: lib/auth/dal.ts, lib/admin/validation.ts, lib/supabase/server.ts
+ *  Dépendances: lib/auth/dal.ts, lib/admin/validation.ts, lib/admin/audit.ts, supabase
  * =============================================================
  */
 
@@ -19,6 +19,7 @@ import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getDictionary } from "@/i18n";
+import { audit, type Supabase } from "@/lib/admin/audit";
 import {
   isUuid,
   parseAuthor,
@@ -42,7 +43,6 @@ const IMAGE_PATH_PATTERN = new RegExp(
   `^(livres|auteurs)/(${UUID_SOURCE})/${UUID_SOURCE}[.](jpg|png|webp)$`,
 );
 
-type Supabase = Awaited<ReturnType<typeof createClient>>;
 type DbError = { code?: string; message: string } | null;
 
 // ==================== FONCTIONS UTILITAIRES ====================
@@ -51,26 +51,6 @@ type DbError = { code?: string; message: string } | null;
 function dbErrorMessage(error: DbError): string {
   if (error?.code === "23505") return e.slugTaken;
   return e.generic;
-}
-
-/**
- * Inscrit l'opération au journal d'audit (fonction SQL réservée aux administrateurs).
- * Une erreur ici signale une anomalie grave (droits) : elle est levée, pas masquée.
- */
-async function audit(
-  supabase: Supabase,
-  action: string,
-  targetType: string,
-  targetId: string,
-  details: Record<string, unknown>,
-): Promise<void> {
-  const { error } = await supabase.rpc("write_audit", {
-    p_action: action,
-    p_target_type: targetType,
-    p_target_id: targetId,
-    p_details: details,
-  });
-  if (error) throw new Error(`Journal d'audit impossible : ${error.message}`);
 }
 
 /** Enregistre les prix : met à jour les devises saisies, supprime les autres. */
