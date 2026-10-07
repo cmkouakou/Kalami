@@ -1,5 +1,22 @@
 # Journal des modifications
 
+## [v0.3.0] - 2026-10-07 — Sprint 2 : catalogue
+### Ajouté
+- Migration `catalog` : catégories (celles du cahier), auteurs, livres, prix par devise
+  (XOF, EUR, CAD), recherche plein texte, compartiment d'images `covers`, RLS.
+- Migration `covers_admin_select` : l'administrateur peut supprimer les images remplacées.
+- Accueil : livres en vedette, nouveautés, catégories ; fiches livre, auteur et catégorie ;
+  page de recherche. Données publiques mises en cache (`'use cache'`, étiquette catalogue).
+- Choix de la devise (cookie, puis préférence du profil) et affichage des prix.
+- Administration du catalogue (`/admin`) : tableau de bord, catégories, auteurs (photo),
+  livres (prix, statut, vedette, couverture), suppression confirmée, journal d'audit.
+- Composants de formulaire : zone de texte, liste déroulante, texte d'aide.
+- Tests : validation des formulaires d'administration, devises, slugs ; intégration RLS
+  du catalogue.
+
+### Modifié
+- CI : variables publiques Supabase pour le build (variables GitHub).
+
 ## [v0.2.0] - 2026-10-06 — Sprint 1 : comptes et rôles
 ### Ajouté
 - Migration `profiles_roles` : profils (créés à l'inscription), rôle administrateur,

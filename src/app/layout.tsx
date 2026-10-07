@@ -4,9 +4,9 @@
  *  Projet     : Kalami
  *  Description: Gabarit racine : langue, polices, métadonnées, en-tête et pied de page.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-06
- *  Dépendances: lib/config.ts, i18n
+ *  Dépendances: lib/config.ts, i18n, components/catalog, components/layout
  * =============================================================
  */
 
@@ -15,6 +15,7 @@ import { Inter, Literata } from "next/font/google";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { CurrencySelector } from "@/components/catalog/currency-selector";
 import { SignInLink, UserMenu } from "@/components/layout/user-menu";
 import { getDictionary } from "@/i18n";
 import { APP_NAME, APP_URL } from "@/lib/config";
@@ -51,7 +52,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               {APP_NAME}
             </Link>
             <ul className="flex items-center gap-4 text-sm text-texte-doux">
-              <li>{t.nav.catalog}</li>
+              <li>
+                <Link href="/recherche" className="hover:text-principale">
+                  {t.nav.catalog}
+                </Link>
+              </li>
+              <li>
+                {/* Devise lue en flux (cookie, pays) : emplacement réservé pendant le rendu */}
+                <Suspense fallback={<span className="inline-block h-11 w-20" />}>
+                  <CurrencySelector />
+                </Suspense>
+              </li>
               <li>
                 {/* Session lue en flux : l'en-tête reste statique et instantané */}
                 <Suspense fallback={<SignInLink />}>

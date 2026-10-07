@@ -3,8 +3,11 @@
 #  Projet     : Kalami
 #  Description: Intégration continue — lint, types, tests unitaires et build à chaque push / PR.
 #  Auteur     : Claude Marcel
-#  Version    : 1.0
-#  Date       : 2026-10-06
+#  Version    : 1.1
+#  Date       : 2026-10-07
+#  Variables  : NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY à créer dans
+#               GitHub → Settings → Secrets and variables → Actions → Variables (valeurs
+#               publiques : le build pré-rend l'accueil, qui lit le catalogue).
 # =============================================================
 
 name: CI
@@ -17,6 +20,9 @@ on:
 jobs:
   verification:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
     steps:
       - uses: actions/checkout@v4
 

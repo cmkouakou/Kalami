@@ -6,7 +6,7 @@
  *               serveur privée passe par ces fonctions : c'est ici que l'autorisation est
  *               réellement vérifiée (le proxy ne fait qu'une vérification optimiste).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-06
  *  Dépendances: lib/supabase/server.ts
  * =============================================================
@@ -16,6 +16,7 @@ import "server-only";
 
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -43,6 +44,9 @@ export type Profile = {
  * Mis en cache pour la durée d'une requête (plusieurs appels = une seule vérification).
  */
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
+  // getClaims() lit l'heure (expiration du jeton) : à exécuter au moment de la requête,
+  // jamais pendant un pré-rendu
+  await connection();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   const claims = data?.claims;
