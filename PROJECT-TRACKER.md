@@ -29,4 +29,5 @@ Version actuelle : v0.5.0 | Statut : 🟡 En cours (Sprint 4 terminé, migration
 - [x] Sprint 4 — liseuse : page tournée, défilement, réglages, signets, recherche (v0.5.0)
 - [ ] Sprint 4 — migration `20261009120000_reader.sql` à appliquer (éditeur SQL)
 - [ ] Sprint 4 — essai réel de la liseuse (ordinateur, tablette, téléphone)
+- [ ] Sprint 4b — design (identité visuelle, composants) avant le Sprint 5
 - [ ] Sprints 5 à 11 — voir [docs/SPRINTS.md](docs/SPRINTS.md)
