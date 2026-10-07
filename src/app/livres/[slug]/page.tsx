@@ -3,10 +3,11 @@
  *  Fichier    : page.tsx (livres/[slug])
  *  Projet     : Kalami
  *  Description: Fiche publique d'un livre : couverture, auteur, prix, informations, résumé.
- *               Sommaire avec extrait gratuit ; liseuse au Sprint 4, achat au Sprint 5.
+ *               Sommaire avec extrait gratuit (liens vers la liseuse), bouton « Lire » ou
+ *               « Reprendre » selon le lecteur ; achat au Sprint 5.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-08
+ *  Version    : 1.2
+ *  Date       : 2026-10-09
  *  Dépendances: lib/catalog/queries.ts, components/catalog
  * =============================================================
  */
@@ -21,6 +22,7 @@ import { PriceTag } from "@/components/catalog/price-tag";
 import { getDictionary, interpolate } from "@/i18n";
 import { getBookBySlug, getBookToc } from "@/lib/catalog/queries";
 import type { BookDetail, TocEntry } from "@/lib/catalog/types";
+import { getReadingStatus } from "@/lib/reader/queries";
 
 const t = getDictionary();
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
@@ -91,7 +93,7 @@ async function BookContent({ params }: { params: Promise<{ slug: string }> }) {
         </section>
       )}
 
-      <BookToc toc={toc} />
+      <BookToc toc={toc} slug={book.slug} />
 
       {book.author.bio && (
         <section aria-labelledby="titre-auteur" className="flex flex-col gap-3">
@@ -110,7 +112,7 @@ async function BookContent({ params }: { params: Promise<{ slug: string }> }) {
 
 // ==================== SOUS-COMPOSANTS ====================
 
-/** Titre, auteur, prix et boutons d'action (inactifs jusqu'aux sprints 3 et 5). */
+/** Titre, auteur, prix et boutons d'action (achat inactif jusqu'au sprint 5). */
 function BookHeader({ book }: { book: BookDetail }) {
   return (
     <header className="flex flex-col gap-4">
@@ -128,13 +130,9 @@ function BookHeader({ book }: { book: BookDetail }) {
       </p>
       <PriceTag prices={book.book_prices} className="text-2xl" />
       <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          disabled
-          className="min-h-11 rounded-md border border-bordure px-5 font-medium opacity-60"
-        >
-          {t.catalog.book.readExcerpt}
-        </button>
+        <Suspense fallback={<ReadLink slug={book.slug} label={t.catalog.book.readExcerpt} />}>
+          <ReadButton bookId={book.id} slug={book.slug} />
+        </Suspense>
         <button
           type="button"
           disabled
@@ -149,8 +147,31 @@ function BookHeader({ book }: { book: BookDetail }) {
   );
 }
 
+/** Lien vers la liseuse. */
+function ReadLink({ slug, label }: { slug: string; label: string }) {
+  return (
+    <Link
+      href={`/livres/${slug}/lire`}
+      className="flex min-h-11 items-center rounded-md border border-bordure px-5 font-medium
+        hover:bg-surface"
+    >
+      {label}
+    </Link>
+  );
+}
+
+/** Bouton de lecture selon le lecteur : extrait, livre entier ou reprise à l'avancement. */
+async function ReadButton({ bookId, slug }: { bookId: string; slug: string }) {
+  const { full, progress } = await getReadingStatus(bookId);
+  let label = full ? t.reader.readBook : t.catalog.book.readExcerpt;
+  if (progress !== null && progress > 0) {
+    label = interpolate(t.reader.resume, { percent: String(Math.round(progress * 100)) });
+  }
+  return <ReadLink slug={slug} label={label} />;
+}
+
 /** Sommaire public : titres, longueur et chapitres compris dans l'extrait gratuit. */
-function BookToc({ toc }: { toc: TocEntry[] }) {
+function BookToc({ toc, slug }: { toc: TocEntry[]; slug: string }) {
   return (
     <section aria-labelledby="titre-sommaire" className="flex flex-col gap-3">
       <h2 id="titre-sommaire" className="font-serif text-2xl font-semibold">
@@ -166,7 +187,17 @@ function BookToc({ toc }: { toc: TocEntry[] }) {
               className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2"
             >
               <span>
-                <span className="text-texte-doux">{entry.chapter_position}.</span> {entry.title}
+                <span className="text-texte-doux">{entry.chapter_position}.</span>{" "}
+                {entry.is_preview ? (
+                  <Link
+                    href={`/livres/${slug}/lire?chapitre=${entry.chapter_position}`}
+                    className="text-principale underline"
+                  >
+                    {entry.title}
+                  </Link>
+                ) : (
+                  entry.title
+                )}
               </span>
               <span className="flex items-baseline gap-3 text-sm text-texte-doux">
                 {entry.is_preview && (

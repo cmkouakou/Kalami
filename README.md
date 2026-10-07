@@ -18,6 +18,7 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
 - Supabase (Postgres + RLS, Auth, Storage)
 - Stripe, Resend, Vercel
 - mammoth, JSZip, sanitize-html (conversion DOCX/EPUB en chapitres nettoyés)
+- page-flip (effet de page tournée de la liseuse), synthèse vocale du navigateur
 - Vitest (tests unitaires et d'intégration)
 
 ## 📁 Structure des fichiers
@@ -67,6 +68,8 @@ kalami/
 - Next.js 16 : l'ancien `middleware.ts` s'appelle désormais `proxy.ts`.
 - Le texte des livres n'est servi que par `/api/livres/{id}/chapitres/{n}` (clé serveur) :
   la table `chapters` est illisible par les clients ; le seau `manuscripts` est privé.
+- La liseuse (`/livres/{slug}/lire`) décourage la copie et l'impression et affiche un
+  filigrane : ce sont des freins, pas une protection absolue (le texte est affiché).
 
 ## 📅 Historique des versions
 Voir [CHANGELOG.md](CHANGELOG.md).

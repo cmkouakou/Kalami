@@ -8,8 +8,8 @@ démarre après la v1.0.0 de la plateforme de lecture.
 | 0 | Fondations : Next.js, Supabase, config, redirections 301, CI, docs | v0.1.0 | 🟡 en cours |
 | 1 | Comptes et rôles : courriel, Google, profils, MFA admin, RLS | v0.2.0 | ✅ (Google à configurer) |
 | 2 | Catalogue : catégories, accueil, fiches, auteurs, recherche, prix par devise | v0.3.0 | ✅ |
-| 3 | Contenu protégé : conversion DOCX/EPUB, extrait, API chapitres (403), débit | v0.4.0 | ✅ (migration à appliquer) |
-| 4 | Liseuse : page tournée, défilement, réglages, marque-page, protection, filigrane | v0.5.0 | ⬜ |
+| 3 | Contenu protégé : conversion DOCX/EPUB, extrait, API chapitres (403), débit | v0.4.0 | ✅ |
+| 4 | Liseuse : page tournée, défilement, réglages, marque-page, protection, filigrane | v0.5.0 | ✅ (migration à appliquer) |
 | 5 | Paiement carte : commandes, Stripe + Stripe Tax, webhook, droits, promos, reçus | v0.6.0 | ⬜ |
 | 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.7.0 | ⬜ |
 | 7 | Annotations, citation (APA/MLA/Chicago), carte de partage | v0.8.0 | ⬜ |
@@ -20,6 +20,7 @@ démarre après la v1.0.0 de la plateforme de lecture.
 
 ## Tests critiques (cahier §7.3)
 - Sprint 3 : l'API du chapitre 2 renvoie 403 sans droit d'accès.
+- Sprint 4 : la recherche ne renvoie rien hors des parties autorisées.
 - Sprint 5 : le droit de lecture n'est accordé que par le webhook signé, une seule fois par événement.
 - Sprint 6 : le droit n'est accordé que par la validation d'un administrateur.
 - Sprint 7 : un surlignage reste ancré après changement de police.

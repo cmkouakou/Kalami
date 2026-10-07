@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.4.0 | Statut : 🟡 En cours (Sprint 3 terminé, migration appliquée)
+Version actuelle : v0.5.0 | Statut : 🟡 En cours (Sprint 4 terminé, migration à appliquer)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -8,7 +8,8 @@ Version actuelle : v0.4.0 | Statut : 🟡 En cours (Sprint 3 terminé, migration
 | #2 | 2026-10-06 | Sprint 1 : authentification, profils, MFA admin, RLS | ~90 000 | ~0.54 $ |
 | #3 | 2026-10-07 | Sprint 2 : catalogue, recherche, devises, administration | ~180 000 | ~1.08 $ |
 | #4 | 2026-10-08 | Sprint 3 : conversion DOCX/EPUB, extrait, API chapitres, droits | ~200 000 | ~1.20 $ |
-| **TOTAL** | | | **~530 000** | **~3.18 $** |
+| #5 | 2026-10-09 | Sprint 4 : liseuse, marque-page, signets, recherche, protection | ~250 000 | ~1.50 $ |
+| **TOTAL** | | | **~780 000** | **~4.68 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -25,4 +26,7 @@ Version actuelle : v0.4.0 | Statut : 🟡 En cours (Sprint 3 terminé, migration
 - [x] Sprint 3 — contenu protégé : conversion, extrait, API 403/429, droits (v0.4.0)
 - [x] Sprint 3 — migration `20261008120000_content.sql` appliquée, tests d'intégration 85/85
 - [ ] Sprint 3 — essai réel : dépôt d'un DOCX et d'un EPUB en administration
-- [ ] Sprints 4 à 11 — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 4 — liseuse : page tournée, défilement, réglages, signets, recherche (v0.5.0)
+- [ ] Sprint 4 — migration `20261009120000_reader.sql` à appliquer (éditeur SQL)
+- [ ] Sprint 4 — essai réel de la liseuse (ordinateur, tablette, téléphone)
+- [ ] Sprints 5 à 11 — voir [docs/SPRINTS.md](docs/SPRINTS.md)

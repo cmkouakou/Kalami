@@ -7,43 +7,20 @@
  *               chapitre absent, 429 au-delà de la limite de débit. Jamais mise en cache.
  *               Conçue pour la liseuse (Sprint 4) et la lecture hors ligne (v2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-08
- *  Dépendances: lib/content/chapters.ts, lib/content/access.ts, lib/auth/dal.ts
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
+ *  Dépendances: lib/content/chapters.ts, lib/content/access.ts, lib/content/responses.ts,
+ *               lib/auth/dal.ts
  * =============================================================
  */
 
 import type { NextRequest } from "next/server";
 
-import { getDictionary } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import { getCurrentUser } from "@/lib/auth/dal";
-import {
-  CONTENT_RATE_WINDOW_SECONDS,
-  parseChapterPosition,
-  rateLimitSubject,
-} from "@/lib/content/access";
+import { parseChapterPosition, rateLimitSubject } from "@/lib/content/access";
 import { getChapterForRequest } from "@/lib/content/chapters";
-
-const t = getDictionary();
-
-/** En-têtes communs : contenu personnel, jamais mis en cache ni indexé. */
-const PRIVATE_HEADERS = {
-  "Cache-Control": "private, no-store, max-age=0",
-  "X-Robots-Tag": "noindex, nofollow",
-};
-
-/** Réponse d'erreur JSON sans aucun contenu du livre. */
-function errorResponse(status: 403 | 404 | 429): Response {
-  const body = {
-    403: { error: "locked", message: t.content.api.locked },
-    404: { error: "not_found", message: t.content.api.notFound },
-    429: { error: "rate_limited", message: t.content.api.tooManyRequests },
-  }[status];
-  const headers: Record<string, string> = { ...PRIVATE_HEADERS };
-  if (status === 429) headers["Retry-After"] = String(CONTENT_RATE_WINDOW_SECONDS);
-  return Response.json(body, { status, headers });
-}
+import { errorResponse, PRIVATE_HEADERS } from "@/lib/content/responses";
 
 /**
  * GET /api/livres/{id}/chapitres/{n}

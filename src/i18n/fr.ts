@@ -5,8 +5,8 @@
  *  Description: Textes de l'interface en français (langue par défaut).
  *               « {appName} » est remplacé par APP_NAME au moment de l'affichage.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-06
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
  * =============================================================
  */
 
@@ -53,6 +53,7 @@ const fr = {
       freeExcerpt: "Extrait gratuit",
       words: "{count} mots",
       readExcerpt: "Lire l'extrait",
+      readExcerptHint: "Extrait gratuit, sans inscription",
       buy: "Acheter",
       soon: "Bientôt disponible",
       aboutAuthor: "À propos de l'auteur",
@@ -84,6 +85,101 @@ const fr = {
       locked: "Ce chapitre est réservé aux lecteurs qui ont acheté le livre.",
       notFound: "Chapitre introuvable.",
       tooManyRequests: "Trop de chapitres demandés en peu de temps. Réessayez dans une minute.",
+      badRequest: "Requête invalide.",
+      unauthorized: "Connexion requise.",
+    },
+  },
+  reader: {
+    metaTitle: "Lecture — {title}",
+    close: "Fermer la liseuse",
+    loading: "Chargement du chapitre…",
+    loadError: "Impossible de charger ce chapitre. Vérifiez votre connexion.",
+    retry: "Réessayer",
+    previousPage: "Page précédente",
+    nextPage: "Page suivante",
+    previousChapter: "Chapitre précédent",
+    nextChapter: "Chapitre suivant",
+    pageOf: "Page {current} sur {total}",
+    progress: "{percent} % du livre",
+    progressLabel: "Avancement dans le livre",
+    toolbar: "Outils de lecture",
+    resume: "Reprendre la lecture ({percent} %)",
+    readBook: "Lire le livre",
+    protection:
+      "Le texte est protégé : copie et impression désactivées. Les captures d'écran restent " +
+      "possibles, chaque page porte un filigrane personnel.",
+    printBlocked: "L'impression de ce livre n'est pas autorisée.",
+    shortcuts: "Flèches : tourner les pages · Échap : fermer un panneau",
+    panels: {
+      toc: "Sommaire",
+      bookmarks: "Signets",
+      search: "Rechercher",
+      settings: "Réglages",
+      close: "Fermer le panneau",
+    },
+    toc: {
+      locked: "Réservé aux acheteurs",
+      current: "Chapitre en cours",
+    },
+    bookmarks: {
+      add: "Ajouter un signet ici",
+      label: "Nom du signet",
+      save: "Enregistrer",
+      empty: "Aucun signet pour ce livre.",
+      remove: "Supprimer le signet « {label} »",
+      signInRequired: "Connectez-vous pour enregistrer des signets sur tous vos appareils.",
+      signIn: "Se connecter",
+      invalid: "Le nom du signet doit compter de 1 à 120 caractères.",
+      tooMany: "Nombre maximal de signets atteint pour ce livre.",
+      error: "Impossible d'enregistrer le signet. Réessayez.",
+    },
+    search: {
+      field: "Mot ou expression",
+      submit: "Rechercher",
+      searching: "Recherche…",
+      tooShort: "Saisissez de 2 à 100 caractères.",
+      noResults: "Aucun résultat dans les parties que vous pouvez lire.",
+      results: "{count} résultat(s)",
+      limited: "Seuls les {count} premiers résultats sont affichés.",
+      previewOnly: "La recherche porte uniquement sur l'extrait gratuit.",
+      error: "Recherche impossible pour le moment. Réessayez.",
+    },
+    settings: {
+      mode: "Mode de lecture",
+      flip: "Pages à tourner",
+      scroll: "Défilement",
+      theme: "Thème",
+      light: "Clair",
+      sepia: "Sépia",
+      dark: "Sombre",
+      font: "Police",
+      serif: "Avec empattements",
+      sans: "Sans empattements",
+      fontSize: "Taille du texte",
+      smaller: "Réduire le texte",
+      larger: "Agrandir le texte",
+      lineHeight: "Interligne",
+      lineHeights: ["Serré", "Normal", "Aéré"],
+    },
+    readAloud: {
+      start: "Lire à voix haute",
+      pause: "Mettre en pause",
+      resume: "Reprendre la lecture à voix haute",
+      stop: "Arrêter la lecture à voix haute",
+      unsupported: "La lecture à voix haute n'est pas disponible dans ce navigateur.",
+    },
+    lock: {
+      title: "Fin de l'extrait",
+      text: "La suite de « {title} » est réservée aux lecteurs qui ont acheté le livre.",
+      buy: "Acheter",
+      buySoon: "L'achat en ligne ouvrira très prochainement.",
+      signIn: "Vous avez déjà acheté ce livre ? Connectez-vous.",
+      backToBook: "Retour à la fiche du livre",
+    },
+    end: {
+      title: "Fin du livre",
+      text: "Vous avez terminé « {title} ». Merci de votre lecture !",
+      backToBook: "Retour à la fiche du livre",
     },
   },
   auth: {

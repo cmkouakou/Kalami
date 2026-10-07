@@ -1,5 +1,30 @@
 # Journal des modifications
 
+## [v0.5.0] - 2026-10-09 — Sprint 4 : liseuse
+### Ajouté
+- Migration `reader` : position de lecture (`reading_positions`) et signets nommés
+  (`bookmarks`, 200 au plus par livre), RLS réservée au propriétaire.
+- Liseuse plein écran `/livres/{slug}/lire` : mode page tournée (page-flip, par défaut sur
+  ordinateur et tablette) et mode défilement (par défaut sur téléphone), commutables.
+- Pagination mesurée (coupure aux limites de mots, intertitres jamais seuls en bas de page).
+- Réglages enregistrés sur l'appareil : mode, thème (clair, sépia, sombre), police, taille,
+  interligne.
+- Marque-page automatique : synchronisé au serveur pour un lecteur connecté
+  (`PUT /api/livres/{id}/position`, protection CSRF), sur l'appareil pour un visiteur.
+- Signets nommés, sommaire cliquable, barre de progression, navigation au clavier,
+  lecture à voix haute (synthèse vocale du navigateur).
+- Recherche `GET /api/livres/{id}/recherche` limitée aux parties autorisées (extrait coupé
+  compris), insensible aux accents.
+- Écran de fin d'extrait : prix et bouton « Acheter » (inactif jusqu'au sprint 5).
+- Freins à la copie et à l'impression ; filigrane (courriel du lecteur connecté et
+  identifiant court de son droit de lecture).
+- Fiche livre : bouton « Lire l'extrait » / « Lire » / « Reprendre (x %) », liens du sommaire.
+- Tests : pagination, position, recherche, routes position et recherche ; intégration RLS
+  de la liseuse (ignorée tant que la migration n'est pas appliquée).
+
+### Modifié
+- Réponses JSON partagées dans `lib/content/responses.ts`.
+
 ## [v0.4.0] - 2026-10-08 — Sprint 3 : contenu protégé
 ### Ajouté
 - Migration `content` : versions converties (`book_versions`), chapitres en blocs HTML

@@ -1,0 +1,302 @@
+/*
+=============================================================
+  Fichier    : reader.css
+  Projet     : Kalami
+  Description: Styles de la liseuse : thèmes (clair, sépia, sombre), typographie du texte,
+               pages à tourner, défilement, filigrane, protection (sélection, impression).
+  Auteur     : Claude Marcel
+  Version    : 1.0
+  Date       : 2026-10-09
+  Dépend de  : globals.css (polices --police-lecture / --police-interface)
+=============================================================
+*/
+
+/* ==================== THÈMES ==================== */
+
+.liseuse {
+  --liseuse-fond: #fbf8f3;
+  --liseuse-page: #fffdf9;
+  --liseuse-texte: #1f1b16;
+  --liseuse-doux: #5c554c;
+  --liseuse-bordure: #e6dfd3;
+  --liseuse-survol: rgb(0 0 0 / 0.06);
+  --liseuse-lien: #8a3b12;
+  --liseuse-filigrane: rgb(0 0 0 / 0.06);
+  --liseuse-surlignage: #f6dd8f;
+  background: var(--liseuse-fond);
+  color: var(--liseuse-texte);
+  font-family: var(--police-interface), Arial, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.liseuse[data-theme="sepia"] {
+  --liseuse-fond: #efe5cf;
+  --liseuse-page: #f6eedb;
+  --liseuse-texte: #4a3a2a;
+  --liseuse-doux: #6f5d48;
+  --liseuse-bordure: #dccbaa;
+  --liseuse-survol: rgb(74 58 42 / 0.08);
+  --liseuse-lien: #7a3812;
+  --liseuse-filigrane: rgb(74 58 42 / 0.07);
+  --liseuse-surlignage: #e9c97a;
+}
+
+.liseuse[data-theme="dark"] {
+  --liseuse-fond: #121110;
+  --liseuse-page: #1b1916;
+  --liseuse-texte: #e6e0d6;
+  --liseuse-doux: #a89f92;
+  --liseuse-bordure: #36302a;
+  --liseuse-survol: rgb(255 255 255 / 0.08);
+  --liseuse-lien: #e8a070;
+  --liseuse-filigrane: rgb(255 255 255 / 0.05);
+  --liseuse-surlignage: #6b5420;
+}
+
+/* Les champs des panneaux restent sélectionnables et lisibles */
+.liseuse input,
+.liseuse-champ {
+  -webkit-user-select: text;
+  user-select: text;
+  background: var(--liseuse-page);
+  color: var(--liseuse-texte);
+  border-color: var(--liseuse-bordure);
+}
+
+.liseuse-barre,
+.liseuse-panneau {
+  background: var(--liseuse-fond);
+}
+
+.liseuse-avancement {
+  background: var(--liseuse-lien);
+  transition: width 0.3s ease;
+}
+
+.liseuse-surlignage {
+  background: var(--liseuse-surlignage);
+  color: inherit;
+  border-radius: 2px;
+}
+
+/* ==================== TEXTE ==================== */
+
+.liseuse-texte {
+  font-family: var(--liseuse-police), Georgia, serif;
+  font-size: var(--liseuse-taille, 19px);
+  line-height: var(--liseuse-interligne, 1.6);
+  hyphens: auto;
+  overflow-wrap: break-word;
+  text-align: justify;
+}
+
+.liseuse-texte p {
+  margin: 0;
+  text-indent: 1.5em;
+}
+
+/* Paragraphe qui suit un titre ou une coupure de page : pas de retrait */
+.liseuse-texte h1 + p,
+.liseuse-texte h2 + p,
+.liseuse-texte h3 + p,
+.liseuse-texte p.suite,
+.liseuse-texte .suite > p:first-child {
+  text-indent: 0;
+}
+
+.liseuse-titre-chapitre {
+  margin: 0 0 1.5em;
+  font-size: 1.6em;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.liseuse-texte h2,
+.liseuse-texte h3,
+.liseuse-texte h4,
+.liseuse-texte h5,
+.liseuse-texte h6 {
+  margin: 1.2em 0 0.6em;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.liseuse-texte h2 {
+  font-size: 1.3em;
+}
+
+.liseuse-texte h3 {
+  font-size: 1.15em;
+}
+
+.liseuse-texte blockquote {
+  margin: 0.8em 0;
+  padding-left: 1em;
+  border-left: 3px solid var(--liseuse-bordure);
+  font-style: italic;
+}
+
+.liseuse-texte ul,
+.liseuse-texte ol {
+  margin: 0.6em 0;
+  padding-left: 1.5em;
+}
+
+.liseuse-texte ul {
+  list-style: disc;
+}
+
+.liseuse-texte ol {
+  list-style: decimal;
+}
+
+.liseuse-texte table {
+  width: 100%;
+  margin: 0.8em 0;
+  border-collapse: collapse;
+  font-size: 0.85em;
+  text-align: left;
+}
+
+.liseuse-texte th,
+.liseuse-texte td {
+  padding: 0.25em 0.5em;
+  border: 1px solid var(--liseuse-bordure);
+}
+
+.liseuse-texte pre {
+  margin: 0.8em 0;
+  overflow-x: auto;
+  font-size: 0.8em;
+  white-space: pre-wrap;
+  text-align: left;
+}
+
+.liseuse-texte hr {
+  margin: 1.2em auto;
+  width: 30%;
+  border: 0;
+  border-top: 1px solid var(--liseuse-bordure);
+}
+
+.liseuse-texte figure {
+  margin: 0.8em 0;
+  text-align: center;
+}
+
+.liseuse-texte a {
+  color: var(--liseuse-lien);
+  text-decoration: underline;
+}
+
+/* ==================== PAGES À TOURNER ==================== */
+
+.liseuse-flip {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.liseuse-page {
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--liseuse-page);
+  color: var(--liseuse-texte);
+}
+
+.liseuse-numero {
+  position: absolute;
+  right: 0;
+  bottom: 16px;
+  left: 0;
+  color: var(--liseuse-doux);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Page de mesure : même typographie, invisible et hors écran */
+.liseuse-mesure {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ==================== DÉFILEMENT ==================== */
+
+.liseuse-defilement {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.liseuse-defilement .liseuse-texte > div + div {
+  margin-top: 0;
+}
+
+/* ==================== FILIGRANE ==================== */
+
+.liseuse-filigrane {
+  position: absolute;
+  z-index: 1;
+  color: var(--liseuse-filigrane);
+  font-family: var(--police-interface), Arial, sans-serif;
+  font-size: 14px;
+  white-space: nowrap;
+  transform: rotate(-24deg);
+  pointer-events: none;
+}
+
+/* ==================== IMPRESSION ==================== */
+
+.liseuse-impression {
+  display: none;
+}
+
+@media print {
+  body:has(.liseuse) {
+    visibility: hidden;
+  }
+
+  .liseuse-impression {
+    display: block;
+    position: fixed;
+    top: 2cm;
+    right: 2cm;
+    left: 2cm;
+    visibility: visible;
+    color: #000000;
+    font-size: 16pt;
+    text-align: center;
+  }
+}
+
+/* ==================== RESPONSIVE — TABLETTE ==================== */
+
+@media (max-width: 768px) {
+  .liseuse-texte {
+    text-align: left;
+  }
+}
+
+/* ==================== RESPONSIVE — MOBILE ==================== */
+
+@media (max-width: 480px) {
+  .liseuse-titre-chapitre {
+    font-size: 1.4em;
+  }
+
+  .liseuse-filigrane {
+    font-size: 12px;
+  }
+}

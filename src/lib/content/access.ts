@@ -3,10 +3,11 @@
  *  Fichier    : access.ts
  *  Projet     : Kalami
  *  Description: Règles d'accès aux chapitres (fonctions pures, sans base de données) :
- *               extrait gratuit, droit de lecture, coupure de l'extrait, limites de débit.
- *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-08
+ *               extrait gratuit, droit de lecture, coupure de l'extrait, chapitres autorisés,
+ *               limites de débit.
+ *  Auteur    : Claude Marcel
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
  *  Dépendances: (aucune)
  * =============================================================
  */
@@ -93,6 +94,27 @@ export function applyPreviewCut(
   return isCutChapter
     ? { blocks: blocks.slice(0, rule.preview_cut_block!), truncated: true }
     : { blocks, truncated: false };
+}
+
+/**
+ * Ne garde que la partie autorisée d'une liste de chapitres (recherche dans le texte) :
+ * chapitres refusés retirés, dernier chapitre de l'extrait coupé.
+ * @param chapters - Chapitres complets lus en base
+ * @param rule     - Règles de l'extrait
+ * @param entitled - Le demandeur a un droit de lecture sur le livre
+ * @returns Chapitres autorisés, blocs éventuellement coupés
+ */
+export function authorizedChapters<T extends { position: number; blocks: string[] }>(
+  chapters: T[],
+  rule: PreviewRule,
+  entitled: boolean,
+): T[] {
+  return chapters.flatMap((chapter) => {
+    const decision = decideAccess(chapter.position, rule, entitled);
+    if (decision === "denied") return [];
+    const { blocks } = applyPreviewCut(chapter.blocks, chapter.position, decision, rule);
+    return [{ ...chapter, blocks }];
+  });
 }
 
 /**
