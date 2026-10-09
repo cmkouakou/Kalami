@@ -35,7 +35,7 @@ async function GuardedMfa() {
 export default function MfaPage() {
   return (
     <main className="mx-auto w-full max-w-md px-4 py-10">
-      <div className="rounded-xl border border-bordure bg-surface p-6 shadow-sm">
+      <div className="rounded-lg border border-line bg-surface p-6">
         <h1 className="mb-6 font-serif text-2xl font-semibold">{t.admin.mfa.title}</h1>
         <Suspense>
           <GuardedMfa />

@@ -12,7 +12,7 @@
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
     <main className="mx-auto w-full max-w-md px-4 py-10">
-      <div className="rounded-xl border border-bordure bg-surface p-6 shadow-sm">{children}</div>
+      <div className="rounded-lg border border-line bg-surface p-6">{children}</div>
     </main>
   );
 }

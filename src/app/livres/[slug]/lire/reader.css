@@ -5,54 +5,38 @@
   Description: Styles de la liseuse : thèmes (clair, sépia, sombre), typographie du texte,
                pages à tourner, défilement, filigrane, protection (sélection, impression).
   Auteur     : Claude Marcel
-  Version    : 1.0
+  Version    : 1.1
   Date       : 2026-10-09
-  Dépend de  : globals.css (polices --police-lecture / --police-interface)
+  Dépend de  : globals.css (jetons de la charte, polices --police-lecture / --police-interface)
 =============================================================
 */
 
 /* ==================== THÈMES ==================== */
 
+/* Les couleurs viennent des jetons de la charte (globals.css) : l'attribut data-theme de
+   .liseuse (light, sepia, dark) choisit le thème Papier, Sépia ou Nuit. */
 .liseuse {
-  --liseuse-fond: #fbf8f3;
-  --liseuse-page: #fffdf9;
-  --liseuse-texte: #1f1b16;
-  --liseuse-doux: #5c554c;
-  --liseuse-bordure: #e6dfd3;
-  --liseuse-survol: rgb(0 0 0 / 0.06);
-  --liseuse-lien: #8a3b12;
-  --liseuse-filigrane: rgb(0 0 0 / 0.06);
-  --liseuse-surlignage: #f6dd8f;
+  --liseuse-fond: var(--paper);
+  --liseuse-scene: var(--sand);
+  --liseuse-page: var(--paper);
+  --liseuse-texte: var(--ink);
+  --liseuse-doux: var(--ink-muted);
+  --liseuse-bordure: var(--line);
+  --liseuse-survol: var(--sand);
+  --liseuse-lien: var(--encre);
+  --liseuse-filigrane: color-mix(in srgb, var(--ink) 7%, transparent);
+  --liseuse-surlignage: var(--hl-jaune);
   background: var(--liseuse-fond);
   color: var(--liseuse-texte);
-  font-family: var(--police-interface), Arial, sans-serif;
+  font-family: var(--police-interface), "Segoe UI", system-ui, sans-serif;
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
 }
 
-.liseuse[data-theme="sepia"] {
-  --liseuse-fond: #efe5cf;
-  --liseuse-page: #f6eedb;
-  --liseuse-texte: #4a3a2a;
-  --liseuse-doux: #6f5d48;
-  --liseuse-bordure: #dccbaa;
-  --liseuse-survol: rgb(74 58 42 / 0.08);
-  --liseuse-lien: #7a3812;
-  --liseuse-filigrane: rgb(74 58 42 / 0.07);
-  --liseuse-surlignage: #e9c97a;
-}
-
-.liseuse[data-theme="dark"] {
-  --liseuse-fond: #121110;
-  --liseuse-page: #1b1916;
-  --liseuse-texte: #e6e0d6;
-  --liseuse-doux: #a89f92;
-  --liseuse-bordure: #36302a;
-  --liseuse-survol: rgb(255 255 255 / 0.08);
-  --liseuse-lien: #e8a070;
-  --liseuse-filigrane: rgb(255 255 255 / 0.05);
-  --liseuse-surlignage: #6b5420;
+/* Mode livre : la double page posée sur un fond sable */
+.liseuse-zone:has(.liseuse-flip) {
+  background: var(--liseuse-scene);
 }
 
 /* Les champs des panneaux restent sélectionnables et lisibles */
@@ -71,8 +55,8 @@
 }
 
 .liseuse-avancement {
-  background: var(--liseuse-lien);
-  transition: width 0.3s ease;
+  background: var(--encre);
+  transition: width 300ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .liseuse-surlignage {
@@ -205,6 +189,12 @@
   padding: 0;
 }
 
+/* Le livre ouvert porte la seule ombre de la liseuse (ombre « livre » de la charte) */
+.liseuse-flip .stf__parent {
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(42, 37, 32, 0.08), 0 8px 24px rgba(42, 37, 32, 0.1);
+}
+
 .liseuse-page {
   position: relative;
   box-sizing: border-box;
@@ -250,7 +240,7 @@
   position: absolute;
   z-index: 1;
   color: var(--liseuse-filigrane);
-  font-family: var(--police-interface), Arial, sans-serif;
+  font-family: var(--police-interface), "Segoe UI", system-ui, sans-serif;
   font-size: 14px;
   white-space: nowrap;
   transform: rotate(-24deg);

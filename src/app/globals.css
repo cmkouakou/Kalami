@@ -2,64 +2,281 @@
 =============================================================
   Fichier    : globals.css
   Projet     : Kalami
-  Description: Styles globaux, jetons de couleur (clair / sombre) et thème Tailwind.
+  Description: Jetons de la charte graphique Kalami (thèmes Papier, Sépia, Nuit), thème
+               Tailwind (couleurs, typographie, rayons, ombres) et styles de base.
   Auteur     : Claude Marcel
-  Version    : 1.0
-  Date       : 2026-10-06
-  Dépend de  : Tailwind CSS 4
+  Version    : 2.0
+  Date       : 2026-10-09
+  Dépend de  : Tailwind CSS 4 ; charte https://claude.ai/artifact/Qz8Qvsvft89hggJYuJX4EF
 =============================================================
 */
 
 @import "tailwindcss";
 
-/* ==================== VARIABLES GLOBALES ==================== */
+/* ==================== VARIABLES GLOBALES — THÈME PAPIER ==================== */
 
-:root {
-  --couleur-fond: #fbf8f3;
-  --couleur-surface: #ffffff;
-  --couleur-texte: #1f1b16;
-  --couleur-texte-doux: #5c554c;
-  --couleur-bordure: #e6dfd3;
-  --couleur-principale: #8a3b12;
-  --couleur-principale-texte: #ffffff;
-  --couleur-accent: #c8902e;
+/* Valeurs exactes de tokens.json ; ne jamais écrire une couleur en dur ailleurs */
+:root,
+[data-theme="light"] {
+  --paper: #faf6ef;
+  --surface: #ffffff;
+  --sand: #efe6d6;
+  --line: #e2d8c6;
+  --ink: #2a2520;
+  --ink-muted: #6b6156;
+  --encre: #1e4d4a;
+  --encre-strong: #163a38;
+  --on-encre: #faf6ef;
+  --encre-soft: #dce9e6;
+  --ocre: #b8622f;
+  --ocre-text: #a3542a;
+  --focus: #b8622f;
+  --success: #2e6b47;
+  --warning: #8a5a00;
+  --danger: #a1291f;
+  --hl-jaune: #f6e27a;
+  --hl-vert: #c6e5b9;
+  --hl-bleu: #c4dcf2;
+  --hl-rose: #f3c9d3;
+  --hl-orange: #f8cfa8;
+  --scrim: rgba(23, 28, 27, 0.48);
+  color-scheme: light;
+}
+
+/* ==================== THÈME SÉPIA ==================== */
+
+[data-theme="sepia"] {
+  --paper: #f4ecd8;
+  --surface: #fbf5e6;
+  --sand: #e9ddc2;
+  --line: #ddcdae;
+  --ink: #3b2f22;
+  --ink-muted: #6e5d48;
+  --encre: #1e4d4a;
+  --encre-strong: #163a38;
+  --on-encre: #faf6ef;
+  --encre-soft: #d9e4da;
+  --ocre: #b8622f;
+  --ocre-text: #a3542a;
+  --focus: #b8622f;
+  --success: #2e6b47;
+  --warning: #8a5a00;
+  --danger: #a1291f;
+  --hl-jaune: #f2d96b;
+  --hl-vert: #bedbaa;
+  --hl-bleu: #bbd2e3;
+  --hl-rose: #ecbfc5;
+  --hl-orange: #f2c391;
+  --scrim: rgba(23, 28, 27, 0.48);
+  color-scheme: light;
+}
+
+/* ==================== THÈME NUIT ==================== */
+
+/* Variables du thème Nuit, partagées par le choix explicite et le mode sombre du système */
+[data-theme="dark"] {
+  --paper: #171c1b;
+  --surface: #1f2624;
+  --sand: #2a3330;
+  --line: #313b38;
+  --ink: #ede6da;
+  --ink-muted: #a9a196;
+  --encre: #7fb8b0;
+  --encre-strong: #a3d0c9;
+  --on-encre: #10201e;
+  --encre-soft: #22403c;
+  --ocre: #e08a55;
+  --ocre-text: #e08a55;
+  --focus: #e08a55;
+  --success: #86c9a0;
+  --warning: #e6b85c;
+  --danger: #f0958c;
+  --hl-jaune: #6b5e1c;
+  --hl-vert: #2f5a33;
+  --hl-bleu: #2a4a66;
+  --hl-rose: #64323e;
+  --hl-orange: #6b4020;
+  --scrim: rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --couleur-fond: #16130f;
-    --couleur-surface: #211d18;
-    --couleur-texte: #efe9df;
-    --couleur-texte-doux: #b4ab9e;
-    --couleur-bordure: #3a332b;
-    --couleur-principale: #e08a55;
-    --couleur-principale-texte: #16130f;
-    --couleur-accent: #e2b45c;
+  :root:not([data-theme]) {
+    --paper: #171c1b;
+    --surface: #1f2624;
+    --sand: #2a3330;
+    --line: #313b38;
+    --ink: #ede6da;
+    --ink-muted: #a9a196;
+    --encre: #7fb8b0;
+    --encre-strong: #a3d0c9;
+    --on-encre: #10201e;
+    --encre-soft: #22403c;
+    --ocre: #e08a55;
+    --ocre-text: #e08a55;
+    --focus: #e08a55;
+    --success: #86c9a0;
+    --warning: #e6b85c;
+    --danger: #f0958c;
+    --hl-jaune: #6b5e1c;
+    --hl-vert: #2f5a33;
+    --hl-bleu: #2a4a66;
+    --hl-rose: #64323e;
+    --hl-orange: #6b4020;
+    --scrim: rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
   }
 }
 
 /* ==================== THÈME TAILWIND ==================== */
 
 @theme inline {
-  --color-fond: var(--couleur-fond);
-  --color-surface: var(--couleur-surface);
-  --color-texte: var(--couleur-texte);
-  --color-texte-doux: var(--couleur-texte-doux);
-  --color-bordure: var(--couleur-bordure);
-  --color-principale: var(--couleur-principale);
-  --color-principale-texte: var(--couleur-principale-texte);
-  --color-accent: var(--couleur-accent);
-  --font-sans: var(--police-interface), Arial, sans-serif;
-  --font-serif: var(--police-lecture), Georgia, serif;
+  /* Couleurs : bg-paper, text-ink, border-line, bg-encre, text-ocre-text… */
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-sand: var(--sand);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-encre: var(--encre);
+  --color-encre-strong: var(--encre-strong);
+  --color-on-encre: var(--on-encre);
+  --color-encre-soft: var(--encre-soft);
+  --color-ocre: var(--ocre);
+  --color-ocre-text: var(--ocre-text);
+  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-hl-jaune: var(--hl-jaune);
+  --color-hl-vert: var(--hl-vert);
+  --color-hl-bleu: var(--hl-bleu);
+  --color-hl-rose: var(--hl-rose);
+  --color-hl-orange: var(--hl-orange);
+  --color-scrim: var(--scrim);
+
+  /* Familles : font-sans (Source Sans 3), font-serif (Literata) */
+  --font-sans: var(--police-interface), "Segoe UI", system-ui, sans-serif;
+  --font-serif: var(--police-lecture), Georgia, "Times New Roman", serif;
+}
+
+@theme {
+  /* Styles de texte de la charte : text-display, text-h1… (famille à ajouter) */
+  --text-display: 44px;
+  --text-display--line-height: 52px;
+  --text-display--font-weight: 600;
+  --text-display--letter-spacing: -0.01em;
+  --text-h1: 34px;
+  --text-h1--line-height: 42px;
+  --text-h1--font-weight: 600;
+  --text-h2: 26px;
+  --text-h2--line-height: 34px;
+  --text-h2--font-weight: 600;
+  --text-book-title: 18px;
+  --text-book-title--line-height: 24px;
+  --text-book-title--font-weight: 600;
+  --text-reading: 19px;
+  --text-reading--line-height: 31px;
+  --text-reading-small: 17px;
+  --text-reading-small--line-height: 28px;
+  --text-quote: 22px;
+  --text-quote--line-height: 32px;
+  --text-h3: 19px;
+  --text-h3--line-height: 26px;
+  --text-h3--font-weight: 600;
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+  --text-label: 15px;
+  --text-label--line-height: 20px;
+  --text-label--font-weight: 600;
+  --text-small: 14px;
+  --text-small--line-height: 20px;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-caption--font-weight: 600;
+  --text-caption--letter-spacing: 0.06em;
+
+  /* Rayons : rounded-sm (miniatures, champs), rounded-md (boutons, cartes), rounded-lg */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Ombres : seulement les livres et les menus flottants */
+  --shadow-book: 0 1px 2px rgba(42, 37, 32, 0.08), 0 8px 24px rgba(42, 37, 32, 0.1);
+  --shadow-pop: 0 4px 20px rgba(23, 28, 27, 0.14);
+
+  /* Largeurs : max-w-content (pages), max-w-measure (colonne de lecture) */
+  --container-content: 1200px;
+  --container-measure: 66ch;
+
+  /* Mouvement */
+  --ease-kalami: cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* ==================== RESET & BASE ==================== */
 
 body {
-  background: var(--couleur-fond);
-  color: var(--couleur-texte);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 24px;
 }
 
 img {
   max-width: 100%;
+}
+
+/* Anneau de focus clavier : 2 px, décalé de 2 px, sur tout élément interactif */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--encre-soft);
+  color: var(--ink);
+}
+
+/* Libellé réservé aux lecteurs d'écran */
+.visuellement-cache {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Logo : version inverse en thème Nuit */
+.logo-inverse {
+  display: none;
+}
+
+[data-theme="dark"] .logo-normal {
+  display: none;
+}
+
+[data-theme="dark"] .logo-inverse {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .logo-normal {
+    display: none;
+  }
+
+  :root:not([data-theme]) .logo-inverse {
+    display: block;
+  }
+}
+
+/* ==================== MOUVEMENT RÉDUIT ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 150ms !important;
+    animation-duration: 150ms !important;
+  }
 }

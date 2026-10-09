@@ -135,7 +135,7 @@ export function BookForm({ book, authors, categories }: BookFormProps) {
       {/* ==================== PRIX ==================== */}
       <fieldset className="flex flex-col gap-2">
         <legend className="text-sm font-medium">{l.prices}</legend>
-        <p className="text-xs text-texte-doux">{l.pricesHelp}</p>
+        <p className="text-xs text-ink-muted">{l.pricesHelp}</p>
         <div className="grid gap-4 sm:grid-cols-3">
           {CURRENCIES.map((currency) => (
             <Field

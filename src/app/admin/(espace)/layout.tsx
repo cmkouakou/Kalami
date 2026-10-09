@@ -35,7 +35,7 @@ const LINKS = [
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8">
-      <nav aria-label={t.admin.title} className="border-b border-bordure pb-3">
+      <nav aria-label={t.admin.title} className="border-b border-line pb-3">
         <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm font-medium">
           {LINKS.map((link) => (
             <li key={link.href}>

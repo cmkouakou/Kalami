@@ -31,9 +31,9 @@ async function AccountContent() {
 
   return (
     <div className="flex flex-col gap-8">
-      <section className="rounded-xl border border-bordure bg-surface p-6">
+      <section className="rounded-lg border border-line bg-surface p-6">
         <h2 className="mb-1 text-lg font-semibold">{t.account.profile}</h2>
-        <p className="mb-4 text-sm text-texte-doux">{user.email}</p>
+        <p className="mb-4 text-sm text-ink-muted">{user.email}</p>
         <ProfileForm
           displayName={profile?.display_name ?? null}
           preferredCurrency={profile?.preferred_currency ?? null}
@@ -41,7 +41,7 @@ async function AccountContent() {
       </section>
 
       {profile?.is_admin && (
-        <Link href="/admin" className="text-principale underline">
+        <Link href="/admin" className="text-encre underline">
           {t.account.adminLink}
         </Link>
       )}

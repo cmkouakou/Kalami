@@ -63,7 +63,7 @@ export function SignInForm({ searchParams }: { searchParams: AuthSearchParams })
         />
         <FormMessage {...pwState} />
         <SubmitButton>{t.auth.signIn.submit}</SubmitButton>
-        <Link href="/mot-de-passe-oublie" className="text-sm text-principale underline">
+        <Link href="/mot-de-passe-oublie" className="text-sm text-encre underline">
           {t.auth.signIn.forgot}
         </Link>
       </form>
@@ -89,9 +89,9 @@ export function SignInForm({ searchParams }: { searchParams: AuthSearchParams })
         <SubmitButton variant="secondary">{t.auth.signIn.google}</SubmitButton>
       </form>
 
-      <p className="text-center text-sm text-texte-doux">
+      <p className="text-center text-sm text-ink-muted">
         {t.auth.signIn.noAccount}{" "}
-        <Link href="/inscription" className="text-principale underline">
+        <Link href="/inscription" className="text-encre underline">
           {t.auth.signIn.signUpLink}
         </Link>
       </p>
@@ -102,10 +102,10 @@ export function SignInForm({ searchParams }: { searchParams: AuthSearchParams })
 /** Séparateur « ou » entre deux méthodes de connexion. */
 function Separator() {
   return (
-    <div className="flex items-center gap-3 text-sm text-texte-doux" aria-hidden="true">
-      <span className="h-px flex-1 bg-bordure" />
+    <div className="flex items-center gap-3 text-sm text-ink-muted" aria-hidden="true">
+      <span className="h-px flex-1 bg-line" />
       {t.auth.or}
-      <span className="h-px flex-1 bg-bordure" />
+      <span className="h-px flex-1 bg-line" />
     </div>
   );
 }
@@ -130,9 +130,9 @@ export function SignUpForm() {
       />
       <FormMessage {...state} />
       <SubmitButton>{t.auth.signUp.submit}</SubmitButton>
-      <p className="text-center text-sm text-texte-doux">
+      <p className="text-center text-sm text-ink-muted">
         {t.auth.signUp.hasAccount}{" "}
-        <Link href="/connexion" className="text-principale underline">
+        <Link href="/connexion" className="text-encre underline">
           {t.auth.signUp.signInLink}
         </Link>
       </p>
@@ -148,7 +148,7 @@ export function ForgotPasswordForm() {
 
   return (
     <form action={action} className="flex flex-col gap-4">
-      <p className="text-sm text-texte-doux">{t.auth.forgot.intro}</p>
+      <p className="text-sm text-ink-muted">{t.auth.forgot.intro}</p>
       <Field label={t.auth.email} name="email" type="email" autoComplete="email" required />
       <FormMessage {...state} />
       <SubmitButton>{t.auth.forgot.submit}</SubmitButton>

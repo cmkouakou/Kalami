@@ -46,13 +46,13 @@ async function CategoriesContent() {
     <>
       <ul className="flex flex-col gap-3">
         {categories.map((category) => (
-          <li key={category.id} className="rounded-lg border border-bordure bg-surface">
+          <li key={category.id} className="rounded-lg border border-line bg-surface">
             <details>
               <summary className="flex min-h-11 cursor-pointer items-center gap-3 px-4">
                 <span className="font-medium">{category.name}</span>
-                <span className="text-sm text-texte-doux">/{category.slug}</span>
+                <span className="text-sm text-ink-muted">/{category.slug}</span>
               </summary>
-              <div className="flex flex-col gap-4 border-t border-bordure p-4">
+              <div className="flex flex-col gap-4 border-t border-line p-4">
                 <CategoryForm category={category} />
                 <DeleteButton action={deleteCategory.bind(null, category.id)} />
               </div>
@@ -60,7 +60,7 @@ async function CategoriesContent() {
           </li>
         ))}
       </ul>
-      <section className="flex flex-col gap-4 rounded-lg border border-bordure bg-surface p-4">
+      <section className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-4">
         <h2 className="text-xl font-semibold">{l.new}</h2>
         <CategoryForm />
       </section>

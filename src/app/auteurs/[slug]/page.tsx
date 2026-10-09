@@ -4,9 +4,9 @@
  *  Projet     : Kalami
  *  Description: Page publique d'un auteur : photo, biographie et livres publiés.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
- *  Dépendances: lib/catalog/queries.ts, components/catalog
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
+ *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
  */
 
@@ -16,6 +16,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { BookGrid } from "@/components/catalog/book-card";
+import { PAGE } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import { publicImageUrl } from "@/lib/catalog/images";
 import { getAuthorWithBooks } from "@/lib/catalog/queries";
@@ -41,7 +42,7 @@ export async function generateMetadata({
 
 export default function AuthorPage({ params }: PageProps<"/auteurs/[slug]">) {
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
+    <main className={`${PAGE} py-10 sm:py-12`}>
       <Suspense fallback={<div aria-hidden="true" className="h-40 animate-pulse" />}>
         <AuthorContent params={params} />
       </Suspense>
@@ -72,15 +73,17 @@ async function AuthorContent({ params }: { params: Promise<{ slug: string }> }) 
           />
         )}
         <div className="flex flex-col gap-3">
-          <h1 className="font-serif text-3xl font-semibold sm:text-4xl">
-            {author.display_name}
-          </h1>
-          {author.bio && <p className="max-w-prose whitespace-pre-line">{author.bio}</p>}
+          <h1 className="font-serif text-h1">{author.display_name}</h1>
+          {author.bio && (
+            <p className="max-w-measure font-serif text-reading-small whitespace-pre-line">
+              {author.bio}
+            </p>
+          )}
         </div>
       </header>
 
       <section aria-labelledby="titre-livres" className="flex flex-col gap-5">
-        <h2 id="titre-livres" className="font-serif text-2xl font-semibold">
+        <h2 id="titre-livres" className="font-serif text-h2">
           {t.catalog.author.books}
         </h2>
         <BookGrid books={books} />

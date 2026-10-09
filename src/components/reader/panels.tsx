@@ -38,9 +38,9 @@ const t = getDictionary();
 export type PanelName = "toc" | "bookmarks" | "search" | "settings";
 
 const BUTTON =
-  "min-h-11 rounded-md border border-[var(--liseuse-bordure)] px-3 text-sm font-medium " +
+  "min-h-11 rounded-md border border-line px-3 text-label hover:bg-sand " +
   "disabled:opacity-50";
-const BUTTON_ACTIVE = "bg-[var(--liseuse-texte)] text-[var(--liseuse-fond)]";
+const BUTTON_ACTIVE = "border-encre bg-encre-soft text-encre";
 
 // ==================== CADRE ====================
 
@@ -58,7 +58,7 @@ export function Panel({
     <aside
       aria-labelledby={`panneau-${name}`}
       className="liseuse-panneau absolute inset-y-0 right-0 z-20 flex w-full max-w-sm flex-col
-        border-l border-[var(--liseuse-bordure)] shadow-xl"
+        border-l border-line shadow-pop"
     >
       <header className="flex items-center justify-between gap-2 border-b
         border-[var(--liseuse-bordure)] px-4 py-2">

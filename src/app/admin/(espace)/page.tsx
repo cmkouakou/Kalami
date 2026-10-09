@@ -48,7 +48,7 @@ async function Dashboard() {
 
   return (
     <>
-      <p className="text-texte-doux">
+      <p className="text-ink-muted">
         {t.admin.welcome} ({profile.display_name ?? user.email})
       </p>
       <ul className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -56,11 +56,11 @@ async function Dashboard() {
           <li key={tile.label}>
             <Link
               href={tile.href}
-              className="flex flex-col gap-1 rounded-lg border border-bordure bg-surface p-4
-                hover:border-principale"
+              className="flex flex-col gap-1 rounded-lg border border-line bg-surface p-4
+                hover:border-encre"
             >
               <span className="text-3xl font-semibold">{tile.value}</span>
-              <span className="text-sm text-texte-doux">{tile.label}</span>
+              <span className="text-sm text-ink-muted">{tile.label}</span>
             </Link>
           </li>
         ))}

@@ -20,14 +20,34 @@ const fr = {
     catalog: "Catalogue",
     library: "Ma bibliothèque",
     signIn: "Se connecter",
+    search: "Rechercher un livre ou un auteur",
+    home: "Kalami, accueil",
   },
   home: {
-    title: "Des livres à lire partout, sur tous vos écrans",
+    kicker: "Librairie en ligne",
+    title: "Des livres pour comprendre, décider et avancer.",
     subtitle:
       "Découvrez le sommaire et un extrait gratuit, puis poursuivez la lecture " +
       "après achat par carte bancaire ou Mobile Money.",
     comingSoon: "Le catalogue ouvre bientôt.",
     browse: "Parcourir le catalogue",
+    readExcerpt: "Lire un extrait gratuit",
+    exploreCategories: "Explorer par catégorie",
+    benefits: [
+      {
+        title: "Extrait gratuit",
+        text: "Lisez le début de chaque livre sans inscription avant de vous décider.",
+      },
+      {
+        title: "Sur tous vos écrans",
+        text: "Ordinateur, tablette ou téléphone : la lecture reprend là où vous l'avez laissée.",
+      },
+      {
+        title: "Lecture protégée",
+        text:
+          "Les livres restent en ligne, avec un filigrane personnel, pour respecter les auteurs.",
+      },
+    ],
   },
   catalog: {
     newReleases: "Nouveautés",
@@ -57,6 +77,10 @@ const fr = {
       buy: "Acheter",
       soon: "Bientôt disponible",
       aboutAuthor: "À propos de l'auteur",
+      breadcrumb: "Fil d'Ariane",
+      home: "Accueil",
+      free: "Gratuit",
+      included: "Inclus à l'achat",
     },
     author: {
       books: "Ses livres",
@@ -77,6 +101,8 @@ const fr = {
   },
   footer: {
     rights: "Tous droits réservés.",
+    tagline: "Lecture en ligne d'ouvrages d'auteurs africains et francophones.",
+    explore: "Explorer",
   },
   content: {
     openingTitle: "Début de l'ouvrage",
@@ -169,9 +195,8 @@ const fr = {
       unsupported: "La lecture à voix haute n'est pas disponible dans ce navigateur.",
     },
     lock: {
-      title: "Fin de l'extrait",
+      title: "Vous avez terminé l'extrait gratuit",
       text: "La suite de « {title} » est réservée aux lecteurs qui ont acheté le livre.",
-      buy: "Acheter",
       buySoon: "L'achat en ligne ouvrira très prochainement.",
       signIn: "Vous avez déjà acheté ce livre ? Connectez-vous.",
       backToBook: "Retour à la fiche du livre",

@@ -89,15 +89,15 @@ export function ImageUpload({ kind, id, label, currentPath }: ImageUploadProps) 
     <div className="flex flex-col gap-3">
       <span className="text-sm font-medium">{label}</span>
       <div
-        className="relative aspect-[2/3] w-32 overflow-hidden rounded-md border border-bordure
-          bg-fond"
+        className="relative aspect-[2/3] w-32 overflow-hidden rounded-md border border-line
+          bg-paper"
       >
         {src && <Image src={src} alt="" fill sizes="128px" className="object-cover" />}
       </div>
       <label
         htmlFor={inputId}
         className="flex min-h-11 w-fit cursor-pointer items-center rounded-md border
-          border-bordure bg-surface px-4 text-sm font-medium hover:bg-fond"
+          border-line bg-surface px-4 text-sm font-medium hover:bg-paper"
       >
         {t.admin.upload.choose}
       </label>

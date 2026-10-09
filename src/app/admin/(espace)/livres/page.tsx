@@ -27,10 +27,10 @@ export const metadata: Metadata = { title: l.title };
 
 /** Couleur de pastille par statut. */
 const STATUS_CLASS: Record<BookStatus, string> = {
-  draft: "bg-gray-100 text-gray-800",
-  submitted: "bg-amber-100 text-amber-900",
-  published: "bg-green-100 text-green-900",
-  rejected: "bg-red-100 text-red-900",
+  draft: "bg-sand text-ink",
+  submitted: "bg-warning/15 text-ink",
+  published: "bg-success/15 text-ink",
+  rejected: "bg-danger/15 text-ink",
 };
 
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
@@ -42,8 +42,8 @@ export default function AdminBooksPage() {
         <h1 className="font-serif text-3xl font-semibold">{l.title}</h1>
         <Link
           href="/admin/livres/nouveau"
-          className="inline-flex min-h-11 items-center rounded-md bg-principale px-4 font-medium
-            text-principale-texte hover:opacity-90"
+          className="inline-flex min-h-11 items-center rounded-md bg-encre px-4 font-medium
+            text-on-encre hover:opacity-90"
         >
           {l.new}
         </Link>
@@ -59,12 +59,12 @@ export default function AdminBooksPage() {
 async function BooksTable() {
   await requireAdmin();
   const books = await listBooksAdmin();
-  if (books.length === 0) return <p className="text-texte-doux">{t.admin.common.empty}</p>;
+  if (books.length === 0) return <p className="text-ink-muted">{t.admin.common.empty}</p>;
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-bordure bg-surface">
+    <div className="overflow-x-auto rounded-lg border border-line bg-surface">
       <table className="w-full text-left text-sm">
-        <thead className="border-b border-bordure text-texte-doux">
+        <thead className="border-b border-line text-ink-muted">
           <tr>
             <th scope="col" className="px-4 py-3 font-medium">{l.bookTitle}</th>
             <th scope="col" className="px-4 py-3 font-medium">{l.author}</th>
@@ -75,17 +75,17 @@ async function BooksTable() {
         </thead>
         <tbody>
           {books.map((book) => (
-            <tr key={book.id} className="border-b border-bordure last:border-0">
+            <tr key={book.id} className="border-b border-line last:border-0">
               <td className="px-4 py-2">
                 <Link
                   href={`/admin/livres/${book.id}`}
-                  className="inline-flex min-h-11 items-center font-medium text-principale
+                  className="inline-flex min-h-11 items-center font-medium text-encre
                     hover:underline"
                 >
                   {book.title}
                 </Link>
                 {book.is_featured && (
-                  <span className="ml-2 text-xs text-texte-doux">★ {l.featuredBadge}</span>
+                  <span className="ml-2 text-xs text-ink-muted">★ {l.featuredBadge}</span>
                 )}
               </td>
               <td className="px-4 py-2">{book.author.display_name}</td>

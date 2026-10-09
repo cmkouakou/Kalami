@@ -27,7 +27,7 @@ export const metadata: Metadata = { title: t.admin.books.new };
 export default function NewBookPage() {
   return (
     <main className="flex flex-col gap-6">
-      <Link href="/admin/livres" className="w-fit text-sm text-principale hover:underline">
+      <Link href="/admin/livres" className="w-fit text-sm text-encre hover:underline">
         ← {t.admin.common.back}
       </Link>
       <h1 className="font-serif text-3xl font-semibold">{t.admin.books.new}</h1>

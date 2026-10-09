@@ -165,3 +165,12 @@ Un même compte peut être lecteur et auteur. L'accès administrateur exige l'au
 - Le PDF acheté porte le nom, le courriel et le numéro de commande sur chaque page ; le lien expire.
 - Un auteur dépose un DOCX, le voit en aperçu, le soumet ; l'admin le valide ; il apparaît au catalogue.
 - Chaque vente génère des écritures de ledger cohérentes avec la commission configurée.
+
+---
+
+## Charte graphique et maquettes
+
+- **Charte graphique Kalami** (couleurs des thèmes Papier, Sépia et Nuit, typographies Literata et Source Sans 3, espacements, rayons, logo, règles d'usage) : https://claude.ai/artifact/Qz8Qvsvft89hggJYuJX4EF — lire d'abord son `README` et son fichier `tokens.json`, et transposer les jetons en variables CSS / thème Tailwind. Ne jamais écrire une couleur en dur.
+- **Maquettes** (accueil, fiche livre, liseuse ordinateur, liseuse mobile, fin d'extrait et paiement, Kalami Stratégie) : https://claude.ai/artifact/N6dNnfmEzmtBdjdULYxnkE — référence visuelle à reproduire fidèlement, en composants réutilisables.
+- **Logos** : fichiers fournis dans le dossier `kalami-logos/` (logo, logo inversé, symbole, icône d'application SVG et PNG 512 px). Générer à partir de l'icône les tailles PWA (192, 512, version « maskable »).
+- Polices : servir Literata et Source Sans 3 en auto-hébergement (paquets `@fontsource/literata` et `@fontsource/source-sans-3`), licence SIL OFL.

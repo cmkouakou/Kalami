@@ -48,14 +48,14 @@ export function DeleteButton({
           <button
             type="submit"
             disabled={pending}
-            className={`${BUTTON_CLASS} bg-red-700 text-white hover:bg-red-800`}
+            className={`${BUTTON_CLASS} bg-danger text-on-encre hover:opacity-90`}
           >
             {confirmLabel}
           </button>
           <button
             type="button"
             onClick={() => setConfirming(false)}
-            className={`${BUTTON_CLASS} border border-bordure`}
+            className={`${BUTTON_CLASS} border border-line`}
           >
             {t.admin.common.cancel}
           </button>
@@ -64,7 +64,7 @@ export function DeleteButton({
         <button
           type="button"
           onClick={() => setConfirming(true)}
-          className={`${BUTTON_CLASS} w-fit border border-red-300 text-red-800 hover:bg-red-50`}
+          className={`${BUTTON_CLASS} w-fit border border-danger text-danger hover:bg-danger/10`}
         >
           {label}
         </button>

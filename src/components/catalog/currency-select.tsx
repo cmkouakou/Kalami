@@ -34,7 +34,7 @@ export function CurrencySelect({ current }: { current: Currency }) {
         name="currency"
         defaultValue={current}
         onChange={(event) => event.currentTarget.form?.requestSubmit()}
-        className="min-h-11 rounded-md border border-bordure bg-surface px-2 text-sm"
+        className="min-h-11 rounded-md border border-line bg-surface px-2 text-small text-ink"
       >
         {CURRENCIES.map((code) => (
           <option key={code} value={code}>

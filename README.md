@@ -14,7 +14,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
 - PDF filigrané en option, espace auteur, grand livre et versements
 
 ## 🛠️ Technologies utilisées
-- Next.js 16 (App Router), TypeScript, Tailwind CSS 4
+- Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)
+- Polices Literata (lecture, titres) et Source Sans 3 (interface) via next/font
 - Supabase (Postgres + RLS, Auth, Storage)
 - Stripe, Resend, Vercel
 - mammoth, JSZip, sanitize-html (conversion DOCX/EPUB en chapitres nettoyés)
@@ -25,13 +26,14 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
 ```
 kalami/
 ├── docs/                 → cahiers des charges, architecture, sprints
-├── public/               → fichiers statiques (icônes PWA)
+├── public/brand/         → logos Kalami (normal, inversé, monogramme)
 ├── supabase/
 │   ├── config.toml       → configuration de la CLI Supabase
 │   ├── migrations/       → schéma SQL + politiques RLS versionnés
 │   └── tests/            → tests RLS
 ├── src/
-│   ├── app/              → pages et routes (App Router)
+│   ├── app/              → pages et routes (App Router) ; globals.css = jetons
+│   ├── components/ui/    → styles partagés (boutons, pastilles, cartes) et icônes
 │   ├── i18n/             → textes de l'interface (fr ; en prévu en v2)
 │   ├── lib/              → configuration, clients Supabase, logique métier
 │   └── proxy.ts          → traitement avant requête (redirections 301, session)
@@ -68,6 +70,8 @@ kalami/
 - Next.js 16 : l'ancien `middleware.ts` s'appelle désormais `proxy.ts`.
 - Le texte des livres n'est servi que par `/api/livres/{id}/chapitres/{n}` (clé serveur) :
   la table `chapters` est illisible par les clients ; le seau `manuscripts` est privé.
+- Charte : couleurs uniquement par jetons (`globals.css`, thèmes Papier, Sépia, Nuit) ;
+  contraste AA 4,5:1 vérifié par `tests/unit/contrast.test.ts`.
 - La liseuse (`/livres/{slug}/lire`) décourage la copie et l'impression et affiche un
   filigrane : ce sont des freins, pas une protection absolue (le texte est affiché).
 

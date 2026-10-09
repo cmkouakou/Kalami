@@ -6,8 +6,8 @@
  *               (cookie, pays) : le prix est rendu en flux, sous sa propre frontière
  *               <Suspense>, pendant que le reste de la page reste statique et en cache.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
  *  Dépendances: lib/currency.ts, lib/currency-server.ts
  * =============================================================
  */
@@ -33,7 +33,7 @@ async function PriceValue({ prices, className }: PriceTagProps) {
 
   if (!price) {
     return (
-      <span className={`text-texte-doux ${className ?? ""}`}>{t.catalog.priceUnavailable}</span>
+      <span className={`text-ink-muted ${className ?? ""}`}>{t.catalog.priceUnavailable}</span>
     );
   }
   return (
@@ -50,7 +50,7 @@ export function PriceTag(props: PriceTagProps) {
       fallback={
         <span
           aria-hidden="true"
-          className={`inline-block h-[1lh] w-16 animate-pulse rounded bg-bordure
+          className={`inline-block h-[1lh] w-16 animate-pulse rounded-sm bg-line
             ${props.className ?? ""}`}
         />
       }

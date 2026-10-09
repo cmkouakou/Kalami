@@ -1,5 +1,33 @@
 # Journal des modifications
 
+## [v0.5.1] - 2026-10-09 — Sprint 4b : design
+### Ajouté
+- Charte Kalami : jetons de couleur des thèmes Papier, Sépia et Nuit dans `globals.css`
+  (thème sombre du système compris), échelle typographique, rayons, ombres, mesure de lecture.
+- Polices Literata (lecture, titres) et Source Sans 3 (interface) via next/font.
+- Logos (`public/brand/`), icône du site (`src/app/icon.svg`), composant `Logo` qui bascule
+  sur la version inversée en thème sombre.
+- `components/ui/styles.ts` (boutons primaire, secondaire, tertiaire et d'icône, pastilles,
+  badges, cartes, panneaux sable, champs) et `components/ui/icons.tsx` (icônes au trait).
+- Test de contraste WCAG AA (4,5:1) des paires texte / fond dans les trois thèmes.
+
+### Modifié
+- En-tête (logo, catalogue, recherche, devise, compte) et pied de page sombre.
+- Accueil : présentation avec vitrine de couvertures, catégories, sélection, nouveautés,
+  avantages.
+- Fiche livre : fil d'Ariane, carte de prix, tuiles d'informations, sommaire avec chapitres
+  gratuits ou inclus à l'achat, carte de l'auteur.
+- Pages catégorie (pastilles), recherche et auteur alignées sur la charte.
+- Liseuse : thèmes branchés sur les jetons, barre d'outils à icônes, barre de progression
+  encre, ombre de livre, réglages et panneaux harmonisés, animations réduites respectées.
+- Fin d'extrait : feuille « Vous avez terminé l'extrait gratuit » avec le prix et un retour
+  à la fiche du livre (aucun paiement avant les sprints dédiés).
+- Authentification, compte et administration : couleurs d'état, messages et boutons sur
+  les jetons (plus aucune couleur Tailwind en dur, hormis le fond blanc du QR code MFA).
+
+### Supprimé
+- `src/app/favicon.ico`, remplacé par `icon.svg`.
+
 ## [v0.5.0] - 2026-10-09 — Sprint 4 : liseuse
 ### Ajouté
 - Migration `reader` : position de lecture (`reading_positions`) et signets nommés

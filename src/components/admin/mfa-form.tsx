@@ -96,7 +96,7 @@ export function MfaForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {enrollment.qrCode ? (
         <>
-          <p className="text-sm text-texte-doux">{t.admin.mfa.enrollIntro}</p>
+          <p className="text-sm text-ink-muted">{t.admin.mfa.enrollIntro}</p>
           {/* Code QR fourni par Supabase sous forme d'image SVG (data URL) */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -108,11 +108,11 @@ export function MfaForm() {
           />
           <p className="text-sm">
             {t.admin.mfa.secretLabel}{" "}
-            <code className="break-all rounded bg-fond px-1">{enrollment.secret}</code>
+            <code className="break-all rounded bg-paper px-1">{enrollment.secret}</code>
           </p>
         </>
       ) : (
-        <p className="text-sm text-texte-doux">{t.admin.mfa.challengeIntro}</p>
+        <p className="text-sm text-ink-muted">{t.admin.mfa.challengeIntro}</p>
       )}
 
       <label htmlFor="champ-code" className="text-sm font-medium">
@@ -128,14 +128,14 @@ export function MfaForm() {
         required
         value={code}
         onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-        className="min-h-11 rounded-md border border-bordure bg-surface px-3 text-center
+        className="min-h-11 rounded-md border border-line bg-surface px-3 text-center
           text-2xl tracking-[0.5em]"
       />
       <FormMessage error={error} />
       <button
         type="submit"
         disabled={pending || code.length !== 6}
-        className="min-h-11 rounded-md bg-principale px-4 font-medium text-principale-texte
+        className="min-h-11 rounded-md bg-encre px-4 font-medium text-on-encre
           disabled:opacity-60"
       >
         {pending ? "…" : t.admin.mfa.verify}

@@ -7,9 +7,9 @@
  *               clavier, la lecture à voix haute et l'enregistrement de la position
  *               (appareil pour tous, serveur pour un lecteur connecté).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-09
- *  Dépendances: flip-view, scroll-view, panels, lock-screen, use-*, storage, lib/reader
+ *  Dépendances: flip-view, scroll-view, panels, lock-screen, use-*, storage, lib/reader, components/ui
  * =============================================================
  */
 
@@ -26,6 +26,19 @@ import {
   useState,
 } from "react";
 
+import {
+  IconArrowLeft,
+  IconBookmark,
+  IconChevronLeft,
+  IconChevronRight,
+  IconList,
+  IconPause,
+  IconSearch,
+  IconSquare,
+  IconType,
+  IconVolume,
+} from "@/components/ui/icons";
+import { BUTTON_ICON, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { addBookmark, deleteBookmark } from "@/lib/reader/actions";
 import {
@@ -74,12 +87,10 @@ const SAVE_DELAY = 1500;
 /** Bloc « au-delà de la fin » : ouvre un chapitre sur sa dernière page (retour arrière). */
 const END_BLOCK = 100000;
 
-const TOOL_BUTTON =
-  "flex min-h-11 min-w-11 items-center justify-center rounded-md px-2 text-lg " +
-  "hover:bg-[var(--liseuse-survol)] aria-pressed:bg-[var(--liseuse-survol)]";
-const NAV_BUTTON =
-  "min-h-11 rounded-md border border-[var(--liseuse-bordure)] px-3 text-sm font-medium " +
-  "disabled:opacity-40";
+/** Boutons d'icône de la liseuse (icônes 24 px) et boutons texte. */
+const TOOL_BUTTON = `${BUTTON_ICON} disabled:opacity-40`;
+const NAV_BUTTON = BUTTON_SECONDARY;
+const ICON_SIZE = 24;
 
 /** Chapitre affiché et position d'ouverture de sa vue ; « serial » force un nouveau montage. */
 type Opening = ReaderPosition & { serial: number };
@@ -346,7 +357,8 @@ export function Reader({ data, price }: ReaderProps) {
     ) : isChapterReadable(toc, next, access) ? (
       <div className="flex justify-center">
         <button type="button" onClick={goNextChapter} className={NAV_BUTTON}>
-          {t.reader.nextChapter} →
+          {t.reader.nextChapter}
+          <IconChevronRight />
         </button>
       </div>
     ) : (
@@ -357,7 +369,7 @@ export function Reader({ data, price }: ReaderProps) {
   if (ended) main = end;
   else if (state.status === "locked") main = lock;
   else if (state.status === "loading") {
-    main = <p className="m-auto opacity-80">{t.reader.loading}</p>;
+    main = <p className="m-auto text-ink-muted">{t.reader.loading}</p>;
   } else if (state.status === "error") {
     main = (
       <div role="alert" className="m-auto flex flex-col items-center gap-3 px-6 text-center">
@@ -404,7 +416,7 @@ export function Reader({ data, price }: ReaderProps) {
   } as CSSProperties;
 
   const togglePanel = (name: PanelName) => setPanel((value) => (value === name ? null : name));
-  const panelButton = (name: PanelName, icon: string) => (
+  const panelButton = (name: PanelName, icon: ReactNode) => (
     <button
       type="button"
       onClick={() => togglePanel(name)}
@@ -413,7 +425,7 @@ export function Reader({ data, price }: ReaderProps) {
       title={t.reader.panels[name]}
       className={TOOL_BUTTON}
     >
-      <span aria-hidden="true">{icon}</span>
+      {icon}
     </button>
   );
 
@@ -430,8 +442,7 @@ export function Reader({ data, price }: ReaderProps) {
       <header
         role="toolbar"
         aria-label={t.reader.toolbar}
-        className="liseuse-barre flex items-center gap-1 border-b border-[var(--liseuse-bordure)]
-          px-2 py-1"
+        className="liseuse-barre flex items-center gap-1 border-b border-line px-2 py-1"
       >
         <Link
           href={`/livres/${book.slug}`}
@@ -439,15 +450,15 @@ export function Reader({ data, price }: ReaderProps) {
           title={t.reader.close}
           className={TOOL_BUTTON}
         >
-          <span aria-hidden="true">←</span>
+          <IconArrowLeft size={ICON_SIZE} />
         </Link>
-        <div className="min-w-0 flex-1 px-1">
-          <h1 className="truncate text-sm font-semibold">{book.title}</h1>
-          <p className="truncate text-xs opacity-75">{chapterTitle}</p>
+        <div className="flex min-w-0 flex-1 flex-col px-2">
+          <p className="truncate text-caption text-ink-muted uppercase">{chapterTitle}</p>
+          <h1 className="truncate font-serif text-book-title">{book.title}</h1>
         </div>
-        {panelButton("toc", "☰")}
-        {panelButton("bookmarks", "🔖")}
-        {panelButton("search", "🔍")}
+        {panelButton("toc", <IconList size={ICON_SIZE} />)}
+        {panelButton("bookmarks", <IconBookmark size={ICON_SIZE} />)}
+        {panelButton("search", <IconSearch size={ICON_SIZE} />)}
         {speech.supported && (
           <>
             <button
@@ -461,9 +472,14 @@ export function Reader({ data, price }: ReaderProps) {
                     ? t.reader.readAloud.resume
                     : t.reader.readAloud.start
               }
-              className={`${TOOL_BUTTON} disabled:opacity-40`}
+              aria-pressed={speech.status === "speaking"}
+              className={TOOL_BUTTON}
             >
-              <span aria-hidden="true">{speech.status === "speaking" ? "⏸" : "🔊"}</span>
+              {speech.status === "speaking" ? (
+                <IconPause size={ICON_SIZE} />
+              ) : (
+                <IconVolume size={ICON_SIZE} />
+              )}
             </button>
             {speech.status !== "idle" && (
               <button
@@ -472,12 +488,12 @@ export function Reader({ data, price }: ReaderProps) {
                 aria-label={t.reader.readAloud.stop}
                 className={TOOL_BUTTON}
               >
-                <span aria-hidden="true">⏹</span>
+                <IconSquare size={ICON_SIZE} />
               </button>
             )}
           </>
         )}
-        {panelButton("settings", "Aa")}
+        {panelButton("settings", <IconType size={ICON_SIZE} />)}
       </header>
 
       {/* ==================== TEXTE ==================== */}
@@ -516,16 +532,15 @@ export function Reader({ data, price }: ReaderProps) {
       </main>
 
       {/* ==================== AVANCEMENT ==================== */}
-      <footer className="liseuse-barre flex items-center gap-3 border-t
-        border-[var(--liseuse-bordure)] px-3 py-2">
+      <footer className="liseuse-barre flex items-center gap-3 border-t border-line px-2 py-2">
         <button
           type="button"
           onClick={settings.mode === "flip" ? pagePrevious : goPreviousChapter}
           disabled={previous === null && !ended && settings.mode === "scroll"}
           aria-label={settings.mode === "flip" ? t.reader.previousPage : t.reader.previousChapter}
-          className={NAV_BUTTON}
+          className={TOOL_BUTTON}
         >
-          ←
+          <IconChevronLeft size={ICON_SIZE} />
         </button>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div
@@ -534,11 +549,11 @@ export function Reader({ data, price }: ReaderProps) {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={percent}
-            className="h-1.5 overflow-hidden rounded-full bg-[var(--liseuse-bordure)]"
+            className="h-1 overflow-hidden rounded-full bg-line"
           >
             <div className="liseuse-avancement h-full" style={{ width: `${percent}%` }} />
           </div>
-          <p className="flex justify-between gap-2 text-xs opacity-75">
+          <p className="flex justify-between gap-2 text-caption text-ink-muted tabular-nums">
             <span>{interpolate(t.reader.progress, { percent: String(percent) })}</span>
             {settings.mode === "flip" && display.page && !ended && (
               <span>{`${display.page.current} / ${display.page.total}`}</span>
@@ -550,9 +565,9 @@ export function Reader({ data, price }: ReaderProps) {
           onClick={settings.mode === "flip" ? pageNext : goNextChapter}
           disabled={ended || state.status === "locked"}
           aria-label={settings.mode === "flip" ? t.reader.nextPage : t.reader.nextChapter}
-          className={NAV_BUTTON}
+          className={TOOL_BUTTON}
         >
-          →
+          <IconChevronRight size={ICON_SIZE} />
         </button>
       </footer>
     </div>

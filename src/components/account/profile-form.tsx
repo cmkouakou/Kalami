@@ -46,7 +46,7 @@ export function ProfileForm({ displayName, preferredCurrency }: ProfileFormProps
           id="champ-devise"
           name="preferred_currency"
           defaultValue={preferredCurrency ?? ""}
-          className="min-h-11 rounded-md border border-bordure bg-surface px-3"
+          className="min-h-11 rounded-md border border-line bg-surface px-3"
         >
           <option value="">{t.account.currencyAuto}</option>
           <option value="XOF">FCFA (XOF)</option>

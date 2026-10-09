@@ -30,7 +30,7 @@ const l = t.admin.content;
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
 
-const CARD_CLASS = "flex flex-col gap-4 rounded-lg border border-bordure bg-surface p-4 sm:p-6";
+const CARD_CLASS = "flex flex-col gap-4 rounded-lg border border-line bg-surface p-4 sm:p-6";
 
 type BookContentSectionProps = { bookId: string; content: BookContentAdmin };
 
@@ -68,7 +68,7 @@ function VersionCard({ bookId, content }: BookContentSectionProps) {
           })}
         </p>
       ) : (
-        <p className="text-sm text-texte-doux">{l.noVersion}</p>
+        <p className="text-sm text-ink-muted">{l.noVersion}</p>
       )}
       {toc.length > 0 && (
         <details>
@@ -78,9 +78,9 @@ function VersionCard({ bookId, content }: BookContentSectionProps) {
               <li key={entry.chapter_position} className="flex justify-between gap-4">
                 <span>
                   {entry.chapter_position}. {entry.title}
-                  {entry.is_preview && <span className="text-principale"> ★</span>}
+                  {entry.is_preview && <span className="text-encre"> ★</span>}
                 </span>
-                <span className="shrink-0 text-texte-doux">
+                <span className="shrink-0 text-ink-muted">
                   {interpolate(l.blocks, { count: String(entry.block_count) })}
                 </span>
               </li>
@@ -99,7 +99,7 @@ function PreviewCard({ bookId, content }: BookContentSectionProps) {
   return (
     <div className={CARD_CLASS}>
       <h3 className="font-semibold">{l.preview}</h3>
-      <p className="text-sm text-texte-doux">{l.previewHelp}</p>
+      <p className="text-sm text-ink-muted">{l.previewHelp}</p>
       <ActionForm action={updatePreviewRule.bind(null, bookId)} submitLabel={t.admin.common.save}>
         <Field
           label={l.previewChapters}
@@ -136,11 +136,11 @@ function EntitlementsCard({
   return (
     <div className={CARD_CLASS}>
       <h3 className="font-semibold">{l.entitlements}</h3>
-      <p className="text-sm text-texte-doux">{l.entitlementsHelp}</p>
+      <p className="text-sm text-ink-muted">{l.entitlementsHelp}</p>
       {entitlements.length === 0 ? (
         <p className="text-sm">{l.noEntitlements}</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-bordure">
+        <ul className="flex flex-col divide-y divide-line">
           {entitlements.map((row) => (
             <EntitlementItem key={row.id} row={row} />
           ))}
@@ -164,9 +164,9 @@ function EntitlementItem({ row }: { row: EntitlementRow }) {
   const revoked = row.revoked_at !== null;
   return (
     <li className="flex flex-wrap items-center justify-between gap-3 py-3">
-      <div className={`flex flex-col text-sm ${revoked ? "text-texte-doux line-through" : ""}`}>
+      <div className={`flex flex-col text-sm ${revoked ? "text-ink-muted line-through" : ""}`}>
         <span className="font-medium">{row.email}</span>
-        <span className="text-texte-doux">
+        <span className="text-ink-muted">
           {l.sources[row.source]} · {DATE_FORMAT.format(new Date(row.created_at))}
           {row.note && ` · ${row.note}`}
         </span>

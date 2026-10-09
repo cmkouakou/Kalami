@@ -10,14 +10,19 @@ démarre après la v1.0.0 de la plateforme de lecture.
 | 2 | Catalogue : catégories, accueil, fiches, auteurs, recherche, prix par devise | v0.3.0 | ✅ |
 | 3 | Contenu protégé : conversion DOCX/EPUB, extrait, API chapitres (403), débit | v0.4.0 | ✅ |
 | 4 | Liseuse : page tournée, défilement, réglages, marque-page, protection, filigrane | v0.5.0 | ✅ |
-| 4b | Design : identité visuelle (couleurs, typographie, logo), composants, refonte des pages, contrastes | v0.5.x | ⬜ (avant le Sprint 5) |
-| 5 | Paiement carte : commandes, Stripe + Stripe Tax, webhook, droits, promos, reçus | v0.6.0 | ⬜ |
-| 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.7.0 | ⬜ |
-| 7 | Annotations, citation (APA/MLA/Chicago), carte de partage | v0.8.0 | ⬜ |
-| 8 | PDF filigrané : génération Chromium, lien signé 24 h, 3 téléchargements | v0.9.0 | ⬜ |
-| 9 | Espace auteur : contrat, dépôt, aperçu, validation admin, tableau de bord | v0.10.0 | ⬜ |
-| 10 | Grand livre, remboursements, versements, administration, audit | v0.11.0 | ⬜ |
-| 11 | PWA, Loi 25 / RGPD, accessibilité, critères d'acceptation, mise en production | v1.0.0 | ⬜ |
+| 4b | Design : identité visuelle (couleurs, typographie, logo), composants, refonte des pages, contrastes | v0.5.1 | ✅ |
+| 7 | Annotations, citation (APA/MLA/Chicago), carte de partage | v0.6.0 | ⬜ |
+| 8 | PDF filigrané : génération Chromium, lien signé 24 h, 3 téléchargements | v0.7.0 | ⬜ |
+| 9 | Espace auteur : contrat, dépôt, aperçu, validation admin, tableau de bord | v0.8.0 | ⬜ |
+| 11a | PWA, Loi 25 / RGPD, accessibilité | v0.9.0 | ⬜ |
+| 5 | Paiement carte : commandes, Stripe + Stripe Tax, webhook, droits, promos, reçus | v0.10.0 | ⬜ |
+| 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.11.0 | ⬜ |
+| 10 | Grand livre, remboursements, versements, administration, audit | v0.12.0 | ⬜ |
+| 11b | Critères d'acceptation, mise en production | v1.0.0 | ⬜ |
+
+Ordre revu le 2026-10-08 : les paiements (5, 6) passent en dernier. Le grand livre (10) en dépend
+et les suit ; la mise en production (11b) clôt le projet. D'ici là, les droits de lecture sont
+accordés par l'administrateur.
 
 ## Tests critiques (cahier §7.3)
 - Sprint 3 : l'API du chapitre 2 renvoie 403 sans droit d'accès.

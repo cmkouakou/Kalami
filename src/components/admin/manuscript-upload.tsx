@@ -83,12 +83,12 @@ export function ManuscriptUpload({ bookId }: { bookId: string }) {
   return (
     <div className="flex flex-col gap-3">
       <span className="text-sm font-medium">{l.manuscript}</span>
-      <p className="text-sm text-texte-doux">{l.help}</p>
+      <p className="text-sm text-ink-muted">{l.help}</p>
       <label
         htmlFor={inputId}
         aria-disabled={busy}
         className="flex min-h-11 w-fit cursor-pointer items-center rounded-md border
-          border-bordure bg-surface px-4 text-sm font-medium hover:bg-fond
+          border-line bg-surface px-4 text-sm font-medium hover:bg-paper
           aria-disabled:cursor-wait aria-disabled:opacity-60"
       >
         {l.choose}

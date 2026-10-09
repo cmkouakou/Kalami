@@ -31,7 +31,7 @@ export const metadata: Metadata = { title: t.admin.authors.title };
 export default function AdminAuthorPage({ params }: PageProps<"/admin/auteurs/[id]">) {
   return (
     <main className="flex flex-col gap-6">
-      <Link href="/admin/auteurs" className="w-fit text-sm text-principale hover:underline">
+      <Link href="/admin/auteurs" className="w-fit text-sm text-encre hover:underline">
         ← {t.admin.common.back}
       </Link>
       <Suspense fallback={<div aria-hidden="true" className="h-96 animate-pulse" />}>
@@ -52,7 +52,7 @@ async function AuthorContent({ params }: { params: Promise<{ id: string }> }) {
     <>
       <header className="flex flex-wrap items-baseline justify-between gap-2">
         <h1 className="font-serif text-3xl font-semibold">{author.display_name}</h1>
-        <Link href={`/auteurs/${author.slug}`} className="text-sm text-principale hover:underline">
+        <Link href={`/auteurs/${author.slug}`} className="text-sm text-encre hover:underline">
           {t.admin.common.view}
         </Link>
       </header>

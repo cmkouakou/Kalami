@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.5.0 | Statut : 🟡 En cours (Sprint 4 terminé, migration appliquée)
+Version actuelle : v0.5.1 | Statut : 🟡 En cours (Sprint 4b terminé : design)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -9,7 +9,8 @@ Version actuelle : v0.5.0 | Statut : 🟡 En cours (Sprint 4 terminé, migration
 | #3 | 2026-10-07 | Sprint 2 : catalogue, recherche, devises, administration | ~180 000 | ~1.08 $ |
 | #4 | 2026-10-08 | Sprint 3 : conversion DOCX/EPUB, extrait, API chapitres, droits | ~200 000 | ~1.20 $ |
 | #5 | 2026-10-09 | Sprint 4 : liseuse, marque-page, signets, recherche, protection | ~250 000 | ~1.50 $ |
-| **TOTAL** | | | **~780 000** | **~4.68 $** |
+| #6 | 2026-10-09 | Sprint 4b : charte, composants, refonte des pages et de la liseuse | ~300 000 | ~1.80 $ |
+| **TOTAL** | | | **~1 080 000** | **~6.48 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -29,5 +30,6 @@ Version actuelle : v0.5.0 | Statut : 🟡 En cours (Sprint 4 terminé, migration
 - [x] Sprint 4 — liseuse : page tournée, défilement, réglages, signets, recherche (v0.5.0)
 - [x] Sprint 4 — migration `20261009120000_reader.sql` appliquée, tests d'intégration 23/23
 - [ ] Sprint 4 — essai réel de la liseuse (ordinateur, tablette, téléphone)
-- [ ] Sprint 4b — design (identité visuelle, composants) avant le Sprint 5
-- [ ] Sprints 5 à 11 — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 4b — design : charte, composants, pages, liseuse, contrastes AA (v0.5.1)
+- [ ] Sprint 4b — revue visuelle par l'utilisateur (ordinateur, téléphone, 3 thèmes)
+- [ ] Sprints 7, 8, 9, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)

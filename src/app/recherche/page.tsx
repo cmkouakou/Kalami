@@ -6,9 +6,9 @@
  *               filtres catégorie, langue et prix maximal dans la devise du visiteur.
  *               Formulaire GET : chaque recherche a une URL partageable.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
- *  Dépendances: lib/catalog/queries.ts, lib/currency.ts, components/catalog
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
+ *  Dépendances: lib/catalog/queries.ts, lib/currency.ts, components/catalog, components/ui
  * =============================================================
  */
 
@@ -17,6 +17,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { BookGrid } from "@/components/catalog/book-card";
+import { IconChevronLeft, IconChevronRight } from "@/components/ui/icons";
+import { BUTTON_PRIMARY, BUTTON_TERTIARY, CARD, CONTROL, PAGE } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import { getCategories, searchBooks } from "@/lib/catalog/queries";
 import { BOOK_LANGUAGES, type BookLanguage, type BookSearch } from "@/lib/catalog/types";
@@ -59,8 +61,8 @@ function pageHref(values: FormValues, page: number): string {
 
 export default function SearchPage({ searchParams }: PageProps<"/recherche">) {
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10">
-      <h1 className="font-serif text-3xl font-semibold sm:text-4xl">{t.catalog.search.title}</h1>
+    <main className={`${PAGE} flex flex-col gap-8 py-10 sm:py-12`}>
+      <h1 className="font-serif text-h1">{t.catalog.search.title}</h1>
       <Suspense fallback={<div aria-hidden="true" className="h-60 animate-pulse" />}>
         <SearchContent searchParams={searchParams} />
       </Suspense>
@@ -102,15 +104,17 @@ async function SearchContent({ searchParams }: { searchParams: Promise<RawParams
       {(page > 1 || hasMore) && (
         <nav aria-label="Pagination" className="flex justify-between gap-4">
           {page > 1 ? (
-            <Link href={pageHref(values, page - 1)} className="min-h-11 py-2 text-principale">
-              ← {t.catalog.search.previous}
+            <Link href={pageHref(values, page - 1)} className={BUTTON_TERTIARY}>
+              <IconChevronLeft />
+              {t.catalog.search.previous}
             </Link>
           ) : (
             <span />
           )}
           {hasMore && (
-            <Link href={pageHref(values, page + 1)} className="min-h-11 py-2 text-principale">
-              {t.catalog.search.next} →
+            <Link href={pageHref(values, page + 1)} className={BUTTON_TERTIARY}>
+              {t.catalog.search.next}
+              <IconChevronRight />
             </Link>
           )}
         </nav>
@@ -129,17 +133,18 @@ type SearchFormProps = {
 
 /** Formulaire de recherche (GET, fonctionne sans JavaScript). */
 function SearchForm({ values, categories, currency }: SearchFormProps) {
-  const fieldClass = "min-h-11 rounded-md border border-bordure bg-surface px-3 text-base";
+  const fieldClass = CONTROL;
 
   return (
     <form
       action="/recherche"
       method="get"
       role="search"
-      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end"
+      className={`${CARD} grid gap-4 p-4 sm:grid-cols-2 sm:p-6
+        lg:grid-cols-[2fr_1fr_1fr_1fr_auto] lg:items-end`}
     >
       <div className="flex flex-col gap-1 sm:col-span-2 lg:col-span-1">
-        <label htmlFor="champ-q" className="text-sm font-medium">
+        <label htmlFor="champ-q" className="text-label">
           {t.catalog.search.query}
         </label>
         <input
@@ -152,7 +157,7 @@ function SearchForm({ values, categories, currency }: SearchFormProps) {
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label htmlFor="champ-categorie" className="text-sm font-medium">
+        <label htmlFor="champ-categorie" className="text-label">
           {t.catalog.search.category}
         </label>
         <select
@@ -170,7 +175,7 @@ function SearchForm({ values, categories, currency }: SearchFormProps) {
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label htmlFor="champ-langue" className="text-sm font-medium">
+        <label htmlFor="champ-langue" className="text-label">
           {t.catalog.search.language}
         </label>
         <select id="champ-langue" name="langue" defaultValue={values.langue} className={fieldClass}>
@@ -183,7 +188,7 @@ function SearchForm({ values, categories, currency }: SearchFormProps) {
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label htmlFor="champ-prix" className="text-sm font-medium">
+        <label htmlFor="champ-prix" className="text-label">
           {t.catalog.search.maxPrice} ({currency})
         </label>
         <input
@@ -197,7 +202,7 @@ function SearchForm({ values, categories, currency }: SearchFormProps) {
       </div>
       <button
         type="submit"
-        className="min-h-11 rounded-md bg-principale px-5 font-medium text-principale-texte"
+        className={BUTTON_PRIMARY}
       >
         {t.catalog.search.submit}
       </button>

@@ -5,8 +5,8 @@
  *  Description: Couverture d'un livre (image optimisée), ou vignette de remplacement avec
  *               le titre quand aucune couverture n'a encore été envoyée.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
  *  Dépendances: next/image, lib/catalog/images.ts
  * =============================================================
  */
@@ -31,8 +31,8 @@ export function BookCover({ title, coverPath, sizes, priority = false }: BookCov
   const src = publicImageUrl(coverPath);
 
   return (
-    <div className="relative aspect-[2/3] w-full overflow-hidden rounded-md border border-bordure
-      bg-surface shadow-sm">
+    <div className="relative aspect-[2/3] w-full overflow-hidden rounded-sm bg-surface
+      shadow-book">
       {src ? (
         <Image
           src={src}
@@ -43,11 +43,9 @@ export function BookCover({ title, coverPath, sizes, priority = false }: BookCov
           className="object-cover"
         />
       ) : (
-        <div className="flex h-full flex-col justify-between bg-principale/10 p-3">
-          <span className="font-serif text-base leading-snug font-semibold text-principale">
-            {title}
-          </span>
-          <span className="text-xs text-texte-doux">{t.catalog.noCover}</span>
+        <div className="flex h-full flex-col justify-between bg-encre-soft p-3">
+          <span className="font-serif text-book-title text-encre">{title}</span>
+          <span className="text-caption text-ink-muted uppercase">{t.catalog.noCover}</span>
         </div>
       )}
     </div>

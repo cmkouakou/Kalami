@@ -32,7 +32,7 @@ export const metadata: Metadata = { title: t.admin.books.edit };
 export default function AdminBookPage({ params }: PageProps<"/admin/livres/[id]">) {
   return (
     <main className="flex flex-col gap-6">
-      <Link href="/admin/livres" className="w-fit text-sm text-principale hover:underline">
+      <Link href="/admin/livres" className="w-fit text-sm text-encre hover:underline">
         ← {t.admin.common.back}
       </Link>
       <Suspense fallback={<div aria-hidden="true" className="h-96 animate-pulse" />}>
@@ -59,7 +59,7 @@ async function BookContent({ params }: { params: Promise<{ id: string }> }) {
       <header className="flex flex-wrap items-baseline justify-between gap-2">
         <h1 className="font-serif text-3xl font-semibold">{book.title}</h1>
         {book.status === "published" && (
-          <Link href={`/livres/${book.slug}`} className="text-sm text-principale hover:underline">
+          <Link href={`/livres/${book.slug}`} className="text-sm text-encre hover:underline">
             {t.admin.common.view}
           </Link>
         )}

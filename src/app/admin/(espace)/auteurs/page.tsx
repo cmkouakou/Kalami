@@ -43,11 +43,11 @@ async function AuthorsContent() {
   return (
     <>
       {authors.length === 0 ? (
-        <p className="text-texte-doux">{t.admin.common.empty}</p>
+        <p className="text-ink-muted">{t.admin.common.empty}</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-bordure bg-surface">
+        <div className="overflow-x-auto rounded-lg border border-line bg-surface">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-bordure text-texte-doux">
+            <thead className="border-b border-line text-ink-muted">
               <tr>
                 <th scope="col" className="px-4 py-3 font-medium">{l.name}</th>
                 <th scope="col" className="px-4 py-3 font-medium">{l.books}</th>
@@ -55,11 +55,11 @@ async function AuthorsContent() {
             </thead>
             <tbody>
               {authors.map((author) => (
-                <tr key={author.id} className="border-b border-bordure last:border-0">
+                <tr key={author.id} className="border-b border-line last:border-0">
                   <td className="px-4 py-2">
                     <Link
                       href={`/admin/auteurs/${author.id}`}
-                      className="inline-flex min-h-11 items-center font-medium text-principale
+                      className="inline-flex min-h-11 items-center font-medium text-encre
                         hover:underline"
                     >
                       {author.display_name}
@@ -72,7 +72,7 @@ async function AuthorsContent() {
           </table>
         </div>
       )}
-      <section className="flex flex-col gap-4 rounded-lg border border-bordure bg-surface p-4">
+      <section className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-4">
         <h2 className="text-xl font-semibold">{l.new}</h2>
         <AuthorForm />
       </section>

@@ -27,8 +27,8 @@ type FieldProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 const CONTROL_CLASS =
-  "min-h-11 rounded-md border border-bordure bg-surface px-3 text-base " +
-  "focus:outline-2 focus:outline-principale";
+  "min-h-11 rounded-md border border-line bg-surface px-3 text-base " +
+  "focus:outline-2 focus:outline-encre";
 
 /** Libellé, contrôle et aide éventuelle (reliée par aria-describedby). */
 function FieldShell({
@@ -44,12 +44,12 @@ function FieldShell({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium">
+      <label htmlFor={id} className="text-label">
         {label}
       </label>
       {children}
       {hint && (
-        <p id={`${id}-aide`} className="text-xs text-texte-doux">
+        <p id={`${id}-aide`} className="text-small text-ink-muted">
           {hint}
         </p>
       )}
@@ -140,14 +140,14 @@ export function SubmitButton({
   const pending = pendingOverride ?? status.pending;
   const styles =
     variant === "primary"
-      ? "bg-principale text-principale-texte hover:opacity-90"
-      : "border border-bordure bg-surface hover:bg-fond";
+      ? "bg-encre text-on-encre hover:bg-encre-strong"
+      : "border border-encre text-encre hover:bg-encre-soft";
   return (
     <button
       type="submit"
       disabled={pending}
       aria-busy={pending}
-      className={`min-h-11 w-full rounded-md px-4 font-medium transition disabled:opacity-60
+      className={`min-h-11 w-full rounded-md px-4 text-label transition disabled:opacity-60
         ${styles}`}
     >
       {pending ? "…" : children}
@@ -159,14 +159,14 @@ export function SubmitButton({
 export function FormMessage({ error, message }: { error?: string; message?: string }) {
   if (error) {
     return (
-      <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-800">
+      <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 p-3 text-small text-ink">
         {error}
       </p>
     );
   }
   if (message) {
     return (
-      <p role="status" className="rounded-md bg-green-50 p-3 text-sm text-green-800">
+      <p role="status" className="rounded-md border border-success/40 bg-success/10 p-3 text-small text-ink">
         {message}
       </p>
     );
