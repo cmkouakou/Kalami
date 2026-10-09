@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.1 | Statut : 🟡 En cours (Sprint 8 terminé : PDF filigrané)
+Version actuelle : v0.8.2 | Statut : 🟡 En cours (Sprint 8 terminé : PDF filigrané)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -25,7 +25,7 @@ Version actuelle : v0.8.1 | Statut : 🟡 En cours (Sprint 8 terminé : PDF fili
 - [x] Sprint 1 — migration appliquée sur Supabase + tests RLS (20/20)
 - [x] Sprint 1 — compte administrateur promu, MFA TOTP vérifiée
 - [x] Sprint 1 — URL du site et URLs de redirection (localhost)
-- [ ] Sprint 1 — fournisseur Google (client OAuth à créer)
+- [x] Sprint 1 — fournisseur Google configuré (mode test ; publication après les pages légales du 11a)
 - [x] Sprint 2 — catalogue public, devises, administration (v0.3.0)
 - [ ] Sprint 2 — test de l'administration connecté avec MFA (par l'utilisateur)
 - [ ] CI — variables GitHub NEXT_PUBLIC_SUPABASE_URL / _PUBLISHABLE_KEY

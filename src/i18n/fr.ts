@@ -299,19 +299,18 @@ const fr = {
     newPassword: "Nouveau mot de passe",
     displayName: "Nom affiché",
     or: "ou",
+    tabsLabel: "Connexion ou création de compte",
     signIn: {
       title: "Connexion",
       submit: "Se connecter",
       magicLink: "Recevoir un lien de connexion par courriel",
       google: "Continuer avec Google",
       forgot: "Mot de passe oublié ?",
-      noAccount: "Pas encore de compte ?",
       signUpLink: "Créer un compte",
     },
     signUp: {
       title: "Créer un compte",
       submit: "Créer mon compte",
-      hasAccount: "Déjà inscrit ?",
       signInLink: "Se connecter",
       checkEmail:
         "Presque terminé ! Ouvrez le courriel de confirmation que nous venons d'envoyer.",

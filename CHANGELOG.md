@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.8.2] - 2026-10-09 — Connexion et inscription en onglets
+### Modifié
+- `/connexion` et `/inscription` réunies sous deux onglets (« Se connecter », « Créer un
+  compte ») ; la page de retour (`suivant`) est conservée d'un onglet à l'autre.
+- « Continuer avec Google » (avec le logo) proposé en premier sur les deux pages, avant
+  le courriel et le mot de passe.
+
 ## [v0.8.1] - 2026-10-09 — Sprint 8 : PDF filigrané
 ### Ajouté
 - Migration `pdf` : option `books.pdf_enabled`, droits PDF (`pdf_purchases`, référence
