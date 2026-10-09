@@ -57,6 +57,7 @@ export type BookInput = {
   chapter_count: number | null;
   publication_year: number | null;
   is_featured: boolean;
+  pdf_enabled: boolean;
   status: BookStatus;
   rejection_reason: string | null;
 };
@@ -219,6 +220,7 @@ export function parseBook(fd: FormData): ParseResult<{ book: BookInput; prices: 
       chapter_count: optionalInt(fd, "chapter_count", l.chapterCount, 1, 10_000),
       publication_year: optionalInt(fd, "publication_year", l.year, 1900, 2200),
       is_featured: fd.get("is_featured") === "on",
+      pdf_enabled: fd.get("pdf_enabled") === "on",
       status,
       rejection_reason: status === "rejected" ? rejectionReason : null,
     };

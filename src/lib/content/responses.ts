@@ -44,3 +44,17 @@ export function errorResponse(status: ErrorStatus): Response {
   if (status === 429) headers["Retry-After"] = String(CONTENT_RATE_WINDOW_SECONDS);
   return Response.json(ERRORS[status], { status, headers });
 }
+
+/**
+ * Refuse les requêtes venues d'un autre site (protection CSRF) : l'en-tête Origin, envoyé
+ * par les navigateurs pour toute requête POST ou PUT, doit désigner ce site.
+ */
+export function isSameOrigin(request: Request): boolean {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try {
+    return new URL(origin).host === request.headers.get("host");
+  } catch {
+    return false;
+  }
+}

@@ -115,6 +115,31 @@ const fr = {
       unauthorized: "Connexion requise.",
     },
   },
+  pdf: {
+    copyOf: "Exemplaire de",
+    contents: "Sommaire",
+    by: "par",
+    title: "Version PDF",
+    help:
+      "Fichier personnel : chaque page porte votre nom, votre courriel et la référence {ref}. " +
+      "Merci de ne pas le partager.",
+    remaining: "Téléchargements restants : {count} sur 3",
+    prepare: "Préparer mon PDF",
+    preparing: "Préparation du PDF… (jusqu'à une minute)",
+    download: "Télécharger le PDF",
+    expiresAt: "Lien valable jusqu'au {date}.",
+    errors: {
+      no_purchase: "Vous n'avez pas l'option PDF pour ce livre.",
+      exhausted:
+        "Vous avez utilisé vos 3 téléchargements. Écrivez-nous si vous avez perdu le fichier.",
+      unavailable: "Ce livre ne peut pas être imprimé en PDF pour le moment.",
+      expired: "Ce lien a expiré : préparez un nouveau PDF depuis la fiche du livre.",
+      revoked: "L'option PDF a été retirée de votre compte.",
+      not_found: "Fichier introuvable.",
+      generic: "La préparation du PDF a échoué. Réessayez dans quelques minutes.",
+    },
+    back: "Retour au livre",
+  },
   reader: {
     metaTitle: "Lecture — {title}",
     close: "Fermer la liseuse",
@@ -499,6 +524,7 @@ const fr = {
       chapterCount: "Nombre de chapitres",
       year: "Année de publication",
       featured: "Mettre en avant sur l'accueil",
+      pdfEnabled: "Proposer aussi en PDF filigrané (au nom de l'acheteur)",
       status: "Statut",
       rejectionReason: "Motif du refus (obligatoire si refusé)",
       prices: "Prix",
@@ -555,6 +581,24 @@ const fr = {
       revokeConfirm: "Confirmer le retrait",
       noEntitlements: "Aucun droit de lecture.",
       sources: { purchase: "Achat", admin_grant: "Accès manuel" },
+      pdf: {
+        title: "Option PDF",
+        help:
+          "Chaque option donne 3 téléchargements d'un PDF filigrané au nom du lecteur ; elle " +
+          "ouvre aussi la lecture en ligne. Les achats l'accorderont automatiquement.",
+        disabled: "Cochez « Proposer aussi en PDF » dans la fiche du livre pour l'activer.",
+        grant: "Accorder l'option PDF",
+        granted: "Option PDF accordée.",
+        revoke: "Retirer",
+        revoked: "Option PDF retirée.",
+        revokeConfirm: "Confirmer le retrait",
+        reset: "Remettre 3 téléchargements",
+        resetDone: "Téléchargements remis à 3.",
+        none: "Aucune option PDF.",
+        remaining: "{count} téléchargement(s) restant(s)",
+        alreadyGranted: "Ce lecteur a déjà l'option PDF.",
+        pdfDisabled: "L'option PDF n'est pas activée pour ce livre.",
+      },
       errors: {
         invalid_file: "Fichier illisible : ce n'est pas un DOCX ou un EPUB valide.",
         empty: "Aucun texte trouvé dans le fichier.",

@@ -82,6 +82,10 @@ kalami/
   l'inscription est fermée. Les droits sont appliqués par la base (RLS + déclencheurs).
 - Aperçu (`/apercu/{id}`) : version en attente lisible par l'auteur et l'administration
   seulement, sans enregistrement de position ni d'annotations.
+- PDF filigrané : généré à la demande par Chromium (`src/lib/pdf/`), gardé 24 h dans le
+  seau privé `pdf-exports` puis supprimé (tâche `/api/cron/pdf`, `CRON_SECRET` requis dans
+  Vercel). 3 téléchargements par droit. En local, définir `CHROME_EXECUTABLE_PATH`
+  (Chrome installé) dans `.env.local`.
 
 ## 📅 Historique des versions
 Voir [CHANGELOG.md](CHANGELOG.md).

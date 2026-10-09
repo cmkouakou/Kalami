@@ -72,6 +72,7 @@ export type AuthorBookInput = {
   category_id: string | null;
   page_count: number | null;
   publication_year: number | null;
+  pdf_enabled: boolean;
 };
 
 export type ContractInput = { title: string; body: string };
@@ -186,6 +187,7 @@ export function parseAuthorBook(
       category_id: optionalUuid(fd, "category_id", l.category),
       page_count: optionalInt(fd, "page_count", l.pageCount, 1, 100_000),
       publication_year: optionalInt(fd, "publication_year", l.year, 1900, 2200),
+      pdf_enabled: fd.get("pdf_enabled") === "on",
     };
     return { book, prices: parsePrices(fd) };
   });

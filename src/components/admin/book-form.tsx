@@ -167,6 +167,15 @@ export function BookForm({ book, authors, categories }: BookFormProps) {
           />
           {l.featured}
         </label>
+        <label className="flex min-h-11 items-center gap-3 text-sm">
+          <input
+            type="checkbox"
+            name="pdf_enabled"
+            defaultChecked={book?.pdf_enabled ?? false}
+            className="size-5"
+          />
+          {l.pdfEnabled}
+        </label>
       </div>
       <TextArea
         label={l.rejectionReason}

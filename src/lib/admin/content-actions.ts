@@ -4,10 +4,10 @@
  *  Projet     : Kalami
  *  Description: Actions serveur d'administration du contenu d'un livre : conversion d'un
  *               manuscrit déposé (DOCX/EPUB), règles de l'extrait gratuit, octroi et retrait
- *               des droits de lecture. Toute fonction exportée est une action publique :
- *               arguments vérifiés, session administrateur (aal2) exigée.
+ *               des droits de lecture et des options PDF. Toute fonction exportée est une
+ *               action publique : arguments vérifiés, session administrateur (aal2) exigée.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-08
  *  Dépendances: lib/content/*, lib/admin/validation.ts, lib/admin/audit.ts, supabase
  * =============================================================
@@ -116,4 +116,53 @@ export async function revokeEntitlement(id: string): Promise<FormState> {
   const { error } = await supabase.rpc("admin_revoke_entitlement", { p_entitlement_id: id });
   if (error) return { error: e.generic };
   return { message: l.revoked };
+}
+
+// ==================== OPTION PDF ====================
+
+/** Accorde l'option PDF (3 téléchargements) et, au besoin, le droit de lecture. */
+export async function grantPdf(
+  bookId: string,
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  if (!isUuid(bookId)) return { error: e.generic };
+  const parsed = parseGrant(formData);
+  if (!parsed.ok) return { error: parsed.error };
+
+  // La fonction SQL vérifie le rôle et l'option du livre, puis écrit l'entrée d'audit
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_grant_pdf", {
+    p_book_id: bookId,
+    p_email: parsed.value.email,
+    p_note: parsed.value.note,
+  });
+  if (error?.code === "P0002") return { error: l.errors.userNotFound };
+  if (error?.code === "23505") return { error: l.pdf.alreadyGranted };
+  if (error?.message === "pdf_disabled") return { error: l.pdf.pdfDisabled };
+  if (error) return { error: e.generic };
+  return { message: l.pdf.granted };
+}
+
+/** Retire une option PDF (conservée, datée) ; le droit de lecture n'est pas touché. */
+export async function revokePdf(id: string): Promise<FormState> {
+  await requireAdmin();
+  if (!isUuid(id)) return { error: e.generic };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_revoke_pdf", { p_purchase_id: id });
+  if (error) return { error: e.generic };
+  return { message: l.pdf.revoked };
+}
+
+/** Remet 3 téléchargements à une option PDF active. */
+export async function resetPdfDownloads(id: string): Promise<FormState> {
+  await requireAdmin();
+  if (!isUuid(id)) return { error: e.generic };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_reset_pdf_downloads", { p_purchase_id: id });
+  if (error) return { error: e.generic };
+  return { message: l.pdf.resetDone };
 }

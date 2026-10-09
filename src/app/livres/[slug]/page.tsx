@@ -4,9 +4,10 @@
  *  Projet     : Kalami
  *  Description: Fiche publique d'un livre : couverture, auteur, carte de prix, repères,
  *               résumé, sommaire (extrait gratuit) et auteur. Bouton « Lire » ou
- *               « Reprendre » selon le lecteur ; achat aux sprints de paiement.
+ *               « Reprendre » selon le lecteur, bloc PDF pour qui a l'option ; achat aux
+ *               sprints de paiement.
  *  Auteur     : Claude Marcel
- *  Version    : 2.0
+ *  Version    : 2.1
  *  Date       : 2026-10-09
  *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
@@ -18,6 +19,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { BookCover } from "@/components/catalog/book-cover";
+import { PdfDownload } from "@/components/catalog/pdf-download";
 import { PriceTag } from "@/components/catalog/price-tag";
 import { IconLock } from "@/components/ui/icons";
 import {
@@ -29,8 +31,10 @@ import {
   PANEL_SAND,
 } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
+import { getCurrentUser } from "@/lib/auth/dal";
 import { getBookBySlug, getBookToc } from "@/lib/catalog/queries";
 import type { Author, BookDetail, TocEntry } from "@/lib/catalog/types";
+import { getPdfStatus } from "@/lib/pdf/exports";
 import { getReadingStatus } from "@/lib/reader/queries";
 
 const t = getDictionary();
@@ -177,6 +181,9 @@ function BookHeader({ book }: { book: BookDetail }) {
             <ReadButton bookId={book.id} slug={book.slug} />
           </Suspense>
         </div>
+        <Suspense fallback={null}>
+          <PdfSection bookId={book.id} />
+        </Suspense>
         <p className="text-small text-ink-muted">{t.catalog.book.soon}</p>
       </div>
     </header>
@@ -200,6 +207,22 @@ async function ReadButton({ bookId, slug }: { bookId: string; slug: string }) {
     label = interpolate(t.reader.resume, { percent: String(Math.round(progress * 100)) });
   }
   return <ReadLink slug={slug} label={label} />;
+}
+
+/** Bloc PDF, affiché seulement au lecteur connecté qui a l'option PDF de ce livre. */
+async function PdfSection({ bookId }: { bookId: string }) {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  const status = await getPdfStatus(user.id, bookId);
+  if (!status) return null;
+  return (
+    <PdfDownload
+      bookId={bookId}
+      reference={status.purchase.reference}
+      remaining={status.purchase.downloads_remaining}
+      initialExport={status.export}
+    />
+  );
 }
 
 /** Repères bibliographiques en tuiles (n'affiche que les valeurs renseignées). */

@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## [v0.8.1] - 2026-10-09 — Sprint 8 : PDF filigrané
+### Ajouté
+- Migration `pdf` : option `books.pdf_enabled`, droits PDF (`pdf_purchases`, référence
+  KAL-XXXXXXXX, 3 téléchargements), fichiers générés (`pdf_exports`, 24 h), seau privé
+  `pdf-exports`, fonctions d'administration (accorder, retirer, remettre à 3) et
+  `consume_pdf_download` (serveur uniquement, décompte atomique).
+- Génération Chromium (puppeteer-core + @sparticuz/chromium) au format A5 : page de titre,
+  sommaire cliquable, police Literata intégrée ; nom, courriel et référence de l'acheteur en
+  pied de page, en filigrane diagonal léger sur chaque page et dans les métadonnées du PDF.
+- Fiche du livre : bloc « Version PDF » (préparer, télécharger, essais restants, expiration).
+  Le téléchargement passe par un lien signé de 60 s ; le fichier ne transite pas par Vercel.
+- Administration : case « Proposer aussi en PDF » (aussi côté auteur), carte des droits PDF
+  sur la fiche du livre (accorder par courriel, retirer, remettre les téléchargements).
+- Tâche quotidienne Vercel `/api/cron/pdf` (protégée par `CRON_SECRET`) et purge à chaque
+  génération : aucun fichier n'est conservé au-delà de 24 h.
+- Tests unitaires (gabarit, échappement, option PDF) et test d'intégration RLS.
+
+### Modifié
+- Vérification de même origine (`isSameOrigin`) partagée entre les routes POST.
+
+
 ## [v0.8.0] - 2026-10-09 — Sprint 9 : espace auteur
 ### Ajouté
 - Migration `author_space` : contrat auteur versionné (`author_contracts`) et acceptations,

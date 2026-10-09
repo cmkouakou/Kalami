@@ -4,9 +4,9 @@
  *  Projet     : Kalami
  *  Description: Section « Contenu du livre » de la fiche d'administration : dépôt du
  *               manuscrit, version et sommaire convertis, règles de l'extrait gratuit,
- *               droits de lecture (liste, octroi manuel, retrait).
+ *               droits de lecture et options PDF (liste, octroi manuel, retrait).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-08
  *  Dépendances: lib/admin/content-actions.ts, lib/admin/content-queries.ts, components/admin
  * =============================================================
@@ -19,10 +19,17 @@ import { Field } from "@/components/ui/form";
 import { getDictionary, interpolate } from "@/i18n";
 import {
   grantEntitlement,
+  grantPdf,
   revokeEntitlement,
+  resetPdfDownloads,
+  revokePdf,
   updatePreviewRule,
 } from "@/lib/admin/content-actions";
-import type { BookContentAdmin, EntitlementRow } from "@/lib/admin/content-queries";
+import type {
+  BookContentAdmin,
+  EntitlementRow,
+  PdfPurchaseRow,
+} from "@/lib/admin/content-queries";
 
 const t = getDictionary();
 const l = t.admin.content;
@@ -46,6 +53,7 @@ export function BookContentSection({ bookId, content }: BookContentSectionProps)
         <PreviewCard bookId={bookId} content={content} />
       </div>
       <EntitlementsCard bookId={bookId} entitlements={content.entitlements} />
+      <PdfCard bookId={bookId} enabled={content.pdf_enabled} purchases={content.pdf_purchases} />
     </section>
   );
 }
@@ -177,6 +185,81 @@ function EntitlementItem({ row }: { row: EntitlementRow }) {
           label={l.revoke}
           confirmLabel={l.revokeConfirm}
         />
+      )}
+    </li>
+  );
+}
+
+// ==================== OPTION PDF ====================
+
+/** Options PDF du livre et formulaire d'octroi (si l'option est activée sur la fiche). */
+function PdfCard({
+  bookId,
+  enabled,
+  purchases,
+}: {
+  bookId: string;
+  enabled: boolean;
+  purchases: PdfPurchaseRow[];
+}) {
+  const p = l.pdf;
+  return (
+    <div className={CARD_CLASS}>
+      <h3 className="font-semibold">{p.title}</h3>
+      <p className="text-sm text-ink-muted">{p.help}</p>
+      {purchases.length === 0 ? (
+        <p className="text-sm">{p.none}</p>
+      ) : (
+        <ul className="flex flex-col divide-y divide-line">
+          {purchases.map((row) => (
+            <PdfPurchaseItem key={row.id} row={row} />
+          ))}
+        </ul>
+      )}
+      {enabled ? (
+        <ActionForm
+          action={grantPdf.bind(null, bookId)}
+          submitLabel={p.grant}
+          resetOnSuccess
+          className="grid gap-4 sm:grid-cols-2 sm:items-end"
+        >
+          <Field label={l.grantEmail} name="email" type="email" required autoComplete="off" />
+          <Field label={l.grantNote} name="note" maxLength={500} />
+        </ActionForm>
+      ) : (
+        <p className="text-sm text-ink-muted">{p.disabled}</p>
+      )}
+    </div>
+  );
+}
+
+/** Ligne d'une option PDF : lecteur, référence, téléchargements restants, actions. */
+function PdfPurchaseItem({ row }: { row: PdfPurchaseRow }) {
+  const p = l.pdf;
+  const revoked = row.revoked_at !== null;
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-3 py-3">
+      <div className={`flex flex-col text-sm ${revoked ? "text-ink-muted line-through" : ""}`}>
+        <span className="font-medium">
+          {row.email} · {row.reference}
+        </span>
+        <span className="text-ink-muted">
+          {l.sources[row.source]} · {DATE_FORMAT.format(new Date(row.created_at))} ·{" "}
+          {interpolate(p.remaining, { count: String(row.downloads_remaining) })}
+          {row.note && ` · ${row.note}`}
+        </span>
+      </div>
+      {!revoked && (
+        <div className="flex flex-wrap items-start gap-2">
+          <ActionForm action={resetPdfDownloads.bind(null, row.id)} submitLabel={p.reset}>
+            {null}
+          </ActionForm>
+          <DeleteButton
+            action={revokePdf.bind(null, row.id)}
+            label={p.revoke}
+            confirmLabel={p.revokeConfirm}
+          />
+        </div>
       )}
     </li>
   );

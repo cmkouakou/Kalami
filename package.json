@@ -1,6 +1,6 @@
 {
   "name": "kalami",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,6 +14,7 @@
     "db:push": "supabase db push"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^153.0.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
     "dom-serializer": "^3.1.1",
@@ -25,6 +26,8 @@
     "mammoth": "^1.13.0",
     "next": "16.4.0",
     "page-flip": "^2.0.7",
+    "pdf-lib": "^1.17.1",
+    "puppeteer-core": "^25.13.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "sanitize-html": "^2.18.0",

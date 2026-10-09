@@ -107,6 +107,15 @@ export function AuthorBookForm({ book, categories }: AuthorBookFormProps) {
           defaultValue={book?.publication_year ?? ""}
         />
       </div>
+      <label className="flex min-h-11 items-center gap-3 text-sm">
+        <input
+          type="checkbox"
+          name="pdf_enabled"
+          defaultChecked={book?.pdf_enabled ?? false}
+          className="size-5"
+        />
+        {l.pdfEnabled}
+      </label>
 
       {/* ==================== PRIX ==================== */}
       <fieldset className="flex flex-col gap-2">

@@ -17,7 +17,7 @@ import type { NextRequest } from "next/server";
 
 import { isUuid } from "@/lib/admin/validation";
 import { getCurrentUser } from "@/lib/auth/dal";
-import { errorResponse, PRIVATE_HEADERS } from "@/lib/content/responses";
+import { errorResponse, isSameOrigin, PRIVATE_HEADERS } from "@/lib/content/responses";
 import { parsePosition } from "@/lib/reader/position";
 import { createClient } from "@/lib/supabase/server";
 
@@ -26,20 +26,6 @@ const MAX_BODY_BYTES = 1024;
 
 /** Code PostgreSQL : clé étrangère absente (livre inexistant). */
 const FOREIGN_KEY_VIOLATION = "23503";
-
-/**
- * Refuse les requêtes venues d'un autre site (protection CSRF) : l'en-tête Origin, envoyé
- * par les navigateurs pour toute requête PUT, doit désigner ce site.
- */
-function isSameOrigin(request: NextRequest): boolean {
-  const origin = request.headers.get("origin");
-  if (!origin) return false;
-  try {
-    return new URL(origin).host === request.headers.get("host");
-  } catch {
-    return false;
-  }
-}
 
 /** Lit et valide le corps : position + avancement (0 à 1). */
 async function readBody(request: NextRequest) {

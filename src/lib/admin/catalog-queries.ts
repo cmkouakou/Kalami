@@ -46,6 +46,7 @@ export type AdminBook = {
   chapter_count: number | null;
   publication_year: number | null;
   is_featured: boolean;
+  pdf_enabled: boolean;
   status: BookStatus;
   rejection_reason: string | null;
   cover_path: string | null;
@@ -168,7 +169,8 @@ export async function getBookAdmin(id: string): Promise<AdminBook | null> {
     .from("books")
     .select(
       "id, slug, title, subtitle, edition, summary, keywords, language, author_id, " +
-        "category_id, page_count, chapter_count, publication_year, is_featured, status, " +
+        "category_id, page_count, chapter_count, publication_year, is_featured, pdf_enabled, " +
+        "status, " +
         "rejection_reason, cover_path, book_prices(currency, amount_minor)",
     )
     .eq("id", id)

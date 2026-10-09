@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.0 | Statut : 🟡 En cours (Sprint 9 terminé : espace auteur)
+Version actuelle : v0.8.1 | Statut : 🟡 En cours (Sprint 8 terminé : PDF filigrané)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -12,7 +12,8 @@ Version actuelle : v0.8.0 | Statut : 🟡 En cours (Sprint 9 terminé : espace a
 | #6 | 2026-10-09 | Sprint 4b : charte, composants, refonte des pages et de la liseuse | ~300 000 | ~1.80 $ |
 | #7 | 2026-10-10 | Sprint 7 : surlignages, notes, citation, carte de partage | ~280 000 | ~1.68 $ |
 | #8 | 2026-10-09 | Sprint 9 : espace auteur, contrat, aperçu, validation | ~320 000 | ~1.92 $ |
-| **TOTAL** | | | **~1 680 000** | **~10.08 $** |
+| #9 | 2026-10-09 | Sprint 8 : PDF filigrané, lien signé, 3 téléchargements, purge | ~260 000 | ~1.56 $ |
+| **TOTAL** | | | **~1 940 000** | **~11.64 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -43,4 +44,7 @@ Version actuelle : v0.8.0 | Statut : 🟡 En cours (Sprint 9 terminé : espace a
 - [x] Sprint 9 — migration `20261011120000_author_space.sql` appliquée, tests RLS 7/7
 - [x] Sprint 9 — premier contrat publié (brouillon docs/contrat-auteur-brouillon.txt)
 - [x] Sprint 9 — contrat finalisé et republié (relecture juridique conseillée)
-- [ ] Sprints 8, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 8 — PDF filigrané : Chromium, lien signé 24 h, 3 téléchargements, purge (v0.8.1)
+- [ ] Sprint 8 — appliquer `20261012120000_pdf.sql`, définir `CRON_SECRET` dans Vercel
+- [ ] Sprint 8 — essai réel : option PDF sur un livre, droit accordé, téléchargement
+- [ ] Sprint 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)

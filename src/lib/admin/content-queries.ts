@@ -3,10 +3,10 @@
  *  Fichier    : content-queries.ts
  *  Projet     : Kalami
  *  Description: Lectures de l'administration du contenu d'un livre : version convertie
- *               courante, sommaire, règles de l'extrait et droits de lecture.
+ *               courante, sommaire, règles de l'extrait, droits de lecture et options PDF.
  *               Jamais mises en cache (données privées, session administrateur).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-08
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
@@ -39,6 +39,18 @@ export type EntitlementRow = {
   revoked_at: string | null;
 };
 
+/** Option PDF affichée en administration. */
+export type PdfPurchaseRow = {
+  id: string;
+  email: string;
+  reference: string;
+  source: "purchase" | "admin_grant";
+  downloads_remaining: number;
+  note: string | null;
+  created_at: string;
+  revoked_at: string | null;
+};
+
 /** Ensemble des données de la section « Contenu du livre ». */
 export type BookContentAdmin = {
   version: BookVersionSummary | null;
@@ -46,6 +58,8 @@ export type BookContentAdmin = {
   preview_chapters: number;
   preview_cut_block: number | null;
   entitlements: EntitlementRow[];
+  pdf_enabled: boolean;
+  pdf_purchases: PdfPurchaseRow[];
 };
 
 /**
@@ -59,13 +73,13 @@ export async function getBookContentAdmin(bookId: string): Promise<BookContentAd
 
   const { data: book, error } = await supabase
     .from("books")
-    .select("preview_chapters, preview_cut_block, current_version_id")
+    .select("preview_chapters, preview_cut_block, current_version_id, pdf_enabled")
     .eq("id", bookId)
     .maybeSingle();
   if (error) throw new Error(`Lecture du livre impossible : ${error.message}`);
   if (!book) return null;
 
-  const [version, toc, entitlements] = await Promise.all([
+  const [version, toc, entitlements, pdfPurchases] = await Promise.all([
     book.current_version_id
       ? supabase
           .from("book_versions")
@@ -75,11 +89,15 @@ export async function getBookContentAdmin(bookId: string): Promise<BookContentAd
       : Promise.resolve({ data: null, error: null }),
     supabase.rpc("get_book_toc", { p_book_id: bookId }),
     supabase.rpc("admin_list_entitlements", { p_book_id: bookId }),
+    supabase.rpc("admin_list_pdf_purchases", { p_book_id: bookId }),
   ]);
   if (version.error) throw new Error(`Lecture de la version impossible : ${version.error.message}`);
   if (toc.error) throw new Error(`Lecture du sommaire impossible : ${toc.error.message}`);
   if (entitlements.error) {
     throw new Error(`Lecture des droits impossible : ${entitlements.error.message}`);
+  }
+  if (pdfPurchases.error) {
+    throw new Error(`Lecture des options PDF impossible : ${pdfPurchases.error.message}`);
   }
 
   return {
@@ -88,5 +106,7 @@ export async function getBookContentAdmin(bookId: string): Promise<BookContentAd
     preview_chapters: book.preview_chapters,
     preview_cut_block: book.preview_cut_block,
     entitlements: entitlements.data as EntitlementRow[],
+    pdf_enabled: book.pdf_enabled,
+    pdf_purchases: pdfPurchases.data as PdfPurchaseRow[],
   };
 }

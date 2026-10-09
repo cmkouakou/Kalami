@@ -87,6 +87,7 @@ export type AuthorBook = {
   category_id: string | null;
   page_count: number | null;
   publication_year: number | null;
+  pdf_enabled: boolean;
   status: BookStatus;
   rejection_reason: string | null;
   cover_path: string | null;
@@ -241,7 +242,7 @@ export async function getAuthorBook(bookId: string, authorId: string): Promise<A
     .from("books")
     .select(
       "id, slug, title, subtitle, edition, summary, keywords, language, category_id, " +
-        "page_count, publication_year, status, rejection_reason, cover_path, " +
+        "page_count, publication_year, pdf_enabled, status, rejection_reason, cover_path, " +
         "current_version_id, pending_version_id, book_prices(currency, amount_minor)",
     )
     .eq("id", bookId)
