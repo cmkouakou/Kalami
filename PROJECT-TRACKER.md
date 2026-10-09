@@ -40,6 +40,6 @@ Version actuelle : v0.8.0 | Statut : 🟡 En cours (Sprint 9 terminé : espace a
 - [x] Sprint 7 — migration `20261010120000_annotations.sql` appliquée, tests 203/203 (dont RLS 4/4)
 - [ ] Sprint 7 — essai réel : sélection sur téléphone Android (appui long), partage d'image
 - [x] Sprint 9 — espace auteur : contrat, dépôt, aperçu, validation, tableau de bord (v0.8.0)
-- [ ] Sprint 9 — appliquer la migration `20261011120000_author_space.sql` + tests RLS
+- [x] Sprint 9 — migration `20261011120000_author_space.sql` appliquée, tests RLS 7/7
 - [ ] Sprint 9 — publier un premier contrat (/admin/contrat) pour ouvrir les inscriptions
 - [ ] Sprints 8, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
