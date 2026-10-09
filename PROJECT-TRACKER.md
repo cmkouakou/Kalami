@@ -42,5 +42,5 @@ Version actuelle : v0.8.0 | Statut : 🟡 En cours (Sprint 9 terminé : espace a
 - [x] Sprint 9 — espace auteur : contrat, dépôt, aperçu, validation, tableau de bord (v0.8.0)
 - [x] Sprint 9 — migration `20261011120000_author_space.sql` appliquée, tests RLS 7/7
 - [x] Sprint 9 — premier contrat publié (brouillon docs/contrat-auteur-brouillon.txt)
-- [ ] Sprint 9 — finaliser le contrat ([XX] %, versements, délais) + relecture juridique
+- [x] Sprint 9 — contrat finalisé et republié (relecture juridique conseillée)
 - [ ] Sprints 8, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
