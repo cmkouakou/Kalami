@@ -1,0 +1,76 @@
+CONTRAT D'AUTEUR KALAMI — BROUILLON À FAIRE RELIRE PAR UN JURISTE
+(Les passages entre [CROCHETS] sont à compléter. Supprimer cette ligne et la précédente avant de publier.)
+
+Le présent contrat est conclu entre [NOM DE L'EXPLOITANT], exploitant de la plateforme Kalami (kalami-livres.com), ci-après « Kalami », et la personne qui l'accepte en s'inscrivant à l'espace auteur, ci-après « l'Auteur ». Il prend effet à la date de son acceptation en ligne.
+
+ARTICLE 1 — OBJET
+
+L'Auteur confie à Kalami la diffusion numérique, sur la plateforme Kalami, des œuvres qu'il dépose dans son espace auteur et que Kalami accepte de publier. Le présent contrat s'applique à chacune de ces œuvres, ci-après « les Œuvres ».
+
+ARTICLE 2 — DROITS ACCORDÉS
+
+L'Auteur accorde à Kalami, pour le monde entier et pour la durée du contrat, une licence non exclusive lui permettant de reproduire, convertir dans un format de lecture, héberger, afficher et vendre l'accès en ligne aux Œuvres, sur le site et l'application Kalami.
+
+Cette licence comprend le droit de présenter gratuitement un extrait de chaque Œuvre (les premiers chapitres ou une partie de ceux-ci, au choix de Kalami), d'utiliser le titre, la couverture, le résumé, le nom et la photo de l'Auteur pour présenter et promouvoir l'Œuvre, et de permettre aux lecteurs de citer de courts passages (notes, citations, cartes de partage).
+
+L'Auteur demeure titulaire de tous ses droits d'auteur. La licence étant non exclusive, il reste libre de publier ses Œuvres ailleurs, sous toute forme.
+
+ARTICLE 3 — GARANTIES DE L'AUTEUR
+
+L'Auteur déclare être le titulaire des droits sur les Œuvres qu'il dépose, ou disposer des autorisations nécessaires, y compris pour la couverture, les images et les citations qu'elles contiennent.
+
+Il garantit que les Œuvres ne portent pas atteinte aux droits de tiers et ne contiennent aucun contenu illicite, notamment diffamatoire, haineux, incitant à la violence, ou portant atteinte à la vie privée d'autrui.
+
+L'Auteur assume seul la responsabilité du contenu des Œuvres et indemnisera Kalami de toute réclamation fondée sur un manquement à ces garanties.
+
+ARTICLE 4 — VALIDATION ET PUBLICATION
+
+Chaque Œuvre, et chaque nouvelle version d'une Œuvre déjà publiée, est soumise à la validation de Kalami avant sa mise en ligne. Kalami peut la refuser en indiquant un motif, notamment pour un manquement à l'article 3, une qualité de fichier insuffisante ou des informations incomplètes. L'Auteur peut alors la corriger et la soumettre de nouveau.
+
+Kalami n'apporte aucune modification au texte des Œuvres, en dehors de la conversion technique nécessaire à leur affichage.
+
+ARTICLE 5 — PRIX ET RÉMUNÉRATION
+
+L'Auteur fixe le prix de vente de chaque Œuvre dans les devises proposées par la plateforme.
+
+Pour chaque vente, l'Auteur reçoit [XX] % du prix payé par le lecteur, après déduction des taxes applicables et des frais de paiement [ou : « des seuls frais de paiement »]. Kalami conserve le solde à titre de commission.
+
+L'Auteur peut consulter dans son espace auteur le détail de ses ventes et de ses revenus dès que la vente est ouverte sur la plateforme.
+
+ARTICLE 6 — VERSEMENTS
+
+Les sommes dues à l'Auteur sont versées [chaque mois / chaque trimestre], au plus tard le [15] du mois suivant la période concernée, dès que leur total atteint [MONTANT MINIMUM ET DEVISE]. En dessous de ce montant, elles sont reportées sur la période suivante.
+
+Les versements sont faits par virement bancaire ou par Mobile Money, selon les coordonnées que l'Auteur enregistre dans son espace. L'Auteur est responsable de l'exactitude de ces coordonnées et de ses propres obligations fiscales.
+
+En cas de remboursement d'un lecteur ou de paiement contesté, la part correspondante de l'Auteur est déduite du versement suivant.
+
+ARTICLE 7 — PROTECTION DES ŒUVRES
+
+Kalami met en œuvre des mesures raisonnables pour décourager la copie des Œuvres : texte servi uniquement aux lecteurs autorisés, copie et impression bloquées dans la liseuse, filigrane personnalisé. L'Auteur reconnaît qu'aucune mesure technique n'offre une protection absolue et que Kalami ne peut être tenue responsable des copies faites par des tiers en violation des conditions d'utilisation.
+
+ARTICLE 8 — RETRAIT D'UNE ŒUVRE
+
+L'Auteur peut demander le retrait d'une Œuvre à tout moment en écrivant à [ADRESSE COURRIEL]. Le retrait de la vente prend effet dans un délai de [30] jours.
+
+Les lecteurs qui ont acheté l'Œuvre avant son retrait conservent leur accès [ou : « pendant une durée de XX mois »]. Kalami peut également retirer une Œuvre qui ne respecte pas le présent contrat, en informant l'Auteur du motif.
+
+ARTICLE 9 — DONNÉES PERSONNELLES
+
+Kalami traite les données personnelles de l'Auteur (identité, coordonnées de versement) uniquement pour l'exécution du présent contrat, conformément à la Loi sur la protection des renseignements personnels dans le secteur privé (Québec) [et aux lois applicables dans le pays de l'Auteur]. Les coordonnées de versement ne sont visibles que par l'Auteur et l'administration de Kalami.
+
+Les statistiques communiquées à l'Auteur (nombre de lecteurs, passages surlignés) sont agrégées et ne permettent pas d'identifier les lecteurs.
+
+ARTICLE 10 — DURÉE ET RÉSILIATION
+
+Le contrat est conclu pour une durée indéterminée. Chaque partie peut y mettre fin moyennant un préavis de [30] jours, par écrit à l'autre partie. Les sommes acquises avant la fin du contrat restent dues à l'Auteur selon l'article 6.
+
+ARTICLE 11 — MODIFICATION DU CONTRAT
+
+Kalami peut publier une nouvelle version du présent contrat. L'Auteur en est informé dans son espace et doit l'accepter avant toute nouvelle soumission. Les ventes déjà réalisées restent régies par la version en vigueur au moment de la vente.
+
+ARTICLE 12 — DROIT APPLICABLE ET LITIGES
+
+Le présent contrat est régi par les lois [de la province de Québec et les lois du Canada qui s'y appliquent]. Les parties chercheront d'abord à régler à l'amiable tout différend. À défaut, il sera soumis aux tribunaux compétents du district de [Montréal].
+
+Contact : [ADRESSE COURRIEL DE KALAMI]
