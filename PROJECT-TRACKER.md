@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.2 | Statut : 🟡 En cours (Sprint 8 terminé : PDF filigrané)
+Version actuelle : v0.8.3 | Statut : 🟡 En cours (Sprint 8 terminé : PDF filigrané)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -12,7 +12,7 @@ Version actuelle : v0.8.2 | Statut : 🟡 En cours (Sprint 8 terminé : PDF fili
 | #6 | 2026-10-09 | Sprint 4b : charte, composants, refonte des pages et de la liseuse | ~300 000 | ~1.80 $ |
 | #7 | 2026-10-10 | Sprint 7 : surlignages, notes, citation, carte de partage | ~280 000 | ~1.68 $ |
 | #8 | 2026-10-09 | Sprint 9 : espace auteur, contrat, aperçu, validation | ~320 000 | ~1.92 $ |
-| #9 | 2026-10-09 | Sprint 8 : PDF filigrané, lien signé, 3 téléchargements, purge | ~260 000 | ~1.56 $ |
+| #9 | 2026-10-09 | Sprint 8 : PDF filigrané, lien signé, 3 téléchargements, purge ; onglets + Google, filet de sécurité OAuth (v0.8.3) | ~260 000 | ~1.56 $ |
 | **TOTAL** | | | **~1 940 000** | **~11.64 $** |
 
 ## ✅ Fonctionnalités

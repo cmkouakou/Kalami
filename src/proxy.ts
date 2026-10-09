@@ -4,18 +4,19 @@
  *  Projet     : Kalami
  *  Description: Traitement exécuté avant chaque requête (ex-« middleware » de Next.js) :
  *               1. redirection 301 des domaines secondaires ;
- *               2. rafraîchissement de la session Supabase ;
- *               3. renvoi vers /connexion des pages privées si personne n'est connecté.
+ *               2. code de connexion arrivé sur l'accueil → /auth/callback ;
+ *               3. rafraîchissement de la session Supabase ;
+ *               4. renvoi vers /connexion des pages privées si personne n'est connecté.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-06
+ *  Version    : 1.2
+ *  Date       : 2026-10-09
  *  Dépendances: lib/config.ts, lib/domain-redirect.ts, lib/supabase/proxy-session.ts
  * =============================================================
  */
 
 import { NextResponse, type NextRequest } from "next/server";
 
-import { isProtectedPath } from "@/lib/auth/routes";
+import { isProtectedPath, strayAuthCallback } from "@/lib/auth/routes";
 import { APP_URL, REDIRECT_DOMAINS } from "@/lib/config";
 import { getDomainRedirect } from "@/lib/domain-redirect";
 import { updateSession } from "@/lib/supabase/proxy-session";
@@ -32,6 +33,9 @@ export async function proxy(request: NextRequest) {
     REDIRECT_DOMAINS,
   );
   if (target) return NextResponse.redirect(target, 301);
+
+  const callback = strayAuthCallback(request.nextUrl);
+  if (callback) return NextResponse.redirect(callback);
 
   const { response, isAuthenticated } = await updateSession(request);
 

@@ -2,10 +2,11 @@
  * =============================================================
  *  Fichier    : routes.ts
  *  Projet     : Kalami
- *  Description: Chemins privés et validation des redirections après connexion.
+ *  Description: Chemins privés, validation des redirections après connexion et filet de
+ *               sécurité pour un code de connexion arrivé sur l'accueil.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-06
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
  * =============================================================
  */
 
@@ -28,4 +29,17 @@ export function safeNextPath(next: string | null | undefined, fallback = "/compt
     return fallback;
   }
   return next;
+}
+
+/**
+ * Filet de sécurité : si Supabase renvoie le code de connexion sur l'accueil (adresse de
+ * retour refusée → « Site URL »), retourne l'adresse de /auth/callback qui l'échangera.
+ * @param url - Adresse demandée
+ * @returns Adresse de /auth/callback avec les mêmes paramètres, ou null
+ */
+export function strayAuthCallback(url: URL): URL | null {
+  if (url.pathname !== "/" || !url.searchParams.get("code")) return null;
+  const target = new URL(url);
+  target.pathname = "/auth/callback";
+  return target;
 }

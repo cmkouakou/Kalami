@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.8.3] - 2026-10-09 — Filet de sécurité de la connexion Google
+### Corrigé
+- Si Supabase renvoie le code de connexion sur l'accueil (`/?code=…`, adresse de retour non
+  autorisée), le proxy le transmet à `/auth/callback` : la session est ouverte au lieu
+  d'être perdue.
+- Configuration Supabase : Site URL `https://www.kalami-livres.com`, adresses de retour
+  `www` et `localhost` ajoutées.
+
 ## [v0.8.2] - 2026-10-09 — Connexion et inscription en onglets
 ### Modifié
 - `/connexion` et `/inscription` réunies sous deux onglets (« Se connecter », « Créer un
