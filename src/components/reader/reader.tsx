@@ -5,11 +5,13 @@
  *  Description: Liseuse plein écran. Assemble la vue (pages à tourner ou défilement), la
  *               barre d'outils, les panneaux, la barre d'avancement, la navigation au
  *               clavier, la lecture à voix haute et l'enregistrement de la position
- *               (appareil pour tous, serveur pour un lecteur connecté).
+ *               (appareil pour tous, serveur pour un lecteur connecté), les surlignages et
+ *               notes (couche d'annotation, panneau) et le partage du livre.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-09
- *  Dépendances: flip-view, scroll-view, panels, lock-screen, use-*, storage, lib/reader, components/ui
+ *  Version    : 1.2
+ *  Date       : 2026-10-10
+ *  Dépendances: flip-view, scroll-view, panels, lock-screen, annotation-layer, use-*,
+ *               storage, lib/reader, lib/config, components/ui
  * =============================================================
  */
 
@@ -31,16 +33,19 @@ import {
   IconBookmark,
   IconChevronLeft,
   IconChevronRight,
+  IconHighlighter,
   IconList,
   IconPause,
   IconSearch,
+  IconShare,
   IconSquare,
   IconType,
   IconVolume,
 } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
-import { addBookmark, deleteBookmark } from "@/lib/reader/actions";
+import { APP_NAME, APP_URL } from "@/lib/config";
+import { addBookmark, deleteBookmark, deleteHighlight } from "@/lib/reader/actions";
 import {
   bookProgress,
   isChapterReadable,
@@ -51,6 +56,7 @@ import {
 import {
   type Bookmark,
   FONT_SIZES,
+  type Highlight,
   LINE_HEIGHTS,
   type ReaderBootstrap,
   type ReaderPosition,
@@ -58,10 +64,12 @@ import {
   type SavedPosition,
 } from "@/lib/reader/types";
 
+import { AnnotationLayer } from "./annotation-layer";
 import { blockTexts, parseBlock } from "./dom";
 import { FlipView, type ViewControls, type ViewPosition } from "./flip-view";
 import { EndScreen, LockScreen } from "./lock-screen";
 import {
+  AnnotationsPanel,
   BookmarksPanel,
   Panel,
   type PanelName,
@@ -84,6 +92,8 @@ const t = getDictionary();
 
 /** Délai avant d'enregistrer la position après le dernier changement de page (ms). */
 const SAVE_DELAY = 1500;
+/** Durée d'affichage d'un message (lien copié, erreur d'annotation) (ms). */
+const NOTICE_DELAY = 4000;
 /** Bloc « au-delà de la fin » : ouvre un chapitre sur sa dernière page (retour arrière). */
 const END_BLOCK = 100000;
 
@@ -91,6 +101,10 @@ const END_BLOCK = 100000;
 const TOOL_BUTTON = `${BUTTON_ICON} disabled:opacity-40`;
 const NAV_BUTTON = BUTTON_SECONDARY;
 const ICON_SIZE = 24;
+/** Message temporaire, au-dessus de la barre d'avancement. */
+const NOTICE_CLASS =
+  "liseuse-message fixed inset-x-4 bottom-20 z-40 mx-auto w-fit max-w-md rounded-md px-4 " +
+  "py-2 text-small shadow-pop";
 
 /** Chapitre affiché et position d'ouverture de sa vue ; « serial » force un nouveau montage. */
 type Opening = ReaderPosition & { serial: number };
@@ -189,6 +203,9 @@ export function Reader({ data, price }: ReaderProps) {
   const [ended, setEnded] = useState(false);
   const [panel, setPanel] = useState<PanelName | null>(null);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(data.bookmarks);
+  const [highlights, setHighlights] = useState<Highlight[]>(data.highlights);
+  const [notice, setNotice] = useState<string | null>(null);
+  const zoneRef = useRef<HTMLElement>(null);
 
   const chapter = opening.chapter;
   const readable = isChapterReadable(toc, chapter, access);
@@ -296,6 +313,42 @@ export function Reader({ data, price }: ReaderProps) {
     if (await deleteBookmark(id)) setBookmarks((list) => list.filter((item) => item.id !== id));
   };
 
+  // ==================== ANNOTATIONS ET PARTAGE ====================
+
+  // Surlignages du chapitre affiché, du plus ancien au plus récent (le plus récent par-dessus)
+  const chapterHighlights = useMemo(
+    () => highlights.filter((item) => item.chapter === chapter),
+    [highlights, chapter],
+  );
+
+  const onDeleteHighlight = async (id: string) => {
+    if (await deleteHighlight(id)) setHighlights((list) => list.filter((item) => item.id !== id));
+    else setNotice(t.reader.annotations.error);
+  };
+
+  /** Partage du lien du livre : menu natif, sinon copie du lien. */
+  const shareBook = async () => {
+    const url = `${APP_URL}/livres/${book.slug}`;
+    const text = interpolate(t.reader.share.bookText, {
+      title: book.title,
+      author: book.authorName,
+      app: APP_NAME,
+    });
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({ title: book.title, text, url });
+        return;
+      }
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      setNotice(t.reader.share.bookCopied);
+    } catch (error) {
+      // Annulation du menu de partage : rien à signaler
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        setNotice(t.reader.share.error);
+      }
+    }
+  };
+
   /** Sélection dans un panneau : on va à la position et on referme le panneau. */
   const select = (position: ReaderPosition) => {
     if (speech.status !== "idle") speech.stop();
@@ -304,6 +357,13 @@ export function Reader({ data, price }: ReaderProps) {
   };
 
   // ==================== EFFETS ====================
+
+  // Message temporaire
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(null), NOTICE_DELAY);
+    return () => clearTimeout(timer);
+  }, [notice]);
 
   // La page derrière la liseuse ne défile pas
   useEffect(() => {
@@ -390,6 +450,7 @@ export function Reader({ data, price }: ReaderProps) {
           settings={settings}
           initial={initial}
           watermark={watermark}
+          highlights={chapterHighlights}
           controlsRef={controls}
           onPosition={onPosition}
           onNextChapter={goNextChapter}
@@ -401,6 +462,7 @@ export function Reader({ data, price }: ReaderProps) {
           chapter={state.chapter}
           initial={initial}
           watermark={watermark}
+          highlights={chapterHighlights}
           controlsRef={controls}
           onPosition={onPosition}
           footer={scrollFooter}
@@ -458,7 +520,17 @@ export function Reader({ data, price }: ReaderProps) {
         </div>
         {panelButton("toc", <IconList size={ICON_SIZE} />)}
         {panelButton("bookmarks", <IconBookmark size={ICON_SIZE} />)}
+        {panelButton("annotations", <IconHighlighter size={ICON_SIZE} />)}
         {panelButton("search", <IconSearch size={ICON_SIZE} />)}
+        <button
+          type="button"
+          onClick={shareBook}
+          aria-label={t.reader.share.book}
+          title={t.reader.share.book}
+          className={`${TOOL_BUTTON} hidden sm:inline-flex`}
+        >
+          <IconShare size={ICON_SIZE} />
+        </button>
         {speech.supported && (
           <>
             <button
@@ -497,7 +569,10 @@ export function Reader({ data, price }: ReaderProps) {
       </header>
 
       {/* ==================== TEXTE ==================== */}
-      <main className="liseuse-zone relative flex min-h-0 flex-1 flex-col overflow-hidden">
+      <main
+        ref={zoneRef}
+        className="liseuse-zone relative flex min-h-0 flex-1 flex-col overflow-hidden"
+      >
         {main}
         {panel && (
           <Panel name={panel} onClose={() => setPanel(null)}>
@@ -507,6 +582,17 @@ export function Reader({ data, price }: ReaderProps) {
                 access={access}
                 current={chapter}
                 onSelect={(n) => select({ chapter: n, block: 0, offset: 0 })}
+                onShareBook={shareBook}
+              />
+            )}
+            {panel === "annotations" && (
+              <AnnotationsPanel
+                signedIn={signedIn}
+                slug={book.slug}
+                highlights={highlights}
+                toc={toc}
+                onDelete={onDeleteHighlight}
+                onSelect={select}
               />
             )}
             {panel === "bookmarks" && (
@@ -530,6 +616,29 @@ export function Reader({ data, price }: ReaderProps) {
           </Panel>
         )}
       </main>
+
+      {/* ==================== ANNOTATION ==================== */}
+      {state.status === "ready" && !ended && (
+        <AnnotationLayer
+          key={chapter}
+          zoneRef={zoneRef}
+          book={book}
+          chapter={chapter}
+          chapterTitle={chapterTitle}
+          signedIn={signedIn}
+          highlights={chapterHighlights}
+          disabled={panel !== null}
+          onChange={setHighlights}
+          onNotice={setNotice}
+        />
+      )}
+      <p
+        role="status"
+        aria-live="polite"
+        className={notice ? NOTICE_CLASS : "sr-only"}
+      >
+        {notice}
+      </p>
 
       {/* ==================== AVANCEMENT ==================== */}
       <footer className="liseuse-barre flex items-center gap-3 border-t border-line px-2 py-2">

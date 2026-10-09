@@ -1,5 +1,28 @@
 # Journal des modifications
 
+## [v0.6.0] - 2026-10-10 — Sprint 7 : annotations
+### Ajouté
+- Migration `annotations` : table `highlights` (surlignage en 5 couleurs, note facultative
+  ≤ 2000 caractères, passage cité ≤ 1000 caractères), ancrée par chapitre + bloc + décalage
+  de caractères ; 2000 annotations au plus par livre ; RLS réservée au propriétaire.
+- Liseuse : sélection d'un passage → menu (5 couleurs, note, citer, partager, supprimer) ;
+  visiteurs invités à se connecter pour annoter.
+- Surlignages peints après la pagination : ils restent en place quand la police, la taille
+  ou l'écran changent (mode page tournée et mode défilement).
+- Panneau « Annotations » : regroupement par chapitre, recherche (sans accents), filtre par
+  couleur, accès direct au passage, suppression.
+- « Citer » : références APA, MLA et Chicago, copiables.
+- « Partager » : carte image 1080 × 1080 d'un extrait (≤ 280 caractères) avec couverture,
+  titre, auteur et lien ; partage du lien du livre (partage natif ou copie).
+- Tests unitaires (annotations, repagination, citations) et test d'intégration RLS.
+
+### Modifié
+- Protection : la sélection est permise dans le texte (≤ 1000 caractères), la copie reste
+  bloquée sauf pour les références à citer.
+- Mode page tournée : le clic ne tourne plus la page (`disableFlipByClick`), pour permettre
+  la sélection.
+
+
 ## [v0.5.1] - 2026-10-09 — Sprint 4b : design
 ### Ajouté
 - Charte Kalami : jetons de couleur des thèmes Papier, Sépia et Nuit dans `globals.css`

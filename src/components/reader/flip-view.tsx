@@ -7,10 +7,14 @@
  *               page-flip (deux pages sur grand écran, une sur tablette en portrait).
  *               La position (bloc + décalage) survit aux changements de taille et de police.
  *               Les pages sont créées hors de React : page-flip déplace leurs nœuds.
+ *               Les surlignages sont dessinés après la découpe : ils ne changent jamais
+ *               la pagination. Les pages se tournent par les coins, le glissement, les
+ *               flèches et le clavier (un clic sert à sélectionner du texte).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
- *  Dépendances: page-flip, dom.ts, lib/reader/paginate.ts, lib/reader/position.ts
+ *  Version    : 1.1
+ *  Date       : 2026-10-10
+ *  Dépendances: page-flip, dom.ts, highlight-dom.ts, lib/reader/paginate.ts,
+ *               lib/reader/position.ts
  * =============================================================
  */
 
@@ -22,9 +26,10 @@ import { getDictionary, interpolate } from "@/i18n";
 import type { ChapterPayload } from "@/lib/content/types";
 import { pageIndexOf, pageStart, paginate } from "@/lib/reader/paginate";
 import { chapterFraction } from "@/lib/reader/position";
-import type { Page, ReaderSettings } from "@/lib/reader/types";
+import type { Highlight, Page, ReaderSettings } from "@/lib/reader/types";
 
 import { blockInfo, createMeasurer, parseBlock, renderPage, titleElement } from "./dom";
+import { paintHighlights } from "./highlight-dom";
 
 const t = getDictionary();
 
@@ -58,6 +63,8 @@ type FlipViewProps = {
   /** Position d'ouverture (lue une seule fois : la vue est recréée à chaque chapitre) */
   initial: { block: number; offset: number };
   watermark: string | null;
+  /** Surlignages du chapitre, du plus ancien au plus récent */
+  highlights: Highlight[];
   controlsRef: RefObject<ViewControls | null>;
   onPosition: (position: ViewPosition) => void;
   onNextChapter: () => void;
@@ -110,6 +117,8 @@ function buildPage(
   const text = document.createElement("div");
   text.className = "liseuse-texte";
   text.append(...content);
+  // page-flip annule le mousedown (début de glissement) : le texte reste sélectionnable
+  text.addEventListener("mousedown", (event) => event.stopPropagation());
   page.append(text);
 
   if (watermark) {
@@ -136,6 +145,20 @@ function buildPage(
   return page;
 }
 
+/**
+ * Éléments d'une page, chacun repéré pour les surlignages : data-bloc (indice du bloc,
+ * sans le titre) et data-debut (premier caractère du morceau de bloc affiché).
+ */
+function anchoredPage(elements: HTMLElement[], page: Page): HTMLElement[] {
+  const rendered = renderPage(elements, page);
+  page.forEach((fragment, index) => {
+    if (fragment.block === 0) return;
+    rendered[index].dataset.bloc = String(fragment.block - 1);
+    rendered[index].dataset.debut = String(fragment.start);
+  });
+  return rendered;
+}
+
 // ==================== COMPOSANT ====================
 
 /** Livre à pages tournantes pour un chapitre. */
@@ -144,12 +167,16 @@ export function FlipView({
   settings,
   initial,
   watermark,
+  highlights,
   controlsRef,
   onPosition,
   onNextChapter,
   onPreviousChapter,
 }: FlipViewProps) {
   const hostRef = useRef<HTMLDivElement>(null);
+  // Livre affiché et surlignages courants (redessinés sans repaginer)
+  const bookRef = useRef<HTMLElement | null>(null);
+  const highlightsRef = useRef(highlights);
   // Position courante (élément de pagination : 0 = titre, n = bloc n-1), mise à jour à
   // chaque page ; sert à rester au même endroit après une repagination
   const positionRef = useRef({ element: initial.block + 1, offset: initial.offset });
@@ -159,6 +186,12 @@ export function FlipView({
   useEffect(() => {
     callbacks.current = { onPosition, onNextChapter, onPreviousChapter };
   }, [onPosition, onNextChapter, onPreviousChapter]);
+
+  // Surlignage ajouté, recoloré ou retiré : redessin des pages existantes
+  useEffect(() => {
+    highlightsRef.current = highlights;
+    if (bookRef.current) paintHighlights(bookRef.current, highlights);
+  }, [highlights]);
 
   // Repagination après un redimensionnement (fenêtre, rotation de la tablette)
   useEffect(() => {
@@ -206,7 +239,7 @@ export function FlipView({
       const lengths = elements.slice(1).map((element) => element.textContent?.length ?? 0);
       const items = pages.map((page, index) =>
         buildPage(
-          renderPage(elements, page),
+          anchoredPage(elements, page),
           index,
           pages.length,
           chapter.position,
@@ -239,9 +272,11 @@ export function FlipView({
         maxShadowOpacity: 0.3,
         mobileScrollSupport: false,
         showPageCorners: true,
-        disableFlipByClick: false,
+        disableFlipByClick: true,
       });
       flip.loadFromHTML(items);
+      bookRef.current = container;
+      paintHighlights(container, highlightsRef.current);
 
       const spread = layout.twoPages ? 2 : 1;
       const isLastSpread = (index: number) => index + spread >= pages.length;
@@ -281,6 +316,7 @@ export function FlipView({
       };
 
       dispose = () => {
+        bookRef.current = null;
         flip.destroy();
         container.remove();
       };

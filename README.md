@@ -74,6 +74,8 @@ kalami/
   contraste AA 4,5:1 vérifié par `tests/unit/contrast.test.ts`.
 - La liseuse (`/livres/{slug}/lire`) décourage la copie et l'impression et affiche un
   filigrane : ce sont des freins, pas une protection absolue (le texte est affiché).
+- Annotations : ancrées par bloc + décalage de caractères (comme la position de lecture),
+  peintes après la pagination ; la sélection est permise (≤ 1000 caractères) mais pas la copie.
 
 ## 📅 Historique des versions
 Voir [CHANGELOG.md](CHANGELOG.md).

@@ -5,10 +5,11 @@
  *  Description: Mode défilement (par défaut sur téléphone) : un chapitre à la fois, texte
  *               continu, bouton « Chapitre suivant » en bas. La position suivie est le
  *               premier bloc visible ; le filigrane se déplace légèrement toutes les minutes.
+ *               Les surlignages sont dessinés dans les blocs (texte inchangé).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
- *  Dépendances: flip-view.tsx (types communs)
+ *  Version    : 1.1
+ *  Date       : 2026-10-10
+ *  Dépendances: flip-view.tsx (types communs), highlight-dom.ts
  * =============================================================
  */
 
@@ -17,8 +18,10 @@
 import { type ReactNode, type RefObject, useEffect, useRef, useState } from "react";
 
 import type { ChapterPayload } from "@/lib/content/types";
+import type { Highlight } from "@/lib/reader/types";
 
 import type { ViewControls, ViewPosition } from "./flip-view";
+import { paintHighlights } from "./highlight-dom";
 
 /** Intervalle de déplacement du filigrane (ms). */
 const WATERMARK_SHIFT_MS = 60_000;
@@ -29,6 +32,8 @@ type ScrollViewProps = {
   chapter: ChapterPayload;
   initial: { block: number; offset: number };
   watermark: string | null;
+  /** Surlignages du chapitre, du plus ancien au plus récent */
+  highlights: Highlight[];
   controlsRef: RefObject<ViewControls | null>;
   onPosition: (position: ViewPosition) => void;
   /** Bas du chapitre : bouton du chapitre suivant ou écran de fin d'extrait */
@@ -40,11 +45,13 @@ export function ScrollView({
   chapter,
   initial,
   watermark,
+  highlights,
   controlsRef,
   onPosition,
   footer,
 }: ScrollViewProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const articleRef = useRef<HTMLElement>(null);
   const onPositionRef = useRef(onPosition);
   const [shift, setShift] = useState(0);
 
@@ -109,6 +116,11 @@ export function ScrollView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapter, controlsRef]);
 
+  // Surlignages du chapitre (redessinés à chaque ajout, changement ou retrait)
+  useEffect(() => {
+    if (articleRef.current) paintHighlights(articleRef.current, highlights);
+  }, [chapter, highlights]);
+
   // Déplacement régulier du filigrane (gêne le recadrage des captures d'écran)
   useEffect(() => {
     if (!watermark) return;
@@ -119,7 +131,10 @@ export function ScrollView({
   return (
     <div className="relative h-full">
       <div ref={scrollerRef} className="liseuse-defilement h-full overflow-y-auto">
-        <article className="liseuse-texte mx-auto max-w-[42rem] px-5 py-10 sm:px-8">
+        <article
+          ref={articleRef}
+          className="liseuse-texte mx-auto max-w-[42rem] px-5 py-10 sm:px-8"
+        >
           <h1 className="liseuse-titre-chapitre">{chapter.title}</h1>
           {chapter.blocks.map((html, index) => (
             <div

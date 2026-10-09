@@ -2,13 +2,15 @@
  * =============================================================
  *  Fichier    : panels.tsx (reader)
  *  Projet     : Kalami
- *  Description: Panneaux latéraux de la liseuse : sommaire cliquable, signets nommés,
+ *  Description: Panneaux latéraux de la liseuse : sommaire cliquable (et partage du livre),
+ *               signets nommés, annotations (par chapitre, recherche, filtre de couleur),
  *               recherche dans le texte (parties autorisées seulement) et réglages de
  *               lecture (mode, thème, police, taille, interligne).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
- *  Dépendances: i18n, lib/reader/types.ts, API /api/livres/{id}/recherche
+ *  Version    : 1.1
+ *  Date       : 2026-10-10
+ *  Dépendances: i18n, components/ui/icons, lib/reader/annotations.ts,
+ *               lib/reader/types.ts, API /api/livres/{id}/recherche
  * =============================================================
  */
 
@@ -17,12 +19,17 @@
 import Link from "next/link";
 import { type FormEvent, type ReactNode, useState } from "react";
 
+import { IconShare, IconTrash } from "@/components/ui/icons";
 import { getDictionary, interpolate } from "@/i18n";
 import type { TocEntry } from "@/lib/catalog/types";
+import { filterHighlights, groupByChapter, shareExcerpt } from "@/lib/reader/annotations";
 import { parseSearchQuery, SEARCH_MAX_HITS } from "@/lib/reader/search";
 import {
   type Bookmark,
   FONT_SIZES,
+  HIGHLIGHT_COLORS,
+  type Highlight,
+  type HighlightColor,
   LINE_HEIGHTS,
   READER_FONTS,
   READER_MODES,
@@ -35,7 +42,7 @@ import {
 
 const t = getDictionary();
 
-export type PanelName = "toc" | "bookmarks" | "search" | "settings";
+export type PanelName = "toc" | "bookmarks" | "annotations" | "search" | "settings";
 
 const BUTTON =
   "min-h-11 rounded-md border border-line px-3 text-label hover:bg-sand " +
@@ -81,44 +88,53 @@ export function Panel({
 
 // ==================== SOMMAIRE ====================
 
-/** Sommaire : chapitres réservés signalés, chapitre en cours marqué. */
+/** Sommaire : chapitres réservés signalés, chapitre en cours marqué ; partage du livre. */
 export function TocPanel({
   toc,
   access,
   current,
   onSelect,
+  onShareBook,
 }: {
   toc: TocEntry[];
   access: ReaderAccess;
   current: number;
   onSelect: (chapter: number) => void;
+  onShareBook: () => void;
 }) {
   return (
-    <ol className="flex flex-col">
-      {toc.map((entry) => {
-        const locked = access !== "full" && !entry.is_preview;
-        const isCurrent = entry.chapter_position === current;
-        return (
-          <li key={entry.chapter_position}>
-            <button
-              type="button"
-              onClick={() => onSelect(entry.chapter_position)}
-              aria-current={isCurrent ? "true" : undefined}
-              className={`flex min-h-11 w-full items-baseline gap-2 rounded-md px-2 py-2
-                text-left ${isCurrent ? "font-semibold" : ""} ${locked ? "opacity-60" : ""}`}
-            >
-              <span className="opacity-70">{entry.chapter_position}.</span>
-              <span className="flex-1">{entry.title}</span>
-              {locked && (
-                <span className="text-xs" title={t.reader.toc.locked}>
-                  🔒<span className="sr-only">{t.reader.toc.locked}</span>
-                </span>
-              )}
-            </button>
-          </li>
-        );
-      })}
-    </ol>
+    <div className="flex flex-col gap-4">
+      <ol className="flex flex-col">
+        {toc.map((entry) => {
+          const locked = access !== "full" && !entry.is_preview;
+          const isCurrent = entry.chapter_position === current;
+          return (
+            <li key={entry.chapter_position}>
+              <button
+                type="button"
+                onClick={() => onSelect(entry.chapter_position)}
+                aria-current={isCurrent ? "true" : undefined}
+                className={`flex min-h-11 w-full items-baseline gap-2 rounded-md px-2 py-2
+                  text-left ${isCurrent ? "font-semibold" : ""} ${locked ? "opacity-60" : ""}`}
+              >
+                <span className="opacity-70">{entry.chapter_position}.</span>
+                <span className="flex-1">{entry.title}</span>
+                {locked && (
+                  <span className="text-xs" title={t.reader.toc.locked}>
+                    🔒<span className="sr-only">{t.reader.toc.locked}</span>
+                  </span>
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+      <button type="button" onClick={onShareBook} className={`${BUTTON} inline-flex items-center
+        justify-center gap-2`}>
+        <IconShare />
+        {t.reader.share.book}
+      </button>
+    </div>
   );
 }
 
@@ -220,6 +236,124 @@ export function BookmarksPanel(props: BookmarksPanelProps) {
             </li>
           ))}
         </ul>
+      )}
+    </div>
+  );
+}
+
+// ==================== ANNOTATIONS ====================
+
+type AnnotationsPanelProps = {
+  signedIn: boolean;
+  slug: string;
+  highlights: Highlight[];
+  toc: TocEntry[];
+  onDelete: (id: string) => void;
+  onSelect: (position: ReaderPosition) => void;
+};
+
+/** Surlignages et notes du livre, par chapitre, avec recherche et filtre de couleur. */
+export function AnnotationsPanel(props: AnnotationsPanelProps) {
+  const { signedIn, slug, highlights, toc, onDelete, onSelect } = props;
+  const [query, setQuery] = useState("");
+  const [color, setColor] = useState<HighlightColor | null>(null);
+
+  if (!signedIn) {
+    return (
+      <div className="flex flex-col gap-3">
+        <p>{t.reader.annotations.signInRequired}</p>
+        <Link
+          href={`/connexion?suivant=${encodeURIComponent(`/livres/${slug}/lire`)}`}
+          className="underline"
+        >
+          {t.reader.annotations.signIn}
+        </Link>
+      </div>
+    );
+  }
+  if (highlights.length === 0) return <p className="opacity-80">{t.reader.annotations.empty}</p>;
+
+  const visible = filterHighlights(highlights, query, color);
+  const groups = groupByChapter(visible);
+  const chapterTitle = (chapter: number) =>
+    toc.find((entry) => entry.chapter_position === chapter)?.title ?? String(chapter);
+  const colorButton = (value: HighlightColor | null) => (
+    <button
+      key={value ?? "toutes"}
+      type="button"
+      onClick={() => setColor(value)}
+      aria-pressed={color === value}
+      className={`${BUTTON} inline-flex items-center gap-2 ${color === value ? BUTTON_ACTIVE : ""}`}
+    >
+      {value && (
+        <span data-couleur={value} className="liseuse-pastille size-4 rounded-full border" />
+      )}
+      {value ? t.reader.colors[value] : t.reader.annotations.allColors}
+    </button>
+  );
+
+  return (
+    <div className="flex flex-col gap-4">
+      <label htmlFor="recherche-annotations" className="sr-only">
+        {t.reader.annotations.search}
+      </label>
+      <input
+        id="recherche-annotations"
+        type="search"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        placeholder={t.reader.annotations.search}
+        className="liseuse-champ min-h-11 rounded-md border px-3"
+      />
+      <div role="group" aria-label={t.reader.annotations.filter} className="flex flex-wrap gap-1">
+        {colorButton(null)}
+        {HIGHLIGHT_COLORS.map(colorButton)}
+      </div>
+      <p className="text-sm opacity-80" aria-live="polite">
+        {interpolate(t.reader.annotations.count, { count: String(visible.length) })}
+      </p>
+
+      {groups.length === 0 ? (
+        <p className="opacity-80">{t.reader.annotations.noMatch}</p>
+      ) : (
+        groups.map((group) => (
+          <section key={group.chapter} className="flex flex-col gap-1">
+            <h3 className="text-sm font-semibold">{chapterTitle(group.chapter)}</h3>
+            <ul className="flex flex-col divide-y divide-[var(--liseuse-bordure)]">
+              {group.items.map((item) => (
+                <li key={item.id} className="flex items-start gap-2 py-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onSelect({ chapter: item.chapter, block: item.start.block,
+                        offset: item.start.offset })
+                    }
+                    aria-label={`${t.reader.annotations.open} : ${item.quote}`}
+                    className="flex min-h-11 flex-1 flex-col items-start gap-1 text-left"
+                  >
+                    <span
+                      data-couleur={item.color}
+                      className="liseuse-annotation line-clamp-3 rounded-sm px-1"
+                    >
+                      {item.quote}
+                    </span>
+                    {item.note && <span className="text-sm opacity-80">{item.note}</span>}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete(item.id)}
+                    aria-label={interpolate(t.reader.annotations.remove, {
+                      quote: shareExcerpt(item.quote, 40),
+                    })}
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md"
+                  >
+                    <IconTrash />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
       )}
     </div>
   );

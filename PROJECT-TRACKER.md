@@ -10,7 +10,8 @@ Version actuelle : v0.5.1 | Statut : 🟡 En cours (Sprint 4b terminé : design)
 | #4 | 2026-10-08 | Sprint 3 : conversion DOCX/EPUB, extrait, API chapitres, droits | ~200 000 | ~1.20 $ |
 | #5 | 2026-10-09 | Sprint 4 : liseuse, marque-page, signets, recherche, protection | ~250 000 | ~1.50 $ |
 | #6 | 2026-10-09 | Sprint 4b : charte, composants, refonte des pages et de la liseuse | ~300 000 | ~1.80 $ |
-| **TOTAL** | | | **~1 080 000** | **~6.48 $** |
+| #7 | 2026-10-10 | Sprint 7 : surlignages, notes, citation, carte de partage | ~280 000 | ~1.68 $ |
+| **TOTAL** | | | **~1 360 000** | **~8.16 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -34,4 +35,7 @@ Version actuelle : v0.5.1 | Statut : 🟡 En cours (Sprint 4b terminé : design)
 - [ ] Sprint 4 — essai réel de la liseuse (ordinateur, tablette, téléphone)
 - [x] Sprint 4b — design : charte, composants, pages, liseuse, contrastes AA (v0.5.1)
 - [ ] Sprint 4b — revue visuelle par l'utilisateur (ordinateur, téléphone, 3 thèmes)
-- [ ] Sprints 7, 8, 9, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 7 — annotations : surlignages, notes, citation, partage (v0.6.0)
+- [ ] Sprint 7 — migration `20261010120000_annotations.sql` à appliquer + tests d'intégration
+- [ ] Sprint 7 — essai réel : sélection sur téléphone Android (appui long), partage d'image
+- [ ] Sprints 8, 9, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)

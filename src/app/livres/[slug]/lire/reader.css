@@ -3,10 +3,11 @@
   Fichier    : reader.css
   Projet     : Kalami
   Description: Styles de la liseuse : thèmes (clair, sépia, sombre), typographie du texte,
-               pages à tourner, défilement, filigrane, protection (sélection, impression).
+               pages à tourner, défilement, filigrane, annotations (couleurs, notes, menu,
+               fenêtres), protection (sélection, impression).
   Auteur     : Claude Marcel
-  Version    : 1.1
-  Date       : 2026-10-09
+  Version    : 1.2
+  Date       : 2026-10-10
   Dépend de  : globals.css (jetons de la charte, polices --police-lecture / --police-interface)
 =============================================================
 */
@@ -63,6 +64,67 @@
   background: var(--liseuse-surlignage);
   color: inherit;
   border-radius: 2px;
+}
+
+/* ==================== ANNOTATIONS ==================== */
+
+/* Le texte du livre et les références à citer sont sélectionnables (annoter, citer,
+   partager) ; la copie reste bloquée sauf pour les références (use-protection.ts). */
+.liseuse-texte,
+.liseuse [data-selectionnable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Surlignage du lecteur : couleur choisie, texte foncé lisible dans tous les thèmes */
+.liseuse-annotation {
+  color: #1f1b16;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.liseuse-annotation[data-couleur="jaune"],
+.liseuse-pastille[data-couleur="jaune"] {
+  background: var(--hl-jaune);
+}
+
+.liseuse-annotation[data-couleur="vert"],
+.liseuse-pastille[data-couleur="vert"] {
+  background: var(--hl-vert);
+}
+
+.liseuse-annotation[data-couleur="bleu"],
+.liseuse-pastille[data-couleur="bleu"] {
+  background: var(--hl-bleu);
+}
+
+.liseuse-annotation[data-couleur="rose"],
+.liseuse-pastille[data-couleur="rose"] {
+  background: var(--hl-rose);
+}
+
+.liseuse-annotation[data-couleur="orange"],
+.liseuse-pastille[data-couleur="orange"] {
+  background: var(--hl-orange);
+}
+
+/* Passage annoté d'une note : souligné en pointillé */
+.liseuse-annotation[data-note] {
+  text-decoration: underline dotted;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* Menu d'actions, fenêtres et messages suivent le thème de la liseuse */
+.liseuse-menu,
+.liseuse-dialogue,
+.liseuse-message {
+  background: var(--liseuse-fond);
+  color: var(--liseuse-texte);
+}
+
+.liseuse-dialogue::backdrop {
+  background: var(--scrim);
 }
 
 /* ==================== TEXTE ==================== */

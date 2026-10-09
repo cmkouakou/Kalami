@@ -2,11 +2,11 @@
  * =============================================================
  *  Fichier    : types.ts
  *  Projet     : Kalami
- *  Description: Types de la liseuse (position, réglages, pages, signets, recherche,
- *               données de départ), partagés entre le serveur et le client.
+ *  Description: Types de la liseuse (position, réglages, pages, signets, annotations,
+ *               recherche, données de départ), partagés entre le serveur et le client.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-10
  *  Dépendances: lib/catalog/types.ts
  * =============================================================
  */
@@ -86,6 +86,32 @@ export type Bookmark = ReaderPosition & {
   createdAt: string;
 };
 
+// ==================== ANNOTATIONS ====================
+
+/** Couleurs de surlignage (jetons --hl-* de la charte). */
+export const HIGHLIGHT_COLORS = ["jaune", "vert", "bleu", "rose", "orange"] as const;
+export type HighlightColor = (typeof HIGHLIGHT_COLORS)[number];
+
+/** Point du texte d'un chapitre : bloc et décalage dans le texte du bloc. */
+export type TextPoint = { block: number; offset: number };
+
+/** Ancrage d'un passage : chapitre, début (inclus) et fin (exclue). */
+export type HighlightAnchor = {
+  chapter: number;
+  start: TextPoint;
+  end: TextPoint;
+};
+
+/** Surlignage, avec une note facultative. */
+export type Highlight = HighlightAnchor & {
+  id: string;
+  color: HighlightColor;
+  /** Texte du passage (≤ 1000 caractères), pour la liste des annotations */
+  quote: string;
+  note: string | null;
+  createdAt: string;
+};
+
 /** Résultat de recherche : passage autorisé, jamais au-delà de l'extrait. */
 export type SearchHit = ReaderPosition & {
   title: string;
@@ -110,6 +136,10 @@ export type ReaderBootstrap = {
     authorName: string;
     language: BookLanguage;
     prices: Price[];
+    /** Données de citation et de carte de partage */
+    edition: string | null;
+    publicationYear: number | null;
+    coverUrl: string | null;
   };
   toc: TocEntry[];
   access: ReaderAccess;
@@ -119,6 +149,7 @@ export type ReaderBootstrap = {
   watermark: string | null;
   position: SavedPosition | null;
   bookmarks: Bookmark[];
+  highlights: Highlight[];
   /** Chapitre demandé dans l'URL (?chapitre=n), prioritaire sur la position */
   requestedChapter: number | null;
 };
