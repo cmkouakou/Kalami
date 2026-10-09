@@ -5,8 +5,9 @@
  *  Description: Validation des formulaires d'administration du catalogue (catégories,
  *               auteurs, livres, prix, extrait gratuit et droits de lecture). Fonctions
  *               pures : la base applique en plus ses propres contraintes (CHECK, RLS).
+ *               Les briques de lecture des champs servent aussi à l'espace auteur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-07
  *  Dépendances: lib/slug.ts, lib/currency.ts, i18n
  * =============================================================
@@ -69,26 +70,31 @@ export function isUuid(value: unknown): value is string {
 }
 
 /** Erreur de validation transportant le message à afficher. */
-class InvalidField extends Error {}
+export class InvalidField extends Error {}
 
 // ==================== LECTURE DES CHAMPS ====================
 
 /** Texte nettoyé ; null si vide. Lève InvalidField si trop long. */
-function optionalText(fd: FormData, name: string, label: string, max: number): string | null {
+export function optionalText(
+  fd: FormData,
+  name: string,
+  label: string,
+  max: number,
+): string | null {
   const value = String(fd.get(name) ?? "").trim();
   if (value.length > max) throw new InvalidField(interpolate(e.tooLong, { field: label }));
   return value || null;
 }
 
 /** Texte obligatoire. */
-function requiredText(fd: FormData, name: string, label: string, max: number): string {
+export function requiredText(fd: FormData, name: string, label: string, max: number): string {
   const value = optionalText(fd, name, label, max);
   if (!value) throw new InvalidField(interpolate(e.required, { field: label }));
   return value;
 }
 
 /** Entier facultatif compris entre min et max. */
-function optionalInt(
+export function optionalInt(
   fd: FormData,
   name: string,
   label: string,
@@ -105,7 +111,7 @@ function optionalInt(
 }
 
 /** Slug saisi, ou généré depuis le libellé s'il est vide. */
-function slugFrom(fd: FormData, fallbackText: string): string {
+export function slugFrom(fd: FormData, fallbackText: string): string {
   const raw = String(fd.get("slug") ?? "").trim();
   const slug = raw ? raw.toLowerCase() : slugify(fallbackText);
   if (!isValidSlug(slug)) throw new InvalidField(e.invalidSlug);
@@ -113,7 +119,7 @@ function slugFrom(fd: FormData, fallbackText: string): string {
 }
 
 /** Valeur choisie dans une liste fermée. */
-function choice<T extends string>(
+export function choice<T extends string>(
   fd: FormData,
   name: string,
   label: string,
@@ -127,7 +133,7 @@ function choice<T extends string>(
 }
 
 /** Identifiant UUID facultatif (liste déroulante avec option « Aucune »). */
-function optionalUuid(fd: FormData, name: string, label: string): string | null {
+export function optionalUuid(fd: FormData, name: string, label: string): string | null {
   const value = String(fd.get(name) ?? "").trim();
   if (!value) return null;
   if (!isUuid(value)) {
@@ -137,7 +143,7 @@ function optionalUuid(fd: FormData, name: string, label: string): string | null 
 }
 
 /** Exécute une lecture de formulaire et convertit les erreurs en résultat. */
-function attempt<T>(read: () => T): ParseResult<T> {
+export function attempt<T>(read: () => T): ParseResult<T> {
   try {
     return { ok: true, value: read() };
   } catch (error) {
@@ -221,7 +227,7 @@ export function parseBook(fd: FormData): ParseResult<{ book: BookInput; prices: 
 }
 
 /** Lit les trois champs de prix ; lève InvalidField si une saisie est incorrecte. */
-function parsePrices(fd: FormData): PriceInput {
+export function parsePrices(fd: FormData): PriceInput {
   const prices = {} as PriceInput;
   for (const currency of CURRENCIES) {
     const raw = String(fd.get(`price_${currency}`) ?? "").trim();

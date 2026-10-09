@@ -129,3 +129,35 @@ export function rateLimitSubject(userId: string | null, headers: Headers): strin
   const ip = forwarded || headers.get("x-real-ip")?.trim() || "inconnue";
   return `ip:${ip.slice(0, 64)}`;
 }
+
+// ==================== APERÇU AVANT VALIDATION ====================
+
+/** Valeur du paramètre « version » qui demande la version en attente de validation. */
+export const PREVIEW_VERSION_PARAM = "apercu";
+
+/** Versions d'un livre utiles au choix du texte servi. */
+export type BookVersions = {
+  status: string;
+  current_version_id: string | null;
+  pending_version_id: string | null;
+};
+
+/**
+ * Choisit la version servie au demandeur.
+ * @param book    - Statut et versions du livre
+ * @param staff   - Le demandeur est l'auteur du livre ou un administrateur (aal2)
+ * @param preview - Aperçu demandé (?version=apercu)
+ * @returns Identifiant de la version, ou null (réponse 404)
+ *
+ * L'aperçu, réservé à l'équipe, montre la version en attente, sinon la courante. Sans
+ * aperçu : version courante, d'un livre publié sauf pour l'équipe.
+ */
+export function chooseVersion(
+  book: BookVersions,
+  staff: boolean,
+  preview: boolean,
+): string | null {
+  if (preview) return staff ? (book.pending_version_id ?? book.current_version_id) : null;
+  if (book.status !== "published" && !staff) return null;
+  return book.current_version_id;
+}

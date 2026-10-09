@@ -24,3 +24,21 @@ export function publicImageUrl(path: string | null): string | null {
   const encoded = path.split("/").map(encodeURIComponent).join("/");
   return `${base.replace(/\/+$/, "")}/storage/v1/object/public/${COVERS_BUCKET}/${encoded}`;
 }
+
+/** Chemin d'une image envoyée par le navigateur : « {dossier}/{id}/{uuid}.{ext} ». */
+const UUID_SOURCE = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+const IMAGE_PATH_PATTERN = new RegExp(
+  `^(livres|auteurs)/(${UUID_SOURCE})/${UUID_SOURCE}[.](jpg|png|webp)$`,
+);
+
+/**
+ * Vérifie qu'un chemin d'image appartient bien à l'élément modifié.
+ * @param path   - Chemin envoyé par le navigateur
+ * @param folder - « livres » ou « auteurs »
+ * @param id     - Identifiant de l'élément
+ */
+export function isOwnImagePath(path: unknown, folder: "livres" | "auteurs", id: string): boolean {
+  if (typeof path !== "string") return false;
+  const match = IMAGE_PATH_PATTERN.exec(path);
+  return match !== null && match[1] === folder && match[2] === id;
+}

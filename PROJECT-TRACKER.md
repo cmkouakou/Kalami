@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.5.1 | Statut : 🟡 En cours (Sprint 4b terminé : design)
+Version actuelle : v0.8.0 | Statut : 🟡 En cours (Sprint 9 terminé : espace auteur)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -11,7 +11,8 @@ Version actuelle : v0.5.1 | Statut : 🟡 En cours (Sprint 4b terminé : design)
 | #5 | 2026-10-09 | Sprint 4 : liseuse, marque-page, signets, recherche, protection | ~250 000 | ~1.50 $ |
 | #6 | 2026-10-09 | Sprint 4b : charte, composants, refonte des pages et de la liseuse | ~300 000 | ~1.80 $ |
 | #7 | 2026-10-10 | Sprint 7 : surlignages, notes, citation, carte de partage | ~280 000 | ~1.68 $ |
-| **TOTAL** | | | **~1 360 000** | **~8.16 $** |
+| #8 | 2026-10-09 | Sprint 9 : espace auteur, contrat, aperçu, validation | ~320 000 | ~1.92 $ |
+| **TOTAL** | | | **~1 680 000** | **~10.08 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -38,4 +39,7 @@ Version actuelle : v0.5.1 | Statut : 🟡 En cours (Sprint 4b terminé : design)
 - [x] Sprint 7 — annotations : surlignages, notes, citation, partage (v0.6.0)
 - [x] Sprint 7 — migration `20261010120000_annotations.sql` appliquée, tests 203/203 (dont RLS 4/4)
 - [ ] Sprint 7 — essai réel : sélection sur téléphone Android (appui long), partage d'image
-- [ ] Sprints 8, 9, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 9 — espace auteur : contrat, dépôt, aperçu, validation, tableau de bord (v0.8.0)
+- [ ] Sprint 9 — appliquer la migration `20261011120000_author_space.sql` + tests RLS
+- [ ] Sprint 9 — publier un premier contrat (/admin/contrat) pour ouvrir les inscriptions
+- [ ] Sprints 8, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)

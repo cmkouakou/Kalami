@@ -76,6 +76,12 @@ kalami/
   filigrane : ce sont des freins, pas une protection absolue (le texte est affiché).
 - Annotations : ancrées par bloc + décalage de caractères (comme la position de lecture),
   peintes après la pagination ; la sélection est permise (≤ 1000 caractères) mais pas la copie.
+- Espace auteur (`/auteur`) : inscription libre après acceptation du contrat en vigueur ;
+  chaque livre (et chaque nouvelle version) passe par la validation de l'administration
+  (`/admin/soumissions`). Tant qu'aucun contrat n'est publié (`/admin/contrat`),
+  l'inscription est fermée. Les droits sont appliqués par la base (RLS + déclencheurs).
+- Aperçu (`/apercu/{id}`) : version en attente lisible par l'auteur et l'administration
+  seulement, sans enregistrement de position ni d'annotations.
 
 ## 📅 Historique des versions
 Voir [CHANGELOG.md](CHANGELOG.md).

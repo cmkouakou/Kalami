@@ -16,7 +16,7 @@ import type { NextRequest } from "next/server";
 
 import { isUuid } from "@/lib/admin/validation";
 import { getCurrentUser } from "@/lib/auth/dal";
-import { rateLimitSubject } from "@/lib/content/access";
+import { PREVIEW_VERSION_PARAM, rateLimitSubject } from "@/lib/content/access";
 import { searchBookForRequest } from "@/lib/content/chapters";
 import { errorResponse, PRIVATE_HEADERS } from "@/lib/content/responses";
 import { parseSearchQuery, SEARCH_MAX_HITS } from "@/lib/reader/search";
@@ -32,9 +32,10 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/api/livres/[
   const query = parseSearchQuery(request.nextUrl.searchParams.get("q"));
   if (query === null) return errorResponse(400);
 
+  const preview = request.nextUrl.searchParams.get("version") === PREVIEW_VERSION_PARAM;
   const user = await getCurrentUser();
   const subject = rateLimitSubject(user?.id ?? null, request.headers);
-  const result = await searchBookForRequest(id, query, user, subject);
+  const result = await searchBookForRequest(id, query, user, subject, preview);
 
   if (result.status !== 200) return errorResponse(result.status);
   return Response.json(

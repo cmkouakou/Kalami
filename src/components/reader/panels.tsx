@@ -22,6 +22,7 @@ import { type FormEvent, type ReactNode, useState } from "react";
 import { IconShare, IconTrash } from "@/components/ui/icons";
 import { getDictionary, interpolate } from "@/i18n";
 import type { TocEntry } from "@/lib/catalog/types";
+import { PREVIEW_VERSION_PARAM } from "@/lib/content/access";
 import { filterHighlights, groupByChapter, shareExcerpt } from "@/lib/reader/annotations";
 import { parseSearchQuery, SEARCH_MAX_HITS } from "@/lib/reader/search";
 import {
@@ -372,9 +373,12 @@ export function SearchPanel({
   bookId,
   access,
   onSelect,
+  preview = false,
 }: {
   bookId: string;
   access: ReaderAccess;
+  /** Recherche dans la version à valider */
+  preview?: boolean;
   onSelect: (hit: SearchHit) => void;
 }) {
   const [query, setQuery] = useState("");
@@ -391,7 +395,8 @@ export function SearchPanel({
     setState({ status: "searching" });
     try {
       const response = await fetch(
-        `/api/livres/${bookId}/recherche?q=${encodeURIComponent(clean)}`,
+        `/api/livres/${bookId}/recherche?q=${encodeURIComponent(clean)}` +
+          (preview ? `&version=${PREVIEW_VERSION_PARAM}` : ""),
         { cache: "no-store" },
       );
       const body = await response.json();

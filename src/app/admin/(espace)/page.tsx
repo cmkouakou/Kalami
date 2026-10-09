@@ -2,11 +2,12 @@
  * =============================================================
  *  Fichier    : page.tsx (admin)
  *  Projet     : Kalami
- *  Description: Tableau de bord de l'administration (/admin) : compteurs du catalogue.
+ *  Description: Tableau de bord de l'administration (/admin) : compteurs du catalogue et
+ *               des soumissions d'auteurs en attente.
  *               Exige un administrateur en aal2. Paiements et ventes : sprints suivants.
  *  Auteur     : Claude Marcel
- *  Version    : 2.0
- *  Date       : 2026-10-07
+ *  Version    : 2.1
+ *  Date       : 2026-10-09
  *  Dépendances: lib/auth/dal.ts, lib/admin/catalog-queries.ts
  * =============================================================
  */
@@ -40,6 +41,7 @@ async function Dashboard() {
   const counts = await getDashboardCounts();
   const d = t.admin.dashboard;
   const tiles = [
+    { label: d.submissions, value: counts.submissions, href: "/admin/soumissions" },
     { label: d.published, value: counts.published, href: "/admin/livres" },
     { label: d.drafts, value: counts.drafts, href: "/admin/livres" },
     { label: d.authors, value: counts.authors, href: "/admin/auteurs" },
@@ -51,7 +53,7 @@ async function Dashboard() {
       <p className="text-ink-muted">
         {t.admin.welcome} ({profile.display_name ?? user.email})
       </p>
-      <ul className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         {tiles.map((tile) => (
           <li key={tile.label}>
             <Link

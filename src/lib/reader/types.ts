@@ -152,4 +152,6 @@ export type ReaderBootstrap = {
   highlights: Highlight[];
   /** Chapitre demandé dans l'URL (?chapitre=n), prioritaire sur la position */
   requestedChapter: number | null;
+  /** Aperçu de la version à valider (auteur, administrateur) : lien de retour */
+  preview?: { closeHref: string };
 };

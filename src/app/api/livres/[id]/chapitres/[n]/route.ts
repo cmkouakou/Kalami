@@ -18,7 +18,11 @@ import type { NextRequest } from "next/server";
 
 import { isUuid } from "@/lib/admin/validation";
 import { getCurrentUser } from "@/lib/auth/dal";
-import { parseChapterPosition, rateLimitSubject } from "@/lib/content/access";
+import {
+  parseChapterPosition,
+  PREVIEW_VERSION_PARAM,
+  rateLimitSubject,
+} from "@/lib/content/access";
 import { getChapterForRequest } from "@/lib/content/chapters";
 import { errorResponse, PRIVATE_HEADERS } from "@/lib/content/responses";
 
@@ -34,9 +38,10 @@ export async function GET(
   const position = parseChapterPosition(n);
   if (!isUuid(id) || position === null) return errorResponse(404);
 
+  const preview = request.nextUrl.searchParams.get("version") === PREVIEW_VERSION_PARAM;
   const user = await getCurrentUser();
   const subject = rateLimitSubject(user?.id ?? null, request.headers);
-  const result = await getChapterForRequest(id, position, user, subject);
+  const result = await getChapterForRequest(id, position, user, subject, preview);
 
   if (result.status !== 200) return errorResponse(result.status);
   return Response.json(result.payload, { headers: PRIVATE_HEADERS });

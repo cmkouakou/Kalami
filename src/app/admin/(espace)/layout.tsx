@@ -29,6 +29,8 @@ const LINKS = [
   { href: "/admin/livres", label: t.admin.nav.books },
   { href: "/admin/auteurs", label: t.admin.nav.authors },
   { href: "/admin/categories", label: t.admin.nav.categories },
+  { href: "/admin/soumissions", label: t.admin.nav.submissions },
+  { href: "/admin/contrat", label: t.admin.nav.contract },
   { href: "/", label: t.admin.nav.site },
 ];
 

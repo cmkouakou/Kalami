@@ -19,29 +19,22 @@ import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getDictionary } from "@/i18n";
-import { audit, type Supabase } from "@/lib/admin/audit";
+import { audit } from "@/lib/admin/audit";
 import {
   isUuid,
   parseAuthor,
   parseBook,
   parseCategory,
-  type PriceInput,
 } from "@/lib/admin/validation";
 import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
-import { COVERS_BUCKET } from "@/lib/catalog/images";
+import { isOwnImagePath } from "@/lib/catalog/images";
 import { CATALOG_TAG } from "@/lib/catalog/queries";
-import { CURRENCIES } from "@/lib/catalog/types";
+import { removeImage, savePrices } from "@/lib/catalog/writes";
 import { createClient } from "@/lib/supabase/server";
 
 const t = getDictionary();
 const e = t.admin.errors;
-
-/** Chemin d'une image envoyée par le navigateur : « {dossier}/{id}/{uuid}.{ext} ». */
-const UUID_SOURCE = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-const IMAGE_PATH_PATTERN = new RegExp(
-  `^(livres|auteurs)/(${UUID_SOURCE})/${UUID_SOURCE}[.](jpg|png|webp)$`,
-);
 
 type DbError = { code?: string; message: string } | null;
 
@@ -51,53 +44,6 @@ type DbError = { code?: string; message: string } | null;
 function dbErrorMessage(error: DbError): string {
   if (error?.code === "23505") return e.slugTaken;
   return e.generic;
-}
-
-/** Enregistre les prix : met à jour les devises saisies, supprime les autres. */
-async function savePrices(
-  supabase: Supabase,
-  bookId: string,
-  prices: PriceInput,
-): Promise<DbError> {
-  const rows = CURRENCIES.filter((c) => prices[c] !== null).map((currency) => ({
-    book_id: bookId,
-    currency,
-    amount_minor: prices[currency] as number,
-  }));
-  const absent = CURRENCIES.filter((c) => prices[c] === null);
-
-  if (rows.length > 0) {
-    const { error } = await supabase
-      .from("book_prices")
-      .upsert(rows, { onConflict: "book_id,currency" });
-    if (error) return error;
-  }
-  if (absent.length > 0) {
-    const { error } = await supabase
-      .from("book_prices")
-      .delete()
-      .eq("book_id", bookId)
-      .in("currency", absent);
-    if (error) return error;
-  }
-  return null;
-}
-
-/** Supprime une image du seau (échec sans conséquence : le fichier reste orphelin). */
-async function removeImage(supabase: Supabase, path: string | null): Promise<void> {
-  if (path) await supabase.storage.from(COVERS_BUCKET).remove([path]);
-}
-
-/**
- * Vérifie qu'un chemin d'image appartient bien à l'élément modifié.
- * @param path   - Chemin envoyé par le navigateur
- * @param folder - « livres » ou « auteurs »
- * @param id     - Identifiant de l'élément
- */
-function isOwnImagePath(path: unknown, folder: "livres" | "auteurs", id: string): boolean {
-  if (typeof path !== "string") return false;
-  const match = IMAGE_PATH_PATTERN.exec(path);
-  return match !== null && match[1] === folder && match[2] === id;
 }
 
 // ==================== CATÉGORIES ====================

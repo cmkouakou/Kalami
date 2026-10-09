@@ -323,6 +323,114 @@ const fr = {
     save: "Enregistrer",
     saved: "Profil enregistré.",
     adminLink: "Administration",
+    authorLink: "Espace auteur",
+    becomeAuthor: "Devenir auteur",
+    becomeAuthorHelp:
+      "Publiez vos livres sur Kalami : l'inscription est libre, chaque livre est relu " +
+      "avant publication.",
+  },
+  author: {
+    title: "Espace auteur",
+    intro: "Vos livres, leur état de validation et ce qu'en font vos lecteurs.",
+    nav: {
+      dashboard: "Tableau de bord",
+      profile: "Profil et versements",
+      contract: "Contrat",
+    },
+    dashboard: {
+      books: "Mes livres",
+      newBook: "Nouveau livre",
+      noBooks: "Aucun livre pour le moment. Commencez par créer sa fiche.",
+      readers: "{count} lecteurs",
+      highlights: "{count} surlignages",
+      pendingVersion: "Nouvelle version en attente",
+      salesTitle: "Ventes et revenus",
+      salesSoon:
+        "Les ventes, vos revenus et l'historique des versements apparaîtront ici dès " +
+        "l'ouverture des paiements.",
+    },
+    register: {
+      title: "Devenir auteur",
+      intro:
+        "Créez votre fiche d'auteur. Elle sera visible des lecteurs dès la publication de " +
+        "votre premier livre.",
+      closed: "Les inscriptions des auteurs ouvrent bientôt.",
+      displayName: "Nom d'auteur (affiché aux lecteurs)",
+      slug: "Adresse de votre page (laisser vide pour la générer)",
+      bio: "Biographie (facultative)",
+      accept: "J'ai lu et j'accepte le contrat auteur (version {version}).",
+      submit: "Créer ma fiche d'auteur",
+      acceptRequired: "Vous devez accepter le contrat pour continuer.",
+      alreadyAuthor: "Vous avez déjà une fiche d'auteur.",
+    },
+    contract: {
+      title: "Contrat auteur",
+      version: "Version {version} — publiée le {date}",
+      acceptedOn: "Accepté le {date}.",
+      newVersion:
+        "Une nouvelle version du contrat a été publiée. Acceptez-la pour soumettre vos livres.",
+      accept: "J'accepte cette version",
+      accepted: "Contrat accepté.",
+      outdated: "Le contrat vient de changer : relisez la nouvelle version.",
+    },
+    profile: {
+      title: "Profil et versements",
+      public: "Fiche publique",
+      photo: "Photo",
+      payout: "Coordonnées de versement",
+      payoutHelp:
+        "Utilisées pour vous verser vos revenus. Seuls vous et l'équipe Kalami les voyez.",
+      method: "Mode de versement",
+      methods: { bank: "Virement bancaire", mobile_money: "Mobile Money" },
+      accountHolder: "Titulaire du compte",
+      bankName: "Banque",
+      accountNumber: "Numéro de compte ou IBAN",
+      swift: "Code SWIFT/BIC (facultatif)",
+      mobileOperator: "Opérateur",
+      operators: { orange: "Orange Money", mtn: "MTN MoMo", moov: "Moov Money", wave: "Wave" },
+      mobileNumber: "Numéro Mobile Money",
+      bankFields: "Pour un virement : banque et numéro de compte obligatoires.",
+      mobileFields: "Pour Mobile Money : opérateur et numéro obligatoires.",
+    },
+    book: {
+      newTitle: "Nouveau livre",
+      created: "Fiche créée. Ajoutez maintenant la couverture et le manuscrit.",
+      back: "Retour à l'espace auteur",
+      details: "Fiche du livre",
+      locked:
+        "Fiche verrouillée pendant la validation et après publication. Pour corriger le " +
+        "texte d'un livre publié, déposez une nouvelle version.",
+      rejected: "Livre refusé. Motif : {reason}",
+      manuscriptHelp:
+        "Le texte déposé reste privé jusqu'à sa validation. Un nouveau dépôt remplace la " +
+        "version en attente.",
+      pending: "Version en attente : {chapters} chapitres, {words} mots.",
+      current: "Version publiée : {chapters} chapitres, {words} mots.",
+      noVersion: "Aucun manuscrit déposé pour le moment.",
+      preview: "Prévisualiser dans la liseuse",
+      submissionOpen: "Demande de validation en cours depuis le {date}.",
+      submitTitle: "Validation",
+      submitHelp:
+        "Avant d'envoyer : résumé, catégorie, au moins un prix et un manuscrit converti.",
+      submit: "Soumettre pour validation",
+      submitUpdate: "Soumettre la nouvelle version",
+      submitted: "Demande envoyée. Vous serez informé de la décision.",
+      history: "Historique des demandes",
+      kinds: { first: "Première publication", update: "Nouvelle version" },
+      submissionStatuses: { submitted: "En attente", approved: "Validée", rejected: "Refusée" },
+      topPassages: "Passages les plus surlignés",
+      topPassagesHelp: "Affichés à partir de 3 lecteurs différents, sans les identifier.",
+      noTopPassages: "Pas encore assez de surlignages.",
+      passage: "Chapitre {chapter} — {readers} lecteurs",
+    },
+    errors: {
+      contract_required: "Acceptez la dernière version du contrat avant de soumettre.",
+      already_submitted: "Une demande de validation est déjà en cours.",
+      missing_version: "Déposez et convertissez d'abord un manuscrit.",
+      incomplete: "Fiche incomplète : résumé, catégorie et au moins un prix sont requis.",
+      submission_open: "Impossible de déposer une version pendant la validation.",
+      notAuthor: "Créez d'abord votre fiche d'auteur.",
+    },
   },
   admin: {
     title: "Administration",
@@ -332,6 +440,8 @@ const fr = {
       books: "Livres",
       authors: "Auteurs",
       categories: "Catégories",
+      submissions: "Soumissions",
+      contract: "Contrat auteur",
       site: "Voir le site",
     },
     dashboard: {
@@ -339,6 +449,7 @@ const fr = {
       drafts: "Brouillons",
       authors: "Auteurs",
       categories: "Catégories",
+      submissions: "Soumissions en attente",
     },
     common: {
       save: "Enregistrer",
@@ -465,6 +576,39 @@ const fr = {
       rejectionReason: "Indiquez le motif du refus.",
       authorHasBooks: "Impossible : cet auteur a encore des livres.",
       generic: "L'enregistrement a échoué. Réessayez.",
+    },
+    submissions: {
+      title: "Soumissions en attente",
+      empty: "Aucune demande de validation en attente.",
+      book: "Livre",
+      author: "Auteur",
+      kind: "Type",
+      date: "Envoyée le",
+      review: "Décision",
+      reviewHelp:
+        "Prévisualisez la version soumise, puis validez-la (elle devient la version publiée) " +
+        "ou refusez-la avec un motif transmis à l'auteur.",
+      pending: "Version soumise : {chapters} chapitres, {words} mots.",
+      approve: "Valider et publier",
+      approved: "Version validée et publiée.",
+      reason: "Motif du refus (transmis à l'auteur)",
+      reject: "Refuser",
+      rejected: "Demande refusée.",
+      closed: "Cette demande a déjà été traitée.",
+    },
+    contract: {
+      title: "Contrat auteur",
+      current: "Version en vigueur",
+      none: "Aucun contrat publié : les auteurs ne peuvent pas encore s'inscrire.",
+      newVersion: "Publier une nouvelle version",
+      newVersionHelp:
+        "Chaque publication crée une version numérotée. Les auteurs devront l'accepter " +
+        "avant leur prochaine soumission.",
+      contractTitle: "Titre",
+      body: "Texte du contrat",
+      publish: "Publier cette version",
+      published: "Nouvelle version publiée.",
+      acceptances: "{count} acceptations",
     },
     mfa: {
       title: "Vérification en deux étapes",

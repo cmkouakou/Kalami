@@ -1,5 +1,28 @@
 # Journal des modifications
 
+## [v0.8.0] - 2026-10-09 — Sprint 9 : espace auteur
+### Ajouté
+- Migration `author_space` : contrat auteur versionné (`author_contracts`) et acceptations,
+  coordonnées de versement (virement ou Mobile Money, privées), demandes de validation
+  (`book_submissions`), déclencheurs interdisant aux auteurs les champs réservés (statut,
+  mise en avant, versions, extrait), fonctions `author_register`, `author_submit_book`,
+  `admin_review_submission`, `admin_publish_contract`, aperçu et statistiques.
+- Inscription auteur libre (`/auteur/inscription`) avec acceptation du contrat en vigueur ;
+  lien depuis « Mon compte ».
+- Tableau de bord auteur : livres, statut, lecteurs, surlignages, encart « ventes bientôt
+  disponibles ».
+- Profil public (nom, biographie, photo) et coordonnées de versement.
+- Livre : création en brouillon, fiche et prix modifiables tant qu'il n'est pas soumis,
+  couverture, dépôt du manuscrit (DOCX/EPUB), aperçu dans la liseuse, demande de validation,
+  historique des décisions, passages les plus surlignés une fois publié.
+- Administration : file des soumissions, décision (validation ou refus motivé) sur la fiche
+  du livre, publication d'une nouvelle version du contrat ; tuile « Soumissions ».
+- Tests unitaires (validation auteur, choix de version) et test d'intégration RLS.
+
+### Modifié
+- Téléversement d'image et de manuscrit : action serveur injectable (réutilisés côté auteur).
+
+
 ## [v0.6.0] - 2026-10-10 — Sprint 7 : annotations
 ### Ajouté
 - Migration `annotations` : table `highlights` (surlignage en 5 couleurs, note facultative

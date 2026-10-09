@@ -6,8 +6,8 @@
  *               administrateur), sans cache, tous statuts visibles (brouillons compris).
  *               Les appelants doivent avoir exécuté requireAdmin() au préalable.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
  *  Dépendances: lib/supabase/server.ts
  * =============================================================
  */
@@ -59,6 +59,7 @@ export type DashboardCounts = {
   drafts: number;
   authors: number;
   categories: number;
+  submissions: number;
 };
 
 /** Lève une erreur explicite si la lecture a échoué. */
@@ -74,20 +75,21 @@ function check<T>(
 
 /**
  * Compteurs affichés sur l'accueil de l'administration.
- * @returns Livres publiés, brouillons, auteurs et catégories
+ * @returns Livres publiés, brouillons, auteurs, catégories et soumissions en attente
  */
 export async function getDashboardCounts(): Promise<DashboardCounts> {
   const supabase = await createClient();
   const count = (table: string) =>
     supabase.from(table).select("id", { count: "exact", head: true });
 
-  const [published, drafts, authors, categories] = await Promise.all([
+  const [published, drafts, authors, categories, submissions] = await Promise.all([
     count("books").eq("status", "published"),
     count("books").eq("status", "draft"),
     count("authors"),
     count("categories"),
+    count("book_submissions").eq("status", "submitted"),
   ]);
-  for (const result of [published, drafts, authors, categories]) {
+  for (const result of [published, drafts, authors, categories, submissions]) {
     if (result.error) throw new Error(`Comptage impossible : ${result.error.message}`);
   }
   return {
@@ -95,6 +97,7 @@ export async function getDashboardCounts(): Promise<DashboardCounts> {
     drafts: drafts.count ?? 0,
     authors: authors.count ?? 0,
     categories: categories.count ?? 0,
+    submissions: submissions.count ?? 0,
   };
 }
 

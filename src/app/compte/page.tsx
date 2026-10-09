@@ -2,10 +2,11 @@
  * =============================================================
  *  Fichier    : page.tsx
  *  Projet     : Kalami
- *  Description: Espace « Mon compte » (/compte) : profil et déconnexion.
+ *  Description: Espace « Mon compte » (/compte) : profil, accès à l'espace auteur (ou
+ *               invitation à le devenir), administration et déconnexion.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-06
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
  *  Dépendances: lib/auth/dal.ts, components/account/profile-form.tsx
  * =============================================================
  */
@@ -19,6 +20,7 @@ import { SubmitButton } from "@/components/ui/form";
 import { getDictionary } from "@/i18n";
 import { signOut } from "@/lib/auth/actions";
 import { getCurrentProfile, requireUser } from "@/lib/auth/dal";
+import { getAuthorContext } from "@/lib/author/queries";
 
 const t = getDictionary();
 
@@ -27,7 +29,10 @@ export const metadata: Metadata = { title: t.account.title };
 /** Contenu privé : lu dans une zone Suspense (cookies de session). */
 async function AccountContent() {
   const user = await requireUser("/compte");
-  const profile = await getCurrentProfile();
+  const [profile, { author }] = await Promise.all([
+    getCurrentProfile(),
+    getAuthorContext("/compte"),
+  ]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -38,6 +43,22 @@ async function AccountContent() {
           displayName={profile?.display_name ?? null}
           preferredCurrency={profile?.preferred_currency ?? null}
         />
+      </section>
+
+      {/* ==================== ESPACE AUTEUR ==================== */}
+      <section className="rounded-lg border border-line bg-surface p-6">
+        {author ? (
+          <Link href="/auteur" className="text-encre underline">
+            {t.account.authorLink}
+          </Link>
+        ) : (
+          <>
+            <p className="mb-2 text-sm text-ink-muted">{t.account.becomeAuthorHelp}</p>
+            <Link href="/auteur/inscription" className="text-encre underline">
+              {t.account.becomeAuthor}
+            </Link>
+          </>
+        )}
       </section>
 
       {profile?.is_admin && (

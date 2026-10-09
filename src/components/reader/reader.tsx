@@ -45,6 +45,7 @@ import {
 import { BUTTON_ICON, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { APP_NAME, APP_URL } from "@/lib/config";
+import { PREVIEW_VERSION_PARAM } from "@/lib/content/access";
 import { addBookmark, deleteBookmark, deleteHighlight } from "@/lib/reader/actions";
 import {
   bookProgress,
@@ -186,7 +187,8 @@ export function Reader({ data, price }: ReaderProps) {
 
   const rootRef = useRef<HTMLDivElement>(null);
   const controls = useRef<ViewControls | null>(null);
-  const [store] = useState(() => new ChapterStore(book.id));
+  const previewQuery = data.preview ? `?version=${PREVIEW_VERSION_PARAM}` : "";
+  const [store] = useState(() => new ChapterStore(book.id, previewQuery));
   const [settings, setSettings] = useState<ReaderSettings>(loadSettings);
   const [opening, setOpening] = useState<Opening>(() => ({
     ...resolveStartPosition(
@@ -507,7 +509,7 @@ export function Reader({ data, price }: ReaderProps) {
         className="liseuse-barre flex items-center gap-1 border-b border-line px-2 py-1"
       >
         <Link
-          href={`/livres/${book.slug}`}
+          href={data.preview?.closeHref ?? `/livres/${book.slug}`}
           aria-label={t.reader.close}
           title={t.reader.close}
           className={TOOL_BUTTON}
@@ -608,7 +610,12 @@ export function Reader({ data, price }: ReaderProps) {
               />
             )}
             {panel === "search" && (
-              <SearchPanel bookId={book.id} access={access} onSelect={select} />
+              <SearchPanel
+                bookId={book.id}
+                access={access}
+                onSelect={select}
+                preview={Boolean(data.preview)}
+              />
             )}
             {panel === "settings" && (
               <SettingsPanel settings={settings} onChange={changeSettings} />

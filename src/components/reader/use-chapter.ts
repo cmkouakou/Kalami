@@ -32,7 +32,14 @@ type FetchResult = Exclude<ChapterState, { status: "loading" }>;
 export class ChapterStore {
   private readonly results = new Map<number, Promise<FetchResult>>();
 
-  constructor(private readonly bookId: string) {}
+  /**
+   * @param bookId - Identifiant du livre
+   * @param query  - Paramètres ajoutés aux requêtes (ex. « ?version=apercu »)
+   */
+  constructor(
+    private readonly bookId: string,
+    private readonly query = "",
+  ) {}
 
   /**
    * Chapitre demandé (requête unique, même en cas d'appels simultanés).
@@ -56,7 +63,8 @@ export class ChapterStore {
 
   private async fetchChapter(position: number): Promise<FetchResult> {
     try {
-      const response = await fetch(`/api/livres/${this.bookId}/chapitres/${position}`, {
+      const url = `/api/livres/${this.bookId}/chapitres/${position}${this.query}`;
+      const response = await fetch(url, {
         cache: "no-store",
         credentials: "same-origin",
       });

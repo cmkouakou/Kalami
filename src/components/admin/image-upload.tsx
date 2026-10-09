@@ -5,10 +5,11 @@
  *  Description: Envoi d'une couverture de livre ou d'une photo d'auteur. Le fichier part
  *               directement du navigateur vers Supabase Storage (seau « covers », politique
  *               réservée à l'administrateur), sans transiter par le serveur Next.js ; l'action
- *               serveur vérifie ensuite le chemin et l'enregistre sur la fiche.
+ *               serveur vérifie ensuite le chemin et l'enregistre sur la fiche. L'espace
+ *               auteur fournit sa propre action d'enregistrement (prop « save »).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *  Version    : 1.1
+ *  Date       : 2026-10-09
  *  Dépendances: lib/supabase/client.ts, lib/admin/catalog-actions.ts
  * =============================================================
  */
@@ -22,6 +23,7 @@ import { useState, type ChangeEvent } from "react";
 import { FormMessage } from "@/components/ui/form";
 import { getDictionary } from "@/i18n";
 import { setAuthorPhoto, setBookCover } from "@/lib/admin/catalog-actions";
+import type { FormState } from "@/lib/auth/actions";
 import { COVERS_BUCKET, publicImageUrl } from "@/lib/catalog/images";
 import { createClient } from "@/lib/supabase/client";
 
@@ -43,10 +45,12 @@ type ImageUploadProps = {
   id: string;
   label: string;
   currentPath: string | null;
+  /** Action d'enregistrement ; par défaut, celle de l'administration. */
+  save?: (id: string, path: string) => Promise<FormState>;
 };
 
 /** Sélecteur d'image avec aperçu et retour d'état. */
-export function ImageUpload({ kind, id, label, currentPath }: ImageUploadProps) {
+export function ImageUpload({ kind, id, label, currentPath, save }: ImageUploadProps) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ error?: string; message?: string }>({});
@@ -73,8 +77,8 @@ export function ImageUpload({ kind, id, label, currentPath }: ImageUploadProps) 
         .upload(path, file, { contentType: file.type, cacheControl: "31536000" });
       if (error) throw error;
 
-      const save = kind === "book" ? setBookCover : setAuthorPhoto;
-      const result = await save(id, path);
+      const saveImage = save ?? (kind === "book" ? setBookCover : setAuthorPhoto);
+      const result = await saveImage(id, path);
       setFeedback(result ?? {});
       router.refresh();
     } catch {

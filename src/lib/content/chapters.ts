@@ -24,6 +24,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   applyPreviewCut,
   authorizedChapters,
+  chooseVersion,
   CONTENT_RATE_LIMIT,
   CONTENT_RATE_WINDOW_SECONDS,
   decideAccess,
@@ -38,6 +39,7 @@ type BookAccessRow = PreviewRule & {
   id: string;
   status: string;
   current_version_id: string | null;
+  pending_version_id: string | null;
   chapter_count: number | null;
   author: { user_id: string | null };
 };
@@ -58,7 +60,8 @@ export type ReaderAccessInfo = {
 };
 
 const BOOK_ACCESS_COLUMNS =
-  "id, status, preview_chapters, preview_cut_block, current_version_id, chapter_count, " +
+  "id, status, preview_chapters, preview_cut_block, current_version_id, pending_version_id, " +
+  "chapter_count, " +
   "author:authors!inner(user_id)";
 
 // ==================== VÉRIFICATIONS ====================
@@ -147,6 +150,17 @@ async function registerAccess(
   return data === true;
 }
 
+/** Nombre de chapitres d'une version (aperçu d'une version en attente). */
+async function versionChapterCount(db: AdminClient, versionId: string): Promise<number | null> {
+  const { data, error } = await db
+    .from("book_versions")
+    .select("chapter_count")
+    .eq("id", versionId)
+    .maybeSingle<{ chapter_count: number }>();
+  if (error) throw new Error(`Lecture de la version impossible : ${error.message}`);
+  return data?.chapter_count ?? null;
+}
+
 // ==================== SERVICE ====================
 
 /**
@@ -155,6 +169,7 @@ async function registerAccess(
  * @param position - Numéro du chapitre (déjà validé)
  * @param user     - Utilisateur connecté, ou null pour un visiteur
  * @param subject  - Identifiant de limitation de débit (voir rateLimitSubject)
+ * @param preview  - Aperçu de la version en attente (auteur ou administrateur)
  * @returns Chapitre (200) ou code d'erreur : 404 livre/chapitre absent, 429 trop de
  *          requêtes, 403 hors extrait sans droit de lecture
  */
@@ -163,31 +178,34 @@ export async function getChapterForRequest(
   position: number,
   user: CurrentUser | null,
   subject: string,
+  preview = false,
 ): Promise<ChapterResult> {
   const db = createAdminClient();
 
   const book = await loadBook(db, bookId);
-  if (!book?.current_version_id) return { status: 404 };
+  if (!book) return { status: 404 };
 
   const staff = user ? await isStaff(db, user, book.author.user_id) : false;
-  if (book.status !== "published" && !staff) return { status: 404 };
+  const versionId = chooseVersion(book, staff, preview);
+  if (!versionId) return { status: 404 };
 
   if (!(await registerAccess(db, subject, bookId, position))) return { status: 429 };
 
-  const entitled = await isEntitled(db, user, bookId, staff);
+  const entitled = preview || (await isEntitled(db, user, bookId, staff));
   const decision = decideAccess(position, book, entitled);
   if (decision === "denied") return { status: 403 };
 
   const { data: chapter, error: chapterError } = await db
     .from("chapters")
     .select("title, blocks")
-    .eq("version_id", book.current_version_id)
+    .eq("version_id", versionId)
     .eq("position", position)
     .maybeSingle<{ title: string; blocks: string[] }>();
   if (chapterError) throw new Error(`Lecture du chapitre impossible : ${chapterError.message}`);
   if (!chapter) return { status: 404 };
 
   const { blocks, truncated } = applyPreviewCut(chapter.blocks, position, decision, book);
+  const chapterCount = preview ? await versionChapterCount(db, versionId) : book.chapter_count;
   return {
     status: 200,
     payload: {
@@ -195,7 +213,7 @@ export async function getChapterForRequest(
       position,
       title: chapter.title,
       blocks,
-      chapter_count: book.chapter_count ?? position,
+      chapter_count: chapterCount ?? position,
       is_preview: decision === "preview",
       truncated,
     },
@@ -232,6 +250,7 @@ export async function getReaderAccess(
  * @param query   - Requête déjà validée (parseSearchQuery)
  * @param user    - Utilisateur connecté, ou null
  * @param subject - Identifiant de limitation de débit
+ * @param preview - Aperçu de la version en attente (auteur ou administrateur)
  * @returns Occurrences (200), 404 livre absent, 429 trop de requêtes
  */
 export async function searchBookForRequest(
@@ -239,23 +258,25 @@ export async function searchBookForRequest(
   query: string,
   user: CurrentUser | null,
   subject: string,
+  preview = false,
 ): Promise<SearchResult> {
   const db = createAdminClient();
   const book = await loadBook(db, bookId);
-  if (!book?.current_version_id) return { status: 404 };
+  if (!book) return { status: 404 };
 
   const staff = user ? await isStaff(db, user, book.author.user_id) : false;
-  if (book.status !== "published" && !staff) return { status: 404 };
+  const versionId = chooseVersion(book, staff, preview);
+  if (!versionId) return { status: 404 };
 
   // Une recherche compte comme un accès au contenu (position 0 = recherche)
   if (!(await registerAccess(db, subject, bookId, 0))) return { status: 429 };
 
-  const entitled = await isEntitled(db, user, bookId, staff);
+  const entitled = preview || (await isEntitled(db, user, bookId, staff));
 
   let request = db
     .from("chapters")
     .select("position, title, blocks")
-    .eq("version_id", book.current_version_id);
+    .eq("version_id", versionId);
   if (!entitled) request = request.lte("position", book.preview_chapters);
   const { data, error } = await request.order("position");
   if (error) throw new Error(`Lecture des chapitres impossible : ${error.message}`);

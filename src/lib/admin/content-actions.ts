@@ -17,60 +17,19 @@
 
 import { updateTag } from "next/cache";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { getDictionary } from "@/i18n";
 import { audit } from "@/lib/admin/audit";
 import { isUuid, parseGrant, parsePreviewRule } from "@/lib/admin/validation";
 import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { CATALOG_TAG } from "@/lib/catalog/queries";
 import type { TocEntry } from "@/lib/catalog/types";
-import { convertDocx } from "@/lib/content/convert-docx";
-import { convertEpub } from "@/lib/content/convert-epub";
-import {
-  ConversionError,
-  MANUSCRIPT_MAX_BYTES,
-  MANUSCRIPTS_BUCKET,
-  type ConvertedChapter,
-  type ManuscriptFormat,
-} from "@/lib/content/types";
+import { convertStoredManuscript } from "@/lib/content/manuscript";
 import { createClient } from "@/lib/supabase/server";
 
 const t = getDictionary();
 const l = t.admin.content;
 const e = t.admin.errors;
-
-/** Chemin d'un manuscrit envoyé par le navigateur : « livres/{livre}/{uuid}.{ext} ». */
-const UUID_SOURCE = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-const MANUSCRIPT_PATH_PATTERN = new RegExp(
-  `^livres/(${UUID_SOURCE})/${UUID_SOURCE}[.](docx|epub)$`,
-);
-
-// ==================== FONCTIONS UTILITAIRES ====================
-
-/**
- * Format d'un manuscrit si son chemin appartient bien au livre, sinon null.
- * @param path   - Chemin envoyé par le navigateur
- * @param bookId - Identifiant du livre modifié
- */
-function manuscriptFormat(path: unknown, bookId: string): ManuscriptFormat | null {
-  if (typeof path !== "string") return null;
-  const match = MANUSCRIPT_PATH_PATTERN.exec(path);
-  if (!match || match[1] !== bookId) return null;
-  return match[2] as ManuscriptFormat;
-}
-
-/** Convertit le fichier selon son format, avec les titres par défaut du dictionnaire. */
-function convert(
-  format: ManuscriptFormat,
-  data: Uint8Array,
-  bookTitle: string,
-): Promise<ConvertedChapter[]> {
-  if (format === "docx") {
-    return convertDocx(data, { book: bookTitle, opening: t.content.openingTitle });
-  }
-  const chapter = (n: number) => interpolate(t.content.chapterTitle, { n: String(n) });
-  return convertEpub(data, { chapter });
-}
 
 // ==================== MANUSCRIT ====================
 
@@ -86,45 +45,14 @@ function convert(
 export async function convertManuscript(bookId: string, path: string): Promise<FormState> {
   await requireAdmin();
   if (!isUuid(bookId)) return { error: e.generic };
-  const format = manuscriptFormat(path, bookId);
-  if (!format) return { error: e.generic };
-
-  const supabase = await createClient();
-  const { data: book } = await supabase
-    .from("books")
-    .select("title")
-    .eq("id", bookId)
-    .maybeSingle();
-  if (!book) return { error: e.generic };
-
-  const download = await supabase.storage.from(MANUSCRIPTS_BUCKET).download(path);
-  if (download.error || !download.data) return { error: e.generic };
-  if (download.data.size > MANUSCRIPT_MAX_BYTES) {
-    await supabase.storage.from(MANUSCRIPTS_BUCKET).remove([path]);
-    return { error: l.tooLarge };
-  }
-
-  let chapters: ConvertedChapter[];
-  try {
-    const data = new Uint8Array(await download.data.arrayBuffer());
-    chapters = await convert(format, data, book.title);
-  } catch (error) {
-    if (!(error instanceof ConversionError)) throw error;
-    await supabase.storage.from(MANUSCRIPTS_BUCKET).remove([path]);
-    return { error: l.errors[error.code] };
-  }
 
   // La fonction SQL écrit elle-même l'entrée d'audit « book.version_created »
-  const { error } = await supabase.rpc("admin_save_book_version", {
-    p_book_id: bookId,
-    p_source_format: format,
-    p_source_path: path,
-    p_chapters: chapters,
-  });
-  if (error) return { error: e.generic };
-
-  updateTag(CATALOG_TAG);
-  return { message: interpolate(l.converted, { count: String(chapters.length) }) };
+  const supabase = await createClient();
+  const result = await convertStoredManuscript(
+    supabase, bookId, path, "admin_save_book_version",
+  );
+  if (result.message) updateTag(CATALOG_TAG);
+  return { error: result.error, message: result.message };
 }
 
 // ==================== EXTRAIT GRATUIT ====================
