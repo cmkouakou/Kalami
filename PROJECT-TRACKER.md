@@ -36,6 +36,6 @@ Version actuelle : v0.5.1 | Statut : 🟡 En cours (Sprint 4b terminé : design)
 - [x] Sprint 4b — design : charte, composants, pages, liseuse, contrastes AA (v0.5.1)
 - [ ] Sprint 4b — revue visuelle par l'utilisateur (ordinateur, téléphone, 3 thèmes)
 - [x] Sprint 7 — annotations : surlignages, notes, citation, partage (v0.6.0)
-- [ ] Sprint 7 — migration `20261010120000_annotations.sql` à appliquer + tests d'intégration
+- [x] Sprint 7 — migration `20261010120000_annotations.sql` appliquée, tests 203/203 (dont RLS 4/4)
 - [ ] Sprint 7 — essai réel : sélection sur téléphone Android (appui long), partage d'image
 - [ ] Sprints 8, 9, 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
