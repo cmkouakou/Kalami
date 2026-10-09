@@ -16,7 +16,8 @@ Version actuelle : v0.5.1 | Statut : 🟡 En cours (Sprint 4b terminé : design)
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
 - [x] Sprint 0 — projet Supabase « Kalami » relié (whzwodxfymvfufzfhhkv)
 - [x] Sprint 0 — projet Vercel importé, variables définies, premier déploiement réussi (2026-10-09)
-- [ ] Sprint 0 — domaine kalami-livres.com dans Vercel + URLs de redirection Supabase
+- [x] Sprint 0 — domaine kalami-livres.com relié (DNS Porkbun → Vercel), site accessible
+- [ ] Sprint 0 — URLs de redirection Supabase (Site URL + /**) à confirmer
 - [x] Sprint 1 — code des comptes et rôles (v0.2.0)
 - [x] Sprint 1 — migration appliquée sur Supabase + tests RLS (20/20)
 - [x] Sprint 1 — compte administrateur promu, MFA TOTP vérifiée
