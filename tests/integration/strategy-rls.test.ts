@@ -6,8 +6,9 @@
  *              et de l'observateur, synthèse verrouillée tant que 1 à 4 ne sont pas validées,
  *              cascade « à revoir », référence des étapes identique au code. Ignorés si les
  *              clés manquent ou si la migration Stratégie n'est pas encore appliquée. Avec
- *              la migration des gabarits (S2), les étapes 1 et 2 reçoivent d'abord un
- *              contenu qui remplit leur liste de contrôle.
+ *              la migration des gabarits (S2), les étapes 1 à 4 reçoivent d'abord un
+ *              contenu qui remplit leur liste de contrôle (S3 pour les étapes 3 et 4 ;
+ *              avant elle, ce contenu est simplement accepté).
  * Auteur     : Claude Marcel
  * Date       : 2026-10-11
  */
@@ -17,7 +18,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { STEPS } from "@/lib/strategy/steps";
 import { FORCES, initialForces } from "@/lib/strategy/templates/forces";
+import { initialInternal, newResource, PORTER_ACTIVITIES } from "@/lib/strategy/templates/internal";
 import { emptyPestel, newFactor } from "@/lib/strategy/templates/pestel";
+import { newStakeholder } from "@/lib/strategy/templates/stakeholders";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -46,6 +49,19 @@ async function templatesApplied(): Promise<boolean> {
 }
 
 const templates = await templatesApplied();
+
+/** Analyse interne qui remplit la liste de contrôle de l'étape 3. */
+function filledInternal() {
+  const labels = Object.fromEntries(PORTER_ACTIVITIES.map(({ key }) => [key, key]));
+  const payload = initialInternal(labels);
+  payload.activities = payload.activities.map((a) => ({ ...a, evaluation: "strength" as const }));
+  const resource = { ...newResource("r1"), name: "Savoir-faire" };
+  for (const test of ["value", "rarity", "imitability", "organization"] as const) {
+    resource.tests[test] = { answer: "yes", justification: "" };
+  }
+  payload.resources = [resource];
+  return payload;
+}
 
 const PROFILE = {
   sector: "Ébénisterie",
@@ -95,20 +111,28 @@ describe.skipIf(!ready)("RLS — assistant stratégie", () => {
   }
 
   /**
-   * Enregistre un contenu qui remplit la liste de contrôle des étapes 1 et 2 (si la
+   * Enregistre un contenu qui remplit la liste de contrôle des étapes 1 à 4 (si la
    * migration des gabarits est appliquée ; sinon rien à faire).
    */
   async function fillTemplate(client: SupabaseClient, stepNo: number): Promise<void> {
-    if (!templates || (stepNo !== 1 && stepNo !== 2)) return;
+    if (!templates || stepNo < 1 || stepNo > 4) return;
     let payload: object;
     if (stepNo === 1) {
       const pestel = emptyPestel();
       pestel.factors = [{ ...newFactor("f1", "economic"), factor: "Taux", nature: "both" }];
       payload = pestel;
-    } else {
+    } else if (stepNo === 2) {
       const forces = initialForces(`Atelier ${RUN}`, []);
       for (const key of FORCES) forces.forces[key] = { intensity: "low", justification: "Fait." };
       payload = forces;
+    } else if (stepNo === 3) {
+      payload = filledInternal();
+    } else {
+      payload = {
+        stakeholders: [
+          { ...newStakeholder("p1"), name: "Banque", power: 4, interest: 2, approach: "Suivi." },
+        ],
+      };
     }
     const current = await service
       .from("study_steps")

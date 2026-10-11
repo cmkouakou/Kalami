@@ -5,9 +5,10 @@
  *  Description: Lectures de l'assistant stratégie avec la session de l'utilisateur : la RLS
  *               ne laisse voir que les études dont il est membre. Études, crédits, étude
  *               complète (rôle, profil, étapes), contenu d'un gabarit et ses versions, vue
- *               d'ensemble de l'administrateur.
+ *               d'ensemble de l'administrateur, guide d'une étape (explication, exemple,
+ *               lien vers le chapitre si le lecteur y a droit) et réglages du guide.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-11
  *  Dépendances: lib/supabase/server.ts, lib/strategy/steps.ts, lib/strategy/profile.ts
  * =============================================================
@@ -262,10 +263,87 @@ export async function getStepContent(studyId: string, stepNo: StepNo): Promise<S
   };
 }
 
+// ==================== GUIDE D'UNE ÉTAPE ====================
+
+export type StepGuide = {
+  /** Explication fournie par l'auteur ; vide = rien d'affiché. */
+  explanation: string;
+  /** Exemple Infosystem fourni par l'auteur ; vide = rien d'affiché. */
+  example: string;
+  /** Lien vers le chapitre du livre guide, seulement si le lecteur y a droit. */
+  readingHref: string | null;
+};
+
+/**
+ * Guide d'une étape : textes de l'auteur et lien vers le chapitre du livre guide.
+ * @param stepNo - Étape concernée
+ */
+export async function getStepGuide(stepNo: StepNo): Promise<StepGuide> {
+  const supabase = await createClient();
+  const [texts, reading] = await Promise.all([
+    supabase
+      .from("strategy_steps")
+      .select("explanation, example")
+      .eq("step_no", stepNo)
+      .maybeSingle<{ explanation: string; example: string }>(),
+    supabase.rpc("strategy_step_reading", { p_step_no: stepNo }),
+  ]);
+
+  const row = check(texts, "guide de l'étape");
+  const link = (check(reading, "chapitre de l'étape") as
+    { slug: string; chapter_position: number }[])[0];
+  return {
+    explanation: row?.explanation ?? "",
+    example: row?.example ?? "",
+    readingHref: link ? `/livres/${link.slug}/lire?chapitre=${link.chapter_position}` : null,
+  };
+}
+
 // ==================== ADMINISTRATION ====================
 
 /** Études de la plateforme (métadonnées seulement) — administrateur aal2. */
 export async function listStudiesForAdmin(): Promise<AdminStudyRow[]> {
   const supabase = await createClient();
   return check(await supabase.rpc("admin_strategy_studies"), "études (admin)") as AdminStudyRow[];
+}
+
+export type AdminStepGuide = {
+  step_no: StepNo;
+  explanation: string;
+  example: string;
+  lock_reason: string;
+  chapter_position: number | null;
+};
+
+export type GuideSettings = {
+  guideBookId: string | null;
+  /** Livres proposés comme livre guide (titre et identifiant). */
+  books: { id: string; title: string }[];
+};
+
+/** Guide et raison du verrou de chaque étape, par numéro — administrateur aal2. */
+export async function listStepGuidesForAdmin(): Promise<AdminStepGuide[]> {
+  const supabase = await createClient();
+  const result = await supabase
+    .from("strategy_steps")
+    .select("step_no, explanation, example, lock_reason, chapter_position")
+    .order("step_no");
+  return (check(result, "guides (admin)") as (Omit<AdminStepGuide, "step_no"> & {
+    step_no: number;
+  })[]).flatMap((row) => (isStepNo(row.step_no) ? [{ ...row, step_no: row.step_no }] : []));
+}
+
+/** Livre guide choisi et livres disponibles — administrateur aal2. */
+export async function getGuideSettings(): Promise<GuideSettings> {
+  const supabase = await createClient();
+  const [settings, books] = await Promise.all([
+    supabase.from("strategy_settings").select("guide_book_id").maybeSingle<{
+      guide_book_id: string | null;
+    }>(),
+    supabase.from("books").select("id, title").order("title"),
+  ]);
+  return {
+    guideBookId: check(settings, "réglages du guide")?.guide_book_id ?? null,
+    books: check(books, "livres") as { id: string; title: string }[],
+  };
 }

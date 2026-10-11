@@ -205,10 +205,10 @@ describe("actorAverage", () => {
 // ==================== VALIDATION AVANT ENVOI ====================
 
 describe("parsePayload", () => {
-  it("ne connaît que les étapes 1 et 2", () => {
+  it("ne connaît que les étapes 1 à 4", () => {
     expect(hasTemplate(1)).toBe(true);
-    expect(hasTemplate(2)).toBe(true);
-    expect(hasTemplate(3)).toBe(false);
+    expect(hasTemplate(4)).toBe(true);
+    expect(hasTemplate(5)).toBe(false);
   });
 
   it("accepte un contenu complet et refuse un contenu mal formé", () => {

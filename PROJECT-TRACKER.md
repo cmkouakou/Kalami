@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.3.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S2 livrés)
+Version actuelle : v0.8.3 · Stratégie v0.4.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S3 livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -15,7 +15,8 @@ Version actuelle : v0.8.3 · Stratégie v0.3.0 | Statut : 🟡 En cours (projet 
 | #9 | 2026-10-09 | Sprint 8 : PDF filigrané, lien signé, 3 téléchargements, purge ; onglets + Google, filet de sécurité OAuth (v0.8.3) | ~260 000 | ~1.56 $ |
 | #10 | 2026-10-11 | Stratégie S0+S1 : migration, profil, carte des 9 étapes, cascade, crédits, admin | ~300 000 | ~1.80 $ |
 | #11 | 2026-10-11 | Stratégie S2 : gabarits PESTEL et cinq forces, sauvegarde auto, versions | ~280 000 | ~1.68 $ |
-| **TOTAL** | | | **~2 520 000** | **~15.12 $** |
+| #12 | 2026-10-11 | Stratégie S3 : chaîne de valeur, VRIO, parties prenantes, guide des étapes | ~260 000 | ~1.56 $ |
+| **TOTAL** | | | **~2 780 000** | **~16.68 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -57,3 +58,7 @@ Version actuelle : v0.8.3 · Stratégie v0.3.0 | Statut : 🟡 En cours (projet 
 - [ ] S0+S1 — s'accorder un crédit dans /admin/strategie et parcourir une étude de test
 - [x] S2 — gabarits PESTEL et cinq forces, sauvegarde auto, versions (Stratégie v0.3.0)
 - [x] S2 — migration `20261014120000_strategy_templates.sql` appliquée, tests RLS gabarits 12/12
+- [x] S3 — chaîne de valeur, VRIO, parties prenantes, guide des étapes (Stratégie v0.4.0)
+- [ ] S3 — migration `20261015120000_strategy_guides.sql` à appliquer
+- [ ] S3 — saisir explications, exemples Infosystem et chapitres dans /admin/strategie/etapes
+- [ ] Modèle « services » de la chaîne de valeur : liste du livre à fournir par l'auteur

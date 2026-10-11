@@ -3,20 +3,22 @@
  *  Fichier    : page.tsx (admin/strategie)
  *  Projet     : Kalami Stratégie
  *  Description: Administration de l'assistant stratégie : octroi de crédits d'étude et
- *               liste des études (métadonnées seulement, jamais leur contenu).
+ *               liste des études (métadonnées seulement, jamais leur contenu), lien vers
+ *               le guide des étapes.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: lib/admin/strategy-actions.ts, lib/strategy/queries.ts
  * =============================================================
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { ActionForm } from "@/components/admin/action-form";
 import { Field } from "@/components/ui/form";
-import { CARD } from "@/components/ui/styles";
+import { BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import { grantStudyCredits } from "@/lib/admin/strategy-actions";
 import { requireAdmin } from "@/lib/auth/dal";
@@ -31,7 +33,12 @@ export const metadata: Metadata = { title: a.title };
 export default function AdminStrategyPage() {
   return (
     <main className="flex flex-col gap-8">
-      <h1 className="font-serif text-3xl font-semibold">{a.title}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="font-serif text-3xl font-semibold">{a.title}</h1>
+        <Link href="/admin/strategie/etapes" className={BUTTON_TERTIARY}>
+          {a.guides.link}
+        </Link>
+      </div>
       <Suspense fallback={<div aria-hidden="true" className="h-96 animate-pulse" />}>
         <AdminStrategy />
       </Suspense>

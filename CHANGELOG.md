@@ -1,5 +1,34 @@
 # Journal des modifications
 
+## [Stratégie v0.4.0] - 2026-10-11 — S3 : analyse interne, parties prenantes, guide des étapes
+### Ajouté
+- Migration `20261015120000_strategy_guides.sql` : colonnes `explanation`, `example` et
+  `chapter_position` dans `strategy_steps`, table `strategy_settings` (livre guide,
+  lecture réservée à l'administrateur), fonctions `admin_update_strategy_step` et
+  `admin_set_strategy_guide_book` (administrateur aal2, journal d'audit) et
+  `strategy_step_reading` (lien « Lire le chapitre » seulement avec un droit d'accès actif).
+- Gabarit de l'étape 3 : chaîne de valeur (modèle de Porter de départ, activités
+  renommables, ajout et retrait, évaluation force / à améliorer / faiblesse / marginale) et
+  tableau VRIO (arbre de décision ; « partiel » compte comme « non », résultat à confirmer).
+- Gabarit de l'étape 4 : fiches des parties prenantes (attentes, pouvoir et intérêt de 1 à
+  5, engagement actuel et souhaité, approche, actions) et matrice pouvoir-intérêt (fort à
+  partir de 3, placement automatique, déplacement à la main par glisser-déposer ou liste,
+  retour au placement automatique).
+- Guide d'étape sur la page d'étape : explication et exemple Infosystem fournis par
+  l'auteur (masqués quand ils sont vides) et lien vers le chapitre du livre guide.
+- Administration : page `/admin/strategie/etapes` (livre guide, explication, exemple,
+  raison du verrou et chapitre de chaque étape).
+- Tests : `tests/unit/strategy-templates-s3.test.ts` et
+  `tests/integration/strategy-guides-rls.test.ts` (ignoré tant que la migration n'est pas
+  appliquée).
+### Modifié
+- `strategy_checklist_ok` : étape 3 = au moins une activité nommée, toutes évaluées, et une
+  ressource nommée avec ses quatre réponses VRIO ; étape 4 = au moins une partie prenante
+  nommée avec pouvoir, intérêt et approche.
+- La référence des étapes ne s'écrit plus directement (politique de mise à jour retirée) :
+  tout passe par la fonction d'administration.
+- `tests/integration/strategy-rls.test.ts` remplit aussi les gabarits 3 et 4.
+
 ## [Stratégie v0.3.0] - 2026-10-11 — S2 : gabarits PESTEL et cinq forces
 ### Ajouté
 - Migration `20261014120000_strategy_templates.sql` : révision par étape (`revision`),

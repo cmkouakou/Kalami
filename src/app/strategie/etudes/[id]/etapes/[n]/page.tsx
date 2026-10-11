@@ -2,12 +2,13 @@
  * =============================================================
  *  Fichier    : page.tsx (strategie/etudes/[id]/etapes/[n])
  *  Projet     : Kalami Stratégie
- *  Description: Page d'une étape : statut, ce qui manque si elle est verrouillée, raisons
- *               « à revoir », puis le gabarit interactif (étapes 1 et 2 : PESTEL, cinq
- *               forces) ou, pour les autres étapes, les actions (commencer, valider,
- *               modifier) en attendant leur gabarit.
+ *  Description: Page d'une étape : statut, guide de l'auteur (explication, chapitre,
+ *               exemple), ce qui manque si elle est verrouillée, raisons « à revoir », puis
+ *               le gabarit interactif (étapes 1 à 4 : PESTEL, cinq forces, analyse interne,
+ *               parties prenantes) ou, pour les autres étapes, les actions (commencer,
+ *               valider, modifier) en attendant leur gabarit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-11
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts
  * =============================================================
@@ -19,15 +20,24 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { ForcesEditor } from "@/components/strategy/forces/forces-editor";
+import { InternalEditor } from "@/components/strategy/internal/internal-editor";
 import { PestelEditor } from "@/components/strategy/pestel/pestel-editor";
+import { StakeholdersEditor } from "@/components/strategy/stakeholders/stakeholders-editor";
 import { StepActions } from "@/components/strategy/step-actions";
+import { StepGuide } from "@/components/strategy/step-guide";
 import { StepStatusBadge } from "@/components/strategy/step-status";
 import type { TemplateFrameProps } from "@/components/strategy/template-frame";
 import { IconLock } from "@/components/ui/icons";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
-import { getStepContent, getStudy, statusesOf, type StudyDetail } from "@/lib/strategy/queries";
+import {
+  getStepContent,
+  getStepGuide,
+  getStudy,
+  statusesOf,
+  type StudyDetail,
+} from "@/lib/strategy/queries";
 import {
   downstreamSteps,
   getStep,
@@ -39,7 +49,9 @@ import {
 } from "@/lib/strategy/steps";
 import { readForces } from "@/lib/strategy/templates/forces";
 import { hasTemplate } from "@/lib/strategy/templates";
+import { readInternal } from "@/lib/strategy/templates/internal";
 import { readPestel } from "@/lib/strategy/templates/pestel";
+import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
 
 const t = getDictionary();
 const s = t.strategy;
@@ -62,7 +74,7 @@ async function StudyStep({ params }: { params: Promise<{ id: string; n: string }
   const user = await requireUser(`/strategie/etudes/${id}/etapes/${n}`);
   const no = Number(n);
   if (!isStepNo(no)) notFound();
-  const study = await getStudy(id, user.id);
+  const [study, guide] = await Promise.all([getStudy(id, user.id), getStepGuide(no)]);
   if (!study) notFound();
 
   const step = getStep(no);
@@ -91,6 +103,8 @@ async function StudyStep({ params }: { params: Promise<{ id: string; n: string }
         </div>
         <p className="text-ink-muted">{text.tools}</p>
       </header>
+
+      <StepGuide guide={guide} />
 
       {missing.length > 0 ? (
         <LockedPanel
@@ -188,11 +202,31 @@ async function Template({
       />
     );
   }
+  if (no === 2) {
+    return (
+      <ForcesEditor
+        key={content.revision}
+        {...frame}
+        initial={readForces(content.payload, study.company_name, study.profile.competitors)}
+        revision={content.revision}
+      />
+    );
+  }
+  if (no === 3) {
+    return (
+      <InternalEditor
+        key={content.revision}
+        {...frame}
+        initial={readInternal(content.payload, s.internal.porter)}
+        revision={content.revision}
+      />
+    );
+  }
   return (
-    <ForcesEditor
+    <StakeholdersEditor
       key={content.revision}
       {...frame}
-      initial={readForces(content.payload, study.company_name, study.profile.competitors)}
+      initial={readStakeholders(content.payload)}
       revision={content.revision}
     />
   );

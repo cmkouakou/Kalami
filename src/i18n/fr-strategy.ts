@@ -3,10 +3,11 @@
  *  Fichier    : fr-strategy.ts
  *  Projet     : Kalami Stratégie
  *  Description: Textes français de l'assistant stratégie (accueil, études, profil, carte
- *               des étapes, gabarits PESTEL et cinq forces, administration des crédits).
+ *               des étapes, guide des étapes, gabarits PESTEL, cinq forces, analyse interne
+ *               et parties prenantes, administration des crédits et des guides).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-11
  * =============================================================
  */
@@ -366,6 +367,153 @@ const strategyFr = {
     },
   },
 
+  // ==================== GUIDE D'UNE ÉTAPE ====================
+  guide: {
+    title: "Comprendre l'étape",
+    read: "Lire le chapitre",
+    exampleTitle: "Exemple : Infosystem",
+    exampleShow: "Voir l'exemple Infosystem",
+    exampleHide: "Masquer l'exemple",
+  },
+
+  // ==================== GABARIT : ANALYSE INTERNE ====================
+  internal: {
+    chainTitle: "1. Chaîne de valeur",
+    chainIntro:
+      "Les activités du modèle de Porter sont proposées : renommez-les, retirez celles qui ne " +
+      "s'appliquent pas, ajoutez les vôtres, puis évaluez chacune.",
+    kinds: {
+      primary: "Activités principales",
+      support: "Activités de soutien",
+    },
+    porter: {
+      inboundLogistics: "Logistique d'approvisionnement",
+      operations: "Production",
+      outboundLogistics: "Logistique de distribution",
+      marketingSales: "Marketing et vente",
+      service: "Services",
+      infrastructure: "Infrastructure de l'entreprise",
+      humanResources: "Gestion des ressources humaines",
+      technology: "Développement technologique",
+      procurement: "Approvisionnements",
+    },
+    fields: {
+      name: "Activité",
+      description: "Ce que fait l'entreprise",
+      evaluation: "Évaluation",
+      comment: "Commentaire",
+    },
+    evaluations: {
+      strength: "Point fort",
+      improve: "À renforcer",
+      weakness: "Faible",
+      marginal: "Marginale",
+    },
+    evaluationNone: "À évaluer",
+    addActivity: "Ajouter une activité",
+    noActivity: "Aucune activité dans ce groupe.",
+    untitled: "Activité sans nom",
+    maxActivities: "{max} activités au plus.",
+    resourcesTitle: "2. Ressources et analyse VRIO",
+    resourcesIntro:
+      "Pour chaque ressource ou compétence, répondez aux quatre questions dans l'ordre. Le " +
+      "résultat suit l'arbre de décision ; une réponse « partiel » compte comme « non » et " +
+      "rend le résultat à confirmer.",
+    resourceName: "Ressource ou compétence",
+    category: "Catégorie (facultatif)",
+    tests: {
+      value: "Valeur",
+      rarity: "Rareté",
+      imitability: "Difficile à imiter",
+      organization: "Organisation pour l'exploiter",
+    },
+    answers: {
+      yes: "Oui",
+      no: "Non",
+      partial: "Partiel",
+    },
+    answerNone: "–",
+    justification: "Justification",
+    result: "Résultat",
+    resultPending: "Répondez aux questions dans l'ordre.",
+    outcomes: {
+      disadvantage: "Désavantage concurrentiel",
+      parity: "Parité concurrentielle",
+      temporary: "Avantage temporaire",
+      unexploited: "Avantage inexploité",
+      sustained: "Avantage durable",
+    },
+    tentative: "à confirmer",
+    addResource: "Ajouter une ressource",
+    noResource: "Ajoutez une première ressource (ex. : savoir-faire, marque, équipement).",
+    untitledResource: "Ressource sans nom",
+    maxResources: "{max} ressources au plus.",
+    checklist: {
+      activities: "Au moins une activité",
+      evaluated: "Toutes les activités évaluées",
+      resource: "Au moins une ressource avec les quatre réponses",
+    },
+  },
+
+  // ==================== GABARIT : PARTIES PRENANTES ====================
+  stakeholders: {
+    listTitle: "1. Parties prenantes",
+    listIntro:
+      "Notez le pouvoir et l'intérêt de chaque partie prenante de 1 (faible) à 5 (fort) ; " +
+      "à partir de 3, ils sont considérés comme forts.",
+    fields: {
+      name: "Partie prenante",
+      expectations: "Attentes",
+      power: "Pouvoir",
+      interest: "Intérêt",
+      engagementCurrent: "Engagement actuel",
+      engagementDesired: "Engagement souhaité",
+      approach: "Approche",
+      actions: "Actions",
+    },
+    levelNone: "–",
+    engagements: {
+      unaware: "Ignorant",
+      resistant: "Réfractaire",
+      neutral: "Neutre",
+      supportive: "Favorable",
+      leading: "Moteur",
+    },
+    engagementNone: "À préciser",
+    add: "Ajouter une partie prenante",
+    none: "Ajoutez une première partie prenante (ex. : clients, employés, banque).",
+    untitled: "Partie prenante sans nom",
+    max: "{max} parties prenantes au plus.",
+    gridTitle: "2. Matrice pouvoir-intérêt",
+    gridIntro:
+      "La case est calculée à partir du pouvoir et de l'intérêt. Glissez une partie prenante " +
+      "ou choisissez une autre case pour la placer à la main.",
+    powerAxis: "Pouvoir",
+    interestAxis: "Intérêt",
+    quadrants: {
+      manage: "Gérer de près",
+      satisfy: "Satisfaire",
+      inform: "Informer",
+      monitor: "Surveiller",
+    },
+    quadrantHints: {
+      manage: "Pouvoir fort, intérêt fort.",
+      satisfy: "Pouvoir fort, intérêt faible.",
+      inform: "Pouvoir faible, intérêt fort.",
+      monitor: "Pouvoir faible, intérêt faible.",
+    },
+    unplaced: "À placer (pouvoir ou intérêt manquant)",
+    unplacedEmpty: "Toutes les parties prenantes nommées sont placées.",
+    placeIn: "Case de « {name} »",
+    placeAuto: "Automatique ({quadrant})",
+    placeAutoNone: "Automatique",
+    manual: "placée à la main",
+    resetAuto: "Revenir au placement automatique",
+    checklist: {
+      mapped: "Au moins une partie prenante avec pouvoir, intérêt et approche",
+    },
+  },
+
   // ==================== ADMINISTRATION ====================
   admin: {
     title: "Stratégie",
@@ -388,6 +536,29 @@ const strategyFr = {
       created: "Créée le",
       updated: "Modifiée le",
       progress: "Étapes validées",
+    },
+    guides: {
+      link: "Guide des étapes",
+      title: "Guide des étapes",
+      intro:
+        "Textes fournis par l'auteur pour chaque étape. Un champ vide n'est pas affiché aux " +
+        "utilisateurs.",
+      back: "Retour à Stratégie",
+      bookTitle: "Livre guide",
+      bookIntro:
+        "Les liens « Lire le chapitre » ouvrent ce livre, pour les lecteurs qui y ont accès.",
+      bookNone: "Aucun livre guide",
+      bookSave: "Enregistrer le livre guide",
+      bookSaved: "Livre guide enregistré.",
+      stepTitle: "Étape {no} · {title}",
+      explanation: "Explication de l'étape",
+      example: "Exemple Infosystem",
+      lockReason: "Raison du verrou (affichée quand l'étape n'est pas ouverte)",
+      chapter: "Chapitre du livre guide (numéro, vide = aucun lien)",
+      save: "Enregistrer l'étape",
+      saved: "Guide de l'étape enregistré.",
+      tooLong: "{max} caractères au plus.",
+      invalidChapter: "Indiquez un numéro de chapitre entier, ou laissez le champ vide.",
     },
   },
 };
