@@ -5,10 +5,12 @@
  *  Description: Textes de l'interface en français (langue par défaut).
  *               « {appName} » est remplacé par APP_NAME au moment de l'affichage.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-09
  * =============================================================
  */
+
+import strategyFr from "./fr-strategy";
 
 const fr = {
   meta: {
@@ -466,6 +468,7 @@ const fr = {
       categories: "Catégories",
       submissions: "Soumissions",
       contract: "Contrat auteur",
+      strategy: "Stratégie",
       site: "Voir le site",
     },
     dashboard: {
@@ -665,6 +668,7 @@ const fr = {
       invalidCode: "Code incorrect. Réessayez.",
     },
   },
+  strategy: strategyFr,
 };
 
 export default fr;

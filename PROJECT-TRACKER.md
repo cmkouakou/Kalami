@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 | Statut : 🟡 En cours (Sprint 8 terminé : PDF filigrané)
+Version actuelle : v0.8.3 · Stratégie v0.2.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0+S1 livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -13,7 +13,8 @@ Version actuelle : v0.8.3 | Statut : 🟡 En cours (Sprint 8 terminé : PDF fili
 | #7 | 2026-10-10 | Sprint 7 : surlignages, notes, citation, carte de partage | ~280 000 | ~1.68 $ |
 | #8 | 2026-10-09 | Sprint 9 : espace auteur, contrat, aperçu, validation | ~320 000 | ~1.92 $ |
 | #9 | 2026-10-09 | Sprint 8 : PDF filigrané, lien signé, 3 téléchargements, purge ; onglets + Google, filet de sécurité OAuth (v0.8.3) | ~260 000 | ~1.56 $ |
-| **TOTAL** | | | **~1 940 000** | **~11.64 $** |
+| #10 | 2026-10-11 | Stratégie S0+S1 : migration, profil, carte des 9 étapes, cascade, crédits, admin | ~300 000 | ~1.80 $ |
+| **TOTAL** | | | **~2 240 000** | **~13.44 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -48,3 +49,9 @@ Version actuelle : v0.8.3 | Statut : 🟡 En cours (Sprint 8 terminé : PDF fili
 - [ ] Sprint 8 — appliquer `20261012120000_pdf.sql`, définir `CRON_SECRET` dans Vercel
 - [ ] Sprint 8 — essai réel : option PDF sur un livre, droit accordé, téléchargement
 - [ ] Sprint 11a, puis paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+
+## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
+- [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)
+- [ ] S0+S1 — appliquer `20261013120000_strategy_core.sql`, puis tests d'intégration
+- [ ] S0+S1 — s'accorder un crédit dans /admin/strategie et parcourir une étude de test
+- [ ] S2 — gabarits PESTEL et cinq forces

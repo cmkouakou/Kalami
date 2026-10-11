@@ -22,6 +22,12 @@ describe("isProtectedPath", () => {
     expect(isProtectedPath("/connexion")).toBe(false);
     expect(isProtectedPath("/comptes-rendus")).toBe(false);
   });
+
+  it("protège les études stratégiques mais laisse publique la présentation", () => {
+    expect(isProtectedPath("/strategie/etudes/abc/profil")).toBe(true);
+    expect(isProtectedPath("/strategie/nouvelle")).toBe(true);
+    expect(isProtectedPath("/strategie")).toBe(false);
+  });
 });
 
 describe("safeNextPath", () => {

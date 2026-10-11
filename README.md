@@ -12,6 +12,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
 - Paiement par carte (Stripe) et Mobile Money (validation manuelle en v1)
 - Liseuse : effet de page tournée, marque-page, surlignage, notes, citation, partage
 - PDF filigrané en option, espace auteur, grand livre et versements
+- **Kalami Stratégie** (`/strategie`) : assistant d'analyse stratégique en 9 étapes, mêmes
+  comptes, parcours et crédits propres — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)
@@ -36,6 +38,7 @@ kalami/
 │   ├── components/ui/    → styles partagés (boutons, pastilles, cartes) et icônes
 │   ├── i18n/             → textes de l'interface (fr ; en prévu en v2)
 │   ├── lib/              → configuration, clients Supabase, logique métier
+│   │   └── strategy/     → assistant stratégie : étapes, profil, lectures, actions
 │   └── proxy.ts          → traitement avant requête (redirections 301, session)
 ├── tests/unit/           → tests unitaires
 ├── tests/integration/    → tests RLS sur la base de développement

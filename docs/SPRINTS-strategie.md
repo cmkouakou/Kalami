@@ -1,0 +1,38 @@
+# Découpage en sprints — Kalami Stratégie (projet 2)
+
+Assistant d'analyse stratégique sous `/strategie`, mêmes comptes, même Supabase, même déploiement
+que la plateforme de lecture ([cahier](cahiers/CAHIER_DES_CHARGES_assistant_strategie.md)).
+Démarré le 2026-10-11 ; le projet 1 est en pause (reste : 11a, 5, 6, 10, 11b).
+S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11).
+
+Version propre au module (« Stratégie vX.Y.Z »), indépendante de la version de l'application.
+Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés par l'administrateur**.
+
+| Sprint | Contenu | Version | Statut |
+|---|---|---|---|
+| S0 | Fondations : espace `/strategie`, accueil, tables de base, RLS, crédits d'étude, création d'une étude | v0.1.0 | ✅ code (migration à appliquer) |
+| S1 | Profil de l'entreprise, carte des 9 étapes, dépendances, statuts, validation, invalidation en cascade | v0.2.0 | ✅ code (migration à appliquer) |
+| S2 | Gabarits 1-2 : PESTEL (impact-incertitude, scénarios 2×2), cinq forces et comparaison ; sauvegarde auto, versions | v0.3.0 | ⬜ |
+| S3 | Gabarits 3-4 : chaîne de valeur, VRIO, parties prenantes ; explications, exemple Infosystem, lien liseuse | v0.4.0 | ⬜ |
+| S4 | Coach IA : consignes et règles versionnées, sorties JSON (Zod), suggestions, relecture, erreurs classiques, questions, score ; consommation, plafond, débit | v0.5.0 | ⬜ |
+| S5 | Recherche Web sourcée (PESTEL, cinq forces) ; pièces jointes du profil, résumé et préremplissage | v0.6.0 | ⬜ |
+| S6 | Synthèse : SWOT préremplie (É1…É4), TOWS, 3 enjeux | v0.7.0 | ⬜ |
+| S7 | Gabarits 6-8 : Cap (SMART, remplacement du nom), Choix (Porter, Ansoff, PAF), Action (Gantt, tableau de bord équilibré) | v0.8.0 | ⬜ |
+| S8 | Plan stratégique : 8 sections, traçabilité, édition, régénération par section, export PDF et DOCX | v0.9.0 | ⬜ |
+| S9 | Collaboration : invitations, rôles, attribution, présence, verrouillage doux, commentaires, mentions, courriels, journal | v0.10.0 | ⬜ |
+| S10 | Mode enseignant et cas d'entraînement (Ajinomoto, Infosystem, corrigé) | v0.11.0 | ⬜ |
+| S11 | Paiement de l'étude (après les sprints 5-6 du projet 1) : prix par région, réduction livre, lots, recharges d'IA | v0.12.0 | ⬜ |
+| S12 | Critères d'acceptation §12, confidentialité, audit, accessibilité, mise en production | v1.0.0 | ⬜ |
+
+S4 et S10 pourront être coupés en deux (a/b) s'ils dépassent le quota d'une session.
+
+## À fournir par l'auteur (rien n'est inventé)
+- Clé API Anthropic (S4), à coller soi-même dans `.env.local` et Vercel (type « Secret »).
+- Explications des 9 outils, erreurs classiques du livre, exemple Infosystem (S3-S4).
+- Cas Ajinomoto et ses annexes (S10). Prix : étude, lot, recharge (S11).
+
+## Tests critiques (cahier §11.3)
+- S1 : dépendances entre étapes, invalidation en cascade, permissions par rôle.
+- S4 : plafonds d'IA, validation des sorties JSON du coach.
+- S9 : deux membres éditent la même étude sans perte de données.
+- Tous : politiques RLS testées.

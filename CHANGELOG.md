@@ -1,5 +1,28 @@
 # Journal des modifications
 
+## [Stratégie v0.2.0] - 2026-10-11 — S0 + S1 : fondations, profil et carte des étapes
+Module Kalami Stratégie (`/strategie`), versionné à part de l'application (v0.8.3).
+### Ajouté
+- Migration `20261013120000_strategy_core.sql` : référence des 9 étapes (`strategy_steps`,
+  raisons de verrou modifiables par l'admin), études, membres (propriétaire, contributeur,
+  observateur), crédits d'étude, profil de l'entreprise, étapes de l'étude ; RLS réservée
+  aux membres, aucune écriture directe, toutes les écritures par fonctions SQL.
+- Fonctions : création d'une étude (consomme un crédit, `no_credit` sinon), profil,
+  démarrer / valider (propriétaire seulement) / rouvrir une étape avec passage « à revoir »
+  des étapes commencées en aval ; octroi de crédits et liste des études pour l'admin (aal2).
+- Pages : accueil public et « Mes études », nouvelle étude, carte de l'étude (maquette 06 :
+  4 phases, progression, cartes verrouillées en pointillés), profil (questionnaire ou
+  lecture seule), page d'étape (prérequis manquants, raisons « à revoir », actions).
+- Administration `/admin/strategie` : accorder des crédits par courriel, liste des études
+  (métadonnées seulement, jamais leur contenu).
+- Règles partagées TS/SQL (`lib/strategy/steps.ts`, `profile.ts` avec Zod), textes
+  `i18n/fr-strategy.ts`, icônes Check, Clock, Alert, Circle, Plus.
+- Tests : `tests/unit/strategy.test.ts` (graphe, cascade, profil) et
+  `tests/integration/strategy-rls.test.ts` (ignoré tant que la migration n'est pas appliquée).
+### Modifié
+- `/strategie/etudes` et `/strategie/nouvelle` ajoutés aux chemins protégés du proxy.
+- Dépendance ajoutée : `zod`.
+
 ## [v0.8.3] - 2026-10-09 — Filet de sécurité de la connexion Google
 ### Corrigé
 - Si Supabase renvoie le code de connexion sur l'accueil (`/?code=…`, adresse de retour non

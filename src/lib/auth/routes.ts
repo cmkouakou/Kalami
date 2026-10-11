@@ -5,13 +5,18 @@
  *  Description: Chemins privés, validation des redirections après connexion et filet de
  *               sécurité pour un code de connexion arrivé sur l'accueil.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-09
  * =============================================================
  */
 
 /** Préfixes de chemins réservés aux utilisateurs connectés. */
-export const PROTECTED_PREFIXES = ["/compte", "/admin"] as const;
+export const PROTECTED_PREFIXES = [
+  "/compte",
+  "/admin",
+  "/strategie/etudes",
+  "/strategie/nouvelle",
+] as const;
 
 /** Vrai si le chemin exige une connexion. */
 export function isProtectedPath(pathname: string): boolean {
