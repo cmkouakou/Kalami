@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.4.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S3 livrés)
+Version actuelle : v0.8.3 · Stratégie v0.4.2 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S3 livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -17,7 +17,8 @@ Version actuelle : v0.8.3 · Stratégie v0.4.1 | Statut : 🟡 En cours (projet 
 | #11 | 2026-10-11 | Stratégie S2 : gabarits PESTEL et cinq forces, sauvegarde auto, versions | ~280 000 | ~1.68 $ |
 | #12 | 2026-10-11 | Stratégie S3 : chaîne de valeur, VRIO, parties prenantes, guide des étapes | ~260 000 | ~1.56 $ |
 | #13 | 2026-10-11 | Stratégie v0.4.1 : textes du guide, modèle services, nouveaux minimums des étapes 3 et 4 | ~150 000 | ~0.90 $ |
-| **TOTAL** | | | **~2 930 000** | **~17.58 $** |
+| #14 | 2026-10-11 | Stratégie v0.4.2 : accès direct à l'application (connexion, inscription, en-tête propres) | ~120 000 | ~0.72 $ |
+| **TOTAL** | | | **~3 050 000** | **~18.30 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -64,4 +65,5 @@ Version actuelle : v0.8.3 · Stratégie v0.4.1 | Statut : 🟡 En cours (projet 
 - [x] S3 — explications, exemples Infosystem et chapitres chargés par migration (Stratégie v0.4.1)
 - [x] Modèle « services » de la chaîne de valeur (liste de l'auteur) et minimums 3-4 confirmés
 - [x] v0.4.1 — migration `20261016120000_strategy_guides_content.sql` appliquée, tests 342/342, MVP S0-S3 testé en local
+- [x] v0.4.2 — accès direct : /strategie a ses pages de connexion, son en-tête, ses redirections
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

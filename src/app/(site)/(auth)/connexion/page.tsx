@@ -4,16 +4,15 @@
  *  Projet     : Kalami
  *  Description: Page de connexion (/connexion).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-09
- *  Dépendances: components/auth/auth-forms.tsx
+ *  Version    : 1.2
+ *  Date       : 2026-10-11
+ *  Dépendances: components/auth/auth-pages.tsx
  * =============================================================
  */
 
 import type { Metadata } from "next";
-import { Suspense } from "react";
 
-import { SignInForm } from "@/components/auth/auth-forms";
+import { SignInPageContent } from "@/components/auth/auth-pages";
 import { getDictionary } from "@/i18n";
 
 const t = getDictionary();
@@ -21,13 +20,5 @@ const t = getDictionary();
 export const metadata: Metadata = { title: t.auth.signIn.title };
 
 export default function SignInPage({ searchParams }: PageProps<"/connexion">) {
-  return (
-    <>
-      <h1 className="sr-only">{t.auth.signIn.title}</h1>
-      {/* Les paramètres d'URL sont dynamiques : lus dans une zone Suspense */}
-      <Suspense>
-        <SignInForm searchParams={searchParams} />
-      </Suspense>
-    </>
-  );
+  return <SignInPageContent searchParams={searchParams} />;
 }

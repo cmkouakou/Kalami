@@ -6,7 +6,7 @@
  *               démarche en quatre temps, puis, pour un utilisateur connecté, ses études et
  *               ses crédits d'étude disponibles.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: lib/strategy/queries.ts, lib/auth/dal.ts
  * =============================================================
@@ -15,9 +15,16 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { BADGE, BUTTON_PRIMARY, CARD, PANEL_SAND } from "@/components/ui/styles";
+import {
+  BADGE,
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  CARD,
+  PANEL_SAND,
+} from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth/dal";
+import { authPath, STRATEGY_HOME } from "@/lib/auth/routes";
 import { countAvailableCredits, listMyStudies } from "@/lib/strategy/queries";
 import { PHASES } from "@/lib/strategy/steps";
 
@@ -63,13 +70,16 @@ export default function StrategyHomePage() {
 async function MyStudies() {
   const user = await getCurrentUser();
   if (!user) {
+    // Nouveau visiteur ou lecteur du livre : inscription et connexion restent dans l'application
     return (
-      <Link
-        href={`/connexion?suivant=${encodeURIComponent("/strategie")}`}
-        className={`${BUTTON_PRIMARY} self-start`}
-      >
-        {s.landing.signIn}
-      </Link>
+      <div className="flex flex-wrap gap-3">
+        <Link href={authPath("inscription", STRATEGY_HOME)} className={BUTTON_PRIMARY}>
+          {s.landing.signUp}
+        </Link>
+        <Link href={authPath("connexion", STRATEGY_HOME)} className={BUTTON_SECONDARY}>
+          {s.landing.signIn}
+        </Link>
+      </div>
     );
   }
 

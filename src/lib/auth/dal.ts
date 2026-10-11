@@ -6,7 +6,7 @@
  *               serveur privée passe par ces fonctions : c'est ici que l'autorisation est
  *               réellement vérifiée (le proxy ne fait qu'une vérification optimiste).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-06
  *  Dépendances: lib/supabase/server.ts
  * =============================================================
@@ -18,6 +18,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 
+import { authPath } from "@/lib/auth/routes";
 import { createClient } from "@/lib/supabase/server";
 
 /** Utilisateur courant, tel que lu dans le jeton validé. */
@@ -77,12 +78,12 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
 // ==================== GARDES ====================
 
 /**
- * Exige un utilisateur connecté ; sinon redirige vers /connexion.
+ * Exige un utilisateur connecté ; sinon redirige vers la page de connexion de son espace.
  * @param nextPath - Page où revenir après connexion
  */
 export async function requireUser(nextPath = "/compte"): Promise<CurrentUser> {
   const user = await getCurrentUser();
-  if (!user) redirect(`/connexion?suivant=${encodeURIComponent(nextPath)}`);
+  if (!user) redirect(authPath("connexion", nextPath));
   return user;
 }
 

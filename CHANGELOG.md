@@ -1,5 +1,28 @@
 # Journal des modifications
 
+## [Stratégie v0.4.2] - 2026-10-11 — Accès direct à l'application
+### Ajouté
+- Pages de connexion propres à l'application : `/strategie/connexion`, `/strategie/inscription`,
+  `/strategie/mot-de-passe-oublie`, `/strategie/reinitialiser-mot-de-passe` (mêmes formulaires
+  que le site, partagés par `components/auth/auth-pages.tsx`).
+- En-tête et pied de page de Kalami Stratégie (`components/strategy/strategy-chrome.tsx`) :
+  marque, navigation, connexion ou déconnexion qui ramènent à `/strategie`, et un seul lien
+  discret vers le livre guide, affiché seulement s'il est publié.
+- Accueil `/strategie` : « Créer un compte pour commencer » et « J'ai déjà un compte ».
+- `authPath` et `isStrategyPath` (`lib/auth/routes.ts`) : un chemin de `/strategie` mène
+  toujours aux pages de connexion de l'application ; 4 tests unitaires.
+### Modifié
+- Gabarits : la racine ne garde que la langue, les polices et les métadonnées ; l'en-tête et
+  le pied de page de la librairie passent dans le groupe `(site)` (pages déplacées, adresses
+  inchangées).
+- Proxy, `requireUser` et `/auth/callback` (erreur de lien) redirigent vers la connexion de
+  l'espace d'origine.
+### Corrigé
+- L'inscription par courriel ignorait la page d'origine : le lien de confirmation menait à
+  `/compte` (compte lecteur) au lieu de `/strategie`.
+- Mot de passe oublié et nouveau mot de passe gardent la page d'origine.
+- La déconnexion depuis l'application ramène à `/strategie` au lieu de l'accueil des livres.
+
 ## [Stratégie v0.4.1] - 2026-10-11 — Textes du guide, modèle services, nouveaux minimums
 ### Ajouté
 - Migration `20261016120000_strategy_guides_content.sql` : explication et exemple Infosystem

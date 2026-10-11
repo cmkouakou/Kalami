@@ -2,10 +2,11 @@
  * =============================================================
  *  Fichier    : routes.ts
  *  Projet     : Kalami
- *  Description: Chemins privés, validation des redirections après connexion et filet de
- *               sécurité pour un code de connexion arrivé sur l'accueil.
+ *  Description: Chemins privés, validation des redirections après connexion, pages de
+ *               connexion propres à Kalami Stratégie et filet de sécurité pour un code de
+ *               connexion arrivé sur l'accueil.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-09
  * =============================================================
  */
@@ -34,6 +35,34 @@ export function safeNextPath(next: string | null | undefined, fallback = "/compt
     return fallback;
   }
   return next;
+}
+
+/** Accueil de Kalami Stratégie : ses pages de connexion vivent sous ce préfixe. */
+export const STRATEGY_HOME = "/strategie";
+
+/** Pages de connexion, présentes sur le site et dans Kalami Stratégie. */
+export type AuthPage =
+  | "connexion"
+  | "inscription"
+  | "mot-de-passe-oublie"
+  | "reinitialiser-mot-de-passe";
+
+/** Vrai si le chemin appartient à Kalami Stratégie. */
+export function isStrategyPath(path: string | null | undefined): boolean {
+  return !!path && (path === STRATEGY_HOME || /^\/strategie[/?#]/.test(path));
+}
+
+/**
+ * Adresse d'une page de connexion qui garde l'utilisateur dans son espace : un chemin
+ * de Kalami Stratégie mène aux pages /strategie/…, tout autre chemin à celles du site.
+ * @param page - Page de connexion voulue
+ * @param next - Page à rouvrir ensuite (vide = aucune)
+ * @returns Ex. « /strategie/connexion?suivant=%2Fstrategie%2Fnouvelle »
+ */
+export function authPath(page: AuthPage, next?: string | null): string {
+  const base = isStrategyPath(next) ? STRATEGY_HOME : "";
+  const query = next ? `?suivant=${encodeURIComponent(next)}` : "";
+  return `${base}/${page}${query}`;
 }
 
 /**

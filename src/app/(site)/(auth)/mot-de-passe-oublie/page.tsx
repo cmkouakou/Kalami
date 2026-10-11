@@ -4,26 +4,21 @@
  *  Projet     : Kalami
  *  Description: Demande de réinitialisation du mot de passe (/mot-de-passe-oublie).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-06
- *  Dépendances: components/auth/auth-forms.tsx
+ *  Version    : 1.1
+ *  Date       : 2026-10-11
+ *  Dépendances: components/auth/auth-pages.tsx
  * =============================================================
  */
 
 import type { Metadata } from "next";
 
-import { ForgotPasswordForm } from "@/components/auth/auth-forms";
+import { ForgotPasswordPageContent } from "@/components/auth/auth-pages";
 import { getDictionary } from "@/i18n";
 
 const t = getDictionary();
 
 export const metadata: Metadata = { title: t.auth.forgot.title };
 
-export default function ForgotPasswordPage() {
-  return (
-    <>
-      <h1 className="mb-6 font-serif text-2xl font-semibold">{t.auth.forgot.title}</h1>
-      <ForgotPasswordForm />
-    </>
-  );
+export default function ForgotPasswordPage({ searchParams }: PageProps<"/mot-de-passe-oublie">) {
+  return <ForgotPasswordPageContent searchParams={searchParams} />;
 }

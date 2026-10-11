@@ -7,8 +7,8 @@
  *               - « code »              → échange PKCE (flux par défaut de @supabase/ssr)
  *               - « token_hash » + type → vérification OTP (modèles de courriel personnalisés)
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-06
+ *  Version    : 1.1
+ *  Date       : 2026-10-11
  *  Dépendances: lib/supabase/server.ts, lib/auth/routes.ts
  * =============================================================
  */
@@ -16,8 +16,13 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { safeNextPath } from "@/lib/auth/routes";
+import { authPath, isStrategyPath, safeNextPath, STRATEGY_HOME } from "@/lib/auth/routes";
 import { createClient } from "@/lib/supabase/server";
+
+/** Vrai si le chemin est une page de nouveau mot de passe (site ou Kalami Stratégie). */
+function isResetPath(path: string): boolean {
+  return path.split("?")[0].endsWith("/reinitialiser-mot-de-passe");
+}
 
 const OTP_TYPES: EmailOtpType[] = [
   "signup",
@@ -48,10 +53,14 @@ export async function GET(request: NextRequest) {
   } else if (tokenHash && type && OTP_TYPES.includes(type)) {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
     ok = !error;
-    if (ok && type === "recovery") next = "/reinitialiser-mot-de-passe";
+    // Le lien de réinitialisation peut déjà viser la page de Kalami Stratégie
+    if (ok && type === "recovery" && !isResetPath(next)) next = "/reinitialiser-mot-de-passe";
   }
 
-  if (!ok) return NextResponse.redirect(`${origin}/connexion?erreur=lien`);
+  if (!ok) {
+    const login = authPath("connexion", isStrategyPath(next) ? STRATEGY_HOME : null);
+    return NextResponse.redirect(`${origin}${login}${login.includes("?") ? "&" : "?"}erreur=lien`);
+  }
 
   return NextResponse.redirect(`${origin}${next}`);
 }

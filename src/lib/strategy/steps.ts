@@ -11,6 +11,12 @@
  * =============================================================
  */
 
+/**
+ * Livre de la démarche (même valeur que la migration du livre guide) : lien discret du
+ * pied de page de l'application, affiché seulement si le livre est publié.
+ */
+export const GUIDE_BOOK_SLUG = "la-strategie-d-entreprise";
+
 // ==================== TYPES ====================
 
 export type StepNo = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;

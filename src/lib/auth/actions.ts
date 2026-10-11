@@ -6,8 +6,8 @@
  *               connexion, lien magique, Google, inscription, mot de passe oublié,
  *               nouveau mot de passe, déconnexion.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-06
+ *  Version    : 1.1
+ *  Date       : 2026-10-11
  *  Dépendances: lib/supabase/server.ts, lib/auth/routes.ts, i18n
  * =============================================================
  */
@@ -18,7 +18,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { getDictionary } from "@/i18n";
-import { safeNextPath } from "@/lib/auth/routes";
+import { authPath, isStrategyPath, safeNextPath } from "@/lib/auth/routes";
 import { APP_URL } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -126,7 +126,10 @@ export async function signInWithGoogle(formData: FormData): Promise<void> {
     provider: "google",
     options: { redirectTo: await callbackUrl(next) },
   });
-  if (error || !data.url) redirect("/connexion?erreur=oauth");
+  if (error || !data.url) {
+    const login = authPath("connexion", isStrategyPath(next) ? next : null);
+    redirect(`${login}${login.includes("?") ? "&" : "?"}erreur=oauth`);
+  }
 
   redirect(data.url);
 }
@@ -138,6 +141,8 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
   const email = field(formData, "email");
   const password = String(formData.get("password") ?? "");
   const displayName = field(formData, "display_name").slice(0, 120);
+  // Le lien de confirmation ramène à la page d'origine (ex. Kalami Stratégie)
+  const next = safeNextPath(field(formData, "suivant"));
   const invalid = validateCredentials(email, password);
   if (invalid) return { error: invalid };
 
@@ -146,14 +151,14 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
     email,
     password,
     options: {
-      emailRedirectTo: await callbackUrl("/compte"),
+      emailRedirectTo: await callbackUrl(next),
       data: displayName ? { display_name: displayName } : undefined,
     },
   });
   if (error) return { error: authErrorMessage(error.code) };
 
   // Confirmation par courriel désactivée : la session est déjà ouverte
-  if (data.session) redirect("/compte");
+  if (data.session) redirect(next);
 
   return { message: t.auth.signUp.checkEmail };
 }
@@ -166,12 +171,18 @@ export async function requestPasswordReset(
   formData: FormData,
 ): Promise<FormState> {
   const email = field(formData, "email");
+  const suivant = field(formData, "suivant");
   const invalid = validateCredentials(email, null);
   if (invalid) return { error: invalid };
 
+  // Page du nouveau mot de passe dans le même espace (site ou Kalami Stratégie)
+  const resetPage = authPath(
+    "reinitialiser-mot-de-passe",
+    suivant ? safeNextPath(suivant) : null,
+  );
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: await callbackUrl("/reinitialiser-mot-de-passe"),
+    redirectTo: await callbackUrl(resetPage),
   });
   if (error?.code === "over_email_send_rate_limit") return { error: t.auth.errors.rateLimited };
 
@@ -187,14 +198,14 @@ export async function updatePassword(_: FormState, formData: FormData): Promise<
   const { error } = await supabase.auth.updateUser({ password });
   if (error) return { error: authErrorMessage(error.code) };
 
-  redirect("/compte");
+  redirect(safeNextPath(field(formData, "suivant")));
 }
 
 // ==================== DÉCONNEXION ====================
 
-/** Ferme la session et revient à l'accueil. */
-export async function signOut(): Promise<void> {
+/** Ferme la session et revient à l'accueil de l'espace (champ « suivant », sinon « / »). */
+export async function signOut(formData: FormData): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/");
+  redirect(safeNextPath(field(formData, "suivant"), "/"));
 }

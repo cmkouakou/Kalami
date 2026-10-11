@@ -1,0 +1,134 @@
+/**
+ * =============================================================
+ *  Fichier    : strategy-chrome.tsx
+ *  Projet     : Kalami Stratégie
+ *  Description: En-tête et pied de page propres à Kalami Stratégie : l'application se
+ *               suffit à elle-même (connexion, déconnexion et liens restent dans
+ *               /strategie) ; seul un lien discret mène au livre guide, s'il est publié.
+ *  Auteur     : Claude Marcel
+ *  Version    : 1.0
+ *  Date       : 2026-10-11
+ *  Dépendances: lib/auth/dal.ts, lib/auth/actions.ts, lib/catalog/queries.ts, i18n
+ * =============================================================
+ */
+
+import Image from "next/image";
+import Link from "next/link";
+import { Suspense } from "react";
+
+import { BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
+import { getDictionary, interpolate } from "@/i18n";
+import { signOut } from "@/lib/auth/actions";
+import { getCurrentUser } from "@/lib/auth/dal";
+import { authPath, STRATEGY_HOME } from "@/lib/auth/routes";
+import { getBookBySlug } from "@/lib/catalog/queries";
+import { APP_NAME } from "@/lib/config";
+import { GUIDE_BOOK_SLUG } from "@/lib/strategy/steps";
+
+const t = getDictionary();
+const s = t.strategy;
+
+const LINKS = [
+  { href: STRATEGY_HOME, label: s.nav.home },
+  { href: `${STRATEGY_HOME}#mes-etudes`, label: s.nav.studies },
+];
+
+// ==================== EN-TÊTE ====================
+
+/** En-tête de l'application : marque, navigation et compte. */
+export function StrategyHeader() {
+  return (
+    <header className="border-b border-line bg-paper">
+      <nav
+        aria-label={s.title}
+        className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4
+          py-3"
+      >
+        <Link
+          href={STRATEGY_HOME}
+          className="inline-flex min-h-11 items-center gap-2 font-serif text-h3 font-semibold
+            text-encre"
+        >
+          <Image src="/brand/kalami-mark.svg" alt="" width={28} height={28} />
+          {s.title}
+        </Link>
+        <ul className="flex flex-wrap gap-x-5 text-sm font-medium">
+          {LINKS.map((link) => (
+            <li key={link.href}>
+              <Link href={link.href} className="inline-flex min-h-11 items-center hover:underline">
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="ml-auto">
+          {/* Session lue en flux : l'en-tête reste statique et instantané */}
+          <Suspense fallback={<StrategySignInLink />}>
+            <StrategyUserMenu />
+          </Suspense>
+        </div>
+      </nav>
+    </header>
+  );
+}
+
+/** Lien de connexion qui ramène à l'application. */
+function StrategySignInLink() {
+  return (
+    <Link href={authPath("connexion", STRATEGY_HOME)} className={`${BUTTON_SECONDARY} px-4`}>
+      {s.nav.signIn}
+    </Link>
+  );
+}
+
+/** Nom de l'utilisateur et déconnexion (retour à l'accueil de l'application). */
+async function StrategyUserMenu() {
+  const user = await getCurrentUser();
+  if (!user) return <StrategySignInLink />;
+
+  return (
+    <form action={signOut} className="flex flex-wrap items-center gap-x-3">
+      <input type="hidden" name="suivant" value={STRATEGY_HOME} />
+      {user.email && (
+        <span className="text-small text-ink-muted">
+          {interpolate(s.nav.signedInAs, { name: user.email })}
+        </span>
+      )}
+      <button type="submit" className={BUTTON_TERTIARY}>
+        {s.nav.signOut}
+      </button>
+    </form>
+  );
+}
+
+// ==================== PIED DE PAGE ====================
+
+/** Pied de page sobre, avec le lien discret vers le livre guide. */
+export function StrategyFooter() {
+  return (
+    <footer className="mt-16 border-t border-line">
+      <div
+        className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3
+          px-4 py-6 text-small text-ink-muted"
+      >
+        <p>
+          © {APP_NAME}. {s.footer.tagline}
+        </p>
+        <Suspense>
+          <GuideBookLink />
+        </Suspense>
+      </div>
+    </footer>
+  );
+}
+
+/** Lien vers la fiche du livre guide, seulement s'il est publié. */
+async function GuideBookLink() {
+  const book = await getBookBySlug(GUIDE_BOOK_SLUG);
+  if (!book) return null;
+  return (
+    <Link href={`/livres/${GUIDE_BOOK_SLUG}`} className="hover:text-encre hover:underline">
+      {s.footer.book}
+    </Link>
+  );
+}

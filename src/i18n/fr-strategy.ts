@@ -21,6 +21,13 @@ const strategyFr = {
   nav: {
     home: "Présentation",
     studies: "Mes études",
+    signIn: "Se connecter",
+    signOut: "Se déconnecter",
+    signedInAs: "Connecté : {name}",
+  },
+  footer: {
+    tagline: "L'assistant d'analyse stratégique de Kalami.",
+    book: "Le livre « La stratégie d'entreprise »",
   },
 
   // ==================== ACCUEIL ====================
@@ -32,7 +39,8 @@ const strategyFr = {
       "environnement, concurrence, ressources, parties prenantes, puis synthèse, cap, " +
       "choix et feuille de route.",
     start: "Commencer une étude",
-    signIn: "Se connecter pour commencer",
+    signUp: "Créer un compte pour commencer",
+    signIn: "J'ai déjà un compte",
     phasesTitle: "Une démarche en quatre temps",
     coachNote:
       "Un coach vous relira, posera des questions et signalera les erreurs classiques. " +

@@ -8,15 +8,15 @@
  *               3. rafraîchissement de la session Supabase ;
  *               4. renvoi vers /connexion des pages privées si personne n'est connecté.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-09
+ *  Version    : 1.3
+ *  Date       : 2026-10-11
  *  Dépendances: lib/config.ts, lib/domain-redirect.ts, lib/supabase/proxy-session.ts
  * =============================================================
  */
 
 import { NextResponse, type NextRequest } from "next/server";
 
-import { isProtectedPath, strayAuthCallback } from "@/lib/auth/routes";
+import { authPath, isProtectedPath, strayAuthCallback } from "@/lib/auth/routes";
 import { APP_URL, REDIRECT_DOMAINS } from "@/lib/config";
 import { getDomainRedirect } from "@/lib/domain-redirect";
 import { updateSession } from "@/lib/supabase/proxy-session";
@@ -41,10 +41,8 @@ export async function proxy(request: NextRequest) {
 
   const { pathname, search } = request.nextUrl;
   if (!isAuthenticated && isProtectedPath(pathname)) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/connexion";
-    loginUrl.search = `?suivant=${encodeURIComponent(pathname + search)}`;
-    return NextResponse.redirect(loginUrl);
+    // Un chemin de Kalami Stratégie garde ses propres pages de connexion
+    return NextResponse.redirect(new URL(authPath("connexion", pathname + search), request.url));
   }
 
   return response;

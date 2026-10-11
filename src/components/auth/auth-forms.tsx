@@ -4,11 +4,12 @@
  *  Projet     : Kalami
  *  Description: Formulaires d'authentification (composants clients branchés sur les
  *               actions serveur via useActionState) : onglets Connexion / Créer un compte,
- *               Google proposé en premier sur les deux pages.
+ *               Google proposé en premier sur les deux pages. Mêmes formulaires pour le
+ *               site et Kalami Stratégie : la page de retour choisit les liens.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-09
- *  Dépendances: lib/auth/actions.ts, components/ui/form.tsx
+ *  Version    : 1.2
+ *  Date       : 2026-10-11
+ *  Dépendances: lib/auth/actions.ts, lib/auth/routes.ts, components/ui/form.tsx
  * =============================================================
  */
 
@@ -27,6 +28,7 @@ import {
   signUp,
   updatePassword,
 } from "@/lib/auth/actions";
+import { authPath } from "@/lib/auth/routes";
 
 const t = getDictionary();
 
@@ -40,10 +42,12 @@ function urlError(code: string | undefined): string | undefined {
   return undefined;
 }
 
-/** Conserve la page de retour d'un onglet à l'autre. */
-function withNext(path: string, suivant: string): string {
-  return suivant ? `${path}?suivant=${encodeURIComponent(suivant)}` : path;
-}
+/** Propriétés communes : paramètres d'URL et page de retour par défaut de l'espace. */
+type AuthFormProps = {
+  searchParams: AuthSearchParams;
+  /** Page de retour si l'URL n'en donne pas (ex. « /strategie ») ; vide = site. */
+  defaultNext?: string;
+};
 
 // ==================== ONGLETS ====================
 
@@ -53,8 +57,8 @@ function withNext(path: string, suivant: string): string {
  */
 function AuthTabs({ active, suivant }: { active: "signIn" | "signUp"; suivant: string }) {
   const tabs = [
-    { key: "signIn", href: withNext("/connexion", suivant), label: t.auth.signUp.signInLink },
-    { key: "signUp", href: withNext("/inscription", suivant), label: t.auth.signIn.signUpLink },
+    { key: "signIn", href: authPath("connexion", suivant), label: t.auth.signUp.signInLink },
+    { key: "signUp", href: authPath("inscription", suivant), label: t.auth.signIn.signUpLink },
   ] as const;
 
   return (
@@ -129,8 +133,8 @@ function GoogleButton({ suivant }: { suivant: string }) {
 // ==================== CONNEXION ====================
 
 /** Connexion : Google, mot de passe et lien magique. */
-export function SignInForm({ searchParams }: { searchParams: AuthSearchParams }) {
-  const { suivant = "", erreur } = use(searchParams);
+export function SignInForm({ searchParams, defaultNext = "" }: AuthFormProps) {
+  const { suivant = defaultNext, erreur } = use(searchParams);
   const [pwState, pwAction] = useActionState(signInWithPassword, undefined);
   const [linkState, linkAction] = useActionState(signInWithMagicLink, undefined);
 
@@ -153,7 +157,10 @@ export function SignInForm({ searchParams }: { searchParams: AuthSearchParams })
         />
         <FormMessage {...pwState} />
         <SubmitButton>{t.auth.signIn.submit}</SubmitButton>
-        <Link href="/mot-de-passe-oublie" className="text-sm text-encre underline">
+        <Link
+          href={authPath("mot-de-passe-oublie", suivant)}
+          className="text-sm text-encre underline"
+        >
           {t.auth.signIn.forgot}
         </Link>
       </form>
@@ -191,8 +198,8 @@ function Separator() {
 // ==================== INSCRIPTION ====================
 
 /** Création de compte : Google, ou courriel et mot de passe. */
-export function SignUpForm({ searchParams }: { searchParams: AuthSearchParams }) {
-  const { suivant = "", erreur } = use(searchParams);
+export function SignUpForm({ searchParams, defaultNext = "" }: AuthFormProps) {
+  const { suivant = defaultNext, erreur } = use(searchParams);
   const [state, action] = useActionState(signUp, undefined);
 
   return (
@@ -203,6 +210,7 @@ export function SignUpForm({ searchParams }: { searchParams: AuthSearchParams })
       <Separator />
 
       <form action={action} className="flex flex-col gap-4">
+        <input type="hidden" name="suivant" value={suivant} />
         <Field label={t.auth.displayName} name="display_name" autoComplete="name" maxLength={120} />
         <Field label={t.auth.email} name="email" type="email" autoComplete="email" required />
         <Field
@@ -223,11 +231,13 @@ export function SignUpForm({ searchParams }: { searchParams: AuthSearchParams })
 // ==================== MOT DE PASSE ====================
 
 /** Demande de lien de réinitialisation. */
-export function ForgotPasswordForm() {
+export function ForgotPasswordForm({ searchParams, defaultNext = "" }: AuthFormProps) {
+  const { suivant = defaultNext } = use(searchParams);
   const [state, action] = useActionState(requestPasswordReset, undefined);
 
   return (
     <form action={action} className="flex flex-col gap-4">
+      <input type="hidden" name="suivant" value={suivant} />
       <p className="text-sm text-ink-muted">{t.auth.forgot.intro}</p>
       <Field label={t.auth.email} name="email" type="email" autoComplete="email" required />
       <FormMessage {...state} />
@@ -237,11 +247,12 @@ export function ForgotPasswordForm() {
 }
 
 /** Saisie du nouveau mot de passe. */
-export function ResetPasswordForm() {
+export function ResetPasswordForm({ suivant = "" }: { suivant?: string }) {
   const [state, action] = useActionState(updatePassword, undefined);
 
   return (
     <form action={action} className="flex flex-col gap-4">
+      <input type="hidden" name="suivant" value={suivant} />
       <Field
         label={t.auth.newPassword}
         name="password"
