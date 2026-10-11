@@ -59,6 +59,6 @@ Version actuelle : v0.8.3 · Stratégie v0.4.0 | Statut : 🟡 En cours (projet 
 - [x] S2 — gabarits PESTEL et cinq forces, sauvegarde auto, versions (Stratégie v0.3.0)
 - [x] S2 — migration `20261014120000_strategy_templates.sql` appliquée, tests RLS gabarits 12/12
 - [x] S3 — chaîne de valeur, VRIO, parties prenantes, guide des étapes (Stratégie v0.4.0)
-- [ ] S3 — migration `20261015120000_strategy_guides.sql` à appliquer
+- [x] S3 — migration `20261015120000_strategy_guides.sql` appliquée, tests 332/332
 - [ ] S3 — saisir explications, exemples Infosystem et chapitres dans /admin/strategie/etapes
 - [ ] Modèle « services » de la chaîne de valeur : liste du livre à fournir par l'auteur
