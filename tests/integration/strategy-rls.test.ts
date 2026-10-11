@@ -18,7 +18,12 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { STEPS } from "@/lib/strategy/steps";
 import { FORCES, initialForces } from "@/lib/strategy/templates/forces";
-import { initialInternal, newResource, PORTER_ACTIVITIES } from "@/lib/strategy/templates/internal";
+import {
+  emptyInternal,
+  newResource,
+  PORTER_ACTIVITIES,
+  withModel,
+} from "@/lib/strategy/templates/internal";
 import { emptyPestel, newFactor } from "@/lib/strategy/templates/pestel";
 import { newStakeholder } from "@/lib/strategy/templates/stakeholders";
 
@@ -50,17 +55,40 @@ async function templatesApplied(): Promise<boolean> {
 
 const templates = await templatesApplied();
 
-/** Analyse interne qui remplit la liste de contrôle de l'étape 3. */
+/** Analyse interne qui remplit la liste de contrôle de l'étape 3 (modèle, 9 activités, 3 VRIO). */
 function filledInternal() {
   const labels = Object.fromEntries(PORTER_ACTIVITIES.map(({ key }) => [key, key]));
-  const payload = initialInternal(labels);
+  const payload = withModel(emptyInternal(), "porter", labels);
   payload.activities = payload.activities.map((a) => ({ ...a, evaluation: "strength" as const }));
-  const resource = { ...newResource("r1"), name: "Savoir-faire" };
-  for (const test of ["value", "rarity", "imitability", "organization"] as const) {
-    resource.tests[test] = { answer: "yes", justification: "" };
-  }
-  payload.resources = [resource];
+  payload.resources = ["Savoir-faire", "Marque", "Clientèle"].map((name, i) => {
+    const resource = { ...newResource(`r${i}`), name };
+    for (const test of ["value", "rarity", "imitability", "organization"] as const) {
+      resource.tests[test] = { answer: "yes", justification: "" };
+    }
+    return resource;
+  });
   return payload;
+}
+
+/** Parties prenantes qui remplissent la liste de contrôle de l'étape 4 (5, dont 1 forte). */
+function filledStakeholders() {
+  const levels = [
+    [4, 2],
+    [1, 1],
+    [2, 4],
+    [1, 2],
+    [2, 2],
+  ];
+  return {
+    stakeholders: levels.map(([power, interest], i) => ({
+      ...newStakeholder(`p${i}`),
+      name: `Partie ${i}`,
+      power,
+      interest,
+      // Exigée par l'ancienne liste de contrôle SQL, tant que v0.4.1 n'est pas appliquée
+      approach: "Suivi.",
+    })),
+  };
 }
 
 const PROFILE = {
@@ -128,11 +156,7 @@ describe.skipIf(!ready)("RLS — assistant stratégie", () => {
     } else if (stepNo === 3) {
       payload = filledInternal();
     } else {
-      payload = {
-        stakeholders: [
-          { ...newStakeholder("p1"), name: "Banque", power: 4, interest: 2, approach: "Suivi." },
-        ],
-      };
+      payload = filledStakeholders();
     }
     const current = await service
       .from("study_steps")

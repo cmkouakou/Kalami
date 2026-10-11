@@ -3,8 +3,8 @@
  *  Fichier    : value-chain.tsx
  *  Projet     : Kalami Stratégie
  *  Description: Chaîne de valeur de l'étape 3 : activités principales et de soutien,
- *               chacune nommée, décrite, évaluée (point fort, à renforcer, faible,
- *               marginale) et commentée. Les activités se renomment, s'ajoutent et se
+ *               chacune nommée, décrite, évaluée (point fort, à renforcer, point faible,
+ *               marginal) et commentée. Les activités se renomment, s'ajoutent et se
  *               retirent.
  *  Auteur     : Claude Marcel
  *  Version    : 1.0

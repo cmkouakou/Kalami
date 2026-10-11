@@ -217,7 +217,7 @@ async function Template({
       <InternalEditor
         key={content.revision}
         {...frame}
-        initial={readInternal(content.payload, s.internal.porter)}
+        initial={readInternal(content.payload)}
         revision={content.revision}
       />
     );

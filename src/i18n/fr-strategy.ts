@@ -380,8 +380,36 @@ const strategyFr = {
   internal: {
     chainTitle: "1. Chaîne de valeur",
     chainIntro:
-      "Les activités du modèle de Porter sont proposées : renommez-les, retirez celles qui ne " +
+      "Les activités du modèle choisi sont proposées : renommez-les, retirez celles qui ne " +
       "s'appliquent pas, ajoutez les vôtres, puis évaluez chacune.",
+    modelTitle: "Choisissez le modèle de chaîne de valeur",
+    modelIntro:
+      "Votre entreprise livre-t-elle principalement des produits physiques (modèle Porter) ou " +
+      "résout-elle des problèmes pour ses clients (modèle services) ?",
+    models: {
+      porter: "Porter (industrie)",
+      services: "Services",
+    },
+    modelHints: {
+      porter:
+        "Pour une entreprise qui fabrique, transporte ou vend des produits physiques " +
+        "(industrie, agroalimentaire, distribution, construction).",
+      services:
+        "Pour une entreprise qui vend du conseil, de la maintenance, de l'informatique, de la " +
+        "santé, de l'éducation, de la finance ou tout métier où la relation et le savoir " +
+        "priment sur le produit physique.",
+    },
+    modelMixed:
+      "Cas mixte (par exemple un fabricant qui fait aussi beaucoup de service après-vente) : " +
+      "choisissez Porter et ajoutez vos activités de service dans « Services ».",
+    modelChoose: "Choisir ce modèle",
+    modelCurrent: "Modèle : {model}",
+    modelSwitchTo: "Passer au modèle {model}",
+    modelConfirm:
+      "Les activités seront remplacées par celles du modèle {model} ; leurs évaluations et " +
+      "commentaires seront perdus. Les ressources VRIO sont gardées.",
+    modelConfirmYes: "Remplacer les activités",
+    cancel: "Annuler",
     kinds: {
       primary: "Activités principales",
       support: "Activités de soutien",
@@ -397,6 +425,17 @@ const strategyFr = {
       technology: "Développement technologique",
       procurement: "Approvisionnements",
     },
+    services: {
+      attract: "Attirer les clients",
+      diagnose: "Diagnostiquer",
+      deliver: "Mettre en place",
+      dailySupport: "Soutenir au quotidien",
+      emergency: "Intervenir en urgence",
+      administration: "Direction et administration",
+      humanResources: "Gestion des ressources humaines",
+      technology: "Technologie",
+      procurement: "Approvisionnement",
+    },
     fields: {
       name: "Activité",
       description: "Ce que fait l'entreprise",
@@ -406,8 +445,8 @@ const strategyFr = {
     evaluations: {
       strength: "Point fort",
       improve: "À renforcer",
-      weakness: "Faible",
-      marginal: "Marginale",
+      weakness: "Point faible",
+      marginal: "Marginal (ne s'applique pas)",
     },
     evaluationNone: "À évaluer",
     addActivity: "Ajouter une activité",
@@ -449,9 +488,10 @@ const strategyFr = {
     untitledResource: "Ressource sans nom",
     maxResources: "{max} ressources au plus.",
     checklist: {
-      activities: "Au moins une activité",
-      evaluated: "Toutes les activités évaluées",
-      resource: "Au moins une ressource avec les quatre réponses",
+      model: "Modèle de chaîne de valeur choisi",
+      activities: "Au moins 4 activités évaluées",
+      resources: "Au moins 3 ressources passées au VRIO",
+      complete: "Les quatre tests remplis pour chaque ressource",
     },
   },
 
@@ -509,8 +549,13 @@ const strategyFr = {
     placeAutoNone: "Automatique",
     manual: "placée à la main",
     resetAuto: "Revenir au placement automatique",
+    noHighPower:
+      "Vraiment personne n'a de pouvoir sur votre entreprise ? Pensez à vos banques, à vos " +
+      "grands clients, aux organismes qui vous réglementent.",
     checklist: {
-      mapped: "Au moins une partie prenante avec pouvoir, intérêt et approche",
+      count: "Au moins 5 parties prenantes nommées",
+      placed: "Chaque partie prenante placée dans la matrice",
+      highPower: "Au moins une partie prenante à « Gérer de près » ou « Satisfaire »",
     },
   },
 

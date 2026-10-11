@@ -3,12 +3,13 @@
  *  Fichier    : internal.ts
  *  Projet     : Kalami Stratégie
  *  Description: Gabarit de l'étape 3 (cahier des charges §5.3) : chaîne de valeur (modèle de
- *               Porter, activités modifiables) avec évaluation de chaque activité, puis
+ *               Porter ou modèle services de l'auteur d'après Stabell et Fjeldstad, choisi au
+ *               début, activités modifiables) avec évaluation de chaque activité, puis
  *               analyse VRIO des ressources et arbre de décision (« partiel » compte comme
  *               « non » et rend le résultat « à confirmer »). Schéma Zod, contenu de départ,
  *               lecture tolérante et liste de contrôle (miroir de strategy_checklist_ok).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: zod, templates/common.ts
  * =============================================================
@@ -26,8 +27,8 @@ import {
 
 // ==================== RÉFÉRENCES ====================
 
-/** Modèles de chaîne de valeur ; « services » viendra avec la liste fournie par l'auteur. */
-export const VALUE_CHAIN_MODELS = ["porter"] as const;
+/** Modèles de chaîne de valeur : Porter (industrie) ou services (liste fournie par l'auteur). */
+export const VALUE_CHAIN_MODELS = ["porter", "services"] as const;
 
 export type ValueChainModel = (typeof VALUE_CHAIN_MODELS)[number];
 
@@ -62,6 +63,9 @@ export type VrioOutcome = (typeof VRIO_OUTCOMES)[number];
 
 export const ACTIVITIES_MAX = 30;
 export const RESOURCES_MAX = 30;
+/** Minimums de la liste de contrôle (choisis par l'auteur). */
+export const ACTIVITIES_MIN = 4;
+export const RESOURCES_MIN = 3;
 const NAME_MAX = 200;
 const DESCRIPTION_MAX = 1500;
 const COMMENT_MAX = 1000;
@@ -80,6 +84,25 @@ export const PORTER_ACTIVITIES: readonly { key: string; kind: ActivityKind }[] =
   { key: "technology", kind: "support" },
   { key: "procurement", kind: "support" },
 ];
+
+/** Activités du modèle services (parcours du client, puis soutien), fournies par l'auteur. */
+export const SERVICES_ACTIVITIES: readonly { key: string; kind: ActivityKind }[] = [
+  { key: "attract", kind: "primary" },
+  { key: "diagnose", kind: "primary" },
+  { key: "deliver", kind: "primary" },
+  { key: "dailySupport", kind: "primary" },
+  { key: "emergency", kind: "primary" },
+  { key: "administration", kind: "support" },
+  { key: "humanResources", kind: "support" },
+  { key: "technology", kind: "support" },
+  { key: "procurement", kind: "support" },
+];
+
+/** Activités de départ de chaque modèle. */
+export const MODEL_ACTIVITIES: Record<ValueChainModel, typeof PORTER_ACTIVITIES> = {
+  porter: PORTER_ACTIVITIES,
+  services: SERVICES_ACTIVITIES,
+};
 
 // ==================== SCHÉMAS ====================
 
@@ -116,7 +139,8 @@ const resourceSchema = z.object({
 export type Resource = z.infer<typeof resourceSchema>;
 
 export const internalSchema = z.object({
-  model: z.enum(VALUE_CHAIN_MODELS),
+  /** Modèle choisi au début de l'étape ; null tant que l'utilisateur n'a pas choisi. */
+  model: z.enum(VALUE_CHAIN_MODELS).nullable(),
   activities: z.array(activitySchema).max(ACTIVITIES_MAX),
   resources: z.array(resourceSchema).max(RESOURCES_MAX),
 });
@@ -136,19 +160,47 @@ export function newActivity(id: string, kind: ActivityKind, name = ""): Activity
 }
 
 /**
- * Activités du modèle de Porter, nommées avec les libellés donnés.
+ * Activités de départ d'un modèle, nommées avec les libellés donnés.
+ * @param model  - Modèle de chaîne de valeur
  * @param labels - Libellé de chaque activité, indexé par sa clé
  */
-export function porterActivities(labels: Record<string, string>): Activity[] {
-  return PORTER_ACTIVITIES.map(({ key, kind }) => newActivity(key, kind, labels[key] ?? ""));
+export function modelActivities(
+  model: ValueChainModel,
+  labels: Record<string, string>,
+): Activity[] {
+  return MODEL_ACTIVITIES[model].map(({ key, kind }) =>
+    newActivity(key, kind, labels[key] ?? ""),
+  );
+}
+
+/** Gabarit vide : aucun modèle choisi, aucune activité ni ressource. */
+export function emptyInternal(): InternalPayload {
+  return { model: null, activities: [], resources: [] };
 }
 
 /**
- * Gabarit de départ : les activités du modèle de Porter, aucune ressource.
- * @param labels - Libellés des activités (dictionnaire de l'interface)
+ * Choisit (ou change) le modèle : les activités sont remplacées par celles du modèle, les
+ * ressources sont gardées.
+ * @param payload - Contenu actuel
+ * @param model   - Modèle choisi
+ * @param labels  - Libellés des activités du modèle
  */
-export function initialInternal(labels: Record<string, string>): InternalPayload {
-  return { model: "porter", activities: porterActivities(labels), resources: [] };
+export function withModel(
+  payload: InternalPayload,
+  model: ValueChainModel,
+  labels: Record<string, string>,
+): InternalPayload {
+  return { ...payload, model, activities: modelActivities(model, labels) };
+}
+
+/**
+ * Vrai si les activités sont encore celles de départ du modèle (rien d'évalué ni décrit) :
+ * changer de modèle ne fait alors rien perdre.
+ */
+export function untouchedActivities(payload: InternalPayload): boolean {
+  return payload.activities.every(
+    (a) => a.evaluation === null && !a.description.trim() && !a.comment.trim(),
+  );
 }
 
 const EMPTY_TEST: TestAnswer = { answer: null, justification: "" };
@@ -174,16 +226,18 @@ export function newResource(id: string): Resource {
 // ==================== LECTURE ====================
 
 /**
- * Relit le contenu enregistré ; part du modèle de Porter si rien n'a été enregistré.
- * @param raw    - Contenu JSON de study_steps.payload
- * @param labels - Libellés des activités de Porter
+ * Relit le contenu enregistré ; sans modèle valide, l'utilisateur choisira le sien (un
+ * ancien contenu avec des activités mais sans modèle reste sur Porter).
+ * @param raw - Contenu JSON de study_steps.payload
  */
-export function readInternal(raw: unknown, labels: Record<string, string>): InternalPayload {
+export function readInternal(raw: unknown): InternalPayload {
   const source = asObject(raw);
-  if (!Array.isArray(source.activities)) return initialInternal(labels);
+  const parsed = z.enum(VALUE_CHAIN_MODELS).safeParse(source.model);
+  const activities = readList(source.activities, activitySchema, ACTIVITIES_MAX);
+  const model = parsed.success ? parsed.data : activities.length > 0 ? "porter" : null;
   return {
-    model: "porter",
-    activities: readList(source.activities, activitySchema, ACTIVITIES_MAX),
+    model,
+    activities,
     resources: readList(source.resources, resourceSchema, RESOURCES_MAX),
   };
 }
@@ -220,27 +274,27 @@ function named(item: { name: string }): boolean {
   return item.name.trim().length > 0;
 }
 
-export type InternalChecklistKey = "activities" | "evaluated" | "resource";
+/** Ressource dont les quatre questions VRIO ont une réponse. */
+function vrioComplete(resource: Resource): boolean {
+  return VRIO_TESTS.every((test) => resource.tests[test].answer !== null);
+}
+
+export type InternalChecklistKey = "model" | "activities" | "resources" | "complete";
 
 /**
- * Liste de contrôle : au moins une activité, toutes les activités nommées évaluées, au
- * moins une ressource nommée dont les quatre questions ont une réponse.
+ * Liste de contrôle : modèle choisi, au moins ACTIVITIES_MIN activités nommées et évaluées,
+ * au moins RESOURCES_MIN ressources nommées passées au VRIO, et les quatre réponses pour
+ * chaque ressource nommée.
  */
 export function internalChecklist(
   payload: InternalPayload,
 ): ChecklistItem<InternalChecklistKey>[] {
-  const activities = payload.activities.filter(named);
+  const evaluated = payload.activities.filter((a) => named(a) && a.evaluation !== null);
+  const resources = payload.resources.filter(named);
   return [
-    { key: "activities", ok: activities.length > 0 },
-    {
-      key: "evaluated",
-      ok: activities.length > 0 && activities.every((a) => a.evaluation !== null),
-    },
-    {
-      key: "resource",
-      ok: payload.resources
-        .filter(named)
-        .some((r) => VRIO_TESTS.every((test) => r.tests[test].answer !== null)),
-    },
+    { key: "model", ok: payload.model !== null },
+    { key: "activities", ok: evaluated.length >= ACTIVITIES_MIN },
+    { key: "resources", ok: resources.filter(vrioComplete).length >= RESOURCES_MIN },
+    { key: "complete", ok: resources.length > 0 && resources.every(vrioComplete) },
   ];
 }

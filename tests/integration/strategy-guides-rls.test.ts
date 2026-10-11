@@ -5,8 +5,9 @@
  *              modifiable par l'administrateur seulement (RPC, plus d'écriture directe),
  *              réglages invisibles aux utilisateurs, aucun lien de lecture sans droit
  *              d'accès au livre, et listes de contrôle SQL des étapes 3 et 4 identiques à
- *              celles du code. Ignorés si les clés manquent ou si la migration des guides
- *              n'est pas encore appliquée.
+ *              celles du code (règles v0.4.1 : modèle, 4 activités, 3 ressources ; 5 parties
+ *              prenantes placées dont une à pouvoir fort). Ignorés si les clés manquent ou
+ *              si la migration correspondante n'est pas encore appliquée.
  * Auteur     : Claude Marcel
  * Date       : 2026-10-11
  */
@@ -15,10 +16,11 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
-  initialInternal,
+  emptyInternal,
   internalChecklist,
   newResource,
   PORTER_ACTIVITIES,
+  withModel,
   type InternalPayload,
 } from "@/lib/strategy/templates/internal";
 import { checklistOk } from "@/lib/strategy/templates/common";
@@ -44,33 +46,66 @@ async function migrationApplied(): Promise<boolean> {
   return !error;
 }
 
+/** Vrai si les textes v0.4.1 sont chargés (étape 1 rattachée au chapitre 7). */
+async function contentApplied(): Promise<boolean> {
+  if (!ready) return false;
+  const service = createClient(url!, secretKey!, NO_SESSION);
+  const { data } = await service
+    .from("strategy_steps")
+    .select("chapter_position")
+    .eq("step_no", 1)
+    .single();
+  return data?.chapter_position === 7;
+}
+
 const ready = await migrationApplied();
+const content = await contentApplied();
 
 const LABELS = Object.fromEntries(PORTER_ACTIVITIES.map(({ key }) => [key, key]));
 
-/** Analyse interne : activités évaluées ou non, ressource complète ou non. */
-function internal(evaluated: boolean, resourceDone: boolean): InternalPayload {
-  const payload = initialInternal(LABELS);
-  if (evaluated) {
-    payload.activities = payload.activities.map((a) => ({ ...a, evaluation: "improve" }));
-  }
-  const resource = { ...newResource("r1"), name: "Marque" };
-  resource.tests.value = { answer: "partial", justification: "" };
-  if (resourceDone) {
-    resource.tests.rarity = { answer: "no", justification: "" };
-    resource.tests.imitability = { answer: "yes", justification: "" };
-    resource.tests.organization = { answer: "yes", justification: "" };
-  }
-  payload.resources = [resource];
+/**
+ * Analyse interne de test.
+ * @param evaluated - Nombre d'activités évaluées (sur les 9 de Porter)
+ * @param complete  - Nombre de ressources avec les quatre réponses
+ * @param partial   - Nombre de ressources avec une seule réponse
+ */
+function internal(evaluated: number, complete: number, partial = 0): InternalPayload {
+  const payload = withModel(emptyInternal(), "porter", LABELS);
+  payload.activities = payload.activities.map((a, i) =>
+    i < evaluated ? { ...a, evaluation: "improve" } : a,
+  );
+  payload.resources = Array.from({ length: complete + partial }, (_, i) => {
+    const resource = { ...newResource(`r${i}`), name: `Ressource ${i}` };
+    resource.tests.value = { answer: "partial", justification: "" };
+    if (i < complete) {
+      resource.tests.rarity = { answer: "no", justification: "" };
+      resource.tests.imitability = { answer: "yes", justification: "" };
+      resource.tests.organization = { answer: "yes", justification: "" };
+    }
+    return resource;
+  });
   return payload;
 }
 
-/** Parties prenantes : une fiche nommée, avec ou sans approche. */
-function stakeholders(approach: string): StakeholdersPayload {
+/**
+ * Parties prenantes de test (pouvoir, intérêt et case à la main de chacune).
+ * @param levels - [pouvoir, intérêt, case choisie à la main ?] par partie prenante
+ */
+function stakeholders(
+  levels: [number | null, number | null, ("manage" | "satisfy" | "inform" | "monitor")?][],
+): StakeholdersPayload {
   return {
-    stakeholders: [{ ...newStakeholder("p1"), name: "Syndicat", power: 3, interest: 5, approach }],
+    stakeholders: levels.map(([power, interest, override], i) => ({
+      ...newStakeholder(`p${i}`),
+      name: `Partie ${i}`,
+      power,
+      interest,
+      quadrantOverride: override ?? null,
+    })),
   };
 }
+
+const LOW = [1, 1] as [number, number];
 
 describe.skipIf(!ready)("RLS — guide des étapes et gabarits S3", () => {
   let service: SupabaseClient;
@@ -133,32 +168,38 @@ describe.skipIf(!ready)("RLS — guide des étapes et gabarits S3", () => {
 
   // ==================== LISTES DE CONTRÔLE (MIROIR DU CODE) ====================
 
-  it.each([
-    [false, false],
-    [true, false],
-    [true, true],
-  ])("étape 3 : activités évaluées %s, ressource complète %s", async (evaluated, done) => {
-    const payload = internal(evaluated, done);
+  /** Compare le résultat SQL à celui du code et à l'attendu. */
+  async function expectChecklist(stepNo: number, payload: object, expected: boolean) {
     const { data, error } = await user.rpc("strategy_checklist_ok", {
-      p_step_no: 3,
+      p_step_no: stepNo,
       p_payload: payload,
     });
     expect(error).toBeNull();
-    expect(data).toBe(checklistOk(internalChecklist(payload)));
-    expect(data).toBe(evaluated && done);
+    const code =
+      stepNo === 3
+        ? checklistOk(internalChecklist(payload as InternalPayload))
+        : checklistOk(stakeholdersChecklist(payload as StakeholdersPayload));
+    expect(data).toBe(code);
+    expect(data).toBe(expected);
+  }
+
+  it.skipIf(!content).each([
+    ["3 activités évaluées", internal(3, 3), false],
+    ["2 ressources complètes", internal(4, 2), false],
+    ["une ressource incomplète", internal(9, 3, 1), false],
+    ["sans modèle", { ...internal(4, 3), model: null }, false],
+    ["4 activités et 3 ressources", internal(4, 3), true],
+  ] as const)("étape 3 : %s", async (_, payload, expected) => {
+    await expectChecklist(3, payload, expected);
   });
 
-  it.each([["", false], ["Rencontre mensuelle", true]])(
-    "étape 4 : approche « %s »",
-    async (approach, expected) => {
-      const payload = stakeholders(approach);
-      const { data, error } = await user.rpc("strategy_checklist_ok", {
-        p_step_no: 4,
-        p_payload: payload,
-      });
-      expect(error).toBeNull();
-      expect(data).toBe(checklistOk(stakeholdersChecklist(payload)));
-      expect(data).toBe(expected);
-    },
-  );
+  it.skipIf(!content).each([
+    ["4 parties prenantes", stakeholders([[4, 4], LOW, LOW, LOW]), false],
+    ["une non placée", stakeholders([[4, 4], LOW, LOW, LOW, [null, 3]]), false],
+    ["aucun pouvoir fort", stakeholders([[2, 5], LOW, LOW, LOW, LOW]), false],
+    ["pouvoir fort à la main", stakeholders([[2, 5, "satisfy"], LOW, LOW, LOW, LOW]), true],
+    ["placée à la main", stakeholders([[4, 2], LOW, LOW, LOW, [null, null, "inform"]]), true],
+  ] as const)("étape 4 : %s", async (_, payload, expected) => {
+    await expectChecklist(4, payload, expected);
+  });
 });

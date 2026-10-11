@@ -4,9 +4,10 @@
  *  Projet     : Kalami Stratégie
  *  Description: Gabarit de l'étape 4 : parties prenantes et matrice pouvoir-intérêt,
  *               enregistrées automatiquement, dans le cadre commun (liste de contrôle,
- *               actions, versions).
+ *               actions, versions). Si aucune partie prenante placée n'a un pouvoir fort,
+ *               une question invite à y repenser.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: stakeholders/*.tsx, template-frame.tsx, use-autosave.ts
  * =============================================================
@@ -21,7 +22,10 @@ import { useAutosave } from "@/components/strategy/use-autosave";
 import { getDictionary } from "@/i18n";
 import {
   autoQuadrant,
+  namedStakeholders,
   newStakeholder,
+  noHighPower,
+  quadrantOf,
   stakeholdersChecklist,
   STAKEHOLDERS_MAX,
   type Stakeholder,
@@ -63,6 +67,9 @@ export function StakeholdersEditor({ initial, revision, ...frame }: Stakeholders
     enabled: !readOnly,
   });
   const { value, update } = autosave;
+  // La question n'apparaît qu'une fois au moins une partie prenante placée
+  const askHighPower =
+    namedStakeholders(value).some((item) => quadrantOf(item) !== null) && noHighPower(value);
 
   return (
     <TemplateFrame
@@ -90,6 +97,12 @@ export function StakeholdersEditor({ initial, revision, ...frame }: Stakeholders
           update((prev) => ({ stakeholders: prev.stakeholders.filter((item) => item.id !== id) }))
         }
       />
+
+      {askHighPower && (
+        <p role="status" className="rounded-md border border-line p-3 text-small">
+          {s.noHighPower}
+        </p>
+      )}
 
       <PowerInterestGrid
         stakeholders={value.stakeholders}

@@ -1,5 +1,29 @@
 # Journal des modifications
 
+## [Stratégie v0.4.1] - 2026-10-11 — Textes du guide, modèle services, nouveaux minimums
+### Ajouté
+- Migration `20261016120000_strategy_guides_content.sql` : explication et exemple Infosystem
+  des 9 étapes (textes de l'auteur, mot pour mot), chapitre de « La stratégie d'entreprise »
+  de chaque étape (module N = chapitre N + 5) et choix de ce livre comme livre guide.
+- Étape 3 : choix du modèle de chaîne de valeur au début (Porter pour l'industrie, ou
+  services d'après Stabell et Fjeldstad, 1998 : attirer, diagnostiquer, mettre en place,
+  soutenir au quotidien, intervenir en urgence ; soutien : direction et administration,
+  RH, technologie, approvisionnement), avec la question d'aide et le conseil pour le cas
+  mixte. Changement de modèle possible ; confirmation dans la page si des activités ont
+  déjà été évaluées ou décrites (les ressources VRIO sont gardées).
+- Étape 4 : question « Vraiment personne n'a de pouvoir sur votre entreprise ? … » quand
+  aucune partie prenante placée n'est à « Gérer de près » ou « Satisfaire ».
+### Modifié
+- Listes de contrôle (code et `strategy_checklist_ok`) : étape 3 = modèle choisi, au moins
+  4 activités nommées et évaluées (les autres peuvent rester sans évaluation), au moins 3
+  ressources passées au VRIO, les quatre réponses pour chaque ressource nommée ; étape 4 =
+  au moins 5 parties prenantes nommées, toutes placées, au moins une à pouvoir fort
+  (l'approche n'est plus exigée).
+- Évaluations : « Point faible » et « Marginal (ne s'applique pas) ».
+- Un ancien contenu de l'étape 3 sans modèle mais avec des activités reste sur Porter.
+- Tests unitaires et d'intégration adaptés (migration appliquée le 2026-10-11 : 342/342).
+
+
 ## [Stratégie v0.4.0] - 2026-10-11 — S3 : analyse interne, parties prenantes, guide des étapes
 ### Ajouté
 - Migration `20261015120000_strategy_guides.sql` : colonnes `explanation`, `example` et

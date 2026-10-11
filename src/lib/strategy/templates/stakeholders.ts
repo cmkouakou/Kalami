@@ -8,7 +8,7 @@
  *               souhaité, approche et actions. Schéma Zod, lecture tolérante et liste de
  *               contrôle (miroir de strategy_checklist_ok en SQL).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: zod, templates/common.ts
  * =============================================================
@@ -45,6 +45,11 @@ export const LEVEL_MAX = 5;
 /** Seuil à partir duquel le pouvoir ou l'intérêt est « fort ». */
 export const LEVEL_HIGH = 3;
 export const STAKEHOLDERS_MAX = 40;
+/** Minimum de parties prenantes nommées (choisi par l'auteur). */
+export const STAKEHOLDERS_MIN = 5;
+
+/** Cases « pouvoir fort » : il faut au moins une partie prenante dans l'une d'elles. */
+export const HIGH_POWER: readonly StakeQuadrant[] = ["manage", "satisfy"];
 const NAME_MAX = 200;
 const TEXT_MAX = 1500;
 
@@ -131,22 +136,32 @@ export function quadrantOf(stakeholder: Stakeholder): StakeQuadrant | null {
 
 // ==================== LISTE DE CONTRÔLE ====================
 
-export type StakeholdersChecklistKey = "mapped";
+/** Parties prenantes nommées (les fiches sans nom sont ignorées). */
+export function namedStakeholders(payload: StakeholdersPayload): Stakeholder[] {
+  return payload.stakeholders.filter((s) => s.name.trim().length > 0);
+}
 
-/** Liste de contrôle : au moins une partie prenante nommée avec pouvoir, intérêt, approche. */
+/** Vrai si aucune partie prenante nommée ne figure dans une case « pouvoir fort ». */
+export function noHighPower(payload: StakeholdersPayload): boolean {
+  return !namedStakeholders(payload).some((s) => {
+    const quadrant = quadrantOf(s);
+    return quadrant !== null && HIGH_POWER.includes(quadrant);
+  });
+}
+
+export type StakeholdersChecklistKey = "count" | "placed" | "highPower";
+
+/**
+ * Liste de contrôle : au moins STAKEHOLDERS_MIN parties prenantes nommées, toutes placées
+ * dans la matrice, et au moins une dans « gérer de près » ou « garder satisfaits ».
+ */
 export function stakeholdersChecklist(
   payload: StakeholdersPayload,
 ): ChecklistItem<StakeholdersChecklistKey>[] {
+  const named = namedStakeholders(payload);
   return [
-    {
-      key: "mapped",
-      ok: payload.stakeholders.some(
-        (s) =>
-          s.name.trim().length > 0 &&
-          s.power !== null &&
-          s.interest !== null &&
-          s.approach.trim().length > 0,
-      ),
-    },
+    { key: "count", ok: named.length >= STAKEHOLDERS_MIN },
+    { key: "placed", ok: named.length > 0 && named.every((s) => quadrantOf(s) !== null) },
+    { key: "highPower", ok: !noHighPower(payload) },
   ];
 }

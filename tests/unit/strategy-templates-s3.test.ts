@@ -1,11 +1,11 @@
 /**
  * Fichier    : strategy-templates-s3.test.ts
  * Projet     : Kalami Stratégie
- * Description: Tests des gabarits de l'étape 3 (chaîne de valeur, VRIO) et de l'étape 4
- *              (parties prenantes) : contenu de départ, lecture tolérante, arbre VRIO
- *              (« partiel » = « non », à confirmer), cases pouvoir-intérêt (fort à partir
- *              de 3), listes de contrôle (miroir de strategy_checklist_ok) et validation
- *              stricte avant envoi.
+ * Description: Tests des gabarits de l'étape 3 (modèle Porter ou services, chaîne de valeur,
+ *              VRIO) et de l'étape 4 (parties prenantes) : contenu de départ, changement de
+ *              modèle, lecture tolérante, arbre VRIO (« partiel » = « non », à confirmer),
+ *              cases pouvoir-intérêt (fort à partir de 3), listes de contrôle (miroir de
+ *              strategy_checklist_ok) et validation stricte avant envoi.
  * Auteur     : Claude Marcel
  * Date       : 2026-10-11
  */
@@ -15,15 +15,19 @@ import { describe, expect, it } from "vitest";
 import { parsePayload } from "@/lib/strategy/templates";
 import { checklistOk } from "@/lib/strategy/templates/common";
 import {
-  initialInternal,
+  emptyInternal,
   internalChecklist,
   newActivity,
   newResource,
   PORTER_ACTIVITIES,
   readInternal,
   RESOURCES_MAX,
+  SERVICES_ACTIVITIES,
+  untouchedActivities,
   vrioResult,
+  withModel,
   type Answer,
+  type InternalChecklistKey,
   type InternalPayload,
   type Resource,
 } from "@/lib/strategy/templates/internal";
@@ -31,6 +35,7 @@ import {
   autoQuadrant,
   emptyStakeholders,
   newStakeholder,
+  noHighPower,
   quadrantOf,
   readStakeholders,
   stakeholdersChecklist,
@@ -38,12 +43,14 @@ import {
   type Stakeholder,
 } from "@/lib/strategy/templates/stakeholders";
 
-/** Libellés factices des activités de Porter (clé = libellé). */
-const LABELS = Object.fromEntries(PORTER_ACTIVITIES.map(({ key }) => [key, key]));
+/** Libellés factices des activités des deux modèles (clé = libellé). */
+const LABELS = Object.fromEntries(
+  [...PORTER_ACTIVITIES, ...SERVICES_ACTIVITIES].map(({ key }) => [key, key]),
+);
 
 /** Ressource nommée avec les quatre réponses données (null = sans réponse). */
 function resource(answers: (Answer | null)[], id = "r1"): Resource {
-  const item = { ...newResource(id), name: "Savoir-faire" };
+  const item = { ...newResource(id), name: `Savoir-faire ${id}` };
   const [value, rarity, imitability, organization] = answers;
   item.tests = {
     value: { answer: value, justification: "" },
@@ -54,48 +61,84 @@ function resource(answers: (Answer | null)[], id = "r1"): Resource {
   return item;
 }
 
+/** Ressources VRIO complètes. */
+function completeResources(count: number): Resource[] {
+  return Array.from({ length: count }, (_, i) => resource(["yes", "yes", "no", "yes"], `r${i}`));
+}
+
 /** Partie prenante nommée avec pouvoir et intérêt donnés. */
 function stakeholder(
   power: number | null,
   interest: number | null,
   patch: Partial<Stakeholder> = {},
 ): Stakeholder {
-  return { ...newStakeholder("p1"), name: "Banque", power, interest, ...patch };
+  return { ...newStakeholder(crypto.randomUUID()), name: "Banque", power, interest, ...patch };
 }
 
-/** Analyse interne complète : activités évaluées et une ressource évaluée. */
+/** Cinq parties prenantes placées, dont une seule à pouvoir fort. */
+function fiveStakeholders(): Stakeholder[] {
+  return [
+    stakeholder(4, 4),
+    stakeholder(1, 1),
+    stakeholder(2, 4),
+    stakeholder(1, 2),
+    stakeholder(2, 2),
+  ];
+}
+
+/** Analyse interne complète : modèle Porter, 4 activités évaluées sur 9, 3 ressources. */
 function filledInternal(): InternalPayload {
-  const payload = initialInternal(LABELS);
-  payload.activities = payload.activities.map((a) => ({ ...a, evaluation: "strength" }));
-  payload.resources = [resource(["yes", "yes", "no", "yes"])];
+  const payload = withModel(emptyInternal(), "porter", LABELS);
+  payload.activities = payload.activities.map((a, i) =>
+    i < 4 ? { ...a, evaluation: "strength" } : a,
+  );
+  payload.resources = completeResources(3);
   return payload;
 }
 
-// ==================== ÉTAPE 3 : CHAÎNE DE VALEUR ====================
+// ==================== ÉTAPE 3 : MODÈLE ET CHAÎNE DE VALEUR ====================
 
-describe("readInternal", () => {
-  it("part des neuf activités de Porter quand rien n'est enregistré", () => {
-    const result = readInternal({}, LABELS);
+describe("readInternal et withModel", () => {
+  it("attend le choix du modèle quand rien n'est enregistré", () => {
+    expect(readInternal({})).toEqual(emptyInternal());
+  });
+
+  it("garde Porter pour un ancien contenu sans modèle mais avec des activités", () => {
+    const result = readInternal({ activities: [newActivity("a1", "primary", "Ventes")] });
     expect(result.model).toBe("porter");
-    expect(result.activities).toHaveLength(PORTER_ACTIVITIES.length);
-    expect(result.activities.filter((a) => a.kind === "primary")).toHaveLength(5);
-    expect(result.activities.every((a) => a.name.length > 0)).toBe(true);
-    expect(result.resources).toEqual([]);
+  });
+
+  it("part des activités du modèle choisi", () => {
+    const porter = withModel(emptyInternal(), "porter", LABELS);
+    expect(porter.activities).toHaveLength(PORTER_ACTIVITIES.length);
+    const services = withModel(emptyInternal(), "services", LABELS);
+    expect(services.model).toBe("services");
+    expect(services.activities.map((a) => a.name)).toEqual(
+      SERVICES_ACTIVITIES.map(({ key }) => key),
+    );
+    expect(services.activities.filter((a) => a.kind === "primary")).toHaveLength(5);
+  });
+
+  it("change de modèle en gardant les ressources", () => {
+    const payload = filledInternal();
+    expect(untouchedActivities(payload)).toBe(false);
+    const switched = withModel(payload, "services", LABELS);
+    expect(switched.resources).toEqual(payload.resources);
+    expect(untouchedActivities(switched)).toBe(true);
   });
 
   it("garde une liste d'activités enregistrée, même vide", () => {
-    expect(readInternal({ activities: [] }, LABELS).activities).toEqual([]);
+    expect(readInternal({ model: "services", activities: [] }).activities).toEqual([]);
   });
 
   it("écarte les éléments invalides et limite les ressources", () => {
     const many = Array.from({ length: RESOURCES_MAX + 3 }, (_, i) => newResource(`r${i}`));
-    const result = readInternal(
-      {
-        activities: [newActivity("a1", "primary", "Ventes"), { id: "a2", kind: "inconnu" }],
-        resources: many,
-      },
-      LABELS,
-    );
+    const result = readInternal({
+      model: "inconnu",
+      activities: [newActivity("a1", "primary", "Ventes"), { id: "a2", kind: "inconnu" }],
+      resources: many,
+    });
+    expect(result.model).toBe("porter");
     expect(result.activities.map((a) => a.id)).toEqual(["a1"]);
     expect(result.resources).toHaveLength(RESOURCES_MAX);
   });
@@ -135,28 +178,39 @@ describe("vrioResult", () => {
 });
 
 describe("internalChecklist", () => {
-  it("refuse un gabarit de départ non évalué", () => {
-    const items = internalChecklist(initialInternal(LABELS));
-    expect(items.find((i) => i.key === "activities")?.ok).toBe(true);
-    expect(items.find((i) => i.key === "evaluated")?.ok).toBe(false);
-    expect(checklistOk(items)).toBe(false);
+  /** État d'un élément de la liste de contrôle. */
+  const ok = (payload: InternalPayload, key: InternalChecklistKey) =>
+    internalChecklist(payload).find((item) => item.key === key)?.ok;
+
+  it("accepte 4 activités évaluées et 3 ressources complètes", () => {
+    expect(checklistOk(internalChecklist(filledInternal()))).toBe(true);
   });
 
-  it("ignore les activités sans nom et exige une ressource complète", () => {
+  it("exige le choix du modèle", () => {
+    expect(ok({ ...filledInternal(), model: null }, "model")).toBe(false);
+    expect(ok(emptyInternal(), "model")).toBe(false);
+  });
+
+  it("exige 4 activités nommées et évaluées", () => {
     const payload = filledInternal();
-    payload.activities.push(newActivity("vide", "support"));
+    payload.activities[3] = { ...payload.activities[3], evaluation: null };
+    expect(ok(payload, "activities")).toBe(false);
+    payload.activities[3] = { ...payload.activities[3], evaluation: "marginal", name: " " };
+    expect(ok(payload, "activities")).toBe(false);
+  });
+
+  it("exige 3 ressources complètes et les quatre réponses pour chacune", () => {
+    const payload = filledInternal();
+    payload.resources = completeResources(2);
+    expect(ok(payload, "resources")).toBe(false);
+
+    payload.resources = [...completeResources(3), resource(["yes", "yes", null, null], "r9")];
+    expect(ok(payload, "resources")).toBe(true);
+    expect(ok(payload, "complete")).toBe(false);
+
+    // Une ressource sans nom est ignorée
+    payload.resources = [...completeResources(3), newResource("vide")];
     expect(checklistOk(internalChecklist(payload))).toBe(true);
-
-    payload.resources = [resource(["yes", "yes", null, null])];
-    expect(checklistOk(internalChecklist(payload))).toBe(false);
-  });
-
-  it("refuse une chaîne sans activité nommée", () => {
-    const payload = filledInternal();
-    payload.activities = [newActivity("a1", "primary")];
-    const items = internalChecklist(payload);
-    expect(items.find((i) => i.key === "activities")?.ok).toBe(false);
-    expect(items.find((i) => i.key === "evaluated")?.ok).toBe(false);
   });
 });
 
@@ -193,25 +247,43 @@ describe("readStakeholders et stakeholdersChecklist", () => {
     expect(result.stakeholders).toHaveLength(1);
   });
 
-  it("exige une partie prenante nommée avec pouvoir, intérêt et approche", () => {
+  it("exige 5 parties prenantes nommées et placées, dont une à pouvoir fort", () => {
     expect(checklistOk(stakeholdersChecklist(emptyStakeholders()))).toBe(false);
-    const sans = { stakeholders: [stakeholder(4, 4)] };
-    expect(checklistOk(stakeholdersChecklist(sans))).toBe(false);
-    const ok = { stakeholders: [stakeholder(4, 4, { approach: "Rencontre trimestrielle" })] };
-    expect(checklistOk(stakeholdersChecklist(ok))).toBe(true);
+    expect(checklistOk(stakeholdersChecklist({ stakeholders: fiveStakeholders() }))).toBe(true);
+
+    const four = [...fiveStakeholders().slice(0, 4), newStakeholder("vide")];
+    expect(checklistOk(stakeholdersChecklist({ stakeholders: four }))).toBe(false);
+
+    const unplaced = [...fiveStakeholders(), stakeholder(null, 4)];
+    expect(checklistOk(stakeholdersChecklist({ stakeholders: unplaced }))).toBe(false);
+
+    const byHand = [...fiveStakeholders(), stakeholder(null, 4, { quadrantOverride: "inform" })];
+    expect(checklistOk(stakeholdersChecklist({ stakeholders: byHand }))).toBe(true);
+  });
+
+  it("repère l'absence de pouvoir fort, même corrigée à la main", () => {
+    const low = fiveStakeholders().map((item) => ({ ...item, power: 1 }));
+    expect(noHighPower({ stakeholders: low })).toBe(true);
+    expect(checklistOk(stakeholdersChecklist({ stakeholders: low }))).toBe(false);
+
+    low[0] = { ...low[0], quadrantOverride: "satisfy" };
+    expect(noHighPower({ stakeholders: low })).toBe(false);
+    expect(checklistOk(stakeholdersChecklist({ stakeholders: low }))).toBe(true);
   });
 });
 
 // ==================== VALIDATION AVANT ENVOI ====================
 
 describe("parsePayload (étapes 3 et 4)", () => {
-  it("accepte un contenu complet", () => {
+  it("accepte un contenu complet, avec l'un ou l'autre modèle", () => {
     expect(parsePayload(3, filledInternal())).not.toBeNull();
+    expect(parsePayload(3, withModel(filledInternal(), "services", LABELS))).not.toBeNull();
+    expect(parsePayload(3, emptyInternal())).not.toBeNull();
     expect(parsePayload(4, { stakeholders: [stakeholder(3, 4)] })).not.toBeNull();
   });
 
   it("refuse un modèle inconnu, une réponse inconnue ou un niveau hors bornes", () => {
-    expect(parsePayload(3, { ...filledInternal(), model: "services" })).toBeNull();
+    expect(parsePayload(3, { ...filledInternal(), model: "inconnu" })).toBeNull();
     const payload = filledInternal();
     payload.resources[0].tests.value.answer = "peut-être" as Answer;
     expect(parsePayload(3, payload)).toBeNull();
