@@ -52,6 +52,6 @@ Version actuelle : v0.8.3 · Stratégie v0.2.0 | Statut : 🟡 En cours (projet 
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)
-- [ ] S0+S1 — appliquer `20261013120000_strategy_core.sql`, puis tests d'intégration
+- [x] S0+S1 — migration `20261013120000_strategy_core.sql` appliquée, tests RLS 12/12
 - [ ] S0+S1 — s'accorder un crédit dans /admin/strategie et parcourir une étude de test
 - [ ] S2 — gabarits PESTEL et cinq forces

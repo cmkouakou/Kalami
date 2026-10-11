@@ -10,8 +10,8 @@ Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés pa
 
 | Sprint | Contenu | Version | Statut |
 |---|---|---|---|
-| S0 | Fondations : espace `/strategie`, accueil, tables de base, RLS, crédits d'étude, création d'une étude | v0.1.0 | ✅ code (migration à appliquer) |
-| S1 | Profil de l'entreprise, carte des 9 étapes, dépendances, statuts, validation, invalidation en cascade | v0.2.0 | ✅ code (migration à appliquer) |
+| S0 | Fondations : espace `/strategie`, accueil, tables de base, RLS, crédits d'étude, création d'une étude | v0.1.0 | ✅ |
+| S1 | Profil de l'entreprise, carte des 9 étapes, dépendances, statuts, validation, invalidation en cascade | v0.2.0 | ✅ |
 | S2 | Gabarits 1-2 : PESTEL (impact-incertitude, scénarios 2×2), cinq forces et comparaison ; sauvegarde auto, versions | v0.3.0 | ⬜ |
 | S3 | Gabarits 3-4 : chaîne de valeur, VRIO, parties prenantes ; explications, exemple Infosystem, lien liseuse | v0.4.0 | ⬜ |
 | S4 | Coach IA : consignes et règles versionnées, sorties JSON (Zod), suggestions, relecture, erreurs classiques, questions, score ; consommation, plafond, débit | v0.5.0 | ⬜ |
