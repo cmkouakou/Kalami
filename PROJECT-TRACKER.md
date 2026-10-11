@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.2.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0+S1 livrés)
+Version actuelle : v0.8.3 · Stratégie v0.3.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S2 livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -14,7 +14,8 @@ Version actuelle : v0.8.3 · Stratégie v0.2.0 | Statut : 🟡 En cours (projet 
 | #8 | 2026-10-09 | Sprint 9 : espace auteur, contrat, aperçu, validation | ~320 000 | ~1.92 $ |
 | #9 | 2026-10-09 | Sprint 8 : PDF filigrané, lien signé, 3 téléchargements, purge ; onglets + Google, filet de sécurité OAuth (v0.8.3) | ~260 000 | ~1.56 $ |
 | #10 | 2026-10-11 | Stratégie S0+S1 : migration, profil, carte des 9 étapes, cascade, crédits, admin | ~300 000 | ~1.80 $ |
-| **TOTAL** | | | **~2 240 000** | **~13.44 $** |
+| #11 | 2026-10-11 | Stratégie S2 : gabarits PESTEL et cinq forces, sauvegarde auto, versions | ~280 000 | ~1.68 $ |
+| **TOTAL** | | | **~2 520 000** | **~15.12 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -54,4 +55,5 @@ Version actuelle : v0.8.3 · Stratégie v0.2.0 | Statut : 🟡 En cours (projet 
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)
 - [x] S0+S1 — migration `20261013120000_strategy_core.sql` appliquée, tests RLS 12/12
 - [ ] S0+S1 — s'accorder un crédit dans /admin/strategie et parcourir une étude de test
-- [ ] S2 — gabarits PESTEL et cinq forces
+- [x] S2 — gabarits PESTEL et cinq forces, sauvegarde auto, versions (Stratégie v0.3.0)
+- [x] S2 — migration `20261014120000_strategy_templates.sql` appliquée, tests RLS gabarits 12/12

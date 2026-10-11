@@ -3,10 +3,11 @@
  *  Fichier    : page.tsx (strategie/etudes/[id]/etapes/[n])
  *  Projet     : Kalami Stratégie
  *  Description: Page d'une étape : statut, ce qui manque si elle est verrouillée, raisons
- *               « à revoir », puis les actions (commencer, valider, modifier). Le gabarit
- *               interactif de chaque étape arrive aux sprints suivants.
+ *               « à revoir », puis le gabarit interactif (étapes 1 et 2 : PESTEL, cinq
+ *               forces) ou, pour les autres étapes, les actions (commencer, valider,
+ *               modifier) en attendant leur gabarit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts
  * =============================================================
@@ -17,13 +18,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { ForcesEditor } from "@/components/strategy/forces/forces-editor";
+import { PestelEditor } from "@/components/strategy/pestel/pestel-editor";
 import { StepActions } from "@/components/strategy/step-actions";
 import { StepStatusBadge } from "@/components/strategy/step-status";
+import type { TemplateFrameProps } from "@/components/strategy/template-frame";
 import { IconLock } from "@/components/ui/icons";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
-import { getStudy, statusesOf } from "@/lib/strategy/queries";
+import { getStepContent, getStudy, statusesOf, type StudyDetail } from "@/lib/strategy/queries";
 import {
   downstreamSteps,
   getStep,
@@ -33,6 +37,9 @@ import {
   PROFILE_PREREQUISITE,
   type StepNo,
 } from "@/lib/strategy/steps";
+import { readForces } from "@/lib/strategy/templates/forces";
+import { hasTemplate } from "@/lib/strategy/templates";
+import { readPestel } from "@/lib/strategy/templates/pestel";
 
 const t = getDictionary();
 const s = t.strategy;
@@ -111,10 +118,6 @@ async function StudyStep({ params }: { params: Promise<{ id: string; n: string }
             </section>
           )}
 
-          {/* ==================== CONTENU ==================== */}
-          <p className={`${PANEL_SAND} p-4 text-small`}>
-            {no === PLAN_STEP ? s.step.planSoon : s.step.templateSoon}
-          </p>
           {current.status === "validated" && current.validated_at && (
             <p className="text-small text-success">
               {interpolate(s.step.validated, {
@@ -123,18 +126,75 @@ async function StudyStep({ params }: { params: Promise<{ id: string; n: string }
             </p>
           )}
 
-          {/* ==================== ACTIONS ==================== */}
-          <StepActions
-            studyId={study.id}
-            stepNo={no}
-            status={current.status}
-            role={study.role}
-            isPlan={no === PLAN_STEP}
-            affectedTitles={affected.map((down) => s.steps[down].title)}
-          />
+          {/* ==================== CONTENU ==================== */}
+          {hasTemplate(no) ? (
+            <Template
+              study={study}
+              no={no}
+              affectedTitles={affected.map((down) => s.steps[down].title)}
+            />
+          ) : (
+            <>
+              <p className={`${PANEL_SAND} p-4 text-small`}>
+                {no === PLAN_STEP ? s.step.planSoon : s.step.templateSoon}
+              </p>
+              <StepActions
+                studyId={study.id}
+                stepNo={no}
+                status={current.status}
+                role={study.role}
+                isPlan={no === PLAN_STEP}
+                affectedTitles={affected.map((down) => s.steps[down].title)}
+              />
+            </>
+          )}
         </>
       )}
     </main>
+  );
+}
+
+/**
+ * Gabarit interactif de l'étape. La clé `revision` remonte l'éditeur quand le contenu
+ * change côté serveur (restauration, validation, réouverture), sans le remonter pendant
+ * la saisie : la sauvegarde automatique ne recharge pas la page.
+ */
+async function Template({
+  study,
+  no,
+  affectedTitles,
+}: {
+  study: StudyDetail;
+  no: StepNo;
+  affectedTitles: string[];
+}) {
+  const content = await getStepContent(study.id, no);
+  const frame: TemplateFrameProps = {
+    studyId: study.id,
+    stepNo: no,
+    role: study.role,
+    status: study.steps[no].status,
+    affectedTitles,
+    versions: content.versions,
+  };
+
+  if (no === 1) {
+    return (
+      <PestelEditor
+        key={content.revision}
+        {...frame}
+        initial={readPestel(content.payload)}
+        revision={content.revision}
+      />
+    );
+  }
+  return (
+    <ForcesEditor
+      key={content.revision}
+      {...frame}
+      initial={readForces(content.payload, study.company_name, study.profile.competitors)}
+      revision={content.revision}
+    />
   );
 }
 

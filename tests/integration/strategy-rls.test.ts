@@ -5,7 +5,9 @@
  *              crédit à usage unique, étude invisible aux non-membres, droits du contributeur
  *              et de l'observateur, synthèse verrouillée tant que 1 à 4 ne sont pas validées,
  *              cascade « à revoir », référence des étapes identique au code. Ignorés si les
- *              clés manquent ou si la migration Stratégie n'est pas encore appliquée.
+ *              clés manquent ou si la migration Stratégie n'est pas encore appliquée. Avec
+ *              la migration des gabarits (S2), les étapes 1 et 2 reçoivent d'abord un
+ *              contenu qui remplit leur liste de contrôle.
  * Auteur     : Claude Marcel
  * Date       : 2026-10-11
  */
@@ -14,6 +16,8 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { STEPS } from "@/lib/strategy/steps";
+import { FORCES, initialForces } from "@/lib/strategy/templates/forces";
+import { emptyPestel, newFactor } from "@/lib/strategy/templates/pestel";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -32,6 +36,16 @@ async function migrationApplied(): Promise<boolean> {
 }
 
 const ready = await migrationApplied();
+
+/** Vrai si la migration des gabarits (S2) existe : il faut alors un contenu valide. */
+async function templatesApplied(): Promise<boolean> {
+  if (!ready) return false;
+  const service = createClient(url!, secretKey!, NO_SESSION);
+  const { error } = await service.from("study_step_versions").select("id").limit(1);
+  return !error;
+}
+
+const templates = await templatesApplied();
 
 const PROFILE = {
   sector: "Ébénisterie",
@@ -80,6 +94,37 @@ describe.skipIf(!ready)("RLS — assistant stratégie", () => {
     return data.status;
   }
 
+  /**
+   * Enregistre un contenu qui remplit la liste de contrôle des étapes 1 et 2 (si la
+   * migration des gabarits est appliquée ; sinon rien à faire).
+   */
+  async function fillTemplate(client: SupabaseClient, stepNo: number): Promise<void> {
+    if (!templates || (stepNo !== 1 && stepNo !== 2)) return;
+    let payload: object;
+    if (stepNo === 1) {
+      const pestel = emptyPestel();
+      pestel.factors = [{ ...newFactor("f1", "economic"), factor: "Taux", nature: "both" }];
+      payload = pestel;
+    } else {
+      const forces = initialForces(`Atelier ${RUN}`, []);
+      for (const key of FORCES) forces.forces[key] = { intensity: "low", justification: "Fait." };
+      payload = forces;
+    }
+    const current = await service
+      .from("study_steps")
+      .select("revision")
+      .eq("study_id", studyId)
+      .eq("step_no", stepNo)
+      .single();
+    const saved = await client.rpc("strategy_save_step", {
+      p_study_id: studyId,
+      p_step_no: stepNo,
+      p_payload: payload,
+      p_revision: current.data?.revision,
+    });
+    expect(saved.error).toBeNull();
+  }
+
   /** Démarre puis valide une étape en tant que propriétaire. */
   async function startAndValidate(stepNo: number): Promise<void> {
     const start = await owner.rpc("strategy_start_step", {
@@ -87,6 +132,7 @@ describe.skipIf(!ready)("RLS — assistant stratégie", () => {
       p_step_no: stepNo,
     });
     expect(start.error).toBeNull();
+    await fillTemplate(owner, stepNo);
     const done = await owner.rpc("strategy_validate_step", {
       p_study_id: studyId,
       p_step_no: stepNo,
@@ -221,6 +267,7 @@ describe.skipIf(!ready)("RLS — assistant stratégie", () => {
       p_step_no: 1,
     });
     expect(start.error).toBeNull();
+    await fillTemplate(contributor, 1);
     const validate = await contributor.rpc("strategy_validate_step", {
       p_study_id: studyId,
       p_step_no: 1,

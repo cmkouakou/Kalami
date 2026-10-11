@@ -4,9 +4,10 @@
  *  Projet     : Kalami Stratégie
  *  Description: Lectures de l'assistant stratégie avec la session de l'utilisateur : la RLS
  *               ne laisse voir que les études dont il est membre. Études, crédits, étude
- *               complète (rôle, profil, étapes) et vue d'ensemble de l'administrateur.
+ *               complète (rôle, profil, étapes), contenu d'un gabarit et ses versions, vue
+ *               d'ensemble de l'administrateur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: lib/supabase/server.ts, lib/strategy/steps.ts, lib/strategy/profile.ts
  * =============================================================
@@ -55,6 +56,23 @@ export type StudyDetail = {
   steps: Record<StepNo, StudyStep>;
   /** Raison pédagogique du verrou de chaque étape (administrable). */
   lockReasons: Record<StepNo, string>;
+};
+
+export type VersionReason = "auto" | "validation" | "restore";
+
+export type StepVersion = {
+  id: string;
+  revision: number;
+  reason: VersionReason;
+  created_at: string;
+};
+
+export type StepContent = {
+  /** Contenu JSON brut du gabarit (relu par templates/*.ts). */
+  payload: unknown;
+  revision: number;
+  /** Versions enregistrées, de la plus récente à la plus ancienne. */
+  versions: StepVersion[];
 };
 
 export type AdminStudyRow = {
@@ -209,6 +227,39 @@ export function statusesOf(study: StudyDetail): Record<StepNo, StepStatus> {
   const statuses = {} as Record<StepNo, StepStatus>;
   for (const step of Object.values(study.steps)) statuses[step.no] = step.status;
   return statuses;
+}
+
+// ==================== CONTENU D'UNE ÉTAPE ====================
+
+/**
+ * Contenu du gabarit d'une étape et liste de ses versions (sans leur contenu).
+ * À n'appeler qu'après getStudy : la RLS renvoie une ligne vide aux non-membres.
+ * @param studyId - Identifiant de l'étude
+ * @param stepNo  - Étape concernée
+ */
+export async function getStepContent(studyId: string, stepNo: StepNo): Promise<StepContent> {
+  const supabase = await createClient();
+  const [step, versions] = await Promise.all([
+    supabase
+      .from("study_steps")
+      .select("payload, revision")
+      .eq("study_id", studyId)
+      .eq("step_no", stepNo)
+      .maybeSingle<{ payload: unknown; revision: number }>(),
+    supabase
+      .from("study_step_versions")
+      .select("id, revision, reason, created_at")
+      .eq("study_id", studyId)
+      .eq("step_no", stepNo)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  const row = check(step, "contenu de l'étape");
+  return {
+    payload: row?.payload ?? {},
+    revision: row?.revision ?? 0,
+    versions: check(versions, "versions") as StepVersion[],
+  };
 }
 
 // ==================== ADMINISTRATION ====================

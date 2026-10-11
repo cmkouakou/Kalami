@@ -3,9 +3,10 @@
  *  Fichier    : fr-strategy.ts
  *  Projet     : Kalami Stratégie
  *  Description: Textes français de l'assistant stratégie (accueil, études, profil, carte
- *               des étapes, administration des crédits). Rattachés à fr.ts sous « strategy ».
+ *               des étapes, gabarits PESTEL et cinq forces, administration des crédits).
+ *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  * =============================================================
  */
@@ -189,6 +190,180 @@ const strategyFr = {
     not_validated: "Cette étape n'est pas validée.",
     invalid_profile: "Le profil envoyé est invalide.",
     forbidden: "Vous n'avez pas les droits nécessaires sur cette étude.",
+    invalid_payload: "Le contenu envoyé est invalide. Rechargez la page.",
+    payload_too_large: "Le contenu de cette étape est trop volumineux pour être enregistré.",
+    step_validated: "Cette étape est validée : choisissez « Modifier l'étape validée » d'abord.",
+    revision_conflict:
+      "Cette étape a été modifiée ailleurs (autre onglet ou autre membre). Rechargez la page " +
+      "pour repartir de la dernière version.",
+    checklist_incomplete: "La liste de contrôle n'est pas complète.",
+    version_not_found: "Cette version n'existe plus.",
+  },
+
+  // ==================== GABARITS (COMMUN) ====================
+  template: {
+    readOnlyValidated:
+      "Étape validée : le gabarit est en lecture seule. Pour le changer, choisissez " +
+      "« Modifier l'étape validée ».",
+    readOnlyObserver: "Vous consultez ce gabarit en lecture seule.",
+    remove: "Retirer",
+    autosave: {
+      idle: "Les modifications sont enregistrées automatiquement.",
+      dirty: "Modifications non enregistrées…",
+      saving: "Enregistrement…",
+      saved: "Enregistré à {time}",
+      error: "Échec de l'enregistrement : {error}",
+      retry: "Réessayer",
+      reload: "Recharger la page",
+      leaveWarning: "Des modifications ne sont pas encore enregistrées.",
+    },
+    checklist: {
+      title: "Avant de valider",
+      done: "Fait",
+      missing: "À faire",
+      waitSave: "Attendez la fin de l'enregistrement pour valider.",
+    },
+    versions: {
+      title: "Historique des versions ({count})",
+      none: "Aucune version pour l'instant : la première est créée au premier enregistrement.",
+      intro:
+        "Une version est gardée toutes les 15 minutes d'édition, à chaque validation et " +
+        "à chaque restauration (50 au plus).",
+      reasons: {
+        auto: "Enregistrement",
+        validation: "Validation",
+        restore: "Restauration",
+      },
+      revision: "révision {revision}",
+      restore: "Restaurer",
+      confirm: "Remplacer le contenu actuel par cette version ?",
+      confirmYes: "Oui, restaurer",
+      confirmNo: "Annuler",
+      restored: "Version restaurée. L'état précédent a été gardé dans l'historique.",
+      dirtyFirst: "Attendez la fin de l'enregistrement avant de restaurer.",
+    },
+  },
+
+  // ==================== GABARIT : PESTEL ====================
+  pestel: {
+    factorsTitle: "1. Facteurs de l'environnement",
+    factorsIntro:
+      "Pour chaque dimension, notez les tendances qui peuvent toucher l'entreprise, leur effet " +
+      "et s'il s'agit d'une opportunité ou d'une menace.",
+    dimensions: {
+      political: "Politique",
+      economic: "Économique",
+      social: "Socioculturel",
+      technological: "Technologique",
+      environmental: "Environnemental",
+      legal: "Légal",
+    },
+    fields: {
+      factor: "Facteur (tendance)",
+      effect: "Effet sur l'entreprise",
+      nature: "Opportunité ou menace",
+      source: "Source (facultatif)",
+    },
+    natures: {
+      opportunity: "Opportunité",
+      threat: "Menace",
+      both: "Les deux",
+    },
+    natureNone: "À préciser",
+    addFactor: "Ajouter un facteur",
+    noFactor: "Aucun facteur pour cette dimension.",
+    untitled: "Facteur sans titre",
+    maxFactors: "{max} facteurs au plus.",
+    gridTitle: "2. Grille impact-incertitude",
+    gridIntro:
+      "Glissez chaque facteur dans une case, ou choisissez sa case dans la liste. Les facteurs " +
+      "à fort impact et forte incertitude sont vos variables pivots.",
+    unplaced: "À placer",
+    unplacedEmpty: "Tous les facteurs nommés sont placés.",
+    placeIn: "Case de « {factor} »",
+    placeNone: "À placer",
+    impactAxis: "Impact",
+    uncertaintyAxis: "Incertitude",
+    quadrants: {
+      pivot: "Variables pivots",
+      trend: "Tendances lourdes",
+      watch: "À surveiller",
+      minor: "Secondaires",
+    },
+    quadrantHints: {
+      pivot: "Impact fort, incertitude forte : base des scénarios.",
+      trend: "Impact fort, incertitude faible : à intégrer au plan.",
+      watch: "Impact faible, incertitude forte : à suivre.",
+      minor: "Impact faible, incertitude faible.",
+    },
+    scenariosTitle: "3. Matrice des scénarios",
+    scenariosIntro:
+      "Choisissez deux variables pivots et décrivez, pour chacune, une hypothèse basse et une " +
+      "hypothèse haute. Les quatre combinaisons donnent quatre scénarios.",
+    axis: "Variable {no}",
+    axisFactor: "Facteur pivot",
+    axisNone: "Choisir un facteur",
+    axisLow: "Hypothèse basse",
+    axisHigh: "Hypothèse haute",
+    scenarioName: "Nom du scénario",
+    scenarioDescription: "Ce qui se passe pour l'entreprise",
+    noPivot: "Nommez d'abord des facteurs : ils serviront de variables.",
+    checklist: {
+      opportunity: "Au moins une opportunité",
+      threat: "Au moins une menace",
+    },
+  },
+
+  // ==================== GABARIT : CINQ FORCES ====================
+  forces: {
+    forcesTitle: "1. Les cinq forces",
+    forcesIntro:
+      "Pour chaque force, indiquez son intensité dans votre secteur et justifiez-la avec des " +
+      "faits.",
+    names: {
+      rivalry: "Rivalité entre concurrents",
+      newEntrants: "Menace des nouveaux entrants",
+      substitutes: "Menace des produits de substitution",
+      buyers: "Pouvoir de négociation des clients",
+      suppliers: "Pouvoir de négociation des fournisseurs",
+    },
+    hints: {
+      rivalry: "Nombre et taille des concurrents, croissance du marché, différenciation.",
+      newEntrants: "Barrières à l'entrée : investissements, réglementation, accès aux clients.",
+      substitutes: "Autres façons de répondre au même besoin, et leur rapport qualité-prix.",
+      buyers: "Concentration des clients, coût pour changer de fournisseur, sensibilité au prix.",
+      suppliers: "Concentration des fournisseurs, rareté des ressources, coût d'un changement.",
+    },
+    intensity: "Intensité",
+    intensities: {
+      low: "Faible",
+      medium: "Moyenne",
+      high: "Forte",
+    },
+    justification: "Justification",
+    comparisonTitle: "2. Comparaison avec les concurrents",
+    comparisonIntro:
+      "Notez chaque acteur de 1 (faible) à 5 (excellent) sur les critères qui comptent pour " +
+      "vos clients. L'entreprise et les concurrents du profil sont déjà en colonnes.",
+    actorName: "Nom de l'acteur",
+    addActor: "Ajouter un acteur",
+    criterion: "Critère",
+    criterionName: "Nom du critère",
+    addCriterion: "Ajouter un critère",
+    noCriterion: "Ajoutez un premier critère (ex. : prix, qualité, délais, service).",
+    score: "Note de {actor} pour « {criterion} »",
+    scoreNone: "–",
+    note: "Commentaire",
+    average: "Moyenne",
+    maxActors: "{max} acteurs au plus.",
+    maxCriteria: "{max} critères au plus.",
+    checklist: {
+      rivalry: "Rivalité : intensité et justification",
+      newEntrants: "Nouveaux entrants : intensité et justification",
+      substitutes: "Substituts : intensité et justification",
+      buyers: "Clients : intensité et justification",
+      suppliers: "Fournisseurs : intensité et justification",
+    },
   },
 
   // ==================== ADMINISTRATION ====================

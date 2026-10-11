@@ -5,8 +5,10 @@
  *  Description: Boutons d'une étape ouverte : commencer, valider (propriétaire) et modifier
  *               une étape validée, avec l'avertissement sur les étapes en aval. Les droits
  *               sont revérifiés par les fonctions SQL ; ici on n'affiche que l'utile.
+ *               Sur une étape à gabarit, la saisie démarre l'étape et la validation attend
+ *               la fin de l'enregistrement.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: lib/strategy/actions.ts
  * =============================================================
@@ -35,6 +37,10 @@ type StepActionsProps = {
   isPlan: boolean;
   /** Titres des étapes en aval déjà commencées (passeront « à revoir »). */
   affectedTitles: string[];
+  /** Étape à gabarit : la première saisie la démarre (pas de bouton « Commencer »). */
+  startByEditing?: boolean;
+  /** Raison qui empêche de valider pour l'instant (enregistrement en cours…). */
+  validateBlocked?: string;
 };
 
 /** Actions disponibles sur une étape ouverte, selon son statut et le rôle. */
@@ -45,6 +51,8 @@ export function StepActions({
   role,
   isPlan,
   affectedTitles,
+  startByEditing = false,
+  validateBlocked,
 }: StepActionsProps) {
   const [state, setState] = useState<FormState>(undefined);
   const [pending, startTransition] = useTransition();
@@ -62,7 +70,7 @@ export function StepActions({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-3">
-        {status === "todo" && (
+        {status === "todo" && !startByEditing && (
           <button
             type="button"
             className={BUTTON_PRIMARY}
@@ -76,7 +84,7 @@ export function StepActions({
           <button
             type="button"
             className={BUTTON_PRIMARY}
-            disabled={pending}
+            disabled={pending || Boolean(validateBlocked)}
             onClick={() => run(validateStep)}
           >
             {s.step.validate}
@@ -98,6 +106,9 @@ export function StepActions({
         <p className="text-small text-ink-muted">
           {interpolate(s.step.reopenWarning, { steps: affectedTitles.join(", ") })}
         </p>
+      )}
+      {validateBlocked && role === "owner" && status !== "validated" && (
+        <p className="text-small text-ink-muted">{validateBlocked}</p>
       )}
       {!isPlan && status !== "validated" && role !== "owner" && (
         <p className="text-small text-ink-muted">{s.step.validateOwnerOnly}</p>

@@ -1,5 +1,34 @@
 # Journal des modifications
 
+## [Stratégie v0.3.0] - 2026-10-11 — S2 : gabarits PESTEL et cinq forces
+### Ajouté
+- Migration `20261014120000_strategy_templates.sql` : révision par étape (`revision`),
+  historique `study_step_versions` (50 versions gardées par étape, lecture réservée aux
+  membres), fonctions `strategy_save_step` (refus si étape validée ou révision périmée,
+  256 Ko au plus, une version automatique par tranche de 15 minutes) et
+  `strategy_restore_version` (l'état courant est gardé avant restauration).
+- Liste de contrôle avant validation, vérifiée aussi en SQL (`strategy_checklist_ok`) :
+  étape 1 = au moins une opportunité et une menace (« les deux » compte pour chacune),
+  étape 2 = intensité et justification des cinq forces.
+- Gabarit PESTEL (étape 1) : facteurs par dimension, grille impact-incertitude par
+  glisser-déposer (avec liste de placement pour le clavier et le tactile), matrice de
+  scénarios 2 × 2 sur deux variables pivots.
+- Gabarit des cinq forces (étape 2) : intensité et justification avec question d'aide,
+  tableau de comparaison (entreprise et concurrents du profil en colonnes, note de 1 à 5
+  et commentaire par case, moyenne par acteur).
+- Sauvegarde automatique (1,5 s après la dernière frappe, à la sortie de l'onglet et de la
+  page), état affiché, alerte avant de fermer avec des modifications en attente ;
+  historique des versions avec restauration confirmée.
+- Tests : `tests/unit/strategy-templates.test.ts` et
+  `tests/integration/strategy-templates-rls.test.ts` (ignoré tant que la migration n'est
+  pas appliquée).
+### Modifié
+- `strategy_validate_step` refuse une liste de contrôle incomplète et garde une version
+  du contenu validé.
+- Page d'étape : gabarit interactif pour les étapes 1 et 2 ; bouton « Valider » désactivé
+  (avec la raison) tant que la liste n'est pas complète ou qu'un enregistrement est en cours.
+- `tests/integration/strategy-rls.test.ts` remplit les gabarits 1 et 2 avant de les valider.
+
 ## [Stratégie v0.2.0] - 2026-10-11 — S0 + S1 : fondations, profil et carte des étapes
 Module Kalami Stratégie (`/strategie`), versionné à part de l'application (v0.8.3).
 ### Ajouté

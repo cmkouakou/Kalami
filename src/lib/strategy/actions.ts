@@ -3,11 +3,12 @@
  *  Fichier    : actions.ts
  *  Projet     : Kalami Stratégie
  *  Description: Actions serveur de l'assistant stratégie : création d'une étude (crédit),
- *               profil de l'entreprise, démarrage, validation et réouverture d'une étape.
- *               Les droits et les dépendances sont appliqués par les fonctions SQL ; ici,
- *               chaque argument est vérifié et chaque erreur traduite.
+ *               profil de l'entreprise, démarrage, validation et réouverture d'une étape,
+ *               enregistrement et restauration du contenu des gabarits. Les droits et les
+ *               dépendances sont appliqués par les fonctions SQL ; ici, chaque argument est
+ *               vérifié et chaque erreur traduite.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts, lib/supabase/server.ts
  * =============================================================
@@ -24,6 +25,7 @@ import type { FormState } from "@/lib/auth/actions";
 import { requireUser } from "@/lib/auth/dal";
 import { COMPANY_NAME_MAX, parseProfileForm, QUESTION_MAX } from "@/lib/strategy/profile";
 import { isStepNo } from "@/lib/strategy/steps";
+import { hasTemplate, parsePayload } from "@/lib/strategy/templates";
 import { createClient } from "@/lib/supabase/server";
 
 const t = getDictionary();
@@ -159,4 +161,83 @@ export async function reopenStep(studyId: string, stepNo: number): Promise<FormS
   if (error) return { error: strategyError(error) };
   refresh();
   return { message: interpolate(s.step.reopened, { count: String(data ?? 0) }) };
+}
+
+// ==================== GABARITS ====================
+
+/** Retour d'un enregistrement de gabarit (sauvegarde automatique, restauration). */
+export type SaveResult =
+  | { ok: true; revision: number; savedAt: string }
+  | { ok: false; error: string; conflict: boolean };
+
+/** Traduit l'erreur d'un enregistrement en retour lisible par le gabarit. */
+function saveFailure(error: { code?: string; message?: string }): SaveResult {
+  return {
+    ok: false,
+    error: strategyError(error),
+    conflict: error.message === "revision_conflict",
+  };
+}
+
+/**
+ * Enregistre le contenu d'un gabarit (sauvegarde automatique). Pas de rafraîchissement de
+ * la page : le gabarit garde la saisie en cours ; seule la révision revient.
+ * @param studyId  - Identifiant de l'étude
+ * @param stepNo   - Étape dotée d'un gabarit
+ * @param payload  - Contenu complet du gabarit (validé ici par Zod)
+ * @param revision - Révision sur laquelle repose la saisie
+ */
+export async function saveStepPayload(
+  studyId: string,
+  stepNo: number,
+  payload: unknown,
+  revision: number,
+): Promise<SaveResult> {
+  await requireUser(`/strategie/etudes/${studyId}`);
+  if (!isUuid(studyId) || !hasTemplate(stepNo) || !Number.isInteger(revision) || revision < 0) {
+    return { ok: false, error: s.errors.generic, conflict: false };
+  }
+  const data = parsePayload(stepNo, payload);
+  if (!data) return { ok: false, error: s.errors.invalid_payload, conflict: false };
+
+  const supabase = await createClient();
+  const { data: next, error } = await supabase.rpc("strategy_save_step", {
+    p_study_id: studyId,
+    p_step_no: stepNo,
+    p_payload: data,
+    p_revision: revision,
+  });
+  if (error || typeof next !== "number") return saveFailure(error ?? {});
+  return { ok: true, revision: next, savedAt: new Date().toISOString() };
+}
+
+/**
+ * Restaure une version du gabarit ; la page est rafraîchie pour afficher son contenu.
+ * @param studyId   - Identifiant de l'étude
+ * @param stepNo    - Étape concernée
+ * @param versionId - Version à restaurer
+ * @param revision  - Révision affichée (refus si le contenu a changé entre-temps)
+ */
+export async function restoreStepVersion(
+  studyId: string,
+  stepNo: number,
+  versionId: string,
+  revision: number,
+): Promise<SaveResult> {
+  await requireUser(`/strategie/etudes/${studyId}`);
+  if (!isUuid(studyId) || !isUuid(versionId) || !hasTemplate(stepNo)
+    || !Number.isInteger(revision)) {
+    return { ok: false, error: s.errors.generic, conflict: false };
+  }
+
+  const supabase = await createClient();
+  const { data: next, error } = await supabase.rpc("strategy_restore_version", {
+    p_study_id: studyId,
+    p_step_no: stepNo,
+    p_version_id: versionId,
+    p_revision: revision,
+  });
+  if (error || typeof next !== "number") return saveFailure(error ?? {});
+  refresh();
+  return { ok: true, revision: next, savedAt: new Date().toISOString() };
 }
