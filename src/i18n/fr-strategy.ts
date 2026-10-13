@@ -5,10 +5,10 @@
  *  Description: Textes français de l'assistant stratégie (accueil, études, profil, carte
  *               des étapes, guide des étapes, gabarits PESTEL, cinq forces, analyse interne
  *               et parties prenantes, coach IA, administration des crédits, des guides
- *               et du coach).
+ *               et du coach : réglages, consignes et erreurs classiques).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-13
  * =============================================================
  */
@@ -17,8 +17,9 @@ const strategyFr = {
   name: "Stratégie",
   title: "Kalami Stratégie",
   description:
-    "Analysez la stratégie d'une entreprise réelle pas à pas, avec la démarche du livre " +
-    "« La stratégie d'entreprise : analyse et mise en œuvre par l'exemple ».",
+    "Analysez pas à pas la stratégie d'une entreprise, d'une division ou d'un département. " +
+    "Le livre « La stratégie d'entreprise : analyse et mise en œuvre par l'exemple » sert de " +
+    "guide à qui en a besoin.",
   nav: {
     home: "Présentation",
     studies: "Mes études",
@@ -36,15 +37,18 @@ const strategyFr = {
     kicker: "Kalami Stratégie",
     title: "De l'analyse au plan stratégique, une étape à la fois.",
     subtitle:
-      "Seul ou en équipe, appliquez à votre entreprise la démarche du livre : " +
+      "Seul ou en équipe, étudiez une entreprise entière ou l'une de ses divisions : " +
       "environnement, concurrence, ressources, parties prenantes, puis synthèse, cap, " +
       "choix et feuille de route.",
+    bookNote:
+      "Besoin de repères ? Chaque étape renvoie au chapitre correspondant du livre, une " +
+      "étude de cas complète qui montre la démarche appliquée.",
     start: "Commencer une étude",
     signUp: "Créer un compte pour commencer",
     signIn: "J'ai déjà un compte",
     phasesTitle: "Une démarche en quatre temps",
     coachNote:
-      "Un coach vous relira, posera des questions et signalera les erreurs classiques. " +
+      "Un coach IA relit vos analyses, pose des questions et signale les erreurs classiques. " +
       "Vous gardez toujours la décision.",
   },
 
@@ -68,7 +72,7 @@ const strategyFr = {
   create: {
     title: "Nouvelle étude",
     intro: "La création utilise un crédit d'étude. Vous pourrez tout modifier ensuite.",
-    companyName: "Nom de l'entreprise",
+    companyName: "Organisation étudiée (entreprise, division ou département)",
     question: "Votre question stratégique",
     questionHint: "Exemples : « Faut-il croître ? », « Comment préparer la relève ? »",
     submit: "Créer l'étude",
@@ -76,7 +80,7 @@ const strategyFr = {
 
   // ==================== PROFIL ====================
   profile: {
-    title: "Profil de l'entreprise",
+    title: "Profil de l'organisation",
     intro:
       "Ces informations servent de point de départ aux quatre premières analyses. Les champs " +
       "marqués d'un astérisque sont indispensables pour les ouvrir.",
@@ -93,7 +97,9 @@ const strategyFr = {
       question: "Question stratégique",
     },
     fields: {
-      companyName: "Nom de l'entreprise",
+      companyName: "Organisation étudiée",
+      scope: "Périmètre de l'étude",
+      parentCompany: "Entreprise de rattachement",
       strategicQuestion: "Question stratégique",
       sector: "Secteur d'activité",
       employees: "Effectif",
@@ -107,6 +113,13 @@ const strategyFr = {
       clients: "Clients principaux",
       competitors: "Concurrents connus",
     },
+    scopes: {
+      company: "Entreprise entière",
+      unit: "Division / département",
+    },
+    scopeHint:
+      "Pour une division ou un département, indiquez l'entreprise dont il fait partie : " +
+      "le coach en tiendra compte.",
     onePerLine: "Une entrée par ligne.",
     teamRole: "Rôle ou équipe",
     teamHeadcount: "Effectif",
@@ -572,8 +585,15 @@ const strategyFr = {
   coach: {
     title: "Coach",
     intro:
-      "Le coach relit le gabarit enregistré et propose des améliorations. Il ne modifie rien " +
-      "sans votre accord : acceptez, modifiez ou rejetez chaque suggestion.",
+      "Le coach relit le gabarit enregistré, pose des questions et évalue votre analyse. Il " +
+      "ne modifie rien sans votre accord.",
+    tabs: {
+      review: "Relecture",
+      deepen: "Questions",
+      score: "Évaluation",
+    },
+    notAvailable: "Cette fonction du coach n'est pas encore disponible.",
+    book: "Selon le livre : {text}",
     request: "Demander une relecture",
     requesting: "Le coach relit votre gabarit…",
     again: "Relire à nouveau",
@@ -605,6 +625,47 @@ const strategyFr = {
       modified: "Modifiée",
       rejected: "Rejetée",
     },
+    deepen: {
+      intro:
+        "Des questions pour aller plus loin. Traitez-les dans votre gabarit ou écartez celles " +
+        "qui ne s'appliquent pas.",
+      request: "Demander des questions",
+      requesting: "Le coach prépare ses questions…",
+      again: "Nouvelles questions",
+      askedAt: "Questions du {date}",
+      outdated: "Le gabarit a changé depuis ces questions.",
+      none: "Le coach n'a pas de question pour ce gabarit.",
+      why: "Pourquoi cette question : {text}",
+      treat: "Marquer comme traitée",
+      dismiss: "Écarter",
+      decisions: {
+        accepted: "Traitée",
+        modified: "Traitée",
+        rejected: "Écartée",
+      },
+    },
+    score: {
+      intro:
+        "Une note indicative sur 100, avec les critères et les points à améliorer. Elle ne " +
+        "bloque jamais la validation de l'étape.",
+      request: "Demander une évaluation",
+      requesting: "Le coach évalue votre gabarit…",
+      again: "Évaluer à nouveau",
+      scoredAt: "Évaluation du {date}",
+      outdated: "Le gabarit a changé depuis cette évaluation.",
+      total: "{score} / 100",
+      totalLabel: "Note indicative",
+      criteriaTitle: "Critères",
+      criteria: {
+        completeness: "Complétude",
+        precision: "Précision",
+        rules: "Erreurs classiques évitées",
+        coherence: "Cohérence avec le profil",
+      },
+      strengths: "Points forts",
+      improvements: "Points à améliorer",
+      noImprovements: "Le coach ne relève pas de point à améliorer.",
+    },
     usage: "Budget IA de l'étude : {spent} $ US utilisés sur {budget} $ US",
     usageNear:
       "Le budget IA de cette étude est presque épuisé. Contactez l'administrateur pour " +
@@ -621,10 +682,11 @@ const strategyFr = {
       budget_exhausted:
         "Le budget IA de cette étude est atteint. Contactez l'administrateur pour obtenir un " +
         "supplément.",
-      refused: "Le coach n'a pas pu relire ce contenu. Reformulez-le puis réessayez.",
+      refused: "Le coach n'a pas pu traiter ce contenu. Reformulez-le puis réessayez.",
       timeout: "Le coach a mis trop de temps à répondre. Réessayez dans un instant.",
       busy: "Le service du coach est très sollicité. Réessayez dans un instant.",
-      failed: "La relecture n'a pas abouti. Réessayez dans un instant.",
+      failed: "La demande n'a pas abouti. Réessayez dans un instant.",
+      not_published: "Cette fonction du coach n'est pas encore disponible.",
     },
   },
 
@@ -645,7 +707,7 @@ const strategyFr = {
     studiesTitle: "Études",
     noStudies: "Aucune étude pour l'instant.",
     columns: {
-      company: "Entreprise",
+      company: "Organisation",
       owner: "Propriétaire",
       created: "Créée le",
       updated: "Modifiée le",
@@ -678,6 +740,8 @@ const strategyFr = {
       link: "Coach IA",
       title: "Coach IA",
       back: "Retour à Stratégie",
+      promptsLink: "Consignes du coach",
+      rulesLink: "Erreurs classiques",
       settingsTitle: "Réglages",
       settingsIntro:
         "Prix en dollars US par million de jetons, à vérifier sur la grille tarifaire " +
@@ -707,13 +771,89 @@ const strategyFr = {
       usageIntro: "Chiffres seulement : le contenu des études n'est pas affiché ici.",
       noUsage: "Aucune demande au coach pour l'instant.",
       columns: {
-        company: "Entreprise",
+        company: "Organisation",
         owner: "Propriétaire",
         requests: "Demandes",
         spent: "Dépensé ($ US)",
         budget: "Plafond ($ US)",
         last: "Dernière demande",
       },
+    },
+    coachPrompts: {
+      title: "Consignes du coach",
+      intro:
+        "Une consigne est utilisée par le coach seulement une fois publiée. Les brouillons " +
+        "restent invisibles pour les utilisateurs.",
+      back: "Retour au coach IA",
+      functions: {
+        review: "Relecture",
+        deepen: "Questions d'approfondissement",
+        score: "Évaluation",
+      },
+      general: "Toutes les étapes",
+      stepLabel: "Étape {no}",
+      version: "Version {version}",
+      createdAt: "Modifiée le {date}",
+      publishedAt: "Publiée le {date}",
+      status: {
+        current: "En vigueur",
+        draft: "Brouillon",
+        archived: "Ancienne version",
+      },
+      none: "Aucune version publiée : le coach ne propose pas encore cette fonction.",
+      body: "Texte de la consigne",
+      note: "Note de version (facultatif)",
+      saveDraft: "Enregistrer le brouillon",
+      newDraft: "Nouveau brouillon",
+      newDraftHint: "Part du texte en vigueur ; rien n'est publié avant votre décision.",
+      publish: "Publier ce brouillon",
+      discard: "Abandonner le brouillon",
+      restore: "Restaurer comme brouillon",
+      diffTitle: "Changements par rapport à la version en vigueur",
+      noDiff: "Aucun changement par rapport à la version en vigueur.",
+      allNew: "Aucune version en vigueur : tout le texte est nouveau.",
+      history: "Anciennes versions ({count})",
+      show: "Afficher le texte",
+      saved: "Brouillon enregistré.",
+      published: "Consigne publiée : le coach l'utilise dès maintenant.",
+      discarded: "Brouillon abandonné.",
+      restored: "Ancienne version copiée dans le brouillon. Relisez-la puis publiez-la.",
+      invalid: "Fonction ou étape invalide.",
+      emptyBody: "Le texte de la consigne est vide.",
+      tooLong: "{max} caractères au plus.",
+      notDraft: "Cette version n'est plus un brouillon.",
+      notFound: "Version introuvable.",
+    },
+    coachRules: {
+      title: "Erreurs classiques",
+      intro:
+        "Erreurs que le coach signale dans ses relectures. L'explication du livre est " +
+        "affichée sous la suggestion quand elle est remplie. Chaque modification est " +
+        "conservée dans l'historique.",
+      back: "Retour au coach IA",
+      newTitle: "Nouvelle erreur classique",
+      code: "Code",
+      codeHint:
+        "Lettres minuscules, chiffres et soulignés (2 à 60). Il ne peut plus être modifié.",
+      step: "Étape",
+      general: "Toutes les étapes",
+      stepLabel: "Étape {no}",
+      ruleTitle: "Titre",
+      explanation: "Explication selon le livre (facultatif)",
+      position: "Ordre d'affichage",
+      active: "Active",
+      inactive: "Inactive",
+      emptyExplanation: "Explication du livre à saisir.",
+      save: "Enregistrer",
+      create: "Créer l'erreur classique",
+      saved: "Erreur classique enregistrée.",
+      created: "Erreur classique créée.",
+      invalid: "Vérifiez le titre (300 caractères au plus), l'étape et l'ordre.",
+      invalidCode: "Code invalide : lettres minuscules, chiffres et soulignés, 2 à 60.",
+      codeTaken: "Ce code est déjà utilisé.",
+      notFound: "Erreur classique introuvable.",
+      history: "Historique ({count})",
+      changedAt: "Avant le {date}",
     },
   },
 };

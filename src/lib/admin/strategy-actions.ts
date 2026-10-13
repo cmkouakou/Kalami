@@ -5,11 +5,12 @@
  *  Description: Actions d'administration de l'assistant stratégie : octroi de crédits
  *               d'étude à un compte (en attendant l'ouverture des paiements), guide de chaque
  *               étape (explication, exemple Infosystem, raison du verrou, chapitre) et livre
- *               guide, réglages du coach IA (modèle, prix, plafond, débit) et supplément de
- *               plafond d'une étude. Les fonctions SQL vérifient le rôle administrateur (aal2) et
- *               écrivent le journal d'audit.
+ *               guide, réglages du coach IA (modèle, prix, plafond, débit), supplément de
+ *               plafond d'une étude, versions des consignes du coach (brouillon, publication,
+ *               abandon, restauration) et erreurs classiques. Les fonctions SQL vérifient le
+ *               rôle administrateur (aal2) et écrivent le journal d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-13
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
@@ -23,6 +24,7 @@ import { getDictionary, interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { isUuid } from "@/lib/admin/validation";
+import { COACH_FUNCTIONS } from "@/lib/strategy/coach/context";
 import { isStepNo } from "@/lib/strategy/steps";
 import { createClient } from "@/lib/supabase/server";
 
@@ -38,6 +40,19 @@ const CHAPTER_MAX = 1000;
 const MODEL_PATTERN = /^[a-z0-9][a-z0-9.-]{1,79}$/;
 const PRICE_MAX = 10_000;
 const AMOUNT_MAX = 1000;
+/** Longueurs maximales (mêmes contrôles que les fonctions SQL). */
+const PROMPT_BODY_MAX = 20_000;
+const RULE_TITLE_MAX = 300;
+const RULE_CODE_PATTERN = /^[a-z0-9_]{2,60}$/;
+const POSITION_MAX = 1000;
+
+/** Lit une étape facultative (vide = consigne ou règle générale) ; undefined si invalide. */
+function readOptionalStep(formData: FormData): number | null | undefined {
+  const raw = String(formData.get("stepNo") ?? "").trim();
+  if (raw === "") return null;
+  const stepNo = Number(raw);
+  return isStepNo(stepNo) ? stepNo : undefined;
+}
 
 /** Lit un nombre saisi avec une virgule ou un point décimal ; NaN si vide ou invalide. */
 function readNumber(formData: FormData, name: string): number {
@@ -196,4 +211,147 @@ export async function grantCoachAllowance(
   }
   refresh();
   return { message: interpolate(c.granted, { amount: amount.toFixed(2).replace(".", ",") }) };
+}
+
+// ==================== CONSIGNES DU COACH ====================
+
+/** Messages des refus levés par les fonctions SQL des consignes. */
+function promptError(message: string): string {
+  const p = a.coachPrompts;
+  if (message === "invalid_body") return interpolate(p.tooLong, { max: String(PROMPT_BODY_MAX) });
+  if (message === "not_a_draft") return p.notDraft;
+  if (message === "prompt_not_found") return p.notFound;
+  if (message === "invalid_prompt") return p.invalid;
+  return t.strategy.errors.generic;
+}
+
+/**
+ * Enregistre le brouillon d'une consigne : met à jour le brouillon existant de la fonction
+ * et de l'étape, ou en crée un avec le numéro de version suivant. Rien n'est publié.
+ */
+export async function saveCoachPromptDraft(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const p = a.coachPrompts;
+  const fn = String(formData.get("fn") ?? "");
+  const stepNo = readOptionalStep(formData);
+  const body = String(formData.get("body") ?? "").trim();
+  const note = String(formData.get("note") ?? "").trim().slice(0, NOTE_MAX);
+
+  if (!(COACH_FUNCTIONS as readonly string[]).includes(fn) || stepNo === undefined) {
+    return { error: p.invalid };
+  }
+  if (body === "") return { error: p.emptyBody };
+  if (body.length > PROMPT_BODY_MAX) {
+    return { error: interpolate(p.tooLong, { max: String(PROMPT_BODY_MAX) }) };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_save_coach_prompt_draft", {
+    p_function: fn,
+    p_step_no: stepNo,
+    p_body: body,
+    p_note: note,
+  });
+  if (error) return { error: promptError(error.message) };
+  refresh();
+  return { message: p.saved };
+}
+
+/**
+ * Applique une action sur une version désignée par son identifiant.
+ * @param formData - Formulaire portant le champ id
+ * @param rpc      - Fonction SQL à appeler
+ * @param done     - Message de réussite
+ */
+async function promptAction(
+  formData: FormData,
+  rpc: "admin_publish_coach_prompt" | "admin_discard_coach_prompt_draft"
+    | "admin_restore_coach_prompt",
+  done: string,
+): Promise<FormState> {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "").trim();
+  if (!isUuid(id)) return { error: t.strategy.errors.generic };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc(rpc, { p_id: id });
+  if (error) return { error: promptError(error.message) };
+  refresh();
+  return { message: done };
+}
+
+/** Publie un brouillon : il devient la consigne utilisée par le coach. */
+export async function publishCoachPrompt(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  return promptAction(formData, "admin_publish_coach_prompt", a.coachPrompts.published);
+}
+
+/** Supprime un brouillon jamais publié. */
+export async function discardCoachPromptDraft(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  return promptAction(formData, "admin_discard_coach_prompt_draft", a.coachPrompts.discarded);
+}
+
+/** Copie une ancienne version dans le brouillon, à relire puis publier. */
+export async function restoreCoachPrompt(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  return promptAction(formData, "admin_restore_coach_prompt", a.coachPrompts.restored);
+}
+
+// ==================== ERREURS CLASSIQUES ====================
+
+/**
+ * Crée ou modifie une erreur classique : étape, titre, explication du livre, ordre et
+ * activation. Le code n'est saisi qu'à la création ; l'état précédent est historisé en SQL.
+ */
+export async function saveCoachRule(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const r = a.coachRules;
+  const rawId = String(formData.get("id") ?? "").trim();
+  const code = String(formData.get("code") ?? "").trim();
+  const stepNo = readOptionalStep(formData);
+  const title = String(formData.get("title") ?? "").trim();
+  const explanation = String(formData.get("explanation") ?? "").trim();
+  const position = Number(String(formData.get("position") ?? "0").trim() || "0");
+
+  if (rawId !== "" && !isUuid(rawId)) return { error: t.strategy.errors.generic };
+  if (rawId === "" && !RULE_CODE_PATTERN.test(code)) return { error: r.invalidCode };
+  if (stepNo === undefined || title === "" || title.length > RULE_TITLE_MAX
+    || !Number.isInteger(position) || position < 0 || position > POSITION_MAX) {
+    return { error: r.invalid };
+  }
+  if (explanation.length > GUIDE_TEXT_MAX) {
+    return { error: interpolate(a.guides.tooLong, { max: String(GUIDE_TEXT_MAX) }) };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_save_coach_rule", {
+    p_id: rawId === "" ? null : rawId,
+    p_code: code,
+    p_step_no: stepNo,
+    p_title: title,
+    p_explanation: explanation,
+    p_position: position,
+    p_active: formData.get("active") === "on",
+  });
+  if (error) {
+    const known: Record<string, string> = {
+      invalid_rule: r.invalid,
+      invalid_code: r.invalidCode,
+      code_taken: r.codeTaken,
+      rule_not_found: r.notFound,
+    };
+    return { error: known[error.message] ?? t.strategy.errors.generic };
+  }
+  refresh();
+  return { message: rawId === "" ? r.created : r.saved };
 }

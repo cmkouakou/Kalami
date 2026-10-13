@@ -4,10 +4,11 @@
  *  Projet     : Kalami Stratégie
  *  Description: Profil de l'entreprise (cahier des charges §3.2) : schéma Zod, lecture du
  *               formulaire et règle « profil complet » (miroir de la fonction SQL
- *               strategy_profile_complete).
+ *               strategy_profile_complete). Périmètre : entreprise entière ou division /
+ *               département d'une entreprise mère (S4b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-13
  *  Dépendances: zod
  * =============================================================
  */
@@ -25,6 +26,10 @@ const CURRENT_YEAR = new Date().getFullYear();
 
 // ==================== SCHÉMAS ====================
 
+/** Périmètre étudié : l'entreprise entière ou une de ses divisions / départements. */
+export const SCOPES = ["company", "unit"] as const;
+export type Scope = (typeof SCOPES)[number];
+
 /** Liste de textes courts (une entrée par ligne dans le formulaire). */
 const textList = z.array(z.string().trim().min(1).max(ITEM_MAX)).max(LIST_MAX);
 
@@ -36,6 +41,9 @@ const teamSchema = z.object({
 
 /** Réponses du questionnaire stockées dans company_profiles.data. */
 export const profileDataSchema = z.object({
+  scope: z.enum(SCOPES),
+  /** Entreprise dont fait partie la division étudiée (périmètre « unit »). */
+  parentCompany: z.string().trim().max(COMPANY_NAME_MAX),
   sector: z.string().trim().max(TEXT_MAX),
   employees: z.number().int().min(0).max(10_000_000).nullable(),
   revenueRange: z.string().trim().max(TEXT_MAX),
@@ -62,6 +70,8 @@ export type ProfileInput = z.infer<typeof profileInputSchema>;
 
 /** Profil vide (étude qui vient d'être créée). */
 export const EMPTY_PROFILE: ProfileData = {
+  scope: "company",
+  parentCompany: "",
   sector: "",
   employees: null,
   revenueRange: "",
@@ -130,6 +140,8 @@ export function parseProfileForm(
     companyName: text(formData, "companyName"),
     strategicQuestion: text(formData, "strategicQuestion"),
     data: {
+      scope: text(formData, "scope") === "unit" ? "unit" : "company",
+      parentCompany: text(formData, "scope") === "unit" ? text(formData, "parentCompany") : "",
       sector: text(formData, "sector"),
       employees: optionalInt(text(formData, "employees")),
       revenueRange: text(formData, "revenueRange"),

@@ -2,9 +2,11 @@
  * Fichier    : strategy.test.ts
  * Projet     : Kalami Stratégie
  * Description: Tests des règles pures de l'assistant stratégie : graphe des étapes,
- *              prérequis, cascade « à revoir », rôles, lecture et validation du profil.
+ *              prérequis, cascade « à revoir », rôles, lecture et validation du profil
+ *              (périmètre : entreprise entière ou division).
  * Auteur     : Claude Marcel
- * Date       : 2026-10-11
+ * Version    : 1.1
+ * Date       : 2026-10-13
  */
 
 import { describe, expect, it } from "vitest";
@@ -163,6 +165,20 @@ describe("profil de l'entreprise", () => {
     expect(result.value.data.employees).toBe(1200);
     expect(result.value.data.countries).toEqual(["Canada", "France"]);
     expect(result.value.data.teams).toEqual([{ role: "Production", headcount: 40 }]);
+  });
+
+  it("garde l'entreprise mère d'une division, l'efface pour une entreprise entière", () => {
+    const base: [string, string][] = [
+      ["companyName", "Service des achats"],
+      ["parentCompany", " Groupe Bois "],
+    ];
+    const unit = parseProfileForm(form([...base, ["scope", "unit"]]));
+    expect(unit.ok && unit.value.data.scope).toBe("unit");
+    expect(unit.ok && unit.value.data.parentCompany).toBe("Groupe Bois");
+
+    const company = parseProfileForm(form([...base, ["scope", "company"]]));
+    expect(company.ok && company.value.data.scope).toBe("company");
+    expect(company.ok && company.value.data.parentCompany).toBe("");
   });
 
   it("signale les champs invalides par leur nom", () => {

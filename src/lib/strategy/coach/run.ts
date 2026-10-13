@@ -2,13 +2,14 @@
  * =============================================================
  *  Fichier    : run.ts (coach)
  *  Projet     : Kalami Stratégie
- *  Description: Déroulé serveur d'une relecture par le coach : lecture de l'étude et du
- *               gabarit enregistré (session de l'utilisateur, donc RLS), estimation du coût,
- *               réservation (rôle, débit, plafond vérifiés en SQL), appel à Claude avec
- *               sortie structurée, nettoyage, puis enregistrement des jetons et du coût.
+ *  Description: Déroulé serveur d'une demande au coach (relecture, questions ou évaluation) :
+ *               lecture de l'étude et du gabarit enregistré (session de l'utilisateur,
+ *               donc RLS), estimation du coût, réservation (rôle, débit, plafond vérifiés
+ *               en SQL), appel à Claude avec sortie structurée, nettoyage, puis enregistrement des jetons et du coût.
+ *               Seule une consigne publiée sert ; un brouillon n'est jamais utilisé.
  *               Toute demande réservée est terminée, même en cas d'erreur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-13
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
@@ -19,23 +20,37 @@ import "server-only";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+import type { z } from "zod";
 
 import { getDictionary } from "@/i18n";
 import { getCoachClient, isCoachConfigured } from "@/lib/strategy/coach/client";
-import { buildReviewMessage, rulesForStep, type CoachRule } from "@/lib/strategy/coach/context";
 import {
+  buildCoachMessage,
+  rulesForStep,
+  type ChecklistLine,
+  type CoachFunction,
+  type CoachRule,
+} from "@/lib/strategy/coach/context";
+import {
+  deepenOutputSchema,
   reviewOutputSchema,
+  sanitizeDeepen,
   sanitizeReview,
+  sanitizeScore,
+  scoreOutputSchema,
+  type Deepen,
   type Review,
+  type Score,
 } from "@/lib/strategy/coach/schemas";
 import { readProfileData } from "@/lib/strategy/profile";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
+import { checklistFor, hasTemplate, type TemplateStep } from "@/lib/strategy/templates";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 // ==================== CONSTANTES ====================
 
-/** Plafond de jetons de sortie d'une relecture (réflexion comprise). */
+/** Plafond de jetons de sortie d'une demande (réflexion comprise). */
 const MAX_TOKENS = 12_000;
 
 /** Approximation prudente : un jeton pour trois caractères de français. */
@@ -51,8 +66,11 @@ const s = getDictionary().strategy;
 /** Clés des messages d'erreur du coach (fr-strategy.ts, coach.errors). */
 export type CoachErrorKey = keyof typeof s.coach.errors;
 
-export type CoachRunResult =
-  | { ok: true; requestId: string; review: Review }
+/** Résultat nettoyé de chaque fonction du coach. */
+export type CoachOutputs = { review: Review; deepen: Deepen; score: Score };
+
+export type CoachRunResult<F extends CoachFunction = CoachFunction> =
+  | { ok: true; requestId: string; output: CoachOutputs[F] }
   | { ok: false; error: CoachErrorKey };
 
 type Reservation = {
@@ -104,12 +122,36 @@ async function currentPrices(): Promise<{ input: number; output: number } | null
     : null;
 }
 
-/** Consigne de relecture en vigueur : celle de l'étape, sinon la consigne générale. */
-async function activePrompt(stepNo: StepNo): Promise<{ id: string; body: string } | null> {
+/** Libellés de la liste de contrôle de chaque gabarit. */
+const CHECKLIST_LABELS: Record<TemplateStep, Record<string, string>> = {
+  1: s.pestel.checklist,
+  2: s.forces.checklist,
+  3: s.internal.checklist,
+  4: s.stakeholders.checklist,
+};
+
+/** Liste de contrôle lisible du contenu enregistré d'une étape. */
+function checklistLines(stepNo: StepNo, payload: unknown): ChecklistLine[] {
+  if (!hasTemplate(stepNo)) return [];
+  return checklistFor(stepNo, payload).map((item) => ({
+    label: CHECKLIST_LABELS[stepNo][item.key] ?? item.key,
+    ok: item.ok,
+  }));
+}
+
+/**
+ * Consigne publiée en vigueur pour une fonction : celle de l'étape, sinon la consigne
+ * générale. Les brouillons (published_at null) sont ignorés.
+ */
+async function activePrompt(
+  fn: CoachFunction,
+  stepNo: StepNo,
+): Promise<{ id: string; body: string } | null> {
   const { data } = await createAdminClient()
     .from("coach_prompts")
     .select("id, body, step_no, version")
-    .eq("function", "review")
+    .eq("function", fn)
+    .not("published_at", "is", null)
     .or(`step_no.eq.${stepNo},step_no.is.null`)
     .order("version", { ascending: false })
     .returns<PromptRow[]>();
@@ -140,7 +182,7 @@ async function activeRules(): Promise<CoachRule[]> {
 /**
  * Lit l'étude et le gabarit enregistré ; null si l'utilisateur n'y a pas accès.
  * @param studyId - Identifiant de l'étude
- * @param stepNo  - Étape relue
+ * @param stepNo  - Étape concernée
  */
 async function loadStudy(studyId: string, stepNo: StepNo) {
   const supabase = await createClient();
@@ -163,11 +205,13 @@ async function loadStudy(studyId: string, stepNo: StepNo) {
 
 /**
  * Réserve la demande dans la base ; renvoie la réservation ou la clé du refus.
+ * @param fn       - Fonction demandée
  * @param studyId  - Identifiant de l'étude
- * @param stepNo   - Étape relue
+ * @param stepNo   - Étape concernée
  * @param estimate - Coût maximal estimé (dollars US)
  */
 async function reserve(
+  fn: CoachFunction,
   studyId: string,
   stepNo: StepNo,
   estimate: number,
@@ -176,7 +220,7 @@ async function reserve(
   const { data, error } = await supabase.rpc("coach_reserve", {
     p_study_id: studyId,
     p_step_no: stepNo,
-    p_function: "review",
+    p_function: fn,
     p_estimate: Number(estimate.toFixed(6)),
   });
   if (error) {
@@ -222,28 +266,35 @@ async function complete(
 }
 
 /**
- * Lance une relecture du gabarit enregistré d'une étape.
+ * Lance une demande au coach sur le gabarit enregistré d'une étape.
  *
+ * @param fn      - review (relecture), deepen (questions) ou score (évaluation)
  * @param studyId - Identifiant de l'étude (déjà vérifié)
  * @param stepNo  - Étape dotée d'un gabarit
- * @returns Relecture nettoyée, ou clé du message d'erreur
+ * @returns Résultat nettoyé, ou clé du message d'erreur
  *
  * Erreurs possibles :
- *   - unavailable si la clé de l'API manque, rate_limited / budget_exhausted si refusé
+ *   - unavailable si la clé de l'API manque, not_published si aucune consigne n'est
+ *     publiée, rate_limited / budget_exhausted si la base refuse
  */
-export async function runReview(studyId: string, stepNo: StepNo): Promise<CoachRunResult> {
+export async function runCoach<F extends CoachFunction>(
+  fn: F,
+  studyId: string,
+  stepNo: StepNo,
+): Promise<CoachRunResult<F>> {
   if (!isCoachConfigured()) return { ok: false, error: "unavailable" };
 
   const [loaded, prompt, rules, prices] = await Promise.all([
     loadStudy(studyId, stepNo),
-    activePrompt(stepNo),
+    activePrompt(fn, stepNo),
     activeRules(),
     currentPrices(),
   ]);
   if (!loaded) return { ok: false, error: "forbidden" };
-  if (!prompt || !prices) return { ok: false, error: "unavailable" };
+  if (!prompt) return { ok: false, error: "not_published" };
+  if (!prices) return { ok: false, error: "unavailable" };
 
-  const message = buildReviewMessage({
+  const message = buildCoachMessage(fn, {
     companyName: loaded.study.company_name,
     strategicQuestion: loaded.study.strategic_question,
     profile: readProfileData(loaded.study.company_profiles?.data),
@@ -251,46 +302,66 @@ export async function runReview(studyId: string, stepNo: StepNo): Promise<CoachR
     stepTitle: s.steps[stepNo].title,
     payload: loaded.payload,
     rules,
+    checklist: fn === "score" ? checklistLines(stepNo, loaded.payload) : undefined,
   });
   const estimate = estimateCost(prompt.body.length + message.length, prices.input, prices.output);
 
-  const reservation = await reserve(studyId, stepNo, estimate);
+  const reservation = await reserve(fn, studyId, stepNo, estimate);
   if (typeof reservation === "string") return { ok: false, error: reservation };
 
-  const requestId = reservation.request_id as string;
+  const call: ModelCall = {
+    requestId: reservation.request_id as string,
+    model: reservation.model as string,
+    prompt,
+    message,
+    input: { revision: loaded.revision, payload: loaded.payload },
+  };
   const ruleCodes = rulesForStep(rules, stepNo).map((rule) => rule.code);
-  const input = { revision: loaded.revision, payload: loaded.payload };
-  return callModel(requestId, reservation.model as string, prompt, message, ruleCodes, input);
+  // Chaque fonction a son schéma de sortie et son nettoyage
+  const outputs: { [K in CoachFunction]: () => Promise<CoachRunResult<K>> } = {
+    review: () => callModel(call, reviewOutputSchema, (raw) => sanitizeReview(raw, ruleCodes)),
+    deepen: () => callModel(call, deepenOutputSchema, sanitizeDeepen),
+    score: () => callModel(call, scoreOutputSchema, (raw) => sanitizeScore(raw, ruleCodes)),
+  };
+  return outputs[fn]() as Promise<CoachRunResult<F>>;
 }
+
+/** Demande réservée, prête à être envoyée au modèle. */
+type ModelCall = {
+  requestId: string;
+  /** Modèle configuré par l'administrateur */
+  model: string;
+  /** Consigne système publiée en vigueur */
+  prompt: { id: string; body: string };
+  /** Message construit par buildCoachMessage */
+  message: string;
+  /** Révision et contenu soumis (conservés avec la demande) */
+  input: { revision: number; payload: unknown };
+};
 
 /**
  * Appelle Claude puis termine la demande réservée, quelle qu'en soit l'issue.
- * @param requestId - Demande réservée
- * @param model     - Modèle configuré par l'administrateur
- * @param prompt    - Consigne système en vigueur
- * @param message   - Message construit par buildReviewMessage
- * @param ruleCodes - Codes des règles transmises
- * @param input     - Révision et contenu relus (conservés avec la demande)
+ * @param call     - Demande réservée
+ * @param schema   - Schéma de la sortie structurée
+ * @param sanitize - Nettoyage de la sortie validée
  */
-async function callModel(
-  requestId: string,
-  model: string,
-  prompt: { id: string; body: string },
-  message: string,
-  ruleCodes: string[],
-  input: { revision: number; payload: unknown },
-): Promise<CoachRunResult> {
-  const base = { promptId: prompt.id, input };
+async function callModel<S extends z.ZodType, T>(
+  call: ModelCall,
+  schema: S,
+  sanitize: (raw: z.infer<S>) => T,
+): Promise<{ ok: true; requestId: string; output: T } | { ok: false; error: CoachErrorKey }> {
+  const { requestId } = call;
+  const base = { promptId: call.prompt.id, input: call.input };
   let usage = { servedModel: null as string | null, inputTokens: 0, outputTokens: 0 };
   try {
     const response = await getCoachClient().beta.messages.parse({
-      model,
+      model: call.model,
       max_tokens: MAX_TOKENS,
       betas: [FALLBACK_BETA],
       fallbacks: "default",
-      system: prompt.body,
-      messages: [{ role: "user", content: message }],
-      output_config: { format: betaZodOutputFormat(reviewOutputSchema) },
+      system: call.prompt.body,
+      messages: [{ role: "user", content: call.message }],
+      output_config: { format: betaZodOutputFormat(schema) },
     });
     usage = {
       servedModel: response.model,
@@ -309,9 +380,9 @@ async function callModel(
       return { ok: false, error: "failed" };
     }
 
-    const review = sanitizeReview(response.parsed_output, ruleCodes);
-    await complete(requestId, { ...base, ...usage, status: "done", output: review, error: null });
-    return { ok: true, requestId, review };
+    const output = sanitize(response.parsed_output as z.infer<S>);
+    await complete(requestId, { ...base, ...usage, status: "done", output, error: null });
+    return { ok: true, requestId, output };
   } catch (error) {
     // Jetons conservés si l'appel a abouti mais que l'enregistrement a échoué
     const key = apiErrorKey(error);

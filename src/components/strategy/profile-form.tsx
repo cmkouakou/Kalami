@@ -2,12 +2,13 @@
  * =============================================================
  *  Fichier    : profile-form.tsx
  *  Projet     : Kalami Stratégie
- *  Description: Questionnaire du profil de l'entreprise (cahier des charges §3.2) : identité,
+ *  Description: Questionnaire du profil de l'organisation étudiée (cahier des charges §3.2) :
+ *               périmètre (entreprise entière ou division / département), identité,
  *               localisation, organigramme simplifié, offre, clients et concurrents. Les
  *               listes se saisissent une entrée par ligne ; les équipes, ligne par ligne.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-13
  *  Dépendances: components/admin/action-form.tsx, lib/strategy/actions.ts
  * =============================================================
  */
@@ -22,7 +23,7 @@ import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import { saveProfile } from "@/lib/strategy/actions";
-import type { ProfileData } from "@/lib/strategy/profile";
+import type { ProfileData, Scope } from "@/lib/strategy/profile";
 
 const t = getDictionary();
 const p = t.strategy.profile;
@@ -82,6 +83,7 @@ export function ProfileForm({ studyId, companyName, strategicQuestion, data }: P
     })),
   );
   const [nextKey, setNextKey] = useState(teams.length);
+  const [scope, setScope] = useState<Scope>(data.scope);
 
   /** Ajoute une ligne d'équipe vide. */
   function addTeam() {
@@ -110,6 +112,25 @@ export function ProfileForm({ studyId, companyName, strategicQuestion, data }: P
 
       {/* ==================== IDENTITÉ ==================== */}
       <Section title={p.sections.identity}>
+        <fieldset className="flex flex-col gap-2">
+          <legend className="text-label">{f.scope}</legend>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {(["company", "unit"] as const).map((value) => (
+              <label key={value} className="flex min-h-11 items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="scope"
+                  value={value}
+                  checked={scope === value}
+                  onChange={() => setScope(value)}
+                  className="size-5"
+                />
+                {p.scopes[value]}
+              </label>
+            ))}
+          </div>
+          <p className="text-small text-ink-muted">{p.scopeHint}</p>
+        </fieldset>
         <Field
           name="companyName"
           label={`${f.companyName} *`}
@@ -117,6 +138,14 @@ export function ProfileForm({ studyId, companyName, strategicQuestion, data }: P
           maxLength={200}
           defaultValue={companyName}
         />
+        {scope === "unit" && (
+          <Field
+            name="parentCompany"
+            label={f.parentCompany}
+            maxLength={200}
+            defaultValue={data.parentCompany}
+          />
+        )}
         <Field name="sector" label={`${f.sector} *`} maxLength={120} defaultValue={data.sector} />
         <div className="grid gap-4 sm:grid-cols-2">
           <Field

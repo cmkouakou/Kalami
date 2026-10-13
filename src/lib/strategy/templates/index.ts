@@ -3,20 +3,30 @@
  *  Fichier    : index.ts (templates)
  *  Projet     : Kalami Stratégie
  *  Description: Point d'entrée des gabarits : étapes qui en ont un, validation stricte du
- *               contenu envoyé par le navigateur avant enregistrement.
+ *               contenu envoyé par le navigateur avant enregistrement, liste de contrôle
+ *               d'un contenu enregistré (transmise au coach pour l'évaluation).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-11
+ *  Version    : 1.2
+ *  Date       : 2026-10-13
  *  Dépendances: templates/pestel.ts, forces.ts, internal.ts, stakeholders.ts
  * =============================================================
  */
 
 import type { z } from "zod";
 
-import { forcesSchema } from "@/lib/strategy/templates/forces";
-import { internalSchema } from "@/lib/strategy/templates/internal";
-import { pestelSchema } from "@/lib/strategy/templates/pestel";
-import { stakeholdersSchema } from "@/lib/strategy/templates/stakeholders";
+import type { ChecklistItem } from "@/lib/strategy/templates/common";
+import { forcesChecklist, forcesSchema, readForces } from "@/lib/strategy/templates/forces";
+import {
+  internalChecklist,
+  internalSchema,
+  readInternal,
+} from "@/lib/strategy/templates/internal";
+import { pestelChecklist, pestelSchema, readPestel } from "@/lib/strategy/templates/pestel";
+import {
+  readStakeholders,
+  stakeholdersChecklist,
+  stakeholdersSchema,
+} from "@/lib/strategy/templates/stakeholders";
 import type { StepNo } from "@/lib/strategy/steps";
 
 /** Étapes dotées d'un gabarit interactif (les autres arrivent aux sprints suivants). */
@@ -46,4 +56,23 @@ export function hasTemplate(no: number): no is TemplateStep {
 export function parsePayload(no: TemplateStep, raw: unknown): Record<string, unknown> | null {
   const parsed = SCHEMAS[no].safeParse(raw);
   return parsed.success ? parsed.data : null;
+}
+
+/**
+ * Liste de contrôle d'un contenu enregistré (clés des libellés de chaque gabarit).
+ * @param no  - Étape concernée (dotée d'un gabarit)
+ * @param raw - Contenu JSON de study_steps.payload
+ */
+export function checklistFor(no: TemplateStep, raw: unknown): ChecklistItem[] {
+  switch (no) {
+    case 1:
+      return pestelChecklist(readPestel(raw));
+    case 2:
+      // Contenu jamais enregistré : le contenu de départ n'a de toute façon rien d'évalué
+      return forcesChecklist(readForces(raw, "", []));
+    case 3:
+      return internalChecklist(readInternal(raw));
+    case 4:
+      return stakeholdersChecklist(readStakeholders(raw));
+  }
 }

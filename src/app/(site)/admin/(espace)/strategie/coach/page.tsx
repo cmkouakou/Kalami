@@ -4,9 +4,10 @@
  *  Projet     : Kalami Stratégie
  *  Description: Administration du coach IA : réglages (activation, modèle, prix par million
  *               de jetons, plafond par étude, débit), supplément de plafond pour une étude
- *               et consommation par étude (chiffres seulement, jamais le contenu).
+ *               et consommation par étude (chiffres seulement, jamais le contenu). Liens
+ *               vers les consignes et les erreurs classiques.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-13
  *  Dépendances: lib/admin/strategy-actions.ts, lib/strategy/coach/queries.ts
  * =============================================================
@@ -40,9 +41,17 @@ export default function AdminCoachPage() {
     <main className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-serif text-3xl font-semibold">{c.title}</h1>
-        <Link href="/admin/strategie" className={BUTTON_TERTIARY}>
-          {c.back}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/strategie/coach/consignes" className={BUTTON_TERTIARY}>
+            {c.promptsLink}
+          </Link>
+          <Link href="/admin/strategie/coach/regles" className={BUTTON_TERTIARY}>
+            {c.rulesLink}
+          </Link>
+          <Link href="/admin/strategie" className={BUTTON_TERTIARY}>
+            {c.back}
+          </Link>
+        </div>
       </div>
       <Suspense fallback={<div aria-hidden="true" className="h-96 animate-pulse" />}>
         <AdminCoach />

@@ -3,11 +3,12 @@
  *  Fichier    : page.tsx (strategie)
  *  Projet     : Kalami Stratégie
  *  Description: Accueil de l'assistant stratégie (/strategie) : présentation publique de la
- *               démarche en quatre temps, puis, pour un utilisateur connecté, ses études et
- *               ses crédits d'étude disponibles.
+ *               démarche en quatre temps (entreprise entière ou division, le livre servant
+ *               de guide), puis, pour un utilisateur connecté, ses études et ses crédits
+ *               d'étude disponibles.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-11
+ *  Version    : 1.2
+ *  Date       : 2026-10-13
  *  Dépendances: lib/strategy/queries.ts, lib/auth/dal.ts
  * =============================================================
  */
@@ -41,6 +42,7 @@ export default function StrategyHomePage() {
         <p className="text-caption uppercase text-ink-muted">{s.landing.kicker}</p>
         <h1 className="font-serif text-h1 font-semibold">{s.landing.title}</h1>
         <p className="max-w-2xl text-ink-muted">{s.landing.subtitle}</p>
+        <p className="max-w-2xl text-small text-ink-muted">{s.landing.bookNote}</p>
       </header>
 
       <section className="flex flex-col gap-4" aria-labelledby="demarche">

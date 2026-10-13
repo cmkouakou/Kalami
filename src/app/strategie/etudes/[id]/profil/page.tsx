@@ -2,12 +2,12 @@
  * =============================================================
  *  Fichier    : page.tsx (strategie/etudes/[id]/profil)
  *  Projet     : Kalami Stratégie
- *  Description: Profil de l'entreprise d'une étude : questionnaire modifiable pour le
+ *  Description: Profil de l'organisation étudiée : questionnaire modifiable pour le
  *               propriétaire et les contributeurs, résumé en lecture seule pour les
  *               observateurs. Indique les champs indispensables encore vides.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-13
  *  Dépendances: components/strategy/profile-form.tsx, lib/strategy/queries.ts
  * =============================================================
  */
@@ -41,6 +41,7 @@ export default function StudyProfilePage({ params }: PageProps<"/strategie/etude
 
 /** Valeur lisible d'une réponse du profil (liste, équipes, nombre ou texte). */
 function display(key: keyof ProfileData, data: ProfileData): string {
+  if (key === "scope") return t.strategy.profile.scopes[data.scope];
   if (key === "teams") {
     return data.teams
       .map((team) => (team.headcount === null ? team.role : `${team.role} (${team.headcount})`))

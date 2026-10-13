@@ -1,5 +1,33 @@
 # Journal des modifications
 
+## [Stratégie v0.5.1] - 2026-10-13 — Coach IA, partie b (questions, score, administration)
+### Ajouté
+- Migration `20261018120000_strategy_coach_admin.sql` : consignes en brouillon puis publiées
+  (`published_at`), historique des erreurs classiques (`coach_rule_versions`, lisible par
+  l'administrateur seulement), fonctions `admin_save_coach_prompt_draft`,
+  `admin_publish_coach_prompt`, `admin_discard_coach_prompt_draft`,
+  `admin_restore_coach_prompt` et `admin_save_coach_rule` ; brouillons de consignes
+  « relecture v2 », « questions v1 » et « évaluation v1 » à relire avant publication.
+- Coach : onglets Relecture, Questions et Évaluation. Questions d'approfondissement avec leur
+  « pourquoi », à traiter ou écarter (`coach-questions.tsx`). Évaluation indicative sur 100
+  selon quatre critères (complétude, précision, règles, cohérence), points forts et points à
+  améliorer (`coach-score.tsx`) ; la liste de contrôle de l'étape est transmise au modèle.
+  La note ne bloque jamais la validation.
+- Page `/admin/strategie/coach/consignes` : version en vigueur, brouillon comparé ligne à
+  ligne (`lib/strategy/coach/diff.ts`), publication, abandon, restauration d'une ancienne
+  version comme brouillon.
+- Page `/admin/strategie/coach/regles` : titre, étape, ordre, activation et explication
+  « selon le livre » modifiables, création d'une erreur (code définitif), historique.
+- Profil : périmètre de l'étude (entreprise entière, ou division et département avec son
+  entreprise mère), transmis au coach.
+- Tests : 11 unitaires de plus (questions, évaluation, message, comparaison, périmètre) et 3
+  d'intégration (`strategy-coach-admin-rls.test.ts`).
+### Modifié
+- Textes neutres : l'outil sert à étudier toute organisation ; le livre est présenté comme un
+  guide, et « Selon le livre » ne s'affiche que si une explication existe.
+- Erreurs du coach rendues génériques ; nouvelle erreur `not_published` (aucune consigne
+  publiée pour la fonction).
+
 ## [Stratégie v0.5.0] - 2026-10-13 — Coach IA, partie a (relecture)
 ### Ajouté
 - Migration `20261017120000_strategy_coach.sql` : réglages du coach dans `strategy_settings`

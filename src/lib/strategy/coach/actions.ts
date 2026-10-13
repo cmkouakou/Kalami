@@ -3,10 +3,12 @@
  *  Fichier    : actions.ts (coach)
  *  Projet     : Kalami Stratégie
  *  Description: Actions serveur du coach pour les membres d'une étude : demander une
- *               relecture du gabarit enregistré, noter la décision prise sur une suggestion
- *               (acceptée, modifiée, rejetée). Rôle, débit et plafond sont vérifiés en SQL.
+ *               relecture, des questions d'approfondissement ou une évaluation du gabarit
+ *               enregistré, noter la décision prise sur une suggestion (acceptée, modifiée,
+ *               rejetée) ou sur une question (traitée, écartée). Rôle, débit et plafond sont
+ *               vérifiés en SQL.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-13
  *  Dépendances: coach/run.ts, coach/queries.ts, lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
@@ -17,9 +19,9 @@
 import { getDictionary } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import { requireUser } from "@/lib/auth/dal";
+import { COACH_FUNCTIONS, type CoachFunction } from "@/lib/strategy/coach/context";
 import { getCoachUsage, type CoachDecision, type CoachUsage } from "@/lib/strategy/coach/queries";
-import { runReview } from "@/lib/strategy/coach/run";
-import type { Review } from "@/lib/strategy/coach/schemas";
+import { runCoach, type CoachOutputs } from "@/lib/strategy/coach/run";
 import { hasTemplate } from "@/lib/strategy/templates";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,36 +29,42 @@ const c = getDictionary().strategy.coach;
 
 // ==================== TYPES ====================
 
-export type ReviewResult =
-  | { ok: true; requestId: string; review: Review; usage: CoachUsage | null }
+export type CoachActionResult<F extends CoachFunction> =
+  | { ok: true; requestId: string; output: CoachOutputs[F]; usage: CoachUsage | null }
   | { ok: false; error: string; usage: CoachUsage | null };
 
-// ==================== RELECTURE ====================
+// ==================== DEMANDES ====================
 
 /**
- * Demande au coach de relire le gabarit enregistré d'une étape.
+ * Demande au coach une relecture, des questions ou une évaluation du gabarit enregistré.
+ * @param fn      - review, deepen ou score
  * @param studyId - Identifiant de l'étude
  * @param stepNo  - Étape dotée d'un gabarit
- * @returns Relecture et consommation à jour, ou message d'erreur
+ * @returns Résultat et consommation à jour, ou message d'erreur
  */
-export async function requestReview(studyId: string, stepNo: number): Promise<ReviewResult> {
+export async function requestCoach<F extends CoachFunction>(
+  fn: F,
+  studyId: string,
+  stepNo: number,
+): Promise<CoachActionResult<F>> {
   await requireUser(`/strategie/etudes/${studyId}`);
-  if (!isUuid(studyId) || !hasTemplate(stepNo)) {
+  if (!COACH_FUNCTIONS.includes(fn) || !isUuid(studyId) || !hasTemplate(stepNo)) {
     return { ok: false, error: c.errors.failed, usage: null };
   }
 
-  const result = await runReview(studyId, stepNo);
+  const result = await runCoach(fn, studyId, stepNo);
   const usage = await getCoachUsage(studyId).catch(() => null);
   if (!result.ok) return { ok: false, error: c.errors[result.error], usage };
-  return { ok: true, requestId: result.requestId, review: result.review, usage };
+  return { ok: true, requestId: result.requestId, output: result.output, usage };
 }
 
 // ==================== DÉCISIONS ====================
 
 /**
- * Note la décision prise sur une suggestion (suivi de l'usage du coach).
- * @param requestId - Relecture concernée
- * @param index     - Indice de la suggestion
+ * Note la décision prise sur une suggestion ou une question (suivi de l'usage du coach).
+ * Pour une question : accepted = traitée, rejected = écartée.
+ * @param requestId - Demande concernée
+ * @param index     - Indice de la suggestion ou de la question
  * @param decision  - accepted, modified ou rejected
  */
 export async function decideSuggestion(
