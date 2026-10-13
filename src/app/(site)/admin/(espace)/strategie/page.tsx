@@ -4,10 +4,10 @@
  *  Projet     : Kalami Stratégie
  *  Description: Administration de l'assistant stratégie : octroi de crédits d'étude et
  *               liste des études (métadonnées seulement, jamais leur contenu), lien vers
- *               le guide des étapes.
+ *               le guide des étapes et vers le coach IA.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-11
+ *  Version    : 1.2
+ *  Date       : 2026-10-13
  *  Dépendances: lib/admin/strategy-actions.ts, lib/strategy/queries.ts
  * =============================================================
  */
@@ -35,9 +35,14 @@ export default function AdminStrategyPage() {
     <main className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-serif text-3xl font-semibold">{a.title}</h1>
-        <Link href="/admin/strategie/etapes" className={BUTTON_TERTIARY}>
-          {a.guides.link}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/strategie/etapes" className={BUTTON_TERTIARY}>
+            {a.guides.link}
+          </Link>
+          <Link href="/admin/strategie/coach" className={BUTTON_TERTIARY}>
+            {a.coach.link}
+          </Link>
+        </div>
       </div>
       <Suspense fallback={<div aria-hidden="true" className="h-96 animate-pulse" />}>
         <AdminStrategy />

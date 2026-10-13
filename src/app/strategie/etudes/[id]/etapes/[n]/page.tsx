@@ -5,11 +5,11 @@
  *  Description: Page d'une étape : statut, guide de l'auteur (explication, chapitre,
  *               exemple), ce qui manque si elle est verrouillée, raisons « à revoir », puis
  *               le gabarit interactif (étapes 1 à 4 : PESTEL, cinq forces, analyse interne,
- *               parties prenantes) ou, pour les autres étapes, les actions (commencer,
- *               valider, modifier) en attendant leur gabarit.
+ *               parties prenantes) avec le panneau du coach IA ou, pour les autres
+ *               étapes, les actions (commencer, valider, modifier) en attendant leur gabarit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-11
+ *  Version    : 1.3
+ *  Date       : 2026-10-13
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts
  * =============================================================
  */
@@ -31,6 +31,7 @@ import { IconLock } from "@/components/ui/icons";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
+import { getCoachState } from "@/lib/strategy/coach/queries";
 import {
   getStepContent,
   getStepGuide,
@@ -59,6 +60,10 @@ const s = t.strategy;
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 export const metadata: Metadata = { title: s.map.kicker };
+
+/** Durée maximale des actions serveur de la page (secondes) : une relecture du coach
+ *  peut prendre plusieurs minutes. */
+export const maxDuration = 300;
 
 export default function StudyStepPage({ params }: PageProps<"/strategie/etudes/[id]/etapes/[n]">) {
   return (
@@ -182,7 +187,10 @@ async function Template({
   no: StepNo;
   affectedTitles: string[];
 }) {
-  const content = await getStepContent(study.id, no);
+  const [content, coach] = await Promise.all([
+    getStepContent(study.id, no),
+    getCoachState(study.id, no),
+  ]);
   const frame: TemplateFrameProps = {
     studyId: study.id,
     stepNo: no,
@@ -190,6 +198,7 @@ async function Template({
     status: study.steps[no].status,
     affectedTitles,
     versions: content.versions,
+    coach,
   };
 
   if (no === 1) {

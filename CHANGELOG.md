@@ -1,5 +1,27 @@
 # Journal des modifications
 
+## [Stratégie v0.5.0] - 2026-10-13 — Coach IA, partie a (relecture)
+### Ajouté
+- Migration `20261017120000_strategy_coach.sql` : réglages du coach dans `strategy_settings`
+  (activation, modèle, prix par million de jetons, plafond par étude, débit), consignes
+  système versionnées (`coach_prompts`), 10 erreurs classiques (`coach_rules`), demandes avec
+  prix figés, jetons et coût (`coach_requests`), suppléments de plafond (`coach_allowances`).
+  Fonctions `coach_reserve` (rôle, prérequis, débit, plafond, audit), `coach_complete`
+  (rôle service), `coach_decide`, `coach_study_usage` et fonctions d'administration.
+- Coach IA dans les gabarits 1 à 4 (`components/strategy/coach-panel.tsx`) : relecture du
+  contenu enregistré par Claude (sortie structurée validée par Zod, repli automatique de
+  modèle), appréciation d'ensemble, suggestions liées aux erreurs classiques ; chaque
+  suggestion s'accepte, se modifie ou se rejette, et passe par la sauvegarde automatique.
+  Jauge du budget de l'étude, alerte à 80 %.
+- Page `/admin/strategie/coach` : réglages, supplément de plafond, consommation par étude
+  (chiffres seulement).
+- Tests : 16 unitaires (nettoyage, application des suggestions, message, coût) et 7
+  d'intégration (rôles, prérequis, débit, plafond, fin de demande, décisions, lecture).
+### Modifié
+- `TemplateFrame` devient générique et reçoit l'état du coach ; la page d'une étape le
+  charge et autorise 300 s d'exécution (`maxDuration`).
+- Dépendance `@anthropic-ai/sdk` ^0.133.0 (clé lue dans `ANTHROPIC_API_KEY`).
+
 ## [Stratégie v0.4.2] - 2026-10-11 — Accès direct à l'application
 ### Ajouté
 - Pages de connexion propres à l'application : `/strategie/connexion`, `/strategie/inscription`,

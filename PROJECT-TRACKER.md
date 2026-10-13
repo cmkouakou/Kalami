@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.4.2 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S3 livrés)
+Version actuelle : v0.8.3 · Stratégie v0.5.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S4a livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -18,7 +18,8 @@ Version actuelle : v0.8.3 · Stratégie v0.4.2 | Statut : 🟡 En cours (projet 
 | #12 | 2026-10-11 | Stratégie S3 : chaîne de valeur, VRIO, parties prenantes, guide des étapes | ~260 000 | ~1.56 $ |
 | #13 | 2026-10-11 | Stratégie v0.4.1 : textes du guide, modèle services, nouveaux minimums des étapes 3 et 4 | ~150 000 | ~0.90 $ |
 | #14 | 2026-10-11 | Stratégie v0.4.2 : accès direct à l'application (connexion, inscription, en-tête propres) | ~120 000 | ~0.72 $ |
-| **TOTAL** | | | **~3 050 000** | **~18.30 $** |
+| #15 | 2026-10-13 | Stratégie S4a : coach IA (relecture, suggestions, plafond, débit, admin) | ~330 000 | ~1.98 $ |
+| **TOTAL** | | | **~3 380 000** | **~20.28 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -66,4 +67,9 @@ Version actuelle : v0.8.3 · Stratégie v0.4.2 | Statut : 🟡 En cours (projet 
 - [x] Modèle « services » de la chaîne de valeur (liste de l'auteur) et minimums 3-4 confirmés
 - [x] v0.4.1 — migration `20261016120000_strategy_guides_content.sql` appliquée, tests 342/342, MVP S0-S3 testé en local
 - [x] v0.4.2 — accès direct : /strategie a ses pages de connexion, son en-tête, ses redirections
+- [x] S4a — coach IA : relecture, suggestions, plafond, débit, admin (Stratégie v0.5.0), tests 362/362
+- [x] S4a — migration `20261017120000_strategy_coach.sql` appliquée le 2026-10-13 (RLS coach 7/7)
+- [ ] S4a — relire la consigne de relecture v1 (rédigée par Claude, en vigueur dès la migration) et compléter les explications « selon le livre » des 10 erreurs classiques
+- [ ] S4a — vérifier les prix d'Opus 5.5 dans /admin/strategie/coach
+- [ ] S4b — questions d'approfondissement, score, administration des consignes et des règles
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

@@ -3,12 +3,12 @@
  *  Fichier    : template-frame.tsx
  *  Projet     : Kalami Stratégie
  *  Description: Cadre commun des gabarits : avis de lecture seule, état de la sauvegarde
- *               automatique, contenu du gabarit, liste de contrôle avant validation,
- *               actions de l'étape et historique des versions.
+ *               automatique, contenu du gabarit, panneau du coach IA, liste de contrôle
+ *               avant validation, actions de l'étape et historique des versions.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
- *  Dépendances: step-actions.tsx, version-history.tsx, use-autosave.ts
+ *  Version    : 1.1
+ *  Date       : 2026-10-13
+ *  Dépendances: step-actions.tsx, version-history.tsx, coach-panel.tsx, use-autosave.ts
  * =============================================================
  */
 
@@ -16,13 +16,16 @@
 
 import type { ReactNode } from "react";
 
+import { CoachPanel } from "@/components/strategy/coach-panel";
 import { StepActions } from "@/components/strategy/step-actions";
 import type { Autosave } from "@/components/strategy/use-autosave";
 import { VersionHistory } from "@/components/strategy/version-history";
 import { BUTTON_TERTIARY, CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
+import type { CoachState } from "@/lib/strategy/coach/queries";
 import type { StepVersion } from "@/lib/strategy/queries";
 import type { StepNo, StepStatus, StudyRole } from "@/lib/strategy/steps";
+import { hasTemplate } from "@/lib/strategy/templates";
 
 const t = getDictionary();
 const s = t.strategy;
@@ -38,10 +41,15 @@ export type TemplateFrameProps = {
   status: StepStatus;
   affectedTitles: string[];
   versions: StepVersion[];
+  /** État du coach IA (absent : panneau masqué). */
+  coach?: CoachState;
 };
 
-type FrameProps = TemplateFrameProps & {
-  autosave: Pick<Autosave<unknown>, "status" | "revision" | "pending" | "retry">;
+type FrameProps<T> = TemplateFrameProps & {
+  autosave: Pick<
+    Autosave<T>,
+    "status" | "revision" | "pending" | "retry" | "value" | "update"
+  >;
   /** Points de la liste de contrôle, déjà traduits. */
   checklist: { label: string; ok: boolean }[];
   children: ReactNode;
@@ -50,7 +58,7 @@ type FrameProps = TemplateFrameProps & {
 // ==================== SOUS-COMPOSANTS ====================
 
 /** Ligne d'état de la sauvegarde automatique (annoncée aux lecteurs d'écran). */
-function SaveStatus({ autosave }: { autosave: FrameProps["autosave"] }) {
+function SaveStatus({ autosave }: { autosave: Pick<Autosave<unknown>, "status" | "retry"> }) {
   const { status } = autosave;
   let text: string = tpl.autosave.idle;
   if (status.kind === "dirty") text = tpl.autosave.dirty;
@@ -89,7 +97,7 @@ function SaveStatus({ autosave }: { autosave: FrameProps["autosave"] }) {
 }
 
 /** Liste de contrôle minimale avant validation. */
-function Checklist({ items }: { items: FrameProps["checklist"] }) {
+function Checklist({ items }: { items: FrameProps<unknown>["checklist"] }) {
   return (
     <section className={`${PANEL_SAND} flex flex-col gap-2 p-4`}>
       <h2 className="font-semibold">{tpl.checklist.title}</h2>
@@ -113,17 +121,18 @@ function Checklist({ items }: { items: FrameProps["checklist"] }) {
 // ==================== COMPOSANT ====================
 
 /** Encadre un gabarit : état, contenu, contrôle, actions et versions. */
-export function TemplateFrame({
+export function TemplateFrame<T>({
   studyId,
   stepNo,
   role,
   status,
   affectedTitles,
   versions,
+  coach,
   autosave,
   checklist,
   children,
-}: FrameProps) {
+}: FrameProps<T>) {
   const editor = role === "owner" || role === "contributor";
   const validated = status === "validated";
   // Le premier enregistrement fait passer l'étape « à faire » en « en cours » côté serveur
@@ -148,6 +157,20 @@ export function TemplateFrame({
       )}
 
       {children}
+
+      {coach && hasTemplate(stepNo) && (
+        <CoachPanel
+          studyId={studyId}
+          stepNo={stepNo}
+          editor={editor}
+          validated={validated}
+          pending={autosave.pending}
+          revision={autosave.revision}
+          value={autosave.value}
+          update={autosave.update}
+          coach={coach}
+        />
+      )}
 
       {!validated && <Checklist items={checklist} />}
 

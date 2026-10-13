@@ -4,11 +4,12 @@
  *  Projet     : Kalami Stratégie
  *  Description: Textes français de l'assistant stratégie (accueil, études, profil, carte
  *               des étapes, guide des étapes, gabarits PESTEL, cinq forces, analyse interne
- *               et parties prenantes, administration des crédits et des guides).
+ *               et parties prenantes, coach IA, administration des crédits, des guides
+ *               et du coach).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-11
+ *  Version    : 1.3
+ *  Date       : 2026-10-13
  * =============================================================
  */
 
@@ -567,6 +568,66 @@ const strategyFr = {
     },
   },
 
+  // ==================== COACH IA ====================
+  coach: {
+    title: "Coach",
+    intro:
+      "Le coach relit le gabarit enregistré et propose des améliorations. Il ne modifie rien " +
+      "sans votre accord : acceptez, modifiez ou rejetez chaque suggestion.",
+    request: "Demander une relecture",
+    requesting: "Le coach relit votre gabarit…",
+    again: "Relire à nouveau",
+    waitSave: "Attendez la fin de l'enregistrement pour demander une relecture.",
+    readOnly: "Seuls le propriétaire et les contributeurs peuvent solliciter le coach.",
+    validatedStep: "Étape validée : le coach relira l'étape quand elle sera rouverte.",
+    disabled: "Le coach n'est pas disponible pour le moment.",
+    summaryTitle: "Appréciation d'ensemble",
+    reviewedAt: "Relecture du {date}",
+    outdated:
+      "Le gabarit a changé depuis cette relecture : certaines suggestions peuvent ne plus " +
+      "s'appliquer.",
+    noSuggestions: "Le coach n'a pas de suggestion pour ce gabarit.",
+    rule: "Erreur classique : {title}",
+    proposal: "Proposition",
+    current: "Texte actuel",
+    accept: "Accepter",
+    modify: "Modifier",
+    reject: "Rejeter",
+    noted: "Pris en compte",
+    applyEdited: "Appliquer ma version",
+    cancel: "Annuler",
+    editLabel: "Votre version",
+    notApplicable:
+      "Cette proposition ne peut plus être appliquée telle quelle (élément retiré ou texte " +
+      "trop long).",
+    decisions: {
+      accepted: "Acceptée",
+      modified: "Modifiée",
+      rejected: "Rejetée",
+    },
+    usage: "Budget IA de l'étude : {spent} $ US utilisés sur {budget} $ US",
+    usageNear:
+      "Le budget IA de cette étude est presque épuisé. Contactez l'administrateur pour " +
+      "obtenir un supplément.",
+    errors: {
+      unavailable: "Le coach n'est pas disponible pour le moment.",
+      coach_disabled: "Le coach est désactivé par l'administrateur.",
+      forbidden: "Vous n'avez pas les droits nécessaires sur cette étude.",
+      prerequisites_missing: "Des étapes préalables ne sont pas encore validées.",
+      step_validated: "Cette étape est validée : rouvrez-la pour la faire relire.",
+      rate_limited:
+        "Vous avez sollicité le coach plusieurs fois en peu de temps. Réessayez dans quelques " +
+        "minutes.",
+      budget_exhausted:
+        "Le budget IA de cette étude est atteint. Contactez l'administrateur pour obtenir un " +
+        "supplément.",
+      refused: "Le coach n'a pas pu relire ce contenu. Reformulez-le puis réessayez.",
+      timeout: "Le coach a mis trop de temps à répondre. Réessayez dans un instant.",
+      busy: "Le service du coach est très sollicité. Réessayez dans un instant.",
+      failed: "La relecture n'a pas abouti. Réessayez dans un instant.",
+    },
+  },
+
   // ==================== ADMINISTRATION ====================
   admin: {
     title: "Stratégie",
@@ -612,6 +673,47 @@ const strategyFr = {
       saved: "Guide de l'étape enregistré.",
       tooLong: "{max} caractères au plus.",
       invalidChapter: "Indiquez un numéro de chapitre entier, ou laissez le champ vide.",
+    },
+    coach: {
+      link: "Coach IA",
+      title: "Coach IA",
+      back: "Retour à Stratégie",
+      settingsTitle: "Réglages",
+      settingsIntro:
+        "Prix en dollars US par million de jetons, à vérifier sur la grille tarifaire " +
+        "d'Anthropic. Ils servent à estimer le coût de chaque demande.",
+      enabled: "Coach activé",
+      model: "Modèle (identifiant de l'API)",
+      inputPrice: "Prix en entrée ($ US / million de jetons)",
+      outputPrice: "Prix en sortie ($ US / million de jetons)",
+      budget: "Plafond inclus par étude ($ US)",
+      rateLimit: "Demandes par utilisateur",
+      rateWindow: "Fenêtre du débit (minutes)",
+      save: "Enregistrer les réglages",
+      saved: "Réglages du coach enregistrés.",
+      invalid: "Vérifiez les valeurs : un nombre positif est attendu dans chaque champ.",
+      invalidModel:
+        "Identifiant de modèle invalide (lettres minuscules, chiffres, points, tirets).",
+      allowanceTitle: "Accorder un supplément",
+      allowanceIntro:
+        "S'ajoute au plafond inclus d'une étude, en attendant la recharge payante.",
+      study: "Étude",
+      amount: "Montant ($ US)",
+      note: "Note (facultatif)",
+      grant: "Accorder",
+      granted: "Supplément de {amount} $ US accordé.",
+      invalidAmount: "Indiquez un montant entre 0,01 et 1000.",
+      usageTitle: "Consommation par étude",
+      usageIntro: "Chiffres seulement : le contenu des études n'est pas affiché ici.",
+      noUsage: "Aucune demande au coach pour l'instant.",
+      columns: {
+        company: "Entreprise",
+        owner: "Propriétaire",
+        requests: "Demandes",
+        spent: "Dépensé ($ US)",
+        budget: "Plafond ($ US)",
+        last: "Dernière demande",
+      },
     },
   },
 };

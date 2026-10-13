@@ -5,11 +5,12 @@
  *  Description: Actions d'administration de l'assistant stratégie : octroi de crédits
  *               d'étude à un compte (en attendant l'ouverture des paiements), guide de chaque
  *               étape (explication, exemple Infosystem, raison du verrou, chapitre) et livre
- *               guide. Les fonctions SQL vérifient le rôle administrateur (aal2) et
+ *               guide, réglages du coach IA (modèle, prix, plafond, débit) et supplément de
+ *               plafond d'une étude. Les fonctions SQL vérifient le rôle administrateur (aal2) et
  *               écrivent le journal d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-11
+ *  Version    : 1.2
+ *  Date       : 2026-10-13
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -33,6 +34,16 @@ const NOTE_MAX = 500;
 const GUIDE_TEXT_MAX = 5000;
 const LOCK_REASON_MAX = 500;
 const CHAPTER_MAX = 1000;
+/** Identifiant de modèle accepté (même contrôle que la contrainte SQL). */
+const MODEL_PATTERN = /^[a-z0-9][a-z0-9.-]{1,79}$/;
+const PRICE_MAX = 10_000;
+const AMOUNT_MAX = 1000;
+
+/** Lit un nombre saisi avec une virgule ou un point décimal ; NaN si vide ou invalide. */
+function readNumber(formData: FormData, name: string): number {
+  const raw = String(formData.get(name) ?? "").trim().replace(",", ".");
+  return raw === "" ? Number.NaN : Number(raw);
+}
 
 /** Accorde un ou plusieurs crédits d'étude au compte désigné par son courriel. */
 export async function grantStudyCredits(
@@ -114,4 +125,75 @@ export async function setGuideBook(_prev: FormState, formData: FormData): Promis
   if (error) return { error: t.strategy.errors.generic };
   refresh();
   return { message: a.guides.bookSaved };
+}
+
+// ==================== COACH IA ====================
+
+/** Enregistre les réglages du coach : activation, modèle, prix, plafond et débit. */
+export async function saveCoachSettings(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const c = a.coach;
+  const model = String(formData.get("model") ?? "").trim();
+  const inputPrice = readNumber(formData, "inputPrice");
+  const outputPrice = readNumber(formData, "outputPrice");
+  const budget = readNumber(formData, "budget");
+  const rateLimit = readNumber(formData, "rateLimit");
+  const rateWindow = readNumber(formData, "rateWindow");
+
+  if (!MODEL_PATTERN.test(model)) return { error: c.invalidModel };
+  const pricesOk = [inputPrice, outputPrice].every(
+    (price) => Number.isFinite(price) && price >= 0 && price <= PRICE_MAX,
+  );
+  if (!pricesOk || !Number.isFinite(budget) || budget <= 0 || budget > AMOUNT_MAX
+    || !Number.isInteger(rateLimit) || rateLimit < 1 || rateLimit > 100
+    || !Number.isInteger(rateWindow) || rateWindow < 1 || rateWindow > 1440) {
+    return { error: c.invalid };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_update_coach_settings", {
+    p_enabled: formData.get("enabled") === "on",
+    p_model: model,
+    p_input_price: inputPrice,
+    p_output_price: outputPrice,
+    p_budget: budget,
+    p_rate_limit: rateLimit,
+    p_rate_window: rateWindow,
+  });
+  if (error) return { error: t.strategy.errors.generic };
+  refresh();
+  return { message: c.saved };
+}
+
+/** Accorde un supplément de plafond (dollars US) à une étude. */
+export async function grantCoachAllowance(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const c = a.coach;
+  const studyId = String(formData.get("studyId") ?? "").trim();
+  const amount = readNumber(formData, "amount");
+  const note = String(formData.get("note") ?? "").trim().slice(0, NOTE_MAX);
+
+  if (!isUuid(studyId)) return { error: t.strategy.errors.generic };
+  if (!Number.isFinite(amount) || amount < 0.01 || amount > AMOUNT_MAX) {
+    return { error: c.invalidAmount };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_grant_coach_allowance", {
+    p_study_id: studyId,
+    p_amount: Math.round(amount * 100) / 100,
+    p_note: note,
+  });
+  if (error) {
+    if (error.message === "invalid_amount") return { error: c.invalidAmount };
+    return { error: t.strategy.errors.generic };
+  }
+  refresh();
+  return { message: interpolate(c.granted, { amount: amount.toFixed(2).replace(".", ",") }) };
 }
