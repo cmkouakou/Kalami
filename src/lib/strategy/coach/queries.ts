@@ -8,10 +8,10 @@
  *               recherche Web) pour une étape, avec les décisions déjà prises, et fonctions
  *               disponibles (consigne publiée, recherche aux étapes 1 et 2 seulement).
  *               Lectures de l'administrateur : réglages, consommation par étude, versions
- *               des consignes et erreurs classiques avec leur historique.
+ *               des consignes (dont « extract », S5b) et erreurs classiques avec leur historique.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-13
+ *  Version    : 1.3
+ *  Date       : 2026-10-14
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, coach/schemas.ts,
  *               coach/client.ts, coach/context.ts
  * =============================================================
@@ -21,9 +21,10 @@ import "server-only";
 
 import { isCoachConfigured } from "@/lib/strategy/coach/client";
 import {
-  COACH_FUNCTIONS,
   isFunctionAvailable,
+  PROMPT_FUNCTIONS,
   type CoachFunction,
+  type PromptFunction,
 } from "@/lib/strategy/coach/context";
 import {
   readDeepen,
@@ -80,7 +81,7 @@ export type CoachState = {
 /** Version d'une consigne, pour l'administration. */
 export type CoachPromptVersion = {
   id: string;
-  fn: CoachFunction;
+  fn: PromptFunction;
   stepNo: StepNo | null;
   version: number;
   body: string;
@@ -139,13 +140,16 @@ export type CoachUsageRow = {
 // ==================== FONCTIONS UTILITAIRES ====================
 
 /** Lève une erreur explicite si une requête échoue (jamais d'échec silencieux). */
-function check<T>(result: { data: T | null; error: { message: string } | null }, what: string): T {
+export function check<T>(
+  result: { data: T | null; error: { message: string } | null },
+  what: string,
+): T {
   if (result.error) throw new Error(`Lecture impossible (${what}) : ${result.error.message}`);
   return result.data as T;
 }
 
 /** Relit les décisions enregistrées ({ "0": { decision: "accepted", … } }). */
-function readDecisions(raw: unknown): Record<number, CoachDecision> {
+export function readDecisions(raw: unknown): Record<number, CoachDecision> {
   if (!raw || typeof raw !== "object") return {};
   const result: Record<number, CoachDecision> = {};
   for (const [key, entry] of Object.entries(raw as Record<string, unknown>)) {
@@ -349,10 +353,10 @@ export async function listCoachPromptsForAdmin(): Promise<CoachPromptVersion[]> 
     "consignes du coach",
   ) ?? [];
   return rows
-    .filter((row) => (COACH_FUNCTIONS as readonly string[]).includes(row.function))
+    .filter((row) => (PROMPT_FUNCTIONS as readonly string[]).includes(row.function))
     .map((row) => ({
       id: row.id,
-      fn: row.function as CoachFunction,
+      fn: row.function as PromptFunction,
       stepNo: isStepNo(row.step_no) ? row.step_no : null,
       version: row.version,
       body: row.body,

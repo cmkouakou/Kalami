@@ -3,12 +3,13 @@
  *  Fichier    : page.tsx (admin/strategie/coach/consignes)
  *  Projet     : Kalami Stratégie
  *  Description: Versions des consignes du coach IA, par fonction (relecture, questions,
- *               évaluation) et par étape : version en vigueur, brouillon modifiable et
- *               comparé ligne à ligne à la version en vigueur, publication ou abandon du
- *               brouillon, anciennes versions restaurables comme brouillon.
+ *               évaluation, recherche, analyse des documents joints) et par étape : version
+ *               en vigueur, brouillon modifiable et comparé ligne à ligne à la version en
+ *               vigueur, publication ou abandon du brouillon, anciennes versions restaurables
+ *               comme brouillon. L'analyse des documents n'a qu'une consigne générale.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-13
+ *  Version    : 1.1
+ *  Date       : 2026-10-14
  *  Dépendances: lib/admin/strategy-actions.ts, lib/strategy/coach (queries, diff)
  * =============================================================
  */
@@ -28,7 +29,7 @@ import {
   saveCoachPromptDraft,
 } from "@/lib/admin/strategy-actions";
 import { requireAdmin } from "@/lib/auth/dal";
-import { COACH_FUNCTIONS, type CoachFunction } from "@/lib/strategy/coach/context";
+import { PROMPT_FUNCTIONS, type PromptFunction } from "@/lib/strategy/coach/context";
 import { diffLines, hasChanges } from "@/lib/strategy/coach/diff";
 import { listCoachPromptsForAdmin, type CoachPromptVersion } from "@/lib/strategy/coach/queries";
 import type { StepNo } from "@/lib/strategy/steps";
@@ -42,7 +43,7 @@ export const metadata: Metadata = { title: p.title };
 /** Consigne d'une fonction pour une étape (ou générale), avec toutes ses versions. */
 type PromptGroup = {
   key: string;
-  fn: CoachFunction;
+  fn: PromptFunction;
   stepNo: StepNo | null;
   current: CoachPromptVersion | null;
   draft: CoachPromptVersion | null;
@@ -58,7 +59,7 @@ type PromptGroup = {
  */
 function groupPrompts(versions: readonly CoachPromptVersion[]): PromptGroup[] {
   const groups = new Map<string, PromptGroup>();
-  const ensure = (fn: CoachFunction, stepNo: StepNo | null): PromptGroup => {
+  const ensure = (fn: PromptFunction, stepNo: StepNo | null): PromptGroup => {
     const key = `${fn}-${stepNo ?? "general"}`;
     const group = groups.get(key)
       ?? { key, fn, stepNo, current: null, draft: null, archived: [] };
@@ -66,7 +67,7 @@ function groupPrompts(versions: readonly CoachPromptVersion[]): PromptGroup[] {
     return group;
   };
 
-  for (const fn of COACH_FUNCTIONS) ensure(fn, null);
+  for (const fn of PROMPT_FUNCTIONS) ensure(fn, null);
   for (const version of versions) {
     const group = ensure(version.fn, version.stepNo);
     if (version.publishedAt === null) group.draft = version;
@@ -75,7 +76,7 @@ function groupPrompts(versions: readonly CoachPromptVersion[]): PromptGroup[] {
   }
 
   return [...groups.values()].sort((a, b) =>
-    COACH_FUNCTIONS.indexOf(a.fn) - COACH_FUNCTIONS.indexOf(b.fn)
+    PROMPT_FUNCTIONS.indexOf(a.fn) - PROMPT_FUNCTIONS.indexOf(b.fn)
     || (a.stepNo ?? 0) - (b.stepNo ?? 0));
 }
 
@@ -114,7 +115,8 @@ async function AdminCoachPrompts() {
 /** Une consigne : version en vigueur, brouillon et anciennes versions. */
 function PromptSection({ group }: { group: PromptGroup }) {
   const { key, fn, stepNo, current, draft, archived } = group;
-  const scope = stepNo === null ? p.general : interpolate(p.stepLabel, { no: String(stepNo) });
+  let scope = stepNo === null ? p.general : interpolate(p.stepLabel, { no: String(stepNo) });
+  if (fn === "extract") scope = p.profileScope;
 
   return (
     <section className={`${CARD} flex flex-col gap-4 p-4 sm:p-6`}>
@@ -215,7 +217,7 @@ function PromptSection({ group }: { group: PromptGroup }) {
 type DraftFormProps = {
   /** Préfixe unique des identifiants de champs. */
   id: string;
-  fn: CoachFunction;
+  fn: PromptFunction;
   stepNo: StepNo | null;
   body: string;
   note: string;

@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.6.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S5a livrés)
+Version actuelle : v0.8.3 · Stratégie v0.6.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S5b livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -21,7 +21,8 @@ Version actuelle : v0.8.3 · Stratégie v0.6.0 | Statut : 🟡 En cours (projet 
 | #15 | 2026-10-13 | Stratégie S4a : coach IA (relecture, suggestions, plafond, débit, admin) | ~330 000 | ~1.98 $ |
 | #16 | 2026-10-13 | Stratégie S4b : questions, score, administration des consignes et des règles, périmètre | ~340 000 | ~2.04 $ |
 | #17 | 2026-10-13 | Stratégie S5a : recherche Web sourcée, sources, coût des recherches | ~300 000 | ~1.80 $ |
-| **TOTAL** | | | **~4 020 000** | **~24.12 $** |
+| #18 | 2026-10-14 | Stratégie S5b : pièces jointes du profil, analyse par le coach, préremplissage | ~320 000 | ~1.92 $ |
+| **TOTAL** | | | **~4 340 000** | **~26.04 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -79,5 +80,7 @@ Version actuelle : v0.8.3 · Stratégie v0.6.0 | Statut : 🟡 En cours (projet 
 - [x] S5a — recherche Web sourcée, bouton « Ajouter », sources conservées (Stratégie v0.6.0) ; prix des recherches vérifié (10 $ les 1 000)
 - [x] S5a — migration `20261019120000_strategy_coach_research.sql` appliquée le 2026-10-13, intégration coach 13/13
 - [x] S5a — consigne research v1 publiée
-- [ ] S5b — pièces jointes du profil, résumé et préremplissage (Stratégie v0.6.1)
+- [x] S5b — pièces jointes du profil, résumé et préremplissage (Stratégie v0.6.1)
+- [x] S5b — migration `20261020120000_strategy_attachments.sql` appliquée le 2026-10-14 (éditeur SQL, historique réparé), intégration pièces jointes 6/6, coach 13/13
+- [ ] S5b — consigne extract v1 à relire et publier
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

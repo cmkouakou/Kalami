@@ -1,5 +1,30 @@
 # Journal des modifications
 
+## [Stratégie v0.6.1] - 2026-10-14 — Pièces jointes du profil, résumé et préremplissage
+### Ajouté
+- Migration `20261020120000_strategy_attachments.sql` : seau privé `study-attachments`
+  (10 Mo par fichier, dossier `etudes/<étude>/`, dépôt par les éditeurs, lecture par les
+  membres), table `study_attachments` (aucune écriture directe), fonctions
+  `strategy_add_attachment` (chemin vérifié, fichier présent, taille relevée par le stockage,
+  10 pièces au plus) et `strategy_delete_attachment`, fonction du coach « extract » sans
+  étape (`coach_reserve` à 5 arguments, `coach_complete` enregistre le résumé avec la pièce),
+  consigne « extract v1 » en brouillon à relire avant publication.
+- Profil : section « Documents de l'organisation » (PDF, Word, Excel, images ; images
+  limitées à 5 Mo). Envoi direct du navigateur au stockage, téléchargement par lien signé,
+  suppression en deux temps (`attachments-panel.tsx`).
+- Bouton « Analyser » par pièce : le coach résume le document et propose des valeurs pour
+  le profil (au plus 40, validées par Zod et nettoyées : nombres, années, doublons). Word et
+  Excel sont convertis en texte (300 000 caractères au plus) ; PDF et images sont transmis
+  tels quels (`coach/extract.ts`, `attachments-text.ts`, `prefill.ts`).
+- Revue des propositions (`prefill-review.tsx`) : cases à cocher, badge « déjà dans le
+  profil » (décochée par défaut), « Appliquer la sélection » enregistre tout de suite dans
+  le profil (listes complétées sans doublon), « Tout écarter ».
+- Administration : consigne « Analyse des documents joints » (portée : profil).
+- Tests : 18 unitaires (`strategy-attachments.test.ts`) et 6 d'intégration
+  (`strategy-attachments-rls.test.ts`).
+### Modifié
+- Fonctions des consignes réunies dans `PROMPT_FUNCTIONS` (coach, requêtes, administration).
+
 ## [Stratégie v0.6.0] - 2026-10-13 — Recherche Web sourcée
 ### Ajouté
 - Migration `20261019120000_strategy_coach_research.sql` : fonction du coach « research »

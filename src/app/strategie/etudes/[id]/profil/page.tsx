@@ -4,11 +4,14 @@
  *  Projet     : Kalami Stratégie
  *  Description: Profil de l'organisation étudiée : questionnaire modifiable pour le
  *               propriétaire et les contributeurs, résumé en lecture seule pour les
- *               observateurs. Indique les champs indispensables encore vides.
+ *               observateurs. Indique les champs indispensables encore vides. Sous le
+ *               profil, documents joints de l'organisation (S5b) : résumé et propositions du
+ *               coach (l'analyse peut durer plusieurs minutes, d'où maxDuration).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-13
- *  Dépendances: components/strategy/profile-form.tsx, lib/strategy/queries.ts
+ *  Version    : 1.2
+ *  Date       : 2026-10-14
+ *  Dépendances: components/strategy/profile-form.tsx, components/strategy/attachments-panel.tsx,
+ *               lib/strategy/queries.ts, lib/strategy/attachment-queries.ts
  * =============================================================
  */
 
@@ -17,10 +20,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { AttachmentsPanel } from "@/components/strategy/attachments-panel";
 import { ProfileForm } from "@/components/strategy/profile-form";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
+import { getAttachmentsState } from "@/lib/strategy/attachment-queries";
 import { missingProfileFields, type ProfileData } from "@/lib/strategy/profile";
 import { getStudy } from "@/lib/strategy/queries";
 import { canEdit } from "@/lib/strategy/steps";
@@ -30,6 +35,9 @@ const p = t.strategy.profile;
 const f = p.fields as Record<string, string>;
 
 export const metadata: Metadata = { title: p.title };
+
+/** Durée maximale d'une requête : l'analyse d'un document par le coach peut être longue. */
+export const maxDuration = 300;
 
 export default function StudyProfilePage({ params }: PageProps<"/strategie/etudes/[id]/profil">) {
   return (
@@ -60,6 +68,8 @@ async function StudyProfile({ params }: { params: Promise<{ id: string }> }) {
   if (!study) notFound();
 
   const missing = missingProfileFields(study.strategic_question, study.profile);
+  const attachments = await getAttachmentsState(study.id);
+  const editor = canEdit(study.role);
 
   return (
     <main className="flex flex-col gap-6">
@@ -78,8 +88,9 @@ async function StudyProfile({ params }: { params: Promise<{ id: string }> }) {
           : interpolate(p.incomplete, { fields: missing.map((name) => f[name]).join(", ") })}
       </p>
 
-      {canEdit(study.role) ? (
+      {editor ? (
         <ProfileForm
+          key={JSON.stringify(study.profile)}
           studyId={study.id}
           companyName={study.company_name}
           strategicQuestion={study.strategic_question}
@@ -102,6 +113,13 @@ async function StudyProfile({ params }: { params: Promise<{ id: string }> }) {
           </dl>
         </section>
       )}
+
+      <AttachmentsPanel
+        studyId={study.id}
+        state={attachments}
+        profile={study.profile}
+        editor={editor}
+      />
     </main>
   );
 }

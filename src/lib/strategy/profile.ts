@@ -5,10 +5,10 @@
  *  Description: Profil de l'entreprise (cahier des charges §3.2) : schéma Zod, lecture du
  *               formulaire et règle « profil complet » (miroir de la fonction SQL
  *               strategy_profile_complete). Périmètre : entreprise entière ou division /
- *               département d'une entreprise mère (S4b).
+ *               département d'une entreprise mère (S4b). Limites exportées (S5b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-13
+ *  Version    : 1.2
+ *  Date       : 2026-10-14
  *  Dépendances: zod
  * =============================================================
  */
@@ -19,9 +19,9 @@ import { z } from "zod";
 
 export const COMPANY_NAME_MAX = 200;
 export const QUESTION_MAX = 1000;
-const TEXT_MAX = 120;
-const ITEM_MAX = 200;
-const LIST_MAX = 50;
+export const TEXT_MAX = 120;
+export const ITEM_MAX = 200;
+export const LIST_MAX = 50;
 const CURRENT_YEAR = new Date().getFullYear();
 
 // ==================== SCHÉMAS ====================

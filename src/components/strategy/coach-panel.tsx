@@ -8,10 +8,11 @@
  *               (traitées ou écartées), évaluation indicative et recherche Web sourcée
  *               (étapes 1 et 2 seulement ; un fait ajouté passe par la sauvegarde
  *               automatique). Jauge commune du budget IA de l'étude (alerte à 80 %). Une
- *               fonction sans consigne publiée est signalée comme indisponible.
+ *               fonction sans consigne publiée est signalée comme indisponible. La jauge est
+ *               exportée pour le panneau des documents joints (S5b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-13
+ *  Version    : 1.3
+ *  Date       : 2026-10-14
  *  Dépendances: lib/strategy/coach (actions, patch, queries, schemas),
  *               coach-questions.tsx, coach-research.tsx, coach-score.tsx
  * =============================================================
@@ -82,7 +83,7 @@ type CoachPanelProps<T> = {
 // ==================== SOUS-COMPOSANTS ====================
 
 /** Jauge du budget IA de l'étude. */
-function UsageGauge({ spent, budget }: { spent: number; budget: number }) {
+export function UsageGauge({ spent, budget }: { spent: number; budget: number }) {
   const near = budget > 0 && spent / budget >= NEAR_BUDGET;
   return (
     <div className="flex flex-col gap-1 text-small">

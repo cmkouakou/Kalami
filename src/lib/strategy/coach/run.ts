@@ -10,9 +10,10 @@
  *               serveur web_search et l'outil soumettre_faits (les citations de la recherche
  *               excluent la sortie structurée). Seule une consigne publiée sert ; un brouillon
  *               n'est jamais utilisé. Toute demande réservée est terminée, même en cas d'erreur.
+ *               Briques exportées pour l'analyse des pièces jointes (extract.ts, S5b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-13
+ *  Version    : 1.3
+ *  Date       : 2026-10-14
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
  * =============================================================
@@ -32,6 +33,7 @@ import {
   type ChecklistLine,
   type CoachFunction,
   type CoachRule,
+  type PromptFunction,
 } from "@/lib/strategy/coach/context";
 import {
   deepenOutputSchema,
@@ -58,13 +60,13 @@ import { createClient } from "@/lib/supabase/server";
 // ==================== CONSTANTES ====================
 
 /** Plafond de jetons de sortie d'une demande (réflexion comprise). */
-const MAX_TOKENS = 12_000;
+export const MAX_TOKENS = 12_000;
 
 /** Approximation prudente : un jeton pour trois caractères de français. */
-const CHARS_PER_TOKEN = 3;
+export const CHARS_PER_TOKEN = 3;
 
 /** En-tête bêta du repli automatique vers un autre modèle (forme « default »). */
-const FALLBACK_BETA = "server-side-fallback-2026-07-01";
+export const FALLBACK_BETA = "server-side-fallback-2026-07-01";
 
 /** Reprises au plus après une pause de l'outil serveur (stop_reason « pause_turn »). */
 const MAX_CONTINUATIONS = 5;
@@ -125,27 +127,29 @@ export function estimateCost(chars: number, inputPrice: number, outputPrice: num
 }
 
 /** Traduit une erreur de l'API en message pour l'utilisateur. */
-function apiErrorKey(error: unknown): CoachErrorKey {
+export function apiErrorKey(error: unknown): CoachErrorKey {
   if (error instanceof Anthropic.APIConnectionTimeoutError) return "timeout";
   if (error instanceof Anthropic.RateLimitError) return "busy";
   if (error instanceof Anthropic.APIError && error.status === 529) return "busy";
   return "failed";
 }
 
-type Prices = { input: number; output: number; searchMaxUses: number };
+type Prices = { model: string; input: number; output: number; searchMaxUses: number };
 
 /** Prix en vigueur, lus sans réserver (pour estimer avant la réservation). */
-async function currentPrices(): Promise<Prices | null> {
+export async function currentPrices(): Promise<Prices | null> {
   const { data } = await createAdminClient()
     .from("strategy_settings")
-    .select("coach_input_price, coach_output_price, coach_search_max_uses")
+    .select("coach_model, coach_input_price, coach_output_price, coach_search_max_uses")
     .maybeSingle<{
+      coach_model: string;
       coach_input_price: number;
       coach_output_price: number;
       coach_search_max_uses: number;
     }>();
   if (!data) return null;
   return {
+    model: data.coach_model,
     input: Number(data.coach_input_price),
     output: Number(data.coach_output_price),
     searchMaxUses: Number(data.coach_search_max_uses),
@@ -171,18 +175,21 @@ function checklistLines(stepNo: StepNo, payload: unknown): ChecklistLine[] {
 
 /**
  * Consigne publiée en vigueur pour une fonction : celle de l'étape, sinon la consigne
- * générale. Les brouillons (published_at null) sont ignorés.
+ * générale (seule possible pour extract, stepNo null). Les brouillons (published_at null)
+ * sont ignorés.
  */
-async function activePrompt(
-  fn: CoachFunction,
-  stepNo: StepNo,
+export async function activePrompt(
+  fn: PromptFunction,
+  stepNo: StepNo | null,
 ): Promise<{ id: string; body: string } | null> {
-  const { data } = await createAdminClient()
+  const query = createAdminClient()
     .from("coach_prompts")
     .select("id, body, step_no, version")
     .eq("function", fn)
-    .not("published_at", "is", null)
-    .or(`step_no.eq.${stepNo},step_no.is.null`)
+    .not("published_at", "is", null);
+  const { data } = await (stepNo === null
+    ? query.is("step_no", null)
+    : query.or(`step_no.eq.${stepNo},step_no.is.null`))
     .order("version", { ascending: false })
     .returns<PromptRow[]>();
   const rows = data ?? [];
@@ -235,16 +242,18 @@ async function loadStudy(studyId: string, stepNo: StepNo) {
 
 /**
  * Réserve la demande dans la base ; renvoie la réservation ou la clé du refus.
- * @param fn       - Fonction demandée
- * @param studyId  - Identifiant de l'étude
- * @param stepNo   - Étape concernée
- * @param estimate - Coût maximal estimé (dollars US)
+ * @param fn           - Fonction demandée
+ * @param studyId      - Identifiant de l'étude
+ * @param stepNo       - Étape concernée (null pour extract)
+ * @param estimate     - Coût maximal estimé (dollars US)
+ * @param attachmentId - Pièce jointe analysée (extract seulement)
  */
-async function reserve(
-  fn: CoachFunction,
+export async function reserve(
+  fn: PromptFunction,
   studyId: string,
-  stepNo: StepNo,
+  stepNo: StepNo | null,
   estimate: number,
+  attachmentId: string | null = null,
 ): Promise<Reservation | CoachErrorKey> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("coach_reserve", {
@@ -252,6 +261,7 @@ async function reserve(
     p_step_no: stepNo,
     p_function: fn,
     p_estimate: Number(estimate.toFixed(6)),
+    p_attachment_id: attachmentId,
   });
   if (error) {
     if (error.message === "prerequisites_missing") return "prerequisites_missing";
@@ -268,7 +278,7 @@ async function reserve(
 }
 
 /** Enregistre l'issue d'une demande réservée (rôle service). */
-async function complete(
+export async function complete(
   requestId: string,
   values: {
     status: "done" | "failed" | "refused";
@@ -367,16 +377,16 @@ export async function runCoach<F extends CoachFunction>(
 }
 
 /** Demande réservée, prête à être envoyée au modèle. */
-type ModelCall = {
+export type ModelCall = {
   requestId: string;
   /** Modèle configuré par l'administrateur */
   model: string;
   /** Consigne système publiée en vigueur */
   prompt: { id: string; body: string };
-  /** Message construit par buildCoachMessage */
-  message: string;
-  /** Révision et contenu soumis (conservés avec la demande) */
-  input: { revision: number; payload: unknown };
+  /** Message construit par buildCoachMessage, ou blocs (pièce jointe puis texte) */
+  message: string | Anthropic.Beta.BetaContentBlockParam[];
+  /** Contenu soumis, conservé avec la demande (jamais le document lui-même) */
+  input: unknown;
 };
 
 /**
@@ -385,7 +395,7 @@ type ModelCall = {
  * @param schema   - Schéma de la sortie structurée
  * @param sanitize - Nettoyage de la sortie validée
  */
-async function callModel<S extends z.ZodType, T>(
+export async function callModel<S extends z.ZodType, T>(
   call: ModelCall,
   schema: S,
   sanitize: (raw: z.infer<S>) => T,
@@ -486,7 +496,10 @@ async function callResearch(
     webSearches: 0,
   };
   const hits: SearchHit[] = [];
-  const messages: Anthropic.MessageParam[] = [{ role: "user", content: call.message }];
+  const messages: Anthropic.MessageParam[] = [
+    // La recherche porte sur un gabarit : son message est toujours un texte
+    { role: "user", content: call.message as string },
+  ];
   const tools: Anthropic.ToolUnion[] = [
     { type: "web_search_20260209", name: "web_search", max_uses: maxUses,
       allowed_callers: ["direct"] },

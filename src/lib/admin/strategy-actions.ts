@@ -8,11 +8,12 @@
  *               guide, réglages du coach IA (modèle, prix, plafond, débit, recherche Web :
  *               prix et nombre de recherches par demande), supplément de
  *               plafond d'une étude, versions des consignes du coach (brouillon, publication,
- *               abandon, restauration) et erreurs classiques. Les fonctions SQL vérifient le
- *               rôle administrateur (aal2) et écrivent le journal d'audit.
+ *               abandon, restauration ; « extract » sans étape) et erreurs classiques. Les
+ *               fonctions SQL vérifient le rôle administrateur (aal2) et écrivent le journal
+ *               d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-13
+ *  Version    : 1.5
+ *  Date       : 2026-10-14
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -25,7 +26,7 @@ import { getDictionary, interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { isUuid } from "@/lib/admin/validation";
-import { COACH_FUNCTIONS } from "@/lib/strategy/coach/context";
+import { PROMPT_FUNCTIONS } from "@/lib/strategy/coach/context";
 import { isStepNo } from "@/lib/strategy/steps";
 import { createClient } from "@/lib/supabase/server";
 
@@ -246,7 +247,9 @@ export async function saveCoachPromptDraft(
   const body = String(formData.get("body") ?? "").trim();
   const note = String(formData.get("note") ?? "").trim().slice(0, NOTE_MAX);
 
-  if (!(COACH_FUNCTIONS as readonly string[]).includes(fn) || stepNo === undefined) {
+  // L'analyse des pièces jointes (extract) n'a qu'une consigne générale, sans étape
+  if (!(PROMPT_FUNCTIONS as readonly string[]).includes(fn) || stepNo === undefined
+    || (fn === "extract" && stepNo !== null)) {
     return { error: p.invalid };
   }
   if (body === "") return { error: p.emptyBody };

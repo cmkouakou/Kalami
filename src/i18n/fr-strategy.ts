@@ -6,10 +6,11 @@
  *               des étapes, guide des étapes, gabarits PESTEL, cinq forces, analyse interne
  *               et parties prenantes, coach IA, administration des crédits, des guides
  *               et du coach : réglages, consignes et erreurs classiques), recherche Web
- *               sourcée du coach. Rattachés à fr.ts sous « strategy ».
+ *               sourcée du coach, documents joints au profil (S5b). Rattachés à fr.ts sous
+ *               « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-13
+ *  Version    : 1.6
+ *  Date       : 2026-10-14
  * =============================================================
  */
 
@@ -127,6 +128,62 @@ const strategyFr = {
     removeTeam: "Retirer cette équipe",
     invalid: "Vérifiez les champs suivants : {fields}.",
     save: "Enregistrer le profil",
+  },
+
+  // ==================== PIÈCES JOINTES DU PROFIL ====================
+  attachments: {
+    title: "Documents de l'organisation",
+    intro:
+      "Joignez des documents sur l'organisation étudiée (rapport annuel, présentation, " +
+      "organigramme…). Le coach peut en faire un résumé et proposer des informations pour " +
+      "le profil ; rien n'est ajouté sans votre accord.",
+    hint:
+      "PDF, Word (.docx), Excel (.xlsx) ou image (PNG, JPEG, WebP, GIF). 10 Mo au plus par " +
+      "fichier (5 Mo pour une image), 10 fichiers par étude.",
+    count: "{count} document(s) sur 10",
+    add: "Joindre un document",
+    uploading: "Envoi de « {name} »…",
+    uploaded: "Document joint.",
+    empty: "Aucun document joint pour le moment.",
+    readOnly:
+      "Seuls le propriétaire et les contributeurs peuvent joindre ou analyser des documents.",
+    notAvailable: "L'analyse des documents par le coach n'est pas encore disponible.",
+    addedAt: "Joint le {date}",
+    download: "Télécharger",
+    delete: "Supprimer",
+    confirmDelete: "Confirmer la suppression",
+    cancel: "Annuler",
+    analyze: "Analyser",
+    analyzeAgain: "Analyser de nouveau",
+    analyzing: "Le coach lit le document… (jusqu'à quelques minutes)",
+    analyzedAt: "Analysé le {date}",
+    summaryTitle: "Résumé",
+    proposalsTitle: "Propositions pour le profil",
+    noProposals: "Le coach ne propose rien de nouveau pour le profil à partir de ce document.",
+    inProfile: "déjà dans le profil",
+    applyHint:
+      "Les propositions cochées sont enregistrées tout de suite dans le profil : les listes " +
+      "sont complétées, les autres champs remplacés. Enregistrez d'abord les modifications " +
+      "en cours du formulaire.",
+    apply: "Appliquer la sélection",
+    dismissAll: "Tout écarter",
+    applied: "Profil mis à jour.",
+    decided: "Décision prise pour toutes les propositions.",
+    decisions: {
+      accepted: "Ajoutée",
+      modified: "Ajoutée",
+      rejected: "Écartée",
+    },
+    errors: {
+      format:
+        "Format non admis : joignez un PDF, un document Word (.docx), un classeur Excel (.xlsx) " +
+        "ou une image.",
+      tooLarge: "Ce fichier dépasse 10 Mo.",
+      imageTooLarge: "Une image ne peut pas dépasser 5 Mo.",
+      tooMany: "Cette étude compte déjà 10 documents : supprimez-en un d'abord.",
+      missing: "Le fichier est introuvable. Joignez-le de nouveau.",
+      upload: "L'envoi du fichier a échoué. Réessayez.",
+    },
   },
 
   // ==================== CARTE DES ÉTAPES ====================
@@ -712,6 +769,11 @@ const strategyFr = {
       busy: "Le service du coach est très sollicité. Réessayez dans un instant.",
       failed: "La demande n'a pas abouti. Réessayez dans un instant.",
       not_published: "Cette fonction du coach n'est pas encore disponible.",
+      unreadable: "Ce fichier n'a pas pu être lu. Vérifiez qu'il n'est ni protégé ni endommagé.",
+      image_too_large: "Une image ne peut pas dépasser 5 Mo pour être analysée.",
+      document_too_long:
+        "Ce document est trop long pour être analysé d'un bloc. Joignez un extrait (quelques " +
+        "pages ou une feuille).",
     },
   },
 
@@ -817,8 +879,10 @@ const strategyFr = {
         deepen: "Questions d'approfondissement",
         score: "Évaluation",
         research: "Recherche Web sourcée (étapes 1 et 2)",
+        extract: "Analyse des documents joints",
       },
       general: "Toutes les étapes",
+      profileScope: "Profil de l'organisation",
       stepLabel: "Étape {no}",
       version: "Version {version}",
       createdAt: "Modifiée le {date}",

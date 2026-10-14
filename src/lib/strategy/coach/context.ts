@@ -9,9 +9,10 @@
  *               (avec l'explication du livre quand l'auteur l'a fournie). Les saisies de l'équipe
  *               sont placées entre balises et présentées comme des données, jamais comme des
  *               instructions. Seule l'étude demandée est transmise. Fonctions pures.
+ *               Liste des fonctions dotées d'une consigne, dont « extract » (S5b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-13
+ *  Version    : 1.3
+ *  Date       : 2026-10-14
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts
  * =============================================================
  */
@@ -32,6 +33,13 @@ export type CoachRule = {
 /** Fonctions du coach (colonne coach_prompts.function). */
 export const COACH_FUNCTIONS = ["review", "deepen", "score", "research"] as const;
 export type CoachFunction = (typeof COACH_FUNCTIONS)[number];
+
+/**
+ * Fonctions dotées d'une consigne (coach_prompts.function) : celles du coach, plus
+ * l'extraction d'une pièce jointe du profil (sans étape).
+ */
+export const PROMPT_FUNCTIONS = [...COACH_FUNCTIONS, "extract"] as const;
+export type PromptFunction = (typeof PROMPT_FUNCTIONS)[number];
 
 /** Étapes où la recherche Web est proposée : PESTEL (1) et cinq forces (2). */
 export const RESEARCH_STEPS: readonly number[] = [1, 2];
@@ -73,10 +81,9 @@ export function rulesForStep(rules: readonly CoachRule[], stepNo: StepNo): Coach
 // ==================== MISE EN FORME ====================
 
 /** Neutralise les balises de fermeture qu'une saisie pourrait contenir. */
-function escapeTags(text: string): string {
-  return text.replace(/<\/?(profil|gabarit|question|regles|controle|cibles)\b/gi, (match) =>
-    match.replace("<", "‹"),
-  );
+export function escapeTags(text: string): string {
+  const tags = /<\/?(profil|gabarit|question|regles|controle|cibles|document)\b/gi;
+  return text.replace(tags, (match) => match.replace("<", "‹"));
 }
 
 /** Liste lisible (ou « non renseigné »). */
@@ -92,7 +99,7 @@ function scopeLine(profile: ProfileData): string {
 }
 
 /** Profil de l'organisation étudiée en lignes « libellé : valeur ». */
-function profileLines(name: string, profile: ProfileData): string {
+export function profileLines(name: string, profile: ProfileData): string {
   const teams = profile.teams.map((team) =>
     team.headcount === null ? team.role : `${team.role} (${team.headcount})`,
   );
