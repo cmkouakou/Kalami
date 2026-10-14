@@ -9,12 +9,15 @@
  *               (étapes 1 et 2 seulement ; un fait ajouté passe par la sauvegarde
  *               automatique). Jauge commune du budget IA de l'étude (alerte à 80 %). Une
  *               fonction sans consigne publiée est signalée comme indisponible. La jauge est
- *               exportée pour le panneau des documents joints (S5b).
+ *               exportée pour le panneau des documents joints (S5b). À l'étape 5, onglet
+ *               « Propositions » : les propositions cochées complètent la synthèse par la
+ *               sauvegarde automatique, et les décisions sont notées en une fois (S6b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-14
  *  Dépendances: lib/strategy/coach (actions, patch, queries, schemas),
- *               coach-questions.tsx, coach-research.tsx, coach-score.tsx
+ *               lib/strategy/synthesis-proposals.ts, coach-questions.tsx,
+ *               coach-research.tsx, coach-score.tsx, coach-synthesis.tsx
  * =============================================================
  */
 
@@ -25,6 +28,7 @@ import { useState, useTransition } from "react";
 import { CoachQuestions } from "@/components/strategy/coach-questions";
 import { CoachResearchList } from "@/components/strategy/coach-research";
 import { CoachScore } from "@/components/strategy/coach-score";
+import { CoachSynthesis } from "@/components/strategy/coach-synthesis";
 import { FormMessage } from "@/components/ui/form";
 import {
   BADGE,
@@ -37,7 +41,7 @@ import {
   PILL_ACTIVE,
 } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
-import { decideSuggestion, requestCoach } from "@/lib/strategy/coach/actions";
+import { decideMany, decideSuggestion, requestCoach } from "@/lib/strategy/coach/actions";
 import {
   COACH_FUNCTIONS,
   isFunctionAvailable,
@@ -52,9 +56,12 @@ import type {
   CoachRuleTitle,
   CoachScore as CoachScoreResult,
   CoachState,
+  CoachSynthesize,
 } from "@/lib/strategy/coach/queries";
 import type { Suggestion } from "@/lib/strategy/coach/schemas";
+import { applyProposals, indexProposals } from "@/lib/strategy/synthesis-proposals";
 import type { TemplateStep } from "@/lib/strategy/templates";
+import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 
 const c = getDictionary().strategy.coach;
 
@@ -215,6 +222,7 @@ type Results = {
   deepen: CoachDeepen | null;
   score: CoachScoreResult | null;
   research: CoachResearch | null;
+  synthesize: CoachSynthesize | null;
 };
 
 /** Textes du bouton de demande, par fonction. */
@@ -227,6 +235,11 @@ const REQUEST_TEXTS: Record<CoachFunction, { request: string; again: string; bus
     again: c.research.again,
     busy: c.research.requesting,
   },
+  synthesize: {
+    request: c.synthesize.request,
+    again: c.synthesize.again,
+    busy: c.synthesize.requesting,
+  },
 };
 
 /** Introduction de chaque onglet (celle de la relecture est l'introduction générale). */
@@ -235,6 +248,7 @@ const TAB_INTROS: Record<CoachFunction, string | null> = {
   deepen: c.deepen.intro,
   score: c.score.intro,
   research: c.research.intro,
+  synthesize: c.synthesize.intro,
 };
 
 /** Panneau du coach : onglets, budget, demande et dernier résultat de chaque fonction. */
@@ -256,6 +270,7 @@ export function CoachPanel<T>({
     deepen: coach.deepen,
     score: coach.score,
     research: coach.research,
+    synthesize: coach.synthesize,
   });
   // Fonctions dont le résultat porte sur une version antérieure (constat au chargement)
   const [fresh, setFresh] = useState<Record<CoachFunction, boolean>>({
@@ -263,6 +278,7 @@ export function CoachPanel<T>({
     deepen: false,
     score: false,
     research: false,
+    synthesize: false,
   });
   const [message, setMessage] = useState<{ error?: string; message?: string }>({});
   const [busy, startTransition] = useTransition();
@@ -379,6 +395,48 @@ export function CoachPanel<T>({
     record("research", latest.requestId, index, decision);
   }
 
+  /**
+   * Ajoute à la synthèse les propositions cochées, puis note toutes les décisions en une
+   * fois (ajoutées = accepted, les autres = rejected).
+   * @param selected - Indices cochés (vide : tout écarter)
+   */
+  function applySynthesis(selected: ReadonlySet<number>) {
+    const latest = results.synthesize;
+    if (!latest) return;
+    const output = latest.output;
+    // Mêmes identifiants pour le calcul immédiat et pour la mise à jour du gabarit
+    const ids = indexProposals(output).map(() => crypto.randomUUID());
+    const factory = () => {
+      let next = 0;
+      return () => ids[next++] ?? crypto.randomUUID();
+    };
+    const { applied } = applyProposals(
+      readSynthesis(value), output, selected, factory(), c.synthesize.toVerify,
+    );
+    if (applied.size > 0) {
+      update((previous) => applyProposals(
+        readSynthesis(previous), output, selected, factory(), c.synthesize.toVerify,
+      ).payload as T);
+    }
+
+    const decisions: Record<number, CoachDecision> = {};
+    for (const entry of indexProposals(output)) {
+      decisions[entry.index] = applied.has(entry.index) ? "accepted" : "rejected";
+    }
+    setResults((previous) => ({ ...previous, synthesize: { ...latest, decisions } }));
+    // Le gabarit change aussitôt : ce résultat ne doit pas paraître dépassé
+    setFresh((previous) => ({ ...previous, synthesize: true }));
+    const skipped = [...selected].some((index) => !applied.has(index));
+    setMessage({});
+    startTransition(async () => {
+      const outcome = await decideMany(latest.requestId, decisions);
+      if (!outcome.ok) return setMessage({ error: outcome.error });
+      if (applied.size === 0) return setMessage({ message: c.synthesize.decided });
+      const done = interpolate(c.synthesize.applied, { count: String(applied.size) });
+      setMessage({ message: skipped ? `${done} ${c.synthesize.skipped}` : done });
+    });
+  }
+
   return (
     <section className={`${CARD} flex flex-col gap-4 p-4`} aria-busy={busy}>
       <div className="flex flex-col gap-1">
@@ -476,6 +534,18 @@ export function CoachPanel<T>({
             date={date}
             canAct={canAct && !busy}
             onDecide={decideResearch}
+          />
+        )}
+
+        {tab === "synthesize" && results.synthesize && (
+          <CoachSynthesis
+            key={results.synthesize.requestId}
+            result={results.synthesize}
+            date={date}
+            outdated={outdated}
+            payload={readSynthesis(value)}
+            canAct={canAct && !busy}
+            onApply={applySynthesis}
           />
         )}
       </div>

@@ -4,14 +4,15 @@
  *  Projet     : Kalami Stratégie
  *  Description: Forme des réponses du coach : relecture, questions d'approfondissement (S4b)
  *               évaluation sur 100 avec quatre critères (S4b) et faits d'une recherche Web
- *               (S5a), dont les sources passent par une liste blanche. Le schéma envoyé à
- *               l'API reste sans bornes (les sorties structurées n'acceptent pas ces
- *               contraintes) ; le nettoyage qui suit tronque, borne, limite et écarte les codes
+ *               (S5a), dont les sources passent par une liste blanche, et propositions de
+ *               synthèse (S6b : SWOT avec origine vérifiée, pistes TOWS, enjeux, liens
+ *               connus). Le schéma envoyé à l'API reste sans bornes (les sorties
+ *               structurées n'acceptent pas ces contraintes) ; le nettoyage qui suit tronque, borne, limite et écarte les codes
  *               de règle inconnus. Utilisable côté client (lecture d'un résultat enregistré).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-13
- *  Dépendances: zod, templates/pestel.ts, templates/forces.ts
+ *  Version    : 1.3
+ *  Date       : 2026-10-14
+ *  Dépendances: zod, templates/pestel.ts, templates/forces.ts, templates/synthesis.ts
  * =============================================================
  */
 
@@ -24,6 +25,19 @@ import {
   type Nature,
   type PestelDimension,
 } from "@/lib/strategy/templates/pestel";
+import {
+  ISSUE_EXPLANATION_MAX,
+  ISSUE_TITLE_MAX,
+  ISSUES_MAX,
+  ITEM_TEXT_MAX,
+  SOURCE_STEPS,
+  SWOT_KEYS,
+  TOWS_QUADRANTS,
+  type SourceStep,
+  type SwotKey,
+  type SwotOrigin,
+  type TowsQuadrant,
+} from "@/lib/strategy/templates/synthesis";
 
 // ==================== CONSTANTES ====================
 
@@ -379,4 +393,172 @@ export function readResearch(raw: unknown): Research | null {
       sources: fact.sources.filter((source) => urlKey(source.url) !== null),
     })),
   };
+}
+
+// ==================== PROPOSITIONS DE SYNTHÈSE ====================
+
+/** Propositions au plus : 8 par case de la SWOT, 8 pistes TOWS, 3 enjeux (43 < 50 décisions). */
+export const MAX_SWOT_PROPOSALS = 8;
+export const MAX_TOWS_PROPOSALS = 8;
+const MAX_LINKS = 20;
+
+/** Réponse brute attendue du modèle (synthèse), sans bornes comme les autres. */
+export const synthesizeOutputSchema = z.object({
+  summary: z.string(),
+  swot: z.array(
+    z.object({
+      ref: z.string(),
+      key: z.enum(SWOT_KEYS),
+      text: z.string(),
+      sourceStep: z.number().nullable(),
+      sourceId: z.string().nullable(),
+    }),
+  ),
+  tows: z.array(
+    z.object({
+      ref: z.string(),
+      quadrant: z.enum(TOWS_QUADRANTS),
+      text: z.string(),
+      links: z.array(z.string()),
+    }),
+  ),
+  issues: z.array(
+    z.object({ title: z.string(), explanation: z.string(), links: z.array(z.string()) }),
+  ),
+});
+
+export type SynthesizeOutput = z.infer<typeof synthesizeOutputSchema>;
+
+/** Élément de SWOT proposé ; origin null = tiré du profil seul, à vérifier. */
+export type SwotProposal = { ref: string; key: SwotKey; text: string; origin: SwotOrigin | null };
+
+/** Piste TOWS proposée ; links : ref d'une proposition ou id d'un élément existant. */
+export type TowsProposal = { ref: string; quadrant: TowsQuadrant; text: string; links: string[] };
+
+/** Enjeu proposé. */
+export type IssueProposal = { title: string; explanation: string; links: string[] };
+
+/** Propositions nettoyées, telles qu'enregistrées et affichées. */
+export type Synthesize = {
+  summary: string;
+  swot: SwotProposal[];
+  tows: TowsProposal[];
+  issues: IssueProposal[];
+};
+
+/** Identifiants connus pour le nettoyage des propositions. */
+export type SynthesizeKnown = {
+  /** Identifiants des éléments de chaque étape source (clés des forces pour l'étape 2). */
+  sources: Record<SourceStep, ReadonlySet<string>>;
+  /** Éléments déjà présents dans la synthèse. */
+  swotIds: ReadonlySet<string>;
+  towsIds: ReadonlySet<string>;
+};
+
+/** Liens uniques, connus, en nombre limité. */
+function keepLinks(links: readonly string[], known: ReadonlySet<string>): string[] {
+  return [...new Set(links.filter((link) => known.has(link)))].slice(0, MAX_LINKS);
+}
+
+/**
+ * Nettoie les propositions de synthèse produites par le modèle.
+ *
+ * Les textes vides sont écartés et les autres coupés. Une origine n'est gardée que si
+ * l'élément cité existe dans l'étape source ; sinon l'élément est à vérifier (origin null).
+ * Une ref mal formée, en double ou égale à un id existant est remplacée par une ref
+ * inaccessible aux liens. Les liens inconnus sont retirés : une piste ne vise que des
+ * éléments de SWOT, un enjeu des éléments de SWOT ou des pistes.
+ *
+ * @param raw   - Réponse validée par synthesizeOutputSchema
+ * @param known - Identifiants des étapes sources et de la synthèse actuelle
+ * @returns Propositions prêtes à enregistrer
+ */
+export function sanitizeSynthesize(raw: SynthesizeOutput, known: SynthesizeKnown): Synthesize {
+  const used = new Set<string>([...known.swotIds, ...known.towsIds]);
+  let spare = 0;
+  // Ref utilisable pour les liens, ou ref de remplacement que le modèle n'a pas pu citer
+  const claim = (ref: string): { ref: string; linkable: boolean } => {
+    const trimmed = ref.trim();
+    if (ID_PATTERN.test(trimmed) && !used.has(trimmed)) {
+      used.add(trimmed);
+      return { ref: trimmed, linkable: true };
+    }
+    spare += 1;
+    return { ref: `~${spare}`, linkable: false };
+  };
+
+  const counts = new Map<SwotKey, number>();
+  const swotRefs = new Set<string>(known.swotIds);
+  const swot: SwotProposal[] = [];
+  for (const item of raw.swot) {
+    const text = clip(item.text, ITEM_TEXT_MAX);
+    const count = counts.get(item.key) ?? 0;
+    if (!text || count >= MAX_SWOT_PROPOSALS) continue;
+    counts.set(item.key, count + 1);
+    const step = SOURCE_STEPS.find((no) => no === item.sourceStep);
+    const ref = item.sourceId?.trim() ?? "";
+    const origin = step && known.sources[step].has(ref) ? { step, ref } : null;
+    const claimed = claim(item.ref);
+    if (claimed.linkable) swotRefs.add(claimed.ref);
+    swot.push({ ref: claimed.ref, key: item.key, text, origin });
+  }
+
+  const towsRefs = new Set<string>(known.towsIds);
+  const tows: TowsProposal[] = [];
+  for (const item of raw.tows) {
+    const text = clip(item.text, ITEM_TEXT_MAX);
+    if (!text || tows.length >= MAX_TOWS_PROPOSALS) continue;
+    const claimed = claim(item.ref);
+    if (claimed.linkable) towsRefs.add(claimed.ref);
+    tows.push({ ref: claimed.ref, quadrant: item.quadrant, text,
+      links: keepLinks(item.links, swotRefs) });
+  }
+
+  const issueTargets = new Set<string>([...swotRefs, ...towsRefs]);
+  const issues = raw.issues
+    .map((item) => ({
+      title: clip(item.title, ISSUE_TITLE_MAX),
+      explanation: clip(item.explanation, ISSUE_EXPLANATION_MAX),
+      links: keepLinks(item.links, issueTargets),
+    }))
+    .filter((item) => item.title)
+    .slice(0, ISSUES_MAX);
+
+  return { summary: clip(raw.summary, MAX_SUMMARY), swot, tows, issues };
+}
+
+/** Forme enregistrée de propositions nettoyées. */
+const storedSynthesizeSchema = z.object({
+  summary: z.string(),
+  swot: z.array(
+    z.object({
+      ref: z.string(),
+      key: z.enum(SWOT_KEYS),
+      text: z.string(),
+      origin: z
+        .object({ step: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)]),
+          ref: z.string() })
+        .nullable(),
+    }),
+  ),
+  tows: z.array(
+    z.object({
+      ref: z.string(),
+      quadrant: z.enum(TOWS_QUADRANTS),
+      text: z.string(),
+      links: z.array(z.string()),
+    }),
+  ),
+  issues: z.array(
+    z.object({ title: z.string(), explanation: z.string(), links: z.array(z.string()) }),
+  ),
+});
+
+/**
+ * Relit des propositions de synthèse enregistrées ; null si elles sont illisibles.
+ * @param raw - Valeur JSON lue en base
+ */
+export function readSynthesize(raw: unknown): Synthesize | null {
+  const parsed = storedSynthesizeSchema.safeParse(raw);
+  return parsed.success ? parsed.data : null;
 }

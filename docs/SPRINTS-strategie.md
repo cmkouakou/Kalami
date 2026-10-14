@@ -3,7 +3,7 @@
 Assistant d'analyse stratégique sous `/strategie`, mêmes comptes, même Supabase, même déploiement
 que la plateforme de lecture ([cahier](cahiers/CAHIER_DES_CHARGES_assistant_strategie.md)).
 Démarré le 2026-10-11 ; le projet 1 est en pause (reste : 11a, 5, 6, 10, 11b).
-S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11) ; S2 livré en Stratégie v0.3.0 (2026-10-11) ; S3 livré en Stratégie v0.4.0 (2026-10-11) ; S4a (coach : relecture) livré en Stratégie v0.5.0 (2026-10-13) ; S4b (questions, score, administration du coach) livré en Stratégie v0.5.1 (2026-10-13) ; S5a (recherche Web sourcée) livré en Stratégie v0.6.0 (2026-10-13) ; S5b (pièces jointes du profil) livré en Stratégie v0.6.1 (2026-10-14).
+S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11) ; S2 livré en Stratégie v0.3.0 (2026-10-11) ; S3 livré en Stratégie v0.4.0 (2026-10-11) ; S4a (coach : relecture) livré en Stratégie v0.5.0 (2026-10-13) ; S4b (questions, score, administration du coach) livré en Stratégie v0.5.1 (2026-10-13) ; S5a (recherche Web sourcée) livré en Stratégie v0.6.0 (2026-10-13) ; S5b (pièces jointes du profil) livré en Stratégie v0.6.1 (2026-10-14) ; S6a (synthèse SWOT, TOWS, enjeux) livré en Stratégie v0.7.0 (2026-10-14) ; S6b (propositions du coach pour la synthèse) livré en Stratégie v0.7.1 (2026-10-14).
 
 Version propre au module (« Stratégie vX.Y.Z »), indépendante de la version de l'application.
 Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés par l'administrateur**.
@@ -19,7 +19,7 @@ Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés pa
 | S5a | Recherche Web sourcée (PESTEL, cinq forces), sources conservées, coût des recherches | v0.6.0 | ✅ |
 | S5b | Pièces jointes du profil, résumé et préremplissage | v0.6.1 | ✅ |
 | S6a | Synthèse : SWOT avec reprise des étapes 1 à 3 (cases à cocher), TOWS, 2 ou 3 enjeux | v0.7.0 | ✅ |
-| S6b | Synthèse : préremplissage par le coach (SWOT, pistes TOWS, enjeux), contexte des étapes 1 à 4 | v0.7.1 | ⬜ |
+| S6b | Synthèse : préremplissage par le coach (SWOT, pistes TOWS, enjeux), contexte des étapes 1 à 4 | v0.7.1 | ✅ |
 | S7 | Gabarits 6-8 : Cap (SMART, remplacement du nom), Choix (Porter, Ansoff, PAF), Action (Gantt, tableau de bord équilibré) | v0.8.0 | ⬜ |
 | S8 | Plan stratégique : 8 sections, traçabilité, édition, régénération par section, export PDF et DOCX | v0.9.0 | ⬜ |
 | S9 | Collaboration : invitations, rôles, attribution, présence, verrouillage doux, commentaires, mentions, courriels, journal | v0.10.0 | ⬜ |

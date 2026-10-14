@@ -10,8 +10,10 @@
  *               sont placées entre balises et présentées comme des données, jamais comme des
  *               instructions. Seule l'étude demandée est transmise. Fonctions pures.
  *               Liste des fonctions dotées d'une consigne, dont « extract » (S5b).
+ *               À l'étape 5, contenu des étapes 1 à 4 (bloc etapes) et fonction
+ *               « synthesize » qui propose de quoi compléter la synthèse (S6b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-14
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts
  * =============================================================
@@ -31,7 +33,7 @@ export type CoachRule = {
 };
 
 /** Fonctions du coach (colonne coach_prompts.function). */
-export const COACH_FUNCTIONS = ["review", "deepen", "score", "research"] as const;
+export const COACH_FUNCTIONS = ["review", "deepen", "score", "research", "synthesize"] as const;
 export type CoachFunction = (typeof COACH_FUNCTIONS)[number];
 
 /**
@@ -44,14 +46,23 @@ export type PromptFunction = (typeof PROMPT_FUNCTIONS)[number];
 /** Étapes où la recherche Web est proposée : PESTEL (1) et cinq forces (2). */
 export const RESEARCH_STEPS: readonly number[] = [1, 2];
 
+/** Étape de la synthèse, seule à offrir le préremplissage par le coach. */
+export const SYNTHESIS_STEP = 5;
+
 /**
- * Vrai si la fonction est offerte à cette étape (la recherche seulement aux étapes 1 et 2).
+ * Vrai si la fonction est offerte à cette étape (la recherche seulement aux étapes 1 et 2,
+ * le préremplissage seulement à l'étape 5).
  * @param fn     - Fonction du coach
  * @param stepNo - Étape concernée
  */
 export function isFunctionAvailable(fn: CoachFunction, stepNo: number): boolean {
-  return fn !== "research" || RESEARCH_STEPS.includes(stepNo);
+  if (fn === "research") return RESEARCH_STEPS.includes(stepNo);
+  if (fn === "synthesize") return stepNo === SYNTHESIS_STEP;
+  return true;
 }
+
+/** Contenu enregistré d'une étape antérieure, transmis à l'étape 5. */
+export type SourceStepContent = { stepNo: number; title: string; payload: unknown };
 
 /** Point de la liste de contrôle de l'étape, avec son libellé. */
 export type ChecklistLine = { label: string; ok: boolean };
@@ -69,6 +80,8 @@ export type ReviewContextInput = {
   checklist?: readonly ChecklistLine[];
   /** Cibles admises pour un fait (transmises pour la recherche). */
   targets?: readonly string[];
+  /** Étapes 1 à 4 (transmises à l'étape 5, pour toutes les fonctions). */
+  sources?: readonly SourceStepContent[];
 };
 
 // ==================== RÈGLES ====================
@@ -82,7 +95,7 @@ export function rulesForStep(rules: readonly CoachRule[], stepNo: StepNo): Coach
 
 /** Neutralise les balises de fermeture qu'une saisie pourrait contenir. */
 export function escapeTags(text: string): string {
-  const tags = /<\/?(profil|gabarit|question|regles|controle|cibles|document)\b/gi;
+  const tags = /<\/?(profil|gabarit|question|regles|controle|cibles|document|etapes)\b/gi;
   return text.replace(tags, (match) => match.replace("<", "‹"));
 }
 
@@ -147,6 +160,11 @@ const FRAMING: Record<CoachFunction, { head: string; ask: string }> = {
     ask: "Cherche des faits sourcés pour cette étape, puis remets-les avec l'outil "
       + "soumettre_faits.",
   },
+  synthesize: {
+    head: "Synthèse à compléter",
+    ask: "Propose de quoi compléter cette synthèse à partir des étapes, selon le format "
+      + "demandé.",
+  },
 };
 
 /** Liste de contrôle en lignes « [fait] libellé » / « [à faire] libellé ». */
@@ -154,11 +172,20 @@ function checklistLines(items: readonly ChecklistLine[]): string {
   return items.map((item) => `[${item.ok ? "fait" : "à faire"}] ${item.label}`).join("\n");
 }
 
+/** Étapes antérieures, chacune titrée puis suivie de son contenu JSON. */
+function sourceLines(sources: readonly SourceStepContent[]): string {
+  return sources
+    .map((source) => `Étape ${source.stepNo}. ${source.title}\n`
+      + JSON.stringify(source.payload, null, 1))
+    .join("\n\n");
+}
+
 /**
  * Construit le message utilisateur d'une demande au coach.
  *
- * @param fn    - Fonction demandée : review, deepen, score ou research
- * @param input - Étude, étape, contenu du gabarit, règles (liste de contrôle, cibles)
+ * @param fn    - Fonction demandée : review, deepen, score, research ou synthesize
+ * @param input - Étude, étape, contenu du gabarit, règles (liste de contrôle, cibles,
+ *                étapes antérieures)
  * @returns Texte du message, données balisées
  *
  * Exemple d'utilisation :
@@ -173,6 +200,9 @@ export function buildCoachMessage(fn: CoachFunction, input: ReviewContextInput):
   const targets = fn === "research" && input.targets && input.targets.length > 0
     ? ["<cibles>", input.targets.join(", "), "</cibles>", ""]
     : [];
+  const sources = input.sources && input.sources.length > 0
+    ? ["<etapes>", escapeTags(sourceLines(input.sources)), "</etapes>", ""]
+    : [];
   return [
     `${FRAMING[fn].head} : ${input.stepNo}. ${input.stepTitle}`,
     "",
@@ -186,6 +216,7 @@ export function buildCoachMessage(fn: CoachFunction, input: ReviewContextInput):
     escapeTags(input.strategicQuestion || "non renseignée"),
     "</question>",
     "",
+    ...sources,
     "<gabarit>",
     payload,
     "</gabarit>",

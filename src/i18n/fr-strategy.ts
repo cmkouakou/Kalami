@@ -725,6 +725,7 @@ const strategyFr = {
       deepen: "Questions",
       score: "Évaluation",
       research: "Recherche",
+      synthesize: "Propositions",
     },
     notAvailable: "Cette fonction du coach n'est pas encore disponible.",
     book: "Selon le livre : {text}",
@@ -822,6 +823,39 @@ const strategyFr = {
         accepted: "Ajouté",
         modified: "Ajouté",
         rejected: "Écarté",
+      },
+    },
+    synthesize: {
+      intro:
+        "Le coach propose des éléments de SWOT, des pistes TOWS et des enjeux tirés de vos " +
+        "étapes 1 à 4 et du profil. Cochez ceux à ajouter : rien de ce que vous avez saisi " +
+        "n'est remplacé.",
+      request: "Demander des propositions",
+      requesting: "Le coach prépare ses propositions…",
+      again: "Nouvelles propositions",
+      proposedAt: "Propositions du {date}",
+      outdated: "La synthèse a changé depuis ces propositions.",
+      none: "Le coach n'a rien à proposer pour l'instant : complétez d'abord les étapes 1 à 4.",
+      swotTitle: "Matrice SWOT",
+      towsTitle: "Pistes TOWS",
+      issuesTitle: "Enjeux stratégiques",
+      toVerify: "À vérifier :",
+      toVerifyBadge: "À vérifier (profil seul)",
+      duplicate: "Déjà présent",
+      links: "S'appuie sur : {items}",
+      applyHint:
+        "Les éléments cochés sont ajoutés à la synthèse ; les autres sont écartés. Les " +
+        "doublons ne sont pas cochés.",
+      apply: "Appliquer la sélection ({count})",
+      dismissAll: "Tout écarter",
+      applied: "Propositions ajoutées à la synthèse : {count}.",
+      skipped:
+        "Certaines propositions n'ont pas été ajoutées (doublon ou nombre maximal atteint).",
+      decided: "Propositions écartées.",
+      decisions: {
+        accepted: "Ajoutée",
+        modified: "Ajoutée",
+        rejected: "Écartée",
       },
     },
     usage: "Budget IA de l'étude : {spent} $ US utilisés sur {budget} $ US",
@@ -956,6 +990,7 @@ const strategyFr = {
         score: "Évaluation",
         research: "Recherche Web sourcée (étapes 1 et 2)",
         extract: "Analyse des documents joints",
+        synthesize: "Propositions pour la synthèse (étape 5)",
       },
       general: "Toutes les étapes",
       profileScope: "Profil de l'organisation",

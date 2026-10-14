@@ -11,8 +11,10 @@
  *               excluent la sortie structurée). Seule une consigne publiée sert ; un brouillon
  *               n'est jamais utilisé. Toute demande réservée est terminée, même en cas d'erreur.
  *               Briques exportées pour l'analyse des pièces jointes (extract.ts, S5b).
+ *               À l'étape 5, le contenu des étapes 1 à 4 est joint au message, et le
+ *               préremplissage (synthesize) est nettoyé selon les éléments connus (S6b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-14
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
@@ -33,7 +35,9 @@ import {
   type ChecklistLine,
   type CoachFunction,
   type CoachRule,
+  SYNTHESIS_STEP,
   type PromptFunction,
+  type SourceStepContent,
 } from "@/lib/strategy/coach/context";
 import {
   deepenOutputSchema,
@@ -44,16 +48,26 @@ import {
   sanitizeResearch,
   sanitizeReview,
   sanitizeScore,
+  sanitizeSynthesize,
   scoreOutputSchema,
+  synthesizeOutputSchema,
   type Deepen,
   type Research,
   type Review,
   type Score,
   type SearchHit,
+  type Synthesize,
 } from "@/lib/strategy/coach/schemas";
-import { readProfileData } from "@/lib/strategy/profile";
+import { readProfileData, type ProfileData } from "@/lib/strategy/profile";
+import { getSourcePayloads } from "@/lib/strategy/queries";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
+import { knownIds, type ProposalSources } from "@/lib/strategy/synthesis-proposals";
 import { checklistFor, hasTemplate, type TemplateStep } from "@/lib/strategy/templates";
+import { readForces } from "@/lib/strategy/templates/forces";
+import { readInternal } from "@/lib/strategy/templates/internal";
+import { readPestel } from "@/lib/strategy/templates/pestel";
+import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
+import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -88,7 +102,13 @@ const s = getDictionary().strategy;
 export type CoachErrorKey = keyof typeof s.coach.errors;
 
 /** Résultat nettoyé de chaque fonction du coach. */
-export type CoachOutputs = { review: Review; deepen: Deepen; score: Score; research: Research };
+export type CoachOutputs = {
+  review: Review;
+  deepen: Deepen;
+  score: Score;
+  research: Research;
+  synthesize: Synthesize;
+};
 
 export type CoachRunResult<F extends CoachFunction = CoachFunction> =
   | { ok: true; requestId: string; output: CoachOutputs[F] }
@@ -241,6 +261,37 @@ async function loadStudy(studyId: string, stepNo: StepNo) {
   return { study: study.data, payload: step.data.payload, revision: step.data.revision };
 }
 
+/** Étapes antérieures relues, pour le message et pour le nettoyage des propositions. */
+type SynthesisContext = { sources: ProposalSources; message: SourceStepContent[] };
+
+/**
+ * Lit et relit les étapes 1 à 4 de l'étude (session de l'utilisateur, donc RLS).
+ * @param studyId     - Identifiant de l'étude (déjà vérifié)
+ * @param companyName - Nom de l'organisation (gabarit des cinq forces)
+ * @param profile     - Profil relu (concurrents du gabarit des cinq forces)
+ */
+async function loadSynthesisContext(
+  studyId: string,
+  companyName: string,
+  profile: ProfileData,
+): Promise<SynthesisContext> {
+  const raw = await getSourcePayloads(studyId, [1, 2, 3, 4]);
+  const pestel = readPestel(raw[1]);
+  const forces = readForces(raw[2], companyName, profile.competitors);
+  const internal = readInternal(raw[3]);
+  const stakeholders = readStakeholders(raw[4]);
+  const payloads: [StepNo, unknown][] = [[1, pestel], [2, forces], [3, internal],
+    [4, stakeholders]];
+  return {
+    sources: { pestel, internal, stakeholders },
+    message: payloads.map(([stepNo, payload]) => ({
+      stepNo,
+      title: s.steps[stepNo].title,
+      payload,
+    })),
+  };
+}
+
 /**
  * Réserve la demande dans la base ; renvoie la réservation ou la clé du refus.
  * @param fn           - Fonction demandée
@@ -313,7 +364,8 @@ export async function complete(
 /**
  * Lance une demande au coach sur le gabarit enregistré d'une étape.
  *
- * @param fn      - review (relecture), deepen (questions), score (évaluation) ou research
+ * @param fn      - review (relecture), deepen (questions), score (évaluation), research
+ *                  ou synthesize (préremplissage de l'étape 5)
  * @param studyId - Identifiant de l'étude (déjà vérifié)
  * @param stepNo  - Étape dotée d'un gabarit
  * @returns Résultat nettoyé, ou clé du message d'erreur
@@ -339,16 +391,21 @@ export async function runCoach<F extends CoachFunction>(
   if (!prompt) return { ok: false, error: "not_published" };
   if (!prices) return { ok: false, error: "unavailable" };
 
+  const profile = readProfileData(loaded.study.company_profiles?.data);
+  const synthesis = stepNo === SYNTHESIS_STEP
+    ? await loadSynthesisContext(studyId, loaded.study.company_name, profile)
+    : null;
   const message = buildCoachMessage(fn, {
     companyName: loaded.study.company_name,
     strategicQuestion: loaded.study.strategic_question,
-    profile: readProfileData(loaded.study.company_profiles?.data),
+    profile,
     stepNo,
     stepTitle: s.steps[stepNo].title,
     payload: loaded.payload,
     rules,
     checklist: fn === "score" ? checklistLines(stepNo, loaded.payload) : undefined,
     targets: fn === "research" ? researchTargets(stepNo) : undefined,
+    sources: synthesis?.message,
   });
   // Recherche : marge pour les résultats renvoyés (le prix des recherches est ajouté en SQL)
   const searchChars = fn === "research"
@@ -373,6 +430,15 @@ export async function runCoach<F extends CoachFunction>(
     deepen: () => callModel(call, deepenOutputSchema, sanitizeDeepen),
     score: () => callModel(call, scoreOutputSchema, (raw) => sanitizeScore(raw, ruleCodes)),
     research: () => callResearch(call, stepNo, reservation.search_max_uses ?? 1),
+    synthesize: () => {
+      // Réservé à l'étape 5 en SQL : le contexte des étapes est donc toujours présent
+      const known = knownIds(
+        synthesis?.sources ?? { pestel: readPestel(null), internal: readInternal(null),
+          stakeholders: readStakeholders(null) },
+        readSynthesis(loaded.payload),
+      );
+      return callModel(call, synthesizeOutputSchema, (raw) => sanitizeSynthesize(raw, known));
+    },
   };
   return outputs[fn]() as Promise<CoachRunResult<F>>;
 }

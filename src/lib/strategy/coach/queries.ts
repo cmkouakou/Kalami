@@ -9,8 +9,9 @@
  *               disponibles (consigne publiée, recherche aux étapes 1 et 2 seulement).
  *               Lectures de l'administrateur : réglages, consommation par étude, versions
  *               des consignes (dont « extract », S5b) et erreurs classiques avec leur historique.
+ *               Dernières propositions de synthèse (synthesize) à l'étape 5 (S6b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-14
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, coach/schemas.ts,
  *               coach/client.ts, coach/context.ts
@@ -31,10 +32,12 @@ import {
   readResearch,
   readReview,
   readScore,
+  readSynthesize,
   type Deepen,
   type Research,
   type Review,
   type Score,
+  type Synthesize,
 } from "@/lib/strategy/coach/schemas";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -62,6 +65,7 @@ export type CoachReview = CoachResult<Review>;
 export type CoachDeepen = CoachResult<Deepen>;
 export type CoachScore = CoachResult<Score>;
 export type CoachResearch = CoachResult<Research>;
+export type CoachSynthesize = CoachResult<Synthesize>;
 
 /** Erreur classique citée dans une suggestion ; l'explication du livre peut être vide. */
 export type CoachRuleTitle = { code: string; title: string; bookExplanation: string };
@@ -75,6 +79,7 @@ export type CoachState = {
   deepen: CoachDeepen | null;
   score: CoachScore | null;
   research: CoachResearch | null;
+  synthesize: CoachSynthesize | null;
   rules: CoachRuleTitle[];
 };
 
@@ -244,6 +249,7 @@ async function availableFunctions(stepNo: StepNo): Promise<Record<CoachFunction,
     deepen: available("deepen"),
     score: available("score"),
     research: available("research"),
+    synthesize: available("synthesize"),
   };
 }
 
@@ -255,21 +261,25 @@ async function availableFunctions(stepNo: StepNo): Promise<Record<CoachFunction,
  */
 export async function getCoachState(studyId: string, stepNo: StepNo): Promise<CoachState> {
   const supabase = await createClient();
-  const [usage, available, latest, deepen, score, research, rules] = await Promise.all([
-    getCoachUsage(studyId),
-    availableFunctions(stepNo),
-    latestResult(studyId, stepNo, "review", readReview),
-    latestResult(studyId, stepNo, "deepen", readDeepen),
-    latestResult(studyId, stepNo, "score", readScore),
-    isFunctionAvailable("research", stepNo)
-      ? latestResult(studyId, stepNo, "research", readResearch)
-      : Promise.resolve(null),
-    supabase
-      .from("coach_rules")
-      .select("code, title, book_explanation")
-      .eq("active", true)
-      .returns<{ code: string; title: string; book_explanation: string }[]>(),
-  ]);
+  const [usage, available, latest, deepen, score, research, synthesize, rules] =
+    await Promise.all([
+      getCoachUsage(studyId),
+      availableFunctions(stepNo),
+      latestResult(studyId, stepNo, "review", readReview),
+      latestResult(studyId, stepNo, "deepen", readDeepen),
+      latestResult(studyId, stepNo, "score", readScore),
+      isFunctionAvailable("research", stepNo)
+        ? latestResult(studyId, stepNo, "research", readResearch)
+        : Promise.resolve(null),
+      isFunctionAvailable("synthesize", stepNo)
+        ? latestResult(studyId, stepNo, "synthesize", readSynthesize)
+        : Promise.resolve(null),
+      supabase
+        .from("coach_rules")
+        .select("code, title, book_explanation")
+        .eq("active", true)
+        .returns<{ code: string; title: string; book_explanation: string }[]>(),
+    ]);
 
   return {
     usage,
@@ -278,6 +288,7 @@ export async function getCoachState(studyId: string, stepNo: StepNo): Promise<Co
     deepen,
     score,
     research,
+    synthesize,
     rules: (check(rules, "règles du coach") ?? []).map((rule) => ({
       code: rule.code,
       title: rule.title,

@@ -7,10 +7,10 @@
  *               enregistré ou une recherche Web sourcée (étapes 1 et 2), noter la décision
  *               prise sur une suggestion (acceptée, modifiée, rejetée), une question (traitée,
  *               écartée) ou un fait trouvé (ajouté, écarté). Rôle, débit et plafond sont
- *               vérifiés en SQL.
+ *               vérifiés en SQL. Décisions groupées sur les propositions de synthèse (S6b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-13
+ *  Version    : 1.3
+ *  Date       : 2026-10-14
  *  Dépendances: coach/run.ts, coach/queries.ts, lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -42,7 +42,8 @@ export type CoachActionResult<F extends CoachFunction> =
 
 /**
  * Demande au coach une relecture, des questions, une évaluation ou une recherche Web.
- * @param fn      - review, deepen, score ou research (étapes 1 et 2 seulement)
+ * @param fn      - review, deepen, score, research (étapes 1 et 2 seulement) ou synthesize
+ *                  (étape 5 seulement)
  * @param studyId - Identifiant de l'étude
  * @param stepNo  - Étape dotée d'un gabarit
  * @returns Résultat et consommation à jour, ou message d'erreur
@@ -89,6 +90,41 @@ export async function decideSuggestion(
     p_request_id: requestId,
     p_index: index,
     p_decision: decision,
+  });
+  if (error) {
+    return { ok: false, error: error.code === "42501" ? c.errors.forbidden : c.errors.failed };
+  }
+  return { ok: true };
+}
+
+/** Plus grand nombre de décisions notées en une fois (borne de coach_decide_many). */
+const MAX_DECISIONS = 50;
+
+/**
+ * Note en une fois les décisions prises sur les propositions de synthèse (cochées = ajoutées,
+ * décochées = écartées).
+ * @param requestId - Demande concernée
+ * @param decisions - Décision par indice de proposition
+ */
+export async function decideMany(
+  requestId: string,
+  decisions: Record<number, CoachDecision>,
+): Promise<{ ok: boolean; error?: string }> {
+  await requireUser("/strategie");
+  const entries = Object.entries(decisions);
+  const valid = entries.every(([index, decision]) => {
+    const n = Number(index);
+    return Number.isInteger(n) && n >= 0 && n < MAX_DECISIONS
+      && ["accepted", "modified", "rejected"].includes(decision);
+  });
+  if (!isUuid(requestId) || entries.length === 0 || entries.length > MAX_DECISIONS || !valid) {
+    return { ok: false, error: c.errors.failed };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("coach_decide_many", {
+    p_request_id: requestId,
+    p_decisions: decisions,
   });
   if (error) {
     return { ok: false, error: error.code === "42501" ? c.errors.forbidden : c.errors.failed };

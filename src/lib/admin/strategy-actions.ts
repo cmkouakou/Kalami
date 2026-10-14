@@ -247,9 +247,11 @@ export async function saveCoachPromptDraft(
   const body = String(formData.get("body") ?? "").trim();
   const note = String(formData.get("note") ?? "").trim().slice(0, NOTE_MAX);
 
-  // L'analyse des pièces jointes (extract) n'a qu'une consigne générale, sans étape
+  // L'analyse des pièces jointes (extract) n'a qu'une consigne générale, sans étape ;
+  // le préremplissage (synthesize) ne sert qu'à l'étape 5
   if (!(PROMPT_FUNCTIONS as readonly string[]).includes(fn) || stepNo === undefined
-    || (fn === "extract" && stepNo !== null)) {
+    || (fn === "extract" && stepNo !== null)
+    || (fn === "synthesize" && stepNo !== null && stepNo !== 5)) {
     return { error: p.invalid };
   }
   if (body === "") return { error: p.emptyBody };

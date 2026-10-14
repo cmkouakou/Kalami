@@ -1,5 +1,28 @@
 # Journal des modifications
 
+## [Stratégie v0.7.1] - 2026-10-14 — Synthèse : propositions du coach (S6b)
+### Ajouté
+- Migration `20261022120000_strategy_coach_synthesis.sql` : fonction du coach « synthesize »
+  (réservée à l'étape 5 dans `coach_reserve`, consigne admise pour l'étape 5 seulement),
+  `coach_decide_many` (décisions groupées, 50 au plus, membres éditeurs seulement) et
+  consigne « synthesize v1 » en brouillon à relire avant publication.
+- Onglet « Propositions » du coach à l'étape 5 : le coach lit les étapes 1 à 4 et le profil,
+  puis propose des éléments de SWOT, des pistes TOWS et des enjeux. Revue par cases à cocher
+  (`coach-synthesis.tsx`) : étiquette É1 à É4 pour un élément repris d'une étape, mention
+  « à vérifier » pour un élément tiré du profil seul, doublons signalés et décochés.
+  « Appliquer la sélection » complète la synthèse sans rien remplacer (nouveaux
+  identifiants, liens convertis, plafonds respectés, enjeu vide rempli en premier).
+- `synthesis-proposals.ts` : identifiants connus, numérotation, doublons, application.
+- Nettoyage des propositions (`sanitizeSynthesize`) : origine vérifiée contre les étapes,
+  refs invalides ou en double neutralisées, liens limités aux éléments existants ou proposés.
+- Tests : 16 unitaires (`strategy-coach-synthesis.test.ts`) et 4 d'intégration
+  (`strategy-coach-synthesis-rls.test.ts`, ignorés tant que la migration n'est pas appliquée).
+### Modifié
+- Message du coach : bloc `<etapes>` (contenu relu des étapes 1 à 4) à l'étape 5, pour
+  toutes les fonctions.
+- Administration des consignes : libellé de la nouvelle fonction ; consigne synthesize
+  refusée pour une autre étape que la 5.
+
 ## [Stratégie v0.7.0] - 2026-10-14 — Synthèse : SWOT, TOWS et enjeux (S6a)
 ### Ajouté
 - Migration `20261021120000_strategy_synthesis.sql` : liste de contrôle de l'étape 5 dans

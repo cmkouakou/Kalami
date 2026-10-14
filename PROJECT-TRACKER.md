@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.7.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S6a livrés)
+Version actuelle : v0.8.3 · Stratégie v0.7.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S6b livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -23,7 +23,8 @@ Version actuelle : v0.8.3 · Stratégie v0.7.0 | Statut : 🟡 En cours (projet 
 | #17 | 2026-10-13 | Stratégie S5a : recherche Web sourcée, sources, coût des recherches | ~300 000 | ~1.80 $ |
 | #18 | 2026-10-14 | Stratégie S5b : pièces jointes du profil, analyse par le coach, préremplissage | ~320 000 | ~1.92 $ |
 | #19 | 2026-10-14 | Stratégie S6a : synthèse SWOT, reprise des étapes 1 à 3, TOWS, enjeux | ~300 000 | ~1.80 $ |
-| **TOTAL** | | | **~4 640 000** | **~27.84 $** |
+| #20 | 2026-10-14 | Stratégie S6b : propositions du coach pour la synthèse, décisions groupées | ~250 000 | ~1.50 $ |
+| **TOTAL** | | | **~4 890 000** | **~29.34 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -86,5 +87,7 @@ Version actuelle : v0.8.3 · Stratégie v0.7.0 | Statut : 🟡 En cours (projet 
 - [ ] S5b — consigne extract v1 à relire et publier
 - [x] S6a — synthèse : SWOT avec reprise des étapes 1 à 3, TOWS, 2 ou 3 enjeux (Stratégie v0.7.0), unitaires 343/343
 - [x] S6a — migration `20261021120000_strategy_synthesis.sql` appliquée le 2026-10-14 (éditeur SQL, historique réparé), intégration synthèse 8/8, guides 15/15
-- [ ] S6b — préremplissage par le coach (SWOT, pistes TOWS, enjeux), contexte des étapes 1 à 4 (Stratégie v0.7.1)
+- [x] S6b — préremplissage par le coach (SWOT, pistes TOWS, enjeux), contexte des étapes 1 à 4 (Stratégie v0.7.1), unitaires 359/359
+- [ ] S6b — appliquer `20261022120000_strategy_coach_synthesis.sql`, puis lancer l'intégration synthèse du coach (4 tests)
+- [ ] S6b — consigne synthesize v1 à relire et publier
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse
