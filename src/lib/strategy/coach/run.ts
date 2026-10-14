@@ -2,14 +2,16 @@
  * =============================================================
  *  Fichier    : run.ts (coach)
  *  Projet     : Kalami Stratégie
- *  Description: Déroulé serveur d'une demande au coach (relecture, questions ou évaluation) :
- *               lecture de l'étude et du gabarit enregistré (session de l'utilisateur,
- *               donc RLS), estimation du coût, réservation (rôle, débit, plafond vérifiés
- *               en SQL), appel à Claude avec sortie structurée, nettoyage, puis enregistrement des jetons et du coût.
- *               Seule une consigne publiée sert ; un brouillon n'est jamais utilisé.
- *               Toute demande réservée est terminée, même en cas d'erreur.
+ *  Description: Déroulé serveur d'une demande au coach (relecture, questions, évaluation ou
+ *               recherche Web) : lecture de l'étude et du gabarit enregistré (session de
+ *               l'utilisateur, donc RLS), estimation du coût, réservation (rôle, débit,
+ *               plafond vérifiés en SQL), appel à Claude, nettoyage, puis enregistrement des
+ *               jetons, des recherches, du coût et des sources. La recherche passe par l'outil
+ *               serveur web_search et l'outil soumettre_faits (les citations de la recherche
+ *               excluent la sortie structurée). Seule une consigne publiée sert ; un brouillon
+ *               n'est jamais utilisé. Toute demande réservée est terminée, même en cas d'erreur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-13
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
@@ -20,7 +22,7 @@ import "server-only";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import type { z } from "zod";
+import { z } from "zod";
 
 import { getDictionary } from "@/i18n";
 import { getCoachClient, isCoachConfigured } from "@/lib/strategy/coach/client";
@@ -33,14 +35,19 @@ import {
 } from "@/lib/strategy/coach/context";
 import {
   deepenOutputSchema,
+  researchOutputSchema,
+  researchTargets,
   reviewOutputSchema,
   sanitizeDeepen,
+  sanitizeResearch,
   sanitizeReview,
   sanitizeScore,
   scoreOutputSchema,
   type Deepen,
+  type Research,
   type Review,
   type Score,
+  type SearchHit,
 } from "@/lib/strategy/coach/schemas";
 import { readProfileData } from "@/lib/strategy/profile";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
@@ -59,6 +66,18 @@ const CHARS_PER_TOKEN = 3;
 /** En-tête bêta du repli automatique vers un autre modèle (forme « default »). */
 const FALLBACK_BETA = "server-side-fallback-2026-07-01";
 
+/** Reprises au plus après une pause de l'outil serveur (stop_reason « pause_turn »). */
+const MAX_CONTINUATIONS = 5;
+
+/**
+ * Jetons d'entrée prévus par recherche (résultats renvoyés au modèle) : marge prudente
+ * pour l'estimation seulement ; le coût enregistré vient de l'usage réel.
+ */
+const SEARCH_INPUT_ALLOWANCE = 10_000;
+
+/** Nom de l'outil client par lequel le modèle remet ses faits. */
+const SUBMIT_TOOL = "soumettre_faits";
+
 const s = getDictionary().strategy;
 
 // ==================== TYPES ====================
@@ -67,7 +86,7 @@ const s = getDictionary().strategy;
 export type CoachErrorKey = keyof typeof s.coach.errors;
 
 /** Résultat nettoyé de chaque fonction du coach. */
-export type CoachOutputs = { review: Review; deepen: Deepen; score: Score };
+export type CoachOutputs = { review: Review; deepen: Deepen; score: Score; research: Research };
 
 export type CoachRunResult<F extends CoachFunction = CoachFunction> =
   | { ok: true; requestId: string; output: CoachOutputs[F] }
@@ -79,6 +98,7 @@ type Reservation = {
   model: string | null;
   input_price: number | null;
   output_price: number | null;
+  search_max_uses: number | null;
 };
 
 type PromptRow = { id: string; body: string; step_no: number | null; version: number };
@@ -112,14 +132,24 @@ function apiErrorKey(error: unknown): CoachErrorKey {
   return "failed";
 }
 
+type Prices = { input: number; output: number; searchMaxUses: number };
+
 /** Prix en vigueur, lus sans réserver (pour estimer avant la réservation). */
-async function currentPrices(): Promise<{ input: number; output: number } | null> {
+async function currentPrices(): Promise<Prices | null> {
   const { data } = await createAdminClient()
     .from("strategy_settings")
-    .select("coach_input_price, coach_output_price")
-    .maybeSingle<{ coach_input_price: number; coach_output_price: number }>();
-  return data ? { input: Number(data.coach_input_price), output: Number(data.coach_output_price) }
-    : null;
+    .select("coach_input_price, coach_output_price, coach_search_max_uses")
+    .maybeSingle<{
+      coach_input_price: number;
+      coach_output_price: number;
+      coach_search_max_uses: number;
+    }>();
+  if (!data) return null;
+  return {
+    input: Number(data.coach_input_price),
+    output: Number(data.coach_output_price),
+    searchMaxUses: Number(data.coach_search_max_uses),
+  };
 }
 
 /** Libellés de la liste de contrôle de chaque gabarit. */
@@ -246,8 +276,10 @@ async function complete(
     servedModel: string | null;
     inputTokens: number;
     outputTokens: number;
+    webSearches?: number;
     input: unknown;
     output: unknown;
+    sources?: unknown;
     error: string | null;
   },
 ): Promise<void> {
@@ -258,8 +290,10 @@ async function complete(
     p_served_model: values.servedModel,
     p_input_tokens: values.inputTokens,
     p_output_tokens: values.outputTokens,
+    p_web_searches: values.webSearches ?? 0,
     p_input: values.input,
     p_output: values.output,
+    p_sources: values.sources ?? null,
     p_error: values.error,
   });
   if (error) throw new Error(`coach_complete : ${error.message}`);
@@ -268,7 +302,7 @@ async function complete(
 /**
  * Lance une demande au coach sur le gabarit enregistré d'une étape.
  *
- * @param fn      - review (relecture), deepen (questions) ou score (évaluation)
+ * @param fn      - review (relecture), deepen (questions), score (évaluation) ou research
  * @param studyId - Identifiant de l'étude (déjà vérifié)
  * @param stepNo  - Étape dotée d'un gabarit
  * @returns Résultat nettoyé, ou clé du message d'erreur
@@ -303,8 +337,13 @@ export async function runCoach<F extends CoachFunction>(
     payload: loaded.payload,
     rules,
     checklist: fn === "score" ? checklistLines(stepNo, loaded.payload) : undefined,
+    targets: fn === "research" ? researchTargets(stepNo) : undefined,
   });
-  const estimate = estimateCost(prompt.body.length + message.length, prices.input, prices.output);
+  // Recherche : marge pour les résultats renvoyés (le prix des recherches est ajouté en SQL)
+  const searchChars = fn === "research"
+    ? prices.searchMaxUses * SEARCH_INPUT_ALLOWANCE * CHARS_PER_TOKEN : 0;
+  const estimate = estimateCost(
+    prompt.body.length + message.length + searchChars, prices.input, prices.output);
 
   const reservation = await reserve(fn, studyId, stepNo, estimate);
   if (typeof reservation === "string") return { ok: false, error: reservation };
@@ -322,6 +361,7 @@ export async function runCoach<F extends CoachFunction>(
     review: () => callModel(call, reviewOutputSchema, (raw) => sanitizeReview(raw, ruleCodes)),
     deepen: () => callModel(call, deepenOutputSchema, sanitizeDeepen),
     score: () => callModel(call, scoreOutputSchema, (raw) => sanitizeScore(raw, ruleCodes)),
+    research: () => callResearch(call, stepNo, reservation.search_max_uses ?? 1),
   };
   return outputs[fn]() as Promise<CoachRunResult<F>>;
 }
@@ -385,6 +425,119 @@ async function callModel<S extends z.ZodType, T>(
     return { ok: true, requestId, output };
   } catch (error) {
     // Jetons conservés si l'appel a abouti mais que l'enregistrement a échoué
+    const key = apiErrorKey(error);
+    await complete(requestId, { ...base, ...usage, status: "failed", output: null,
+      error: error instanceof Error ? error.message : key })
+      .catch(() => undefined);
+    return { ok: false, error: key };
+  }
+}
+
+// ==================== RECHERCHE WEB ====================
+
+/** Schéma JSON de l'outil soumettre_faits, tiré du schéma Zod. */
+function submitInputSchema(): Anthropic.Tool.InputSchema {
+  // La clé $schema n'est pas attendue par l'API : elle est retirée
+  const schema: Record<string, unknown> = { ...z.toJSONSchema(researchOutputSchema) };
+  delete schema.$schema;
+  return schema as Anthropic.Tool.InputSchema;
+}
+
+/** Résultats de recherche contenus dans une réponse (erreurs de recherche ignorées). */
+function searchHits(content: readonly Anthropic.ContentBlock[]): SearchHit[] {
+  const hits: SearchHit[] = [];
+  for (const block of content) {
+    if (block.type !== "web_search_tool_result" || !Array.isArray(block.content)) continue;
+    for (const result of block.content) {
+      hits.push({ url: result.url, title: result.title, pageAge: result.page_age });
+    }
+  }
+  return hits;
+}
+
+/** Sources aplaties pour coach_complete (une ligne par source et par fait). */
+function flatSources(research: Research) {
+  return research.facts.flatMap((fact, factIndex) =>
+    fact.sources.map((source) => ({ factIndex, fact: fact.text, ...source })),
+  );
+}
+
+/**
+ * Recherche Web sourcée : le modèle cherche (outil serveur web_search), puis remet ses
+ * faits avec l'outil soumettre_faits. Les pauses de l'outil serveur sont reprises
+ * (MAX_CONTINUATIONS au plus) ; jetons et recherches de chaque appel sont additionnés.
+ * Une source n'est gardée que si son URL figure dans les résultats renvoyés par l'API.
+ *
+ * @param call    - Demande réservée
+ * @param stepNo  - Étape 1 (PESTEL) ou 2 (cinq forces)
+ * @param maxUses - Nombre maximal de recherches, figé à la réservation
+ */
+async function callResearch(
+  call: ModelCall,
+  stepNo: StepNo,
+  maxUses: number,
+): Promise<CoachRunResult<"research">> {
+  const { requestId } = call;
+  const base = { promptId: call.prompt.id, input: call.input };
+  const usage = {
+    servedModel: null as string | null,
+    inputTokens: 0,
+    outputTokens: 0,
+    webSearches: 0,
+  };
+  const hits: SearchHit[] = [];
+  const messages: Anthropic.MessageParam[] = [{ role: "user", content: call.message }];
+  const tools: Anthropic.ToolUnion[] = [
+    { type: "web_search_20260209", name: "web_search", max_uses: maxUses,
+      allowed_callers: ["direct"] },
+    { name: SUBMIT_TOOL, description: "Remet les faits trouvés, avec leurs sources.",
+      input_schema: submitInputSchema() },
+  ];
+  // Termine la demande en échec (ou refus) et renvoie la clé du message
+  const fail = async (status: "failed" | "refused", error: string, key: CoachErrorKey) => {
+    await complete(requestId, { ...base, ...usage, status, output: null, error });
+    return { ok: false as const, error: key };
+  };
+  try {
+    for (let turn = 0; turn <= MAX_CONTINUATIONS; turn += 1) {
+      const response = await getCoachClient().messages.create({
+        model: call.model,
+        max_tokens: MAX_TOKENS,
+        system: call.prompt.body,
+        messages,
+        tools,
+      });
+      usage.servedModel = response.model;
+      usage.inputTokens += response.usage.input_tokens;
+      usage.outputTokens += response.usage.output_tokens;
+      usage.webSearches += response.usage.server_tool_use?.web_search_requests ?? 0;
+      hits.push(...searchHits(response.content));
+
+      if (response.stop_reason === "refusal") {
+        return fail("refused", response.stop_details?.category ?? "refusal", "refused");
+      }
+      const submitted = response.content.find(
+        (block): block is Anthropic.ToolUseBlock =>
+          block.type === "tool_use" && block.name === SUBMIT_TOOL,
+      );
+      if (submitted) {
+        const parsed = researchOutputSchema.safeParse(submitted.input);
+        if (!parsed.success) return fail("failed", "faits illisibles", "failed");
+        const output = sanitizeResearch(parsed.data, stepNo, hits);
+        await complete(requestId, { ...base, ...usage, status: "done", output,
+          sources: flatSources(output), error: null });
+        return { ok: true, requestId, output };
+      }
+      if (response.stop_reason !== "pause_turn") {
+        const reason = response.stop_reason ?? "inconnu";
+        return fail("failed", `aucun fait remis (${reason})`, "failed");
+      }
+      // Pause de l'outil serveur : la réponse est renvoyée telle quelle pour qu'il reprenne
+      messages.push({ role: "assistant", content: response.content });
+    }
+    return fail("failed", "trop de reprises", "failed");
+  } catch (error) {
+    // Jetons et recherches déjà consommés conservés
     const key = apiErrorKey(error);
     await complete(requestId, { ...base, ...usage, status: "failed", output: null,
       error: error instanceof Error ? error.message : key })

@@ -4,12 +4,13 @@
  *  Projet     : Kalami Stratégie
  *  Description: Lectures du coach avec la session de l'utilisateur (membres de l'étude
  *               seulement) : consommation de l'étude par rapport à son plafond, dernier
- *               résultat réussi de chaque fonction (relecture, questions, évaluation) pour
- *               une étape, avec les décisions déjà prises, et fonctions disponibles (consigne
- *               publiée). Lectures de l'administrateur : réglages, consommation par étude,
- *               versions des consignes et erreurs classiques avec leur historique.
+ *               résultat réussi de chaque fonction (relecture, questions, évaluation,
+ *               recherche Web) pour une étape, avec les décisions déjà prises, et fonctions
+ *               disponibles (consigne publiée, recherche aux étapes 1 et 2 seulement).
+ *               Lectures de l'administrateur : réglages, consommation par étude, versions
+ *               des consignes et erreurs classiques avec leur historique.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-13
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, coach/schemas.ts,
  *               coach/client.ts, coach/context.ts
@@ -19,12 +20,18 @@
 import "server-only";
 
 import { isCoachConfigured } from "@/lib/strategy/coach/client";
-import { COACH_FUNCTIONS, type CoachFunction } from "@/lib/strategy/coach/context";
+import {
+  COACH_FUNCTIONS,
+  isFunctionAvailable,
+  type CoachFunction,
+} from "@/lib/strategy/coach/context";
 import {
   readDeepen,
+  readResearch,
   readReview,
   readScore,
   type Deepen,
+  type Research,
   type Review,
   type Score,
 } from "@/lib/strategy/coach/schemas";
@@ -53,6 +60,7 @@ export type CoachResult<T> = {
 export type CoachReview = CoachResult<Review>;
 export type CoachDeepen = CoachResult<Deepen>;
 export type CoachScore = CoachResult<Score>;
+export type CoachResearch = CoachResult<Research>;
 
 /** Erreur classique citée dans une suggestion ; l'explication du livre peut être vide. */
 export type CoachRuleTitle = { code: string; title: string; bookExplanation: string };
@@ -65,6 +73,7 @@ export type CoachState = {
   latest: CoachReview | null;
   deepen: CoachDeepen | null;
   score: CoachScore | null;
+  research: CoachResearch | null;
   rules: CoachRuleTitle[];
 };
 
@@ -111,6 +120,10 @@ export type CoachSettings = {
   budget: number;
   rateLimit: number;
   rateWindow: number;
+  /** Prix d'une recherche Web (dollars US). */
+  searchPrice: number;
+  /** Nombre maximal de recherches par demande. */
+  searchMaxUses: number;
 };
 
 export type CoachUsageRow = {
@@ -208,8 +221,9 @@ async function latestResult<T>(
 }
 
 /**
- * Fonctions dont une consigne est publiée pour l'étape (ou en général). Lecture faite avec
- * le rôle service : seuls les noms des fonctions sortent, jamais le texte des consignes.
+ * Fonctions dont une consigne est publiée pour l'étape (ou en général) et qui sont offertes
+ * à cette étape. Lecture faite avec le rôle service : seuls les noms des fonctions sortent,
+ * jamais le texte des consignes.
  * @param stepNo - Étape affichée
  */
 async function availableFunctions(stepNo: StepNo): Promise<Record<CoachFunction, boolean>> {
@@ -220,8 +234,13 @@ async function availableFunctions(stepNo: StepNo): Promise<Record<CoachFunction,
     .or(`step_no.eq.${stepNo},step_no.is.null`)
     .returns<{ function: string }[]>();
   const published = new Set((check(result, "consignes publiées") ?? []).map((row) => row.function));
-  return { review: published.has("review"), deepen: published.has("deepen"),
-    score: published.has("score") };
+  const available = (fn: CoachFunction) => published.has(fn) && isFunctionAvailable(fn, stepNo);
+  return {
+    review: available("review"),
+    deepen: available("deepen"),
+    score: available("score"),
+    research: available("research"),
+  };
 }
 
 /**
@@ -232,12 +251,15 @@ async function availableFunctions(stepNo: StepNo): Promise<Record<CoachFunction,
  */
 export async function getCoachState(studyId: string, stepNo: StepNo): Promise<CoachState> {
   const supabase = await createClient();
-  const [usage, available, latest, deepen, score, rules] = await Promise.all([
+  const [usage, available, latest, deepen, score, research, rules] = await Promise.all([
     getCoachUsage(studyId),
     availableFunctions(stepNo),
     latestResult(studyId, stepNo, "review", readReview),
     latestResult(studyId, stepNo, "deepen", readDeepen),
     latestResult(studyId, stepNo, "score", readScore),
+    isFunctionAvailable("research", stepNo)
+      ? latestResult(studyId, stepNo, "research", readResearch)
+      : Promise.resolve(null),
     supabase
       .from("coach_rules")
       .select("code, title, book_explanation")
@@ -251,6 +273,7 @@ export async function getCoachState(studyId: string, stepNo: StepNo): Promise<Co
     latest,
     deepen,
     score,
+    research,
     rules: (check(rules, "règles du coach") ?? []).map((rule) => ({
       code: rule.code,
       title: rule.title,
@@ -268,7 +291,8 @@ export async function getCoachSettings(): Promise<CoachSettings> {
     .from("strategy_settings")
     .select(
       "coach_enabled, coach_model, coach_input_price, coach_output_price, "
-        + "coach_study_budget, coach_rate_limit, coach_rate_window",
+        + "coach_study_budget, coach_rate_limit, coach_rate_window, coach_search_price, "
+        + "coach_search_max_uses",
     )
     .maybeSingle<{
       coach_enabled: boolean;
@@ -278,6 +302,8 @@ export async function getCoachSettings(): Promise<CoachSettings> {
       coach_study_budget: number;
       coach_rate_limit: number;
       coach_rate_window: number;
+      coach_search_price: number;
+      coach_search_max_uses: number;
     }>();
   const row = check(result, "réglages du coach");
   if (!row) throw new Error("Lecture impossible (réglages du coach) : ligne absente");
@@ -289,6 +315,8 @@ export async function getCoachSettings(): Promise<CoachSettings> {
     budget: Number(row.coach_study_budget),
     rateLimit: row.coach_rate_limit,
     rateWindow: row.coach_rate_window,
+    searchPrice: Number(row.coach_search_price),
+    searchMaxUses: row.coach_search_max_uses,
   };
 }
 

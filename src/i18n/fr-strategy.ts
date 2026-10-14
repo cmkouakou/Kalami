@@ -5,10 +5,10 @@
  *  Description: Textes français de l'assistant stratégie (accueil, études, profil, carte
  *               des étapes, guide des étapes, gabarits PESTEL, cinq forces, analyse interne
  *               et parties prenantes, coach IA, administration des crédits, des guides
- *               et du coach : réglages, consignes et erreurs classiques).
- *               Rattachés à fr.ts sous « strategy ».
+ *               et du coach : réglages, consignes et erreurs classiques), recherche Web
+ *               sourcée du coach. Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.5
  *  Date       : 2026-10-13
  * =============================================================
  */
@@ -591,6 +591,7 @@ const strategyFr = {
       review: "Relecture",
       deepen: "Questions",
       score: "Évaluation",
+      research: "Recherche",
     },
     notAvailable: "Cette fonction du coach n'est pas encore disponible.",
     book: "Selon le livre : {text}",
@@ -665,6 +666,30 @@ const strategyFr = {
       strengths: "Points forts",
       improvements: "Points à améliorer",
       noImprovements: "Le coach ne relève pas de point à améliorer.",
+    },
+    research: {
+      intro:
+        "Le coach cherche sur le Web des faits récents et sourcés pour cette étape. " +
+        "Ajoutez ceux qui vous semblent pertinents, après avoir vérifié leur source.",
+      request: "Lancer une recherche",
+      requesting: "Le coach cherche des faits sur le Web…",
+      again: "Nouvelle recherche",
+      searchedAt: "Recherche du {date}",
+      none: "La recherche n'a pas trouvé de fait utilisable pour cette étape.",
+      target: "Destination : {target}",
+      sources: "Sources",
+      pageAge: "publiée : {date}",
+      hypothesis: "Hypothèse à vérifier : aucune source trouvée",
+      add: "Ajouter",
+      dismiss: "Écarter",
+      notApplicable:
+        "Ce fait ne peut pas être ajouté (gabarit plein ou texte trop long). Ajoutez-le à " +
+        "la main si besoin.",
+      decisions: {
+        accepted: "Ajouté",
+        modified: "Ajouté",
+        rejected: "Écarté",
+      },
     },
     usage: "Budget IA de l'étude : {spent} $ US utilisés sur {budget} $ US",
     usageNear:
@@ -753,6 +778,8 @@ const strategyFr = {
       budget: "Plafond inclus par étude ($ US)",
       rateLimit: "Demandes par utilisateur",
       rateWindow: "Fenêtre du débit (minutes)",
+      searchPrice: "Prix d'une recherche Web ($ US)",
+      searchMaxUses: "Recherches Web par demande (1 à 20)",
       save: "Enregistrer les réglages",
       saved: "Réglages du coach enregistrés.",
       invalid: "Vérifiez les valeurs : un nombre positif est attendu dans chaque champ.",
@@ -789,6 +816,7 @@ const strategyFr = {
         review: "Relecture",
         deepen: "Questions d'approfondissement",
         score: "Évaluation",
+        research: "Recherche Web sourcée (étapes 1 et 2)",
       },
       general: "Toutes les étapes",
       stepLabel: "Étape {no}",

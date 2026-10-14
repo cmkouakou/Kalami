@@ -3,7 +3,7 @@
 Assistant d'analyse stratégique sous `/strategie`, mêmes comptes, même Supabase, même déploiement
 que la plateforme de lecture ([cahier](cahiers/CAHIER_DES_CHARGES_assistant_strategie.md)).
 Démarré le 2026-10-11 ; le projet 1 est en pause (reste : 11a, 5, 6, 10, 11b).
-S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11) ; S2 livré en Stratégie v0.3.0 (2026-10-11) ; S3 livré en Stratégie v0.4.0 (2026-10-11) ; S4a (coach : relecture) livré en Stratégie v0.5.0 (2026-10-13) ; S4b (questions, score, administration du coach) livré en Stratégie v0.5.1 (2026-10-13).
+S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11) ; S2 livré en Stratégie v0.3.0 (2026-10-11) ; S3 livré en Stratégie v0.4.0 (2026-10-11) ; S4a (coach : relecture) livré en Stratégie v0.5.0 (2026-10-13) ; S4b (questions, score, administration du coach) livré en Stratégie v0.5.1 (2026-10-13) ; S5a (recherche Web sourcée) livré en Stratégie v0.6.0 (2026-10-13).
 
 Version propre au module (« Stratégie vX.Y.Z »), indépendante de la version de l'application.
 Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés par l'administrateur**.
@@ -16,7 +16,8 @@ Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés pa
 | S3 | Gabarits 3-4 : chaîne de valeur (Porter ou services), VRIO, parties prenantes ; explications, exemple Infosystem, lien liseuse | v0.4.0 → v0.4.2 | ✅ |
 | S4a | Coach IA : relecture, sorties JSON (Zod), suggestions, erreurs classiques ; consommation, plafond, débit, réglages admin | v0.5.0 | ✅ |
 | S4b | Coach IA : questions d'approfondissement, score ; administration des consignes et des règles avec historique | v0.5.1 | ✅ |
-| S5 | Recherche Web sourcée (PESTEL, cinq forces) ; pièces jointes du profil, résumé et préremplissage | v0.6.0 | ⬜ |
+| S5a | Recherche Web sourcée (PESTEL, cinq forces), sources conservées, coût des recherches | v0.6.0 | ✅ |
+| S5b | Pièces jointes du profil, résumé et préremplissage | v0.6.1 | ⬜ |
 | S6 | Synthèse : SWOT préremplie (É1…É4), TOWS, 3 enjeux | v0.7.0 | ⬜ |
 | S7 | Gabarits 6-8 : Cap (SMART, remplacement du nom), Choix (Porter, Ansoff, PAF), Action (Gantt, tableau de bord équilibré) | v0.8.0 | ⬜ |
 | S8 | Plan stratégique : 8 sections, traçabilité, édition, régénération par section, export PDF et DOCX | v0.9.0 | ⬜ |

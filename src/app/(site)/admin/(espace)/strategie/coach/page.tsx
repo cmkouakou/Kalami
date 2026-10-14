@@ -3,11 +3,12 @@
  *  Fichier    : page.tsx (admin/strategie/coach)
  *  Projet     : Kalami Stratégie
  *  Description: Administration du coach IA : réglages (activation, modèle, prix par million
- *               de jetons, plafond par étude, débit), supplément de plafond pour une étude
+ *               de jetons, plafond par étude, débit, prix et nombre des recherches Web),
+ *               supplément de plafond pour une étude
  *               et consommation par étude (chiffres seulement, jamais le contenu). Liens
  *               vers les consignes et les erreurs classiques.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-13
  *  Dépendances: lib/admin/strategy-actions.ts, lib/strategy/coach/queries.ts
  * =============================================================
@@ -136,6 +137,24 @@ async function AdminCoach() {
               min={1}
               max={1440}
               defaultValue={settings.rateWindow}
+              required
+            />
+            <Field
+              name="searchPrice"
+              type="number"
+              label={c.searchPrice}
+              min={0}
+              step="0.0001"
+              defaultValue={settings.searchPrice}
+              required
+            />
+            <Field
+              name="searchMaxUses"
+              type="number"
+              label={c.searchMaxUses}
+              min={1}
+              max={20}
+              defaultValue={settings.searchMaxUses}
               required
             />
           </div>

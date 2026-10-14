@@ -1,5 +1,27 @@
 # Journal des modifications
 
+## [Stratégie v0.6.0] - 2026-10-13 — Recherche Web sourcée
+### Ajouté
+- Migration `20261019120000_strategy_coach_research.sql` : fonction du coach « research »
+  (étapes 1 et 2 seulement), réglages `coach_search_price` (0,01 $ par recherche) et
+  `coach_search_max_uses` (5, entre 1 et 20), colonnes `search_price` et `web_searches`
+  des demandes, table `web_sources` (lecture par les membres, aucune écriture directe),
+  `coach_reserve` et `coach_complete` recréées (coût des recherches inclus), consigne
+  « research v1 » en brouillon à relire avant publication.
+- Coach : onglet Recherche aux étapes 1 et 2. Le modèle cherche sur le Web (outil
+  `web_search_20260209`, reprise sur `pause_turn`) puis remet ses faits par l'outil
+  `soumettre_faits` validé par Zod. Une source n'est gardée que si son URL figure dans les
+  résultats renvoyés par l'API ; titre, site et date viennent de ces résultats. Un fait sans
+  source est présenté comme « hypothèse à vérifier ».
+- Bouton « Ajouter » : un fait devient un facteur PESTEL (nature et source remplies) ou
+  s'ajoute à la justification de la force visée ; « Écarter » le met de côté
+  (`coach-research.tsx`, `applyFact`, `formatSource`).
+- Administration : prix par recherche et nombre maximal de recherches par demande.
+- Tests : 16 unitaires de plus (liste blanche des URL, ajout d'un fait, cibles, étapes
+  admises) et 3 d'intégration (`strategy-coach-research-rls.test.ts`).
+### Modifié
+- `strategy-coach-rls.test.ts` : nouvelle signature de `coach_complete`.
+
 ## [Stratégie v0.5.1] - 2026-10-13 — Coach IA, partie b (questions, score, administration)
 ### Ajouté
 - Migration `20261018120000_strategy_coach_admin.sql` : consignes en brouillon puis publiées

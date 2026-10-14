@@ -2,17 +2,18 @@
  * =============================================================
  *  Fichier    : coach-panel.tsx
  *  Projet     : Kalami Stratégie
- *  Description: Panneau du coach IA dans un gabarit, en trois onglets : relecture
+ *  Description: Panneau du coach IA dans un gabarit, en quatre onglets : relecture
  *               (suggestions à accepter, modifier ou rejeter ; une suggestion acceptée passe
  *               par la sauvegarde automatique du gabarit), questions d'approfondissement
- *               (traitées ou écartées) et évaluation indicative. Jauge commune du budget IA
- *               de l'étude (alerte à 80 %). Une fonction sans consigne publiée est
- *               signalée comme indisponible.
+ *               (traitées ou écartées), évaluation indicative et recherche Web sourcée
+ *               (étapes 1 et 2 seulement ; un fait ajouté passe par la sauvegarde
+ *               automatique). Jauge commune du budget IA de l'étude (alerte à 80 %). Une
+ *               fonction sans consigne publiée est signalée comme indisponible.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-13
  *  Dépendances: lib/strategy/coach (actions, patch, queries, schemas),
- *               coach-questions.tsx, coach-score.tsx
+ *               coach-questions.tsx, coach-research.tsx, coach-score.tsx
  * =============================================================
  */
 
@@ -21,6 +22,7 @@
 import { useState, useTransition } from "react";
 
 import { CoachQuestions } from "@/components/strategy/coach-questions";
+import { CoachResearchList } from "@/components/strategy/coach-research";
 import { CoachScore } from "@/components/strategy/coach-score";
 import { FormMessage } from "@/components/ui/form";
 import {
@@ -35,11 +37,16 @@ import {
 } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { decideSuggestion, requestCoach } from "@/lib/strategy/coach/actions";
-import { COACH_FUNCTIONS, type CoachFunction } from "@/lib/strategy/coach/context";
-import { applySuggestion, findField } from "@/lib/strategy/coach/patch";
+import {
+  COACH_FUNCTIONS,
+  isFunctionAvailable,
+  type CoachFunction,
+} from "@/lib/strategy/coach/context";
+import { applyFact, applySuggestion, findField } from "@/lib/strategy/coach/patch";
 import type {
   CoachDecision,
   CoachDeepen,
+  CoachResearch,
   CoachReview,
   CoachRuleTitle,
   CoachScore as CoachScoreResult,
@@ -206,6 +213,7 @@ type Results = {
   review: CoachReview | null;
   deepen: CoachDeepen | null;
   score: CoachScoreResult | null;
+  research: CoachResearch | null;
 };
 
 /** Textes du bouton de demande, par fonction. */
@@ -213,6 +221,11 @@ const REQUEST_TEXTS: Record<CoachFunction, { request: string; again: string; bus
   review: { request: c.request, again: c.again, busy: c.requesting },
   deepen: { request: c.deepen.request, again: c.deepen.again, busy: c.deepen.requesting },
   score: { request: c.score.request, again: c.score.again, busy: c.score.requesting },
+  research: {
+    request: c.research.request,
+    again: c.research.again,
+    busy: c.research.requesting,
+  },
 };
 
 /** Introduction de chaque onglet (celle de la relecture est l'introduction générale). */
@@ -220,6 +233,7 @@ const TAB_INTROS: Record<CoachFunction, string | null> = {
   review: null,
   deepen: c.deepen.intro,
   score: c.score.intro,
+  research: c.research.intro,
 };
 
 /** Panneau du coach : onglets, budget, demande et dernier résultat de chaque fonction. */
@@ -240,12 +254,14 @@ export function CoachPanel<T>({
     review: coach.latest,
     deepen: coach.deepen,
     score: coach.score,
+    research: coach.research,
   });
   // Fonctions dont le résultat porte sur une version antérieure (constat au chargement)
   const [fresh, setFresh] = useState<Record<CoachFunction, boolean>>({
     review: false,
     deepen: false,
     score: false,
+    research: false,
   });
   const [message, setMessage] = useState<{ error?: string; message?: string }>({});
   const [busy, startTransition] = useTransition();
@@ -253,6 +269,7 @@ export function CoachPanel<T>({
   const available = coach.available[tab];
   const canAct = editor && !validated && usage.enabled;
   const rules = new Map(coach.rules.map((rule) => [rule.code, rule]));
+  const tabs = COACH_FUNCTIONS.filter((fn) => isFunctionAvailable(fn, stepNo));
   const current = results[tab];
   const outdated = current !== null && !fresh[tab] && current.revision !== revision;
   const date = current ? DATE_FORMAT.format(new Date(current.createdAt)) : "";
@@ -339,6 +356,28 @@ export function CoachPanel<T>({
     record("review", latest.requestId, index, decision);
   }
 
+  /**
+   * Ajoute un fait de la recherche au gabarit (ou l'écarte) puis note la décision.
+   * @param index    - Indice du fait
+   * @param decision - accepted (ajouté) ou rejected (écarté)
+   */
+  function decideResearch(index: number, decision: CoachDecision) {
+    const latest = results.research;
+    if (!latest) return;
+    const fact = latest.output.facts[index];
+
+    if (decision === "accepted") {
+      const id = crypto.randomUUID();
+      if (!applyFact(stepNo, value, fact, id, c.research.hypothesis)) {
+        setMessage({ error: c.research.notApplicable });
+        return;
+      }
+      update((previous) => applyFact(stepNo, previous, fact, id, c.research.hypothesis)
+        ?? previous);
+    }
+    record("research", latest.requestId, index, decision);
+  }
+
   return (
     <section className={`${CARD} flex flex-col gap-4 p-4`} aria-busy={busy}>
       <div className="flex flex-col gap-1">
@@ -349,7 +388,7 @@ export function CoachPanel<T>({
       <UsageGauge spent={usage.spent} budget={usage.budget} />
 
       <div role="tablist" aria-label={c.title} className="flex flex-wrap gap-2">
-        {COACH_FUNCTIONS.map((fn) => (
+        {tabs.map((fn) => (
           <button
             key={fn}
             type="button"
@@ -428,6 +467,15 @@ export function CoachPanel<T>({
 
         {tab === "score" && results.score && (
           <CoachScore result={results.score} date={date} outdated={outdated} rules={rules} />
+        )}
+
+        {tab === "research" && results.research && (
+          <CoachResearchList
+            result={results.research}
+            date={date}
+            canAct={canAct && !busy}
+            onDecide={decideResearch}
+          />
         )}
       </div>
     </section>

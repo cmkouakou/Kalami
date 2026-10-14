@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.5.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S4b livrés)
+Version actuelle : v0.8.3 · Stratégie v0.6.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S5a livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -20,7 +20,8 @@ Version actuelle : v0.8.3 · Stratégie v0.5.1 | Statut : 🟡 En cours (projet 
 | #14 | 2026-10-11 | Stratégie v0.4.2 : accès direct à l'application (connexion, inscription, en-tête propres) | ~120 000 | ~0.72 $ |
 | #15 | 2026-10-13 | Stratégie S4a : coach IA (relecture, suggestions, plafond, débit, admin) | ~330 000 | ~1.98 $ |
 | #16 | 2026-10-13 | Stratégie S4b : questions, score, administration des consignes et des règles, périmètre | ~340 000 | ~2.04 $ |
-| **TOTAL** | | | **~3 720 000** | **~22.32 $** |
+| #17 | 2026-10-13 | Stratégie S5a : recherche Web sourcée, sources, coût des recherches | ~300 000 | ~1.80 $ |
+| **TOTAL** | | | **~4 020 000** | **~24.12 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -71,8 +72,12 @@ Version actuelle : v0.8.3 · Stratégie v0.5.1 | Statut : 🟡 En cours (projet 
 - [x] S4a — coach IA : relecture, suggestions, plafond, débit, admin (Stratégie v0.5.0), tests 362/362
 - [x] S4a — migration `20261017120000_strategy_coach.sql` appliquée le 2026-10-13 (RLS coach 7/7)
 - [ ] S4a — relire la consigne de relecture v1 (rédigée par Claude, en vigueur dès la migration) et compléter les explications « selon le livre » des 10 erreurs classiques
-- [ ] S4a — vérifier les prix d'Opus 5.5 dans /admin/strategie/coach
+- [x] S4a — prix d'Opus 5.5 (4 $ / 20 $ par million de jetons) vérifiés dans la documentation officielle
 - [x] S4b — questions d'approfondissement, score, administration des consignes et des règles, périmètre (Stratégie v0.5.1)
 - [x] S4b — migration `20261018120000_strategy_coach_admin.sql` appliquée le 2026-10-13, tests 384/384
 - [ ] S4b — relire puis publier les brouillons relecture v2, questions v1 et évaluation v1 dans /admin/strategie/coach/consignes
+- [x] S5a — recherche Web sourcée, bouton « Ajouter », sources conservées (Stratégie v0.6.0) ; prix des recherches vérifié (10 $ les 1 000)
+- [x] S5a — migration `20261019120000_strategy_coach_research.sql` appliquée le 2026-10-13, intégration coach 13/13
+- [x] S5a — consigne research v1 publiée
+- [ ] S5b — pièces jointes du profil, résumé et préremplissage (Stratégie v0.6.1)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

@@ -1,13 +1,14 @@
 /**
  * Fichier    : strategy-coach.test.ts
  * Projet     : Kalami Stratégie
- * Description: Tests unitaires du coach IA (S4a, S4b) : nettoyage de la relecture, des
+ * Description: Tests unitaires du coach IA (S4a, S4b, S5a) : nettoyage de la relecture, des
  *              questions et de l'évaluation produites par le modèle, application d'une
  *              suggestion au gabarit, construction du message (règles filtrées, balises
  *              neutralisées, liste de contrôle, périmètre), comparaison des versions de
- *              consignes et estimation du coût maximal d'une demande.
+ *              consignes, estimation du coût maximal d'une demande et recherche Web sourcée
+ *              (liste blanche des URL, ajout d'un fait au gabarit, cibles admises).
  * Auteur     : Claude Marcel
- * Version    : 1.1
+ * Version    : 1.2
  * Date       : 2026-10-13
  */
 
@@ -16,26 +17,38 @@ import { describe, expect, it, vi } from "vitest";
 import {
   buildCoachMessage,
   buildReviewMessage,
+  isFunctionAvailable,
   rulesForStep,
   type CoachRule,
 } from "@/lib/strategy/coach/context";
 import { diffLines, hasChanges } from "@/lib/strategy/coach/diff";
-import { applySuggestion, findField, isApplicable } from "@/lib/strategy/coach/patch";
+import {
+  applyFact,
+  applySuggestion,
+  findField,
+  formatSource,
+  isApplicable,
+} from "@/lib/strategy/coach/patch";
 import {
   MAX_QUESTIONS,
   MAX_SUGGESTIONS,
   SCORE_CRITERIA,
   readDeepen,
+  readResearch,
   readReview,
   readScore,
   sanitizeDeepen,
+  sanitizeResearch,
   sanitizeReview,
   sanitizeScore,
+  urlKey,
+  type ResearchFact,
   type ReviewOutput,
   type ScoreOutput,
   type Suggestion,
 } from "@/lib/strategy/coach/schemas";
 import { readProfileData } from "@/lib/strategy/profile";
+import { initialForces } from "@/lib/strategy/templates/forces";
 import { emptyPestel, newFactor, type PestelPayload } from "@/lib/strategy/templates/pestel";
 
 // Le déroulé de la relecture est réservé au serveur : la garde est neutralisée pour les tests
@@ -383,5 +396,176 @@ describe("estimateCost", () => {
 
   it("vaut zéro si les prix sont nuls", () => {
     expect(estimateCost(9000, 0, 0)).toBe(0);
+  });
+});
+
+// ==================== RECHERCHE WEB ====================
+
+const HITS = [
+  { url: "https://www.example.org/rapport", title: "Rapport annuel", pageAge: "2026-03-01" },
+  { url: "https://stats.example.com/inflation#tableau", title: "Inflation", pageAge: null },
+];
+
+/** Fait brut remis par le modèle, complété par les champs fournis. */
+function rawFact(partial: Partial<{ text: string; target: string; nature: string | null;
+  sourceUrls: string[] }>) {
+  return {
+    text: "Hausse des prix du bois",
+    target: "economic",
+    nature: "threat",
+    sourceUrls: ["https://www.example.org/rapport/"],
+    ...partial,
+  };
+}
+
+/** Fait nettoyé avec une source vérifiée. */
+function fact(partial: Partial<ResearchFact> = {}): ResearchFact {
+  return {
+    text: "Hausse des prix du bois",
+    target: "economic",
+    nature: "threat",
+    sources: [{
+      url: "https://www.example.org/rapport",
+      title: "Rapport annuel",
+      site: "example.org",
+      pageAge: "2026-03-01",
+    }],
+    ...partial,
+  };
+}
+
+describe("urlKey", () => {
+  it("ignore le fragment et la barre oblique finale", () => {
+    expect(urlKey("https://a.org/page/#x")).toBe("https://a.org/page");
+  });
+
+  it("refuse les liens non http(s) et les textes invalides", () => {
+    expect(urlKey("javascript:alert(1)")).toBeNull();
+    expect(urlKey("pas une url")).toBeNull();
+  });
+});
+
+describe("sanitizeResearch", () => {
+  it("ne garde que les sources issues des résultats de recherche", () => {
+    const result = sanitizeResearch({
+      summary: "Synthèse",
+      facts: [rawFact({
+        sourceUrls: ["https://www.example.org/rapport/", "https://inventee.com"],
+      })],
+    }, 1, HITS);
+    expect(result.facts[0].sources).toEqual([fact().sources[0]]);
+  });
+
+  it("reprend titre et date des résultats, et évite les doublons", () => {
+    const result = sanitizeResearch({
+      summary: "",
+      facts: [rawFact({ sourceUrls: [
+        "https://stats.example.com/inflation",
+        "https://stats.example.com/inflation#autre",
+      ] })],
+    }, 1, HITS);
+    expect(result.facts[0].sources).toHaveLength(1);
+    expect(result.facts[0].sources[0]).toMatchObject({
+      title: "Inflation",
+      site: "stats.example.com",
+      pageAge: null,
+    });
+  });
+
+  it("écarte un fait vide ou dont la cible ne correspond pas à l'étape", () => {
+    const result = sanitizeResearch({
+      summary: "",
+      facts: [rawFact({ text: "  " }), rawFact({ target: "rivalry" }), rawFact({})],
+    }, 1, HITS);
+    expect(result.facts).toHaveLength(1);
+  });
+
+  it("ne garde la nature qu'à l'étape 1", () => {
+    const result = sanitizeResearch({
+      summary: "",
+      facts: [rawFact({ target: "rivalry", nature: "threat" })],
+    }, 2, HITS);
+    expect(result.facts[0]).toMatchObject({ target: "rivalry", nature: null });
+  });
+
+  it("garde un fait sans source (hypothèse à vérifier)", () => {
+    const result = sanitizeResearch({ summary: "", facts: [rawFact({ sourceUrls: [] })] }, 1, []);
+    expect(result.facts[0].sources).toEqual([]);
+  });
+});
+
+describe("readResearch", () => {
+  it("relit une recherche enregistrée et retire les liens non http(s)", () => {
+    const bad = { ...fact().sources[0], url: "javascript:alert(1)" };
+    const stored = { summary: "S", facts: [fact({ sources: [fact().sources[0], bad] })] };
+    expect(readResearch(stored)?.facts[0].sources).toHaveLength(1);
+  });
+
+  it("renvoie null pour une valeur illisible", () => {
+    expect(readResearch({ facts: "non" })).toBeNull();
+  });
+});
+
+describe("formatSource", () => {
+  it("assemble titre, site, date et lien", () => {
+    expect(formatSource(fact().sources[0])).toBe(
+      "Rapport annuel, example.org, 2026-03-01, https://www.example.org/rapport",
+    );
+  });
+});
+
+describe("applyFact", () => {
+  it("ajoute un facteur PESTEL avec sa nature et sa source", () => {
+    const next = applyFact(1, pestel(), fact(), "f2", "Hypothèse");
+    const added = next?.factors.at(-1);
+    expect(added).toMatchObject({
+      id: "f2",
+      dimension: "economic",
+      factor: "Hausse des prix du bois",
+      nature: "threat",
+    });
+    expect(added?.source).toContain("example.org");
+  });
+
+  it("signale un fait sans source comme hypothèse", () => {
+    const next = applyFact(1, pestel(), fact({ sources: [] }), "f2", "Hypothèse");
+    expect(next?.factors.at(-1)?.source).toBe("Hypothèse");
+  });
+
+  it("ajoute le fait à la justification d'une force (étape 2)", () => {
+    const forces = initialForces("Atelier", []);
+    const next = applyFact(2, forces, fact({ target: "rivalry", nature: null }), "x", "H");
+    expect(next?.forces.rivalry.justification).toContain("Hausse des prix du bois (source : ");
+  });
+
+  it("refuse une cible qui ne correspond pas à l'étape", () => {
+    expect(applyFact(1, pestel(), fact({ target: "rivalry" }), "f2", "H")).toBeNull();
+  });
+});
+
+describe("isFunctionAvailable", () => {
+  it("réserve la recherche aux étapes 1 et 2", () => {
+    expect(isFunctionAvailable("research", 1)).toBe(true);
+    expect(isFunctionAvailable("research", 2)).toBe(true);
+    expect(isFunctionAvailable("research", 3)).toBe(false);
+    expect(isFunctionAvailable("review", 4)).toBe(true);
+  });
+});
+
+describe("buildCoachMessage (recherche)", () => {
+  const input = {
+    companyName: "Atelier",
+    strategicQuestion: "Faut-il croître ?",
+    profile: readProfileData({ sector: "Ébénisterie" }),
+    stepNo: 1 as const,
+    stepTitle: "PESTEL",
+    payload: pestel(),
+    rules: RULES,
+    targets: ["political", "economic"],
+  };
+
+  it("joint les cibles admises à la recherche seulement", () => {
+    expect(buildCoachMessage("research", input)).toContain("<cibles>\npolitical, economic");
+    expect(buildCoachMessage("review", input)).not.toContain("<cibles>");
   });
 });

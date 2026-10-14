@@ -3,18 +3,27 @@
  *  Fichier    : schemas.ts (coach)
  *  Projet     : Kalami Stratégie
  *  Description: Forme des réponses du coach : relecture, questions d'approfondissement (S4b)
- *               et évaluation sur 100 avec quatre critères (S4b). Le schéma envoyé à l'API
- *               reste sans bornes (les sorties structurées n'acceptent pas ces contraintes) ;
- *               le nettoyage qui suit tronque, borne, limite et écarte les codes de règle
- *               inconnus. Utilisable côté client (lecture d'un résultat enregistré).
+ *               évaluation sur 100 avec quatre critères (S4b) et faits d'une recherche Web
+ *               (S5a), dont les sources passent par une liste blanche. Le schéma envoyé à
+ *               l'API reste sans bornes (les sorties structurées n'acceptent pas ces
+ *               contraintes) ; le nettoyage qui suit tronque, borne, limite et écarte les codes
+ *               de règle inconnus. Utilisable côté client (lecture d'un résultat enregistré).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-13
- *  Dépendances: zod
+ *  Dépendances: zod, templates/pestel.ts, templates/forces.ts
  * =============================================================
  */
 
 import { z } from "zod";
+
+import { FORCES, type ForceKey } from "@/lib/strategy/templates/forces";
+import {
+  NATURES,
+  PESTEL_DIMENSIONS,
+  type Nature,
+  type PestelDimension,
+} from "@/lib/strategy/templates/pestel";
 
 // ==================== CONSTANTES ====================
 
@@ -213,4 +222,161 @@ export function sanitizeScore(raw: ScoreOutput, ruleCodes: readonly string[]): S
 export function readScore(raw: unknown): Score | null {
   const parsed = scoreOutputSchema.safeParse(raw);
   return parsed.success ? parsed.data : null;
+}
+
+// ==================== RECHERCHE WEB ====================
+
+export const MAX_FACTS = 10;
+const MAX_FACT = 1000;
+const MAX_SOURCES_PER_FACT = 3;
+const MAX_URL = 2000;
+const MAX_SOURCE_TITLE = 500;
+const MAX_PAGE_AGE = 100;
+
+/** Contenu attendu de l'outil client soumettre_faits (non borné, comme les autres). */
+export const researchOutputSchema = z.object({
+  summary: z.string(),
+  facts: z.array(
+    z.object({
+      text: z.string(),
+      target: z.string(),
+      nature: z.string().nullable(),
+      sourceUrls: z.array(z.string()),
+    }),
+  ),
+});
+
+export type ResearchOutput = z.infer<typeof researchOutputSchema>;
+
+/** Résultat de recherche renvoyé par l'API (seule origine admise d'une URL). */
+export type SearchHit = { url: string; title: string; pageAge: string | null };
+
+/** Source vérifiée d'un fait. */
+export type WebSource = { url: string; title: string; site: string; pageAge: string | null };
+
+/** Fait nettoyé ; sans source vérifiée, il est présenté comme une hypothèse à vérifier. */
+export type ResearchFact = {
+  text: string;
+  target: PestelDimension | ForceKey;
+  nature: Nature | null;
+  sources: WebSource[];
+};
+
+/** Recherche nettoyée. */
+export type Research = { summary: string; facts: ResearchFact[] };
+
+/**
+ * Forme comparable d'une URL http(s) : sans fragment ni barre oblique finale.
+ * @param raw - URL telle que fournie
+ * @returns Clé de comparaison, ou null si l'URL n'est pas http(s)
+ */
+export function urlKey(raw: string): string | null {
+  try {
+    const url = new URL(raw.trim());
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    url.hash = "";
+    return url.href.replace(/\/+$/, "");
+  } catch {
+    return null;
+  }
+}
+
+/** Nom du site d'une URL, sans « www. ». */
+function siteOf(url: string): string {
+  return new URL(url).hostname.replace(/^www\./, "");
+}
+
+/** Cibles admises selon l'étape : dimensions PESTEL (1) ou forces (2). */
+export function researchTargets(stepNo: number): readonly string[] {
+  return stepNo === 1 ? PESTEL_DIMENSIONS : FORCES;
+}
+
+/**
+ * Nettoie les faits remis par le modèle.
+ *
+ * Un fait sans texte ou dont la cible ne correspond pas à l'étape est écarté. Une source
+ * n'est gardée que si son URL figure dans les résultats de recherche renvoyés par l'API
+ * (jamais une URL fournie seulement par le modèle) ; titre et date viennent de ces résultats.
+ * La nature n'a de sens qu'à l'étape 1.
+ *
+ * @param raw    - Contenu validé par researchOutputSchema
+ * @param stepNo - Étape de la demande (1 ou 2)
+ * @param hits   - Résultats de recherche réellement renvoyés
+ * @returns Recherche prête à enregistrer
+ */
+export function sanitizeResearch(
+  raw: ResearchOutput,
+  stepNo: number,
+  hits: readonly SearchHit[],
+): Research {
+  const known = new Map<string, SearchHit>();
+  for (const hit of hits) {
+    const key = urlKey(hit.url);
+    if (key && hit.url.length <= MAX_URL && !known.has(key)) known.set(key, hit);
+  }
+  const targets = researchTargets(stepNo);
+
+  const facts = raw.facts
+    .filter((item) => item.text.trim() && targets.includes(item.target))
+    .map((item): ResearchFact => {
+      const sources: WebSource[] = [];
+      for (const candidate of item.sourceUrls) {
+        const key = urlKey(candidate);
+        const hit = key ? known.get(key) : undefined;
+        if (!hit || sources.some((source) => source.url === hit.url)) continue;
+        sources.push({
+          url: hit.url,
+          title: clip(hit.title, MAX_SOURCE_TITLE),
+          site: siteOf(hit.url),
+          pageAge: hit.pageAge ? clip(hit.pageAge, MAX_PAGE_AGE) : null,
+        });
+      }
+      const nature = NATURES.find((value) => value === item.nature) ?? null;
+      return {
+        text: clip(item.text, MAX_FACT),
+        target: item.target as PestelDimension | ForceKey,
+        nature: stepNo === 1 ? nature : null,
+        sources: sources.slice(0, MAX_SOURCES_PER_FACT),
+      };
+    })
+    .slice(0, MAX_FACTS);
+
+  return { summary: clip(raw.summary, MAX_SUMMARY), facts };
+}
+
+/** Forme enregistrée d'une recherche nettoyée. */
+const storedResearchSchema = z.object({
+  summary: z.string(),
+  facts: z.array(
+    z.object({
+      text: z.string(),
+      target: z.enum([...PESTEL_DIMENSIONS, ...FORCES]),
+      nature: z.enum(NATURES).nullable(),
+      sources: z.array(
+        z.object({
+          url: z.string(),
+          title: z.string(),
+          site: z.string(),
+          pageAge: z.string().nullable(),
+        }),
+      ),
+    }),
+  ),
+});
+
+/**
+ * Relit une recherche enregistrée ; null si elle est illisible. Les liens non http(s) sont
+ * retirés par précaution (ils sont affichés comme liens cliquables).
+ * @param raw - Valeur JSON lue en base
+ */
+export function readResearch(raw: unknown): Research | null {
+  const parsed = storedResearchSchema.safeParse(raw);
+  if (!parsed.success) return null;
+  return {
+    summary: parsed.data.summary,
+    facts: parsed.data.facts.map((fact) => ({
+      ...fact,
+      sources: fact.sources.filter((source) => urlKey(source.url) !== null),
+    })),
+  };
 }

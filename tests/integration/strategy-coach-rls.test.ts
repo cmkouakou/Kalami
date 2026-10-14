@@ -4,9 +4,11 @@
  * Description: Tests d'intégration du coach IA (S4a) sur la base de développement, sans appel
  *              au modèle : rôles autorisés à réserver, prérequis, débit par utilisateur,
  *              plafond par étude et supplément, fin de demande réservée au rôle service
- *              (coût calculé), décisions, lecture des demandes et des consignes.
+ *              (coût calculé, nouvelle signature S5a), décisions, lecture des demandes et
+ *              des consignes.
  *              Ignorés si les clés manquent ou si la migration du coach n'est pas appliquée.
  * Auteur     : Claude Marcel
+ * Version    : 1.1
  * Date       : 2026-10-13
  */
 
@@ -82,8 +84,10 @@ describe.skipIf(!ready)("RLS — coach IA de l'assistant stratégie", () => {
       p_served_model: "modele-test",
       p_input_tokens: inputTokens,
       p_output_tokens: 1000,
+      p_web_searches: 0,
       p_input: { revision: 1, payload: {} },
       p_output: { summary: "Ok", suggestions: [] },
+      p_sources: null,
       p_error: null,
     });
   }
