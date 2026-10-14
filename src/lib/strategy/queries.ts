@@ -7,9 +7,10 @@
  *               complète (rôle, profil, étapes), contenu d'un gabarit et ses versions, vue
  *               d'ensemble de l'administrateur, guide d'une étape (explication, exemple,
  *               lien vers le chapitre si le lecteur y a droit) et réglages du guide.
+ *               Contenu des étapes sources de la synthèse (S6a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-11
+ *  Version    : 1.3
+ *  Date       : 2026-10-14
  *  Dépendances: lib/supabase/server.ts, lib/strategy/steps.ts, lib/strategy/profile.ts
  * =============================================================
  */
@@ -261,6 +262,35 @@ export async function getStepContent(studyId: string, stepNo: StepNo): Promise<S
     revision: row?.revision ?? 0,
     versions: check(versions, "versions") as StepVersion[],
   };
+}
+
+/**
+ * Contenu enregistré de plusieurs étapes d'une étude (sans les versions), pour reprendre
+ * une étape dans une autre (étapes 1 à 4 vers la synthèse). Une étape jamais enregistrée
+ * renvoie un contenu vide. À n'appeler qu'après getStudy.
+ * @param studyId - Identifiant de l'étude
+ * @param steps   - Étapes à lire
+ */
+export async function getSourcePayloads(
+  studyId: string,
+  steps: readonly StepNo[],
+): Promise<Partial<Record<StepNo, unknown>>> {
+  const supabase = await createClient();
+  const result = await supabase
+    .from("study_steps")
+    .select("step_no, payload")
+    .eq("study_id", studyId)
+    .in("step_no", [...steps]);
+  const rows = (check(result, "contenu des étapes sources") ?? []) as {
+    step_no: number;
+    payload: unknown;
+  }[];
+  const payloads: Partial<Record<StepNo, unknown>> = {};
+  for (const no of steps) payloads[no] = {};
+  for (const row of rows) {
+    if (isStepNo(row.step_no)) payloads[row.step_no] = row.payload ?? {};
+  }
+  return payloads;
 }
 
 // ==================== GUIDE D'UNE ÉTAPE ====================

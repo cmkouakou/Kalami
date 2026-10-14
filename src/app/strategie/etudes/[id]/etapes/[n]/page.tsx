@@ -4,12 +4,13 @@
  *  Projet     : Kalami Stratégie
  *  Description: Page d'une étape : statut, guide de l'auteur (explication, chapitre,
  *               exemple), ce qui manque si elle est verrouillée, raisons « à revoir », puis
- *               le gabarit interactif (étapes 1 à 4 : PESTEL, cinq forces, analyse interne,
- *               parties prenantes) avec le panneau du coach IA ou, pour les autres
- *               étapes, les actions (commencer, valider, modifier) en attendant leur gabarit.
+ *               le gabarit interactif (étapes 1 à 5 : PESTEL, cinq forces, analyse interne,
+ *               parties prenantes, synthèse SWOT-TOWS nourrie des étapes 1 à 3) avec le
+ *               panneau du coach IA ou, pour les autres étapes, les actions (commencer,
+ *               valider, modifier) en attendant leur gabarit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-13
+ *  Version    : 1.4
+ *  Date       : 2026-10-14
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts
  * =============================================================
  */
@@ -23,6 +24,7 @@ import { ForcesEditor } from "@/components/strategy/forces/forces-editor";
 import { InternalEditor } from "@/components/strategy/internal/internal-editor";
 import { PestelEditor } from "@/components/strategy/pestel/pestel-editor";
 import { StakeholdersEditor } from "@/components/strategy/stakeholders/stakeholders-editor";
+import { SynthesisEditor } from "@/components/strategy/synthesis/synthesis-editor";
 import { StepActions } from "@/components/strategy/step-actions";
 import { StepGuide } from "@/components/strategy/step-guide";
 import { StepStatusBadge } from "@/components/strategy/step-status";
@@ -33,10 +35,12 @@ import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getCoachState } from "@/lib/strategy/coach/queries";
 import {
+  getSourcePayloads,
   getStepContent,
   getStepGuide,
   getStudy,
   statusesOf,
+  type StepContent,
   type StudyDetail,
 } from "@/lib/strategy/queries";
 import {
@@ -53,6 +57,7 @@ import { hasTemplate } from "@/lib/strategy/templates";
 import { readInternal } from "@/lib/strategy/templates/internal";
 import { readPestel } from "@/lib/strategy/templates/pestel";
 import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
+import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 
 const t = getDictionary();
 const s = t.strategy;
@@ -231,12 +236,44 @@ async function Template({
       />
     );
   }
+  if (no === 4) {
+    return (
+      <StakeholdersEditor
+        key={content.revision}
+        {...frame}
+        initial={readStakeholders(content.payload)}
+        revision={content.revision}
+      />
+    );
+  }
+  return <Synthesis study={study} frame={frame} content={content} />;
+}
+
+/**
+ * Gabarit de synthèse (étape 5) : charge aussi les étapes 1 à 3, sources de la reprise vers
+ * la SWOT.
+ */
+async function Synthesis({
+  study,
+  frame,
+  content,
+}: {
+  study: StudyDetail;
+  frame: TemplateFrameProps;
+  content: StepContent;
+}) {
+  const sources = await getSourcePayloads(study.id, [1, 2, 3]);
   return (
-    <StakeholdersEditor
+    <SynthesisEditor
       key={content.revision}
       {...frame}
-      initial={readStakeholders(content.payload)}
+      initial={readSynthesis(content.payload)}
       revision={content.revision}
+      sources={{
+        pestel: readPestel(sources[1]),
+        forces: readForces(sources[2], study.company_name, study.profile.competitors),
+        internal: readInternal(sources[3]),
+      }}
     />
   );
 }

@@ -6,9 +6,10 @@
  *               contenu envoyé par le navigateur avant enregistrement, liste de contrôle
  *               d'un contenu enregistré (transmise au coach pour l'évaluation).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-13
- *  Dépendances: templates/pestel.ts, forces.ts, internal.ts, stakeholders.ts
+ *  Version    : 1.3
+ *  Date       : 2026-10-14
+ *  Dépendances: templates/pestel.ts, forces.ts, internal.ts, stakeholders.ts,
+ *               synthesis.ts (étape 5, S6a)
  * =============================================================
  */
 
@@ -27,10 +28,15 @@ import {
   stakeholdersChecklist,
   stakeholdersSchema,
 } from "@/lib/strategy/templates/stakeholders";
+import {
+  readSynthesis,
+  synthesisChecklist,
+  synthesisSchema,
+} from "@/lib/strategy/templates/synthesis";
 import type { StepNo } from "@/lib/strategy/steps";
 
 /** Étapes dotées d'un gabarit interactif (les autres arrivent aux sprints suivants). */
-export const TEMPLATE_STEPS = [1, 2, 3, 4] as const satisfies readonly StepNo[];
+export const TEMPLATE_STEPS = [1, 2, 3, 4, 5] as const satisfies readonly StepNo[];
 
 export type TemplateStep = (typeof TEMPLATE_STEPS)[number];
 
@@ -40,6 +46,7 @@ const SCHEMAS: Record<TemplateStep, z.ZodType<Record<string, unknown>>> = {
   2: forcesSchema,
   3: internalSchema,
   4: stakeholdersSchema,
+  5: synthesisSchema,
 };
 
 /** Vrai si l'étape a un gabarit interactif. */
@@ -74,5 +81,7 @@ export function checklistFor(no: TemplateStep, raw: unknown): ChecklistItem[] {
       return internalChecklist(readInternal(raw));
     case 4:
       return stakeholdersChecklist(readStakeholders(raw));
+    case 5:
+      return synthesisChecklist(readSynthesis(raw));
   }
 }

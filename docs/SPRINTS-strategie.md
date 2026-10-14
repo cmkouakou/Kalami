@@ -18,7 +18,8 @@ Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés pa
 | S4b | Coach IA : questions d'approfondissement, score ; administration des consignes et des règles avec historique | v0.5.1 | ✅ |
 | S5a | Recherche Web sourcée (PESTEL, cinq forces), sources conservées, coût des recherches | v0.6.0 | ✅ |
 | S5b | Pièces jointes du profil, résumé et préremplissage | v0.6.1 | ✅ |
-| S6 | Synthèse : SWOT préremplie (É1…É4), TOWS, 3 enjeux | v0.7.0 | ⬜ |
+| S6a | Synthèse : SWOT avec reprise des étapes 1 à 3 (cases à cocher), TOWS, 2 ou 3 enjeux | v0.7.0 | ✅ |
+| S6b | Synthèse : préremplissage par le coach (SWOT, pistes TOWS, enjeux), contexte des étapes 1 à 4 | v0.7.1 | ⬜ |
 | S7 | Gabarits 6-8 : Cap (SMART, remplacement du nom), Choix (Porter, Ansoff, PAF), Action (Gantt, tableau de bord équilibré) | v0.8.0 | ⬜ |
 | S8 | Plan stratégique : 8 sections, traçabilité, édition, régénération par section, export PDF et DOCX | v0.9.0 | ⬜ |
 | S9 | Collaboration : invitations, rôles, attribution, présence, verrouillage doux, commentaires, mentions, courriels, journal | v0.10.0 | ⬜ |

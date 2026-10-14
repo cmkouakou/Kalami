@@ -1,5 +1,27 @@
 # Journal des modifications
 
+## [Stratégie v0.7.0] - 2026-10-14 — Synthèse : SWOT, TOWS et enjeux (S6a)
+### Ajouté
+- Migration `20261021120000_strategy_synthesis.sql` : liste de contrôle de l'étape 5 dans
+  `strategy_checklist_ok` (un élément rédigé par case de la SWOT, une piste TOWS rédigée,
+  deux ou trois enjeux nommés). Étapes 1 à 4 inchangées.
+- Gabarit de l'étape 5 (`templates/synthesis.ts`, `components/strategy/synthesis/`) :
+  matrice SWOT (30 éléments par case), matrice TOWS en quatre quadrants (SO, ST, WO, WT,
+  40 pistes) liées aux deux cases qu'elles croisent, deux ou trois enjeux liés aux éléments
+  de la SWOT ou aux pistes. Supprimer un élément retire aussi les liens qui le visaient.
+- Reprise des étapes 1 à 3 vers la SWOT, sans IA (`synthesis-sources.ts`,
+  `swot-import.tsx`) : cases à cocher regroupées par case, étiquette d'origine (É1, É2,
+  É3), éléments déjà repris signalés et jamais ajoutés deux fois. Règles : O = facteurs
+  PESTEL opportunité ou les deux ; M = facteurs menace ou les deux et forces d'intensité
+  forte ; F = activités « force » et ressources VRIO avantage temporaire, durable ou
+  inexploité ; Fb = activités « faiblesse » ou « à améliorer » et ressources désavantage.
+- `getSourcePayloads` (queries.ts) : contenu des étapes sources lu pour la page de l'étape.
+- Tests : 12 unitaires (`strategy-synthesis.test.ts`) et 8 d'intégration
+  (`strategy-synthesis-rls.test.ts`, ignorés tant que la migration n'est pas appliquée).
+### Modifié
+- Coach : libellés de la liste de contrôle de l'étape 5 ajoutés.
+- `strategy-templates.test.ts` : l'étape 5 a désormais un gabarit.
+
 ## [Stratégie v0.6.1] - 2026-10-14 — Pièces jointes du profil, résumé et préremplissage
 ### Ajouté
 - Migration `20261020120000_strategy_attachments.sql` : seau privé `study-attachments`

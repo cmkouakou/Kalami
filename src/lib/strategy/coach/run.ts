@@ -162,6 +162,7 @@ const CHECKLIST_LABELS: Record<TemplateStep, Record<string, string>> = {
   2: s.forces.checklist,
   3: s.internal.checklist,
   4: s.stakeholders.checklist,
+  5: s.synthesis.checklist,
 };
 
 /** Liste de contrôle lisible du contenu enregistré d'une étape. */

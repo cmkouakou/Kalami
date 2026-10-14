@@ -6,10 +6,10 @@
  *               des étapes, guide des étapes, gabarits PESTEL, cinq forces, analyse interne
  *               et parties prenantes, coach IA, administration des crédits, des guides
  *               et du coach : réglages, consignes et erreurs classiques), recherche Web
- *               sourcée du coach, documents joints au profil (S5b). Rattachés à fr.ts sous
- *               « strategy ».
+ *               sourcée du coach, documents joints au profil (S5b), gabarit de synthèse
+ *               SWOT, TOWS et enjeux (S6a). Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
+ *  Version    : 1.7
  *  Date       : 2026-10-14
  * =============================================================
  */
@@ -635,6 +635,82 @@ const strategyFr = {
       count: "Au moins 5 parties prenantes nommées",
       placed: "Chaque partie prenante placée dans la matrice",
       highPower: "Au moins une partie prenante à « Gérer de près » ou « Satisfaire »",
+    },
+  },
+
+  // ==================== GABARIT : SYNTHÈSE (SWOT, TOWS, ENJEUX) ====================
+  synthesis: {
+    swotTitle: "1. Matrice SWOT",
+    swotIntro:
+      "Rassemblez les forces et faiblesses (internes) et les opportunités et menaces " +
+      "(externes). L'étiquette « É1 » à « É4 » rappelle l'étape d'où vient un élément.",
+    keys: {
+      strengths: "Forces",
+      weaknesses: "Faiblesses",
+      opportunities: "Opportunités",
+      threats: "Menaces",
+    },
+    keyHints: {
+      strengths: "Interne, favorable",
+      weaknesses: "Interne, défavorable",
+      opportunities: "Externe, favorable",
+      threats: "Externe, défavorable",
+    },
+    itemLabel: "Élément de la case « {key} »",
+    origin: "Repris de l'étape {step}",
+    addItem: "Ajouter",
+    emptyKey: "Aucun élément pour l'instant.",
+    maxItems: "{max} éléments au plus par case.",
+    untitled: "élément sans texte",
+    importOpen: "Reprendre les étapes 1 à 4",
+    importTitle: "Éléments à reprendre",
+    importIntro:
+      "Cochez les éléments à ajouter à la SWOT. Les facteurs PESTEL, les forces d'intensité " +
+      "forte, les activités évaluées et les ressources VRIO sont proposés ; l'étape 4 " +
+      "n'alimente pas la SWOT automatiquement.",
+    importNone:
+      "Rien à reprendre pour l'instant : complétez d'abord les étapes 1 à 3 (nature des " +
+      "facteurs, intensité des forces, évaluation des activités, tests VRIO).",
+    importPresent: "déjà dans la SWOT",
+    importConfirm: "Ajouter les éléments cochés ({count})",
+    importCancel: "Fermer",
+    towsTitle: "2. Matrice TOWS",
+    towsIntro:
+      "Croisez les cases de la SWOT pour dégager des pistes d'action. Liez chaque piste aux " +
+      "éléments de la SWOT qu'elle combine.",
+    quadrants: {
+      so: "Forces × Opportunités",
+      st: "Forces × Menaces",
+      wo: "Faiblesses × Opportunités",
+      wt: "Faiblesses × Menaces",
+    },
+    quadrantHints: {
+      so: "Utiliser ses forces pour saisir les opportunités.",
+      st: "Utiliser ses forces pour contrer les menaces.",
+      wo: "Corriger ses faiblesses grâce aux opportunités.",
+      wt: "Réduire ses faiblesses et se protéger des menaces.",
+    },
+    towsLabel: "Piste « {quadrant} »",
+    addTows: "Ajouter une piste",
+    emptyTows: "Aucune piste pour l'instant.",
+    maxTows: "{max} pistes au plus.",
+    links: "Éléments liés",
+    linksNone: "Aucun élément à lier : complétez d'abord les cases concernées.",
+    issuesTitle: "3. Enjeux stratégiques",
+    issuesIntro:
+      "Formulez deux ou trois enjeux majeurs qui découlent de votre SWOT et de vos pistes " +
+      "TOWS ; ils orienteront la suite de l'étude.",
+    issueTitle: "Enjeu",
+    issueExplanation: "Explication",
+    issueLinks: "S'appuie sur",
+    addIssue: "Ajouter un enjeu",
+    emptyIssues: "Aucun enjeu pour l'instant.",
+    maxIssues: "{max} enjeux au plus.",
+    untitledIssue: "Enjeu sans titre",
+    checklist: {
+      swot: "Au moins un élément dans chaque case de la SWOT",
+      tows: "Au moins une piste TOWS",
+      issues: "Deux ou trois enjeux stratégiques nommés",
     },
   },
 
