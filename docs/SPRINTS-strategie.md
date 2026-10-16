@@ -3,7 +3,7 @@
 Assistant d'analyse stratégique sous `/strategie`, mêmes comptes, même Supabase, même déploiement
 que la plateforme de lecture ([cahier](cahiers/CAHIER_DES_CHARGES_assistant_strategie.md)).
 Démarré le 2026-10-11 ; le projet 1 est en pause (reste : 11a, 5, 6, 10, 11b).
-S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11) ; S2 livré en Stratégie v0.3.0 (2026-10-11) ; S3 livré en Stratégie v0.4.0 (2026-10-11) ; S4a (coach : relecture) livré en Stratégie v0.5.0 (2026-10-13) ; S4b (questions, score, administration du coach) livré en Stratégie v0.5.1 (2026-10-13) ; S5a (recherche Web sourcée) livré en Stratégie v0.6.0 (2026-10-13) ; S5b (pièces jointes du profil) livré en Stratégie v0.6.1 (2026-10-14) ; S6a (synthèse SWOT, TOWS, enjeux) livré en Stratégie v0.7.0 (2026-10-14) ; S6b (propositions du coach pour la synthèse) livré en Stratégie v0.7.1 (2026-10-14) ; S7a (Cap et Choix) livré en Stratégie v0.8.0 (2026-10-15) ; S7b (Action) livré en Stratégie v0.8.1 (2026-10-15) ; S8a (plan stratégique : génération, édition, traçabilité) livré en Stratégie v0.9.0 (2026-10-15).
+S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11) ; S2 livré en Stratégie v0.3.0 (2026-10-11) ; S3 livré en Stratégie v0.4.0 (2026-10-11) ; S4a (coach : relecture) livré en Stratégie v0.5.0 (2026-10-13) ; S4b (questions, score, administration du coach) livré en Stratégie v0.5.1 (2026-10-13) ; S5a (recherche Web sourcée) livré en Stratégie v0.6.0 (2026-10-13) ; S5b (pièces jointes du profil) livré en Stratégie v0.6.1 (2026-10-14) ; S6a (synthèse SWOT, TOWS, enjeux) livré en Stratégie v0.7.0 (2026-10-14) ; S6b (propositions du coach pour la synthèse) livré en Stratégie v0.7.1 (2026-10-14) ; S7a (Cap et Choix) livré en Stratégie v0.8.0 (2026-10-15) ; S7b (Action) livré en Stratégie v0.8.1 (2026-10-15) ; S8a (plan stratégique : génération, édition, traçabilité) livré en Stratégie v0.9.0 (2026-10-15) ; S8b (export PDF et DOCX) livré en Stratégie v0.9.1 (2026-10-15).
 
 Version propre au module (« Stratégie vX.Y.Z »), indépendante de la version de l'application.
 Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés par l'administrateur**.
@@ -23,7 +23,7 @@ Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés pa
 | S7a | Gabarits 6-7 : Cap (vision et test du remplacement du nom, mission, valeurs avec geste, objectifs SMART liés aux enjeux), Choix (Porter, Ansoff, évaluation oui / partiel / non, énoncé, renoncements) | v0.8.0 | ✅ |
 | S7b | Gabarit 8 : Action (chantiers en Gantt au mois, tableau de bord équilibré en 4 perspectives) | v0.8.1 | ✅ |
 | S8a | Plan stratégique : 8 sections assemblées depuis les étapes (sans IA), traçabilité, édition, régénération par section, rédaction par le coach avec sources vérifiées | v0.9.0 | ✅ |
-| S8b | Plan stratégique : export PDF et DOCX | v0.9.1 | ⬜ |
+| S8b | Plan stratégique : export PDF et DOCX | v0.9.1 | ✅ |
 | S9 | Collaboration : invitations, rôles, attribution, présence, verrouillage doux, commentaires, mentions, courriels, journal | v0.10.0 | ⬜ |
 | S10 | Mode enseignant et cas d'entraînement (Ajinomoto, Infosystem, corrigé) | v0.11.0 | ⬜ |
 | S11 | Paiement de l'étude (après les sprints 5-6 du projet 1) : prix par région, réduction livre, lots, recharges d'IA | v0.12.0 | ⬜ |

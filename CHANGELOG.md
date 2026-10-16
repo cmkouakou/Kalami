@@ -1,5 +1,25 @@
 # Journal des modifications
 
+## [Stratégie v0.9.1] - 2026-10-15 — Export du plan (S8b)
+### Ajouté
+- Export du plan stratégique en **PDF** et en **DOCX**, pour tous les membres de l'étude
+  (observateurs compris). Fichier produit à la demande et téléchargé, sans stockage ni
+  compteur (route `POST /api/strategie/etudes/[id]/plan/[format]`) :
+  - page de titre (organisation, question, date d'export), sommaire, 8 sections avec le
+    numéro de paragraphe (§ n) cohérent avec l'annexe, pied de page avec pagination ;
+  - annexe A : feuille de route en Gantt (page paysage) ; annexe B : tableau de bord
+    équilibré par perspective ; annexe C : traçabilité des sources ;
+  - modèle commun (`plan-export.ts`), mise en page PDF (`plan-export-html.ts`, Chromium) et
+    Word (`plan-export-docx.ts`, bibliothèque `docx` 9.8.1) ; métadonnées PDF renseignées ;
+  - boutons « Exporter en PDF / DOCX » dans l'éditeur du plan, inactifs tant qu'une
+    modification n'est pas enregistrée.
+- Tests unitaires `strategy-plan-export.test.ts` (10).
+### Modifié
+- `lib/pdf/generate.ts` : `loadFonts` exporté, impression HTML → PDF générique
+  (`printHtmlToPdf`), réutilisée par le PDF filigrané des livres.
+- `next.config.ts` : polices incluses dans la fonction d'export du plan.
+- Texte « Le plan ne se valide pas : modifiez-le librement. »
+
 ## [Stratégie v0.9.0] - 2026-10-15 — Plan stratégique (S8a)
 ### Ajouté
 - Migration `20261025120000_strategy_plan.sql` :

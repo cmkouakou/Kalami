@@ -986,9 +986,7 @@ const strategyFr = {
     generate: "Générer le plan",
     generating: "Génération…",
     generatedAt: "Plan généré le {date}.",
-    neverValidated:
-      "Le plan ne se valide pas : modifiez-le librement. L'export PDF et DOCX arrive dans la " +
-      "prochaine version.",
+    neverValidated: "Le plan ne se valide pas : modifiez-le librement.",
     regenerateAll: "Tout régénérer depuis les étapes",
     regenerateAllConfirm:
       "Les huit sections seront remplacées par un nouvel assemblage des étapes. Le contenu " +
@@ -1040,6 +1038,34 @@ const strategyFr = {
     annexEmpty: "Aucun paragraphe ne cite de source pour l'instant.",
     annexParagraph: "§ {no}",
     readOnly: "Vous consultez le plan en lecture seule.",
+
+    // Export du plan en PDF et DOCX (S8b)
+    export: {
+      title: "Exporter le plan",
+      intro:
+        "Le fichier reprend la dernière version enregistrée : les huit sections, la feuille " +
+        "de route en Gantt, le tableau de bord équilibré et l'annexe de traçabilité.",
+      pdf: "Exporter en PDF",
+      docx: "Exporter en DOCX",
+      preparing: "Préparation du fichier…",
+      waitSave: "Attendez la fin de l'enregistrement pour exporter.",
+      failed: "L'export a échoué. Réessayez dans un instant.",
+      documentTitle: "Plan stratégique",
+      question: "Question stratégique",
+      exportedOn: "Version exportée le {date}",
+      preparedWith: "Préparé avec Kalami Stratégie",
+      contents: "Sommaire",
+      footer: "Plan stratégique — {name}",
+      emptySection: "Cette section est vide.",
+      ganttTitle: "Annexe A : feuille de route",
+      ganttEmpty: "Aucun chantier daté à l'étape 8.",
+      scorecardTitle: "Annexe B : tableau de bord équilibré",
+      scorecardEmpty: "Aucun indicateur dans cette perspective.",
+      annexTitle: "Annexe C : traçabilité",
+      workstream: "Chantier",
+      period: "Période",
+      none: "—",
+    },
 
     // Textes du plan assemblé (repris tels quels dans le contenu)
     assembled: {

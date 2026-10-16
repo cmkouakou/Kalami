@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.9.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S8a livrés)
+Version actuelle : v0.8.3 · Stratégie v0.9.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S8b livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -27,7 +27,8 @@ Version actuelle : v0.8.3 · Stratégie v0.9.0 | Statut : 🟡 En cours (projet 
 | #21 | 2026-10-15 | Stratégie S7a : gabarits Cap (test du nom, SMART) et Choix (Porter, Ansoff, évaluation) | ~300 000 | ~1.80 $ |
 | #22 | 2026-10-15 | Stratégie S7b : gabarit Action (chantiers, Gantt au mois, tableau de bord équilibré, risques) | ~280 000 | ~1.68 $ |
 | #23 | 2026-10-15 | Stratégie S8a : plan stratégique (8 sections assemblées, traçabilité, édition, coach de rédaction) | ~320 000 | ~1.92 $ |
-| **TOTAL** | | | **~5 790 000** | **~34.74 $** |
+| #24 | 2026-10-15 | Stratégie S8b : export du plan en PDF et DOCX (Gantt, tableau de bord, traçabilité) | ~250 000 | ~1.50 $ |
+| **TOTAL** | | | **~6 040 000** | **~36.24 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -99,6 +100,7 @@ Version actuelle : v0.8.3 · Stratégie v0.9.0 | Statut : 🟡 En cours (projet 
 - [x] S7b — migration `20261024120000_strategy_action.sql` appliquée le 2026-10-15 (éditeur SQL ; `repair --status applied 20261024120000` avant un push CLI), intégration action 10/10
 - [x] S8a — plan stratégique : 8 sections assemblées sans IA, annexe de traçabilité, édition, régénération, coach par section (Stratégie v0.9.0), unitaires 407/407
 - [x] S8a — migration `20261025120000_strategy_plan.sql` appliquée (2026-10-15), intégration du plan 5/5
-- [ ] S8a — consigne plan v1 à relire et publier
-- [ ] S8b — export du plan en PDF et DOCX (Stratégie v0.9.1)
+- [x] S8a — consigne plan v1 publiée (2026-10-15)
+- [x] S8b — export du plan en PDF et DOCX, Gantt et tableau de bord en annexe, pour tous les membres (Stratégie v0.9.1), unitaires 417/417
+- [ ] S12 — limiter le débit des exports du plan (aucun limiteur générique sans migration)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

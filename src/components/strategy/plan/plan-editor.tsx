@@ -6,13 +6,13 @@
  *               les étapes (sans IA), huit sections éditables, régénérables et rédigeables
  *               avec le coach, annexe de traçabilité et historique des versions. Le plan
  *               s'enregistre automatiquement et ne se valide jamais. Lecture seule pour les
- *               observateurs.
+ *               observateurs. Export PDF / DOCX du plan pour tous les membres (S8b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: use-autosave.ts, template-frame.tsx (SaveStatus), version-history.tsx,
  *               coach-panel.tsx (UsageGauge), plan-section.tsx, plan-annex.tsx,
- *               lib/strategy/plan-actions.ts
+ *               plan-export.tsx, lib/strategy/plan-actions.ts
  * =============================================================
  */
 
@@ -22,6 +22,7 @@ import { useState, useTransition } from "react";
 
 import { UsageGauge } from "@/components/strategy/coach-panel";
 import { PlanAnnex } from "@/components/strategy/plan/plan-annex";
+import { PlanExport } from "@/components/strategy/plan/plan-export";
 import { PlanSection } from "@/components/strategy/plan/plan-section";
 import { SaveStatus } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
@@ -172,6 +173,9 @@ export function PlanEditor({
       )}
 
       {error && <p role="alert" className="text-small text-danger">{error}</p>}
+
+      {/* ==================== EXPORT ==================== */}
+      {generated && <PlanExport studyId={studyId} pending={autosave.pending} />}
 
       {/* ==================== SECTIONS ==================== */}
       {generated && (

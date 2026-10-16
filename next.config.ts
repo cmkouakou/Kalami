@@ -15,9 +15,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
-  // Polices Literata lues à l'exécution par la génération des PDF filigranés
+  // Polices Literata lues à l'exécution par la génération des PDF (livres et plan stratégique)
   outputFileTracingIncludes: {
     "/api/livres/\\[id\\]/pdf": ["./src/lib/pdf/fonts/**/*"],
+    "/api/strategie/etudes/\\[id\\]/plan/\\[format\\]": ["./src/lib/pdf/fonts/**/*"],
   },
   images: {
     // Couvertures et photos d'auteurs : seau public « covers » de Supabase Storage

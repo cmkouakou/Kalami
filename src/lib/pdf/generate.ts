@@ -6,8 +6,9 @@
  *               Chrome installé en local via CHROME_EXECUTABLE_PATH), puis marquage des
  *               métadonnées (titre, auteur, sujet et mots-clés au nom de l'acheteur).
  *               Aucune requête réseau n'est autorisée pendant l'impression.
+ *               printHtmlToPdf sert aussi au plan stratégique (S8b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-09
  *  Dépendances: puppeteer-core, @sparticuz/chromium, pdf-lib, render.ts
  * =============================================================
@@ -34,7 +35,7 @@ const RENDER_TIMEOUT_MS = 60_000;
 
 /** Lit les deux fichiers Literata en base64 (une fois par instance). */
 let fontsPromise: Promise<PdfFonts> | null = null;
-function loadFonts(): Promise<PdfFonts> {
+export function loadFonts(): Promise<PdfFonts> {
   fontsPromise ??= Promise.all([
     readFile(path.join(FONTS_DIR, "literata-normal.woff2")),
     readFile(path.join(FONTS_DIR, "literata-italic.woff2")),
@@ -80,6 +81,34 @@ async function markMetadata(bytes: Uint8Array, book: PdfBook, stamp: PdfStamp, c
 // ==================== GÉNÉRATION ====================
 
 /**
+ * Imprime un document HTML autonome en PDF (format défini par ses règles @page). Toute
+ * requête autre qu'une donnée intégrée (data:) est bloquée.
+ * @param html - Document complet, sans script ni ressource externe
+ * @returns Contenu du fichier PDF, avant métadonnées
+ */
+export async function printHtmlToPdf(html: string): Promise<Uint8Array> {
+  const browser = await launchBrowser();
+  try {
+    const page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on("request", (request) => {
+      if (request.url().startsWith("data:")) void request.continue();
+      else void request.abort();
+    });
+    await page.setContent(html, { waitUntil: "load", timeout: RENDER_TIMEOUT_MS });
+    return await page.pdf({
+      preferCSSPageSize: true,
+      printBackground: true,
+      outline: true,
+      tagged: true,
+      timeout: RENDER_TIMEOUT_MS,
+    });
+  } finally {
+    await browser.close();
+  }
+}
+
+/**
  * Produit le PDF filigrané d'un livre au nom de l'acheteur.
  * @param book   - Livre et chapitres de la version courante
  * @param stamp  - Nom, courriel et référence de l'acheteur
@@ -92,25 +121,6 @@ export async function generateWatermarkedPdf(
   labels: PdfLabels,
 ): Promise<Uint8Array> {
   const html = buildPdfHtml(book, stamp, labels, await loadFonts());
-  const browser = await launchBrowser();
-  try {
-    const page = await browser.newPage();
-    // Le document est autonome : toute requête autre qu'une donnée intégrée est bloquée
-    await page.setRequestInterception(true);
-    page.on("request", (request) => {
-      if (request.url().startsWith("data:")) void request.continue();
-      else void request.abort();
-    });
-    await page.setContent(html, { waitUntil: "load", timeout: RENDER_TIMEOUT_MS });
-    const pdf = await page.pdf({
-      preferCSSPageSize: true,
-      printBackground: true,
-      outline: true,
-      tagged: true,
-      timeout: RENDER_TIMEOUT_MS,
-    });
-    return await markMetadata(pdf, book, stamp, labels.copyOf);
-  } finally {
-    await browser.close();
-  }
+  const pdf = await printHtmlToPdf(html);
+  return markMetadata(pdf, book, stamp, labels.copyOf);
 }
