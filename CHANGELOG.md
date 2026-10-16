@@ -1,5 +1,29 @@
 # Journal des modifications
 
+## [Stratégie v0.11.0] - 2026-10-16 — Mode enseignant (S10a)
+### Ajouté
+- Migration `20261029120000_strategy_classes.sql` :
+  - statut enseignant accordé par l'administrateur (`strategy_teachers`) ;
+  - tables `classes`, `class_members`, `class_invitations` et colonne `studies.class_id` ;
+  - fonctions : créer et modifier une classe, lien de classe (régénérable, désactivable),
+    invitations par courriel (renouveler, révoquer), inscription, départ ou retrait d'un
+    étudiant, distribution d'une étude par groupe, suivi, classes de l'étudiant ;
+  - chaque étude distribuée consomme un crédit de l'enseignant (tout ou rien) ; le premier
+    membre du groupe est propriétaire, les autres contributeurs, l'enseignant observateur
+    d'office, non retirable ; coach coupable par étape (`coach_disabled_step`).
+- Pages `/strategie/classes` (mes classes, crédits, création, archives),
+  `/strategie/classes/[id]` (onglets suivi, étudiants, distribuer, réglages) et
+  `/strategie/classe/[jeton]` (inscription par lien ou invitation).
+- Accueil : section « Mes classes » de l'étudiant (études reçues, date de remise, quitter) ;
+  badge de classe et « en retard » (indicatif, sans blocage) sur la page d'étude.
+- Administration : section « Enseignants » (accorder ou retirer le statut).
+- Tests : unitaires `strategy-classes.test.ts` (20), intégration
+  `strategy-classes-rls.test.ts` (11).
+### Modifié
+- `team.ts`, `member-list.tsx` et page équipe (enseignant), `coach/queries.ts`,
+  `coach/run.ts`, `coach-panel.tsx` (coach coupé par l'enseignant), `fr-strategy.ts`
+  (blocs `classes`, `admin.teachers`), `admin/strategy-actions.ts`.
+
 ## [Stratégie v0.10.2] - 2026-10-16 — Présence et verrouillage doux (S9c)
 ### Ajouté
 - Migration `20261028120000_strategy_realtime.sql` :

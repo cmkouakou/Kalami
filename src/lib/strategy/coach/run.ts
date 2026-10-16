@@ -15,9 +15,10 @@
  *               préremplissage (synthesize) est nettoyé selon les éléments connus (S6b).
  *               Aux étapes 6 et 7, les étapes en amont déjà rédigées (synthèse, cap) sont
  *               jointes pour juger la cohérence (S7a) ; à l'étape 8, synthèse, cap et choix (S7b).
+ *               Refus « coach_disabled_step » : coach coupé par l'enseignant (S10a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
- *  Date       : 2026-10-15
+ *  Version    : 1.7
+ *  Date       : 2026-10-16
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
  * =============================================================
@@ -363,7 +364,8 @@ export async function reserve(
   }
   const row = (data as Reservation[] | null)?.[0];
   if (!row) return "failed";
-  if (row.refusal === "coach_disabled" || row.refusal === "rate_limited"
+  if (row.refusal === "coach_disabled" || row.refusal === "coach_disabled_step"
+    || row.refusal === "rate_limited"
     || row.refusal === "budget_exhausted") {
     return row.refusal;
   }

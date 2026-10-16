@@ -9,11 +9,12 @@
  *               sourcée du coach, documents joints au profil (S5b), gabarit de synthèse
  *               SWOT, TOWS et enjeux (S6a), gabarits Cap et Choix (S7a), gabarit Action
  *               (S7b), plan stratégique (S8a), équipe, invitations et journal (S9a),
- *               discussion, mentions et notifications (S9b).
+ *               discussion, mentions et notifications (S9b), mode enseignant : classes,
+ *               inscription, distribution, suivi et statut enseignant (S10a).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 2.2
- *  Date       : 2026-10-15
+ *  Version    : 2.3
+ *  Date       : 2026-10-16
  * =============================================================
  */
 
@@ -1151,6 +1152,7 @@ const strategyFr = {
     readOnly: "Seuls le propriétaire et les contributeurs peuvent solliciter le coach.",
     validatedStep: "Étape validée : le coach relira l'étape quand elle sera rouverte.",
     disabled: "Le coach n'est pas disponible pour le moment.",
+    classDisabled: "Coach désactivé par l'enseignant pour cette étape.",
     summaryTitle: "Appréciation d'ensemble",
     reviewedAt: "Relecture du {date}",
     outdated:
@@ -1280,6 +1282,7 @@ const strategyFr = {
     errors: {
       unavailable: "Le coach n'est pas disponible pour le moment.",
       coach_disabled: "Le coach est désactivé par l'administrateur.",
+      coach_disabled_step: "Coach désactivé par l'enseignant pour cette étape.",
       forbidden: "Vous n'avez pas les droits nécessaires sur cette étude.",
       prerequisites_missing: "Des étapes préalables ne sont pas encore validées.",
       step_validated: "Cette étape est validée : rouvrez-la pour la faire relire.",
@@ -1437,6 +1440,7 @@ const strategyFr = {
         step_reopened: "{actor} a rouvert l'étape {step}.",
         step_needs_review: "L'étape {step} est à revoir après une modification en amont.",
         comment_added: "{actor} a commenté l'étape {step}.",
+        class_assigned: "{actor} a distribué cette étude à la classe « {class} ».",
       },
     },
     errors: {
@@ -1457,6 +1461,7 @@ const strategyFr = {
       invalid_assignee: "Seul un propriétaire ou un contributeur peut être responsable.",
       invalid_token: "Le lien d'invitation n'a pas pu être créé. Réessayez.",
       invalid_name: "Le nom affiché compte 120 caractères au plus.",
+      class_teacher: "L'enseignant de la classe reste observateur de l'étude.",
     },
   },
 
@@ -1584,6 +1589,244 @@ const strategyFr = {
     },
   },
 
+  // ==================== MODE ENSEIGNANT (S10a) ====================
+  classes: {
+    nav: "Mes classes",
+    kicker: "Mode enseignant",
+    title: "Mes classes",
+    intro:
+      "Créez une classe, inscrivez vos étudiants par lien ou par courriel, puis distribuez " +
+      "une étude à chacun ou à chaque équipe. Vous suivez leur avancement et commentez " +
+      "leurs études comme observateur.",
+    notTeacher:
+      "Le mode enseignant est ouvert sur demande pendant la phase de lancement : écrivez à " +
+      "l'équipe Kalami pour l'activer sur votre compte.",
+    credits: "Crédits d'étude disponibles : {count} (une étude distribuée consomme un crédit)",
+    none: "Vous n'avez pas encore de classe.",
+    active: "Classes en cours",
+    archived: "Classes archivées",
+    archivedBadge: "Archivée",
+    counts: "{students} étudiant(s) · {studies} étude(s)",
+    due: "Remise indicative le {date}",
+    open: "Ouvrir la classe",
+    back: "Mes classes",
+    create: {
+      title: "Nouvelle classe",
+      name: "Nom de la classe",
+      namePlaceholder: "Stratégie d'entreprise — groupe 02",
+      institution: "Établissement (facultatif)",
+      term: "Session (facultatif)",
+      termPlaceholder: "Automne 2026",
+      dueDate: "Date de remise indicative (facultatif)",
+      dueHelp:
+        "Affichée aux étudiants. Après cette date, les études non terminées sont signalées " +
+        "« en retard » dans le suivi, sans rien bloquer.",
+      submit: "Créer la classe",
+      creating: "Création…",
+    },
+    tabs: {
+      tracking: "Suivi",
+      students: "Étudiants",
+      distribute: "Distribuer",
+      settings: "Réglages",
+    },
+    tracking: {
+      title: "Suivi de la classe",
+      none: "Aucune étude distribuée pour l'instant. Passez par l'onglet « Distribuer ».",
+      study: "Étude",
+      members: "Étudiants",
+      progress: "Avancement",
+      steps: "Étapes",
+      lastActivity: "Dernière activité",
+      late: "En retard",
+      done: "Terminée",
+      validated: "{count}/9",
+      stepTitle: "Étape {no} — {title} : {status}",
+      open: "Ouvrir",
+      openStudy: "Ouvrir l'étude « {company} »",
+      summary: "{studies} étude(s) · {done} terminée(s) · {late} en retard",
+    },
+    students: {
+      title: "Étudiants inscrits",
+      none: "Aucun étudiant inscrit pour l'instant.",
+      studies: "{count} étude(s)",
+      joined: "Inscrit le {date}",
+      remove: "Retirer",
+      removeConfirm:
+        "Retirer {name} de la classe ? Ses études restent en place et vous en restez " +
+        "observateur.",
+      removed: "Étudiant retiré de la classe.",
+    },
+    link: {
+      title: "Lien de classe",
+      intro:
+        "Toute personne connectée qui ouvre ce lien rejoint la classe. Régénérez-le pour " +
+        "invalider l'ancien, ou désactivez-le une fois les inscriptions faites.",
+      none: "Le lien de classe est désactivé.",
+      hidden:
+        "Un lien est actif. Pour des raisons de sécurité, il n'est montré qu'une fois : " +
+        "régénérez-le pour en obtenir un nouveau.",
+      fresh: "Nouveau lien de classe (copiez-le maintenant, il ne sera plus affiché) :",
+      create: "Créer le lien",
+      regenerate: "Régénérer le lien",
+      regenerateConfirm: "Régénérer le lien ? L'ancien lien ne fonctionnera plus.",
+      disable: "Désactiver le lien",
+      disabled: "Lien de classe désactivé.",
+    },
+    invite: {
+      title: "Inviter par courriel",
+      emails: "Courriels (un par ligne ou séparés par des virgules)",
+      help: "30 courriels au plus par envoi. Chaque invitation est valable 14 jours.",
+      submit: "Envoyer les invitations",
+      sending: "Envoi…",
+      sent: "{count} invitation(s) envoyée(s).",
+      notSent:
+        "Ces invitations ont été créées, mais le courriel n'est pas parti. Transmettez " +
+        "vous-même chaque lien (valable 14 jours) :",
+      failed: "Non invités : {list}",
+      tooMany: "30 courriels au plus par envoi.",
+      empty: "Indiquez au moins un courriel.",
+    },
+    pending: {
+      title: "Invitations en attente",
+      none: "Aucune invitation en attente.",
+      expires: "Expire le {date}",
+      expired: "Expirée",
+      renew: "Renvoyer",
+      revoke: "Annuler",
+      revokeConfirm: "Annuler l'invitation de {email} ? Son lien ne fonctionnera plus.",
+      renewed: "Invitation renvoyée à {email}.",
+      revoked: "Invitation annulée.",
+    },
+    distribute: {
+      title: "Distribuer une étude",
+      intro:
+        "Chaque étude distribuée consomme un de vos crédits. Le premier étudiant d'une " +
+        "équipe en est propriétaire (il valide les étapes), les autres contributeurs ; " +
+        "vous êtes ajouté comme observateur et ne pouvez pas en être retiré.",
+      company: "Entreprise ou cas étudié",
+      question: "Question stratégique (facultatif)",
+      mode: "Répartition",
+      individual: "Une étude par étudiant",
+      teams: "Par équipes",
+      select: "Étudiants",
+      selectAll: "Tout sélectionner",
+      selectNone: "Tout désélectionner",
+      teamOf: "Équipe de {name}",
+      teamNone: "Pas d'étude",
+      teamNumber: "Équipe {no}",
+      teamsHelp:
+        "Choisissez une équipe pour chaque étudiant (6 au plus par équipe). Dans chaque " +
+        "équipe, le premier de la liste en sera propriétaire.",
+      summary: "{studies} étude(s) seront créées, pour {credits} crédit(s) disponible(s).",
+      submit: "Distribuer",
+      distributing: "Distribution…",
+      done: "{count} étude(s) distribuée(s).",
+      noStudents: "Inscrivez des étudiants avant de distribuer une étude.",
+      nothing: "Sélectionnez au moins un étudiant.",
+      teamTooLarge: "Une équipe compte 6 étudiants au plus.",
+      archived: "Cette classe est archivée : réactivez-la dans les réglages pour distribuer.",
+    },
+    settings: {
+      title: "Réglages de la classe",
+      infoTitle: "Description",
+      save: "Enregistrer",
+      saving: "Enregistrement…",
+      saved: "Réglages enregistrés.",
+      coachTitle: "Coach IA",
+      coachIntro:
+        "Coupez le coach pour les étapes que vos étudiants doivent faire sans aide. Les " +
+        "autres étapes gardent le coach.",
+      coachStep: "Coach désactivé à l'étape {no} — {title}",
+      budget: "Plafond d'IA par étude, en dollars américains (facultatif)",
+      budgetHelp:
+        "Remplace le plafond général pour les études de cette classe. Laissez vide pour " +
+        "garder le plafond général. Maximum 50 $.",
+      statusTitle: "Archivage",
+      archiveHelp:
+        "Archiver une classe ferme les inscriptions et la distribution. Aucune étude n'est " +
+        "supprimée et vous en restez observateur.",
+      archive: "Archiver la classe",
+      archiveConfirm: "Archiver la classe ? Les études restent accessibles.",
+      unarchive: "Réactiver la classe",
+      archivedDone: "Classe archivée.",
+      unarchivedDone: "Classe réactivée.",
+    },
+    join: {
+      kicker: "Classe",
+      title: "Rejoindre une classe",
+      body: "{teacher} vous invite à rejoindre la classe « {name} ».",
+      submit: "Rejoindre la classe",
+      joining: "Inscription…",
+      notFound:
+        "Ce lien de classe n'est pas valide ou a été désactivé. Demandez un nouveau lien à " +
+        "votre enseignant.",
+      archived: "Cette classe est archivée : les inscriptions sont fermées.",
+      expired: "Cette invitation a expiré. Demandez à votre enseignant de la renvoyer.",
+      closed: "Cette invitation n'est plus valable.",
+      mismatch:
+        "Cette invitation est adressée à {email}. Connectez-vous avec ce courriel, confirmé, " +
+        "pour rejoindre la classe.",
+      signOut: "Changer de compte",
+      isTeacher: "Vous êtes l'enseignant de cette classe.",
+      alreadyMember: "Vous êtes déjà inscrit à cette classe.",
+      openClass: "Ouvrir la classe",
+      home: "Mes études",
+    },
+    student: {
+      title: "Mes classes",
+      teacher: "Enseignant : {name}",
+      due: "Remise indicative le {date}",
+      studiesTitle: "Mes études de classe",
+      waiting: "Votre enseignant ne vous a pas encore distribué d'étude.",
+      leave: "Quitter la classe",
+      leaveConfirm:
+        "Quitter la classe « {name} » ? Vos études restent accessibles, mais vous ne " +
+        "recevrez plus de nouvelle étude.",
+      left: "Vous avez quitté la classe.",
+    },
+    study: {
+      badge: "Classe : {name}",
+      due: "Remise indicative le {date}",
+      late: "Date de remise passée",
+      teacher: "Enseignant",
+      teacherHelp: "Ajouté par la classe : il suit l'étude et ne peut pas être retiré.",
+    },
+    email: {
+      subject: "{teacher} vous invite à la classe « {name} »",
+      greeting: "Bonjour,",
+      body:
+        "{teacher} vous invite à rejoindre la classe « {name} » sur Kalami Stratégie, pour " +
+        "y réaliser une étude stratégique.",
+      cta: "Rejoindre la classe",
+      account:
+        "Pour rejoindre la classe, connectez-vous (ou créez votre compte) avec cette " +
+        "adresse : {email}.",
+      validity:
+        "Ce lien est valable 14 jours. Si vous ne vous attendiez pas à cette invitation, " +
+        "ignorez ce courriel.",
+    },
+    errors: {
+      not_teacher: "Cette action est réservée à l'enseignant de la classe.",
+      invalid_name: "Donnez un nom à la classe.",
+      text_too_long: "Un des champs est trop long.",
+      invalid_date: "La date de remise n'est pas valide.",
+      invalid_status: "Statut de classe inconnu.",
+      invalid_budget: "Le plafond est un montant entre 0 et 50 $, avec deux décimales au plus.",
+      invalid_steps: "Seules les étapes 1 à 8 ont un coach.",
+      too_many_classes: "Vous avez déjà 50 classes en cours : archivez-en une d'abord.",
+      class_archived: "Cette classe est archivée.",
+      class_full: "Cette classe compte déjà 300 étudiants.",
+      invalid_study: "Indiquez l'entreprise étudiée (200 caractères au plus).",
+      invalid_groups: "La répartition des étudiants n'est pas valide. Rechargez la page.",
+      not_enough_credits: "Vous n'avez pas assez de crédits d'étude pour cette distribution.",
+      link_not_found: "Ce lien de classe n'est pas valide ou a été désactivé.",
+      is_teacher: "Vous êtes l'enseignant de cette classe.",
+      too_many_invitations:
+        "Cette classe compte déjà 300 invitations en attente : annulez-en d'abord.",
+    },
+  },
+
   // ==================== ADMINISTRATION ====================
   admin: {
     title: "Stratégie",
@@ -1598,6 +1841,26 @@ const strategyFr = {
     granted: "{quantity} crédit(s) accordé(s) à {email}.",
     userNotFound: "Aucun compte n'utilise ce courriel.",
     invalidQuantity: "Indiquez un nombre entre 1 et 100.",
+    teachers: {
+      title: "Enseignants",
+      intro:
+        "Le statut enseignant ouvre le mode classe (/strategie/classes). Chaque étude " +
+        "distribuée consomme un crédit d'étude de l'enseignant : accordez-lui des crédits " +
+        "ci-dessus.",
+      action: "Statut",
+      enable: "Activer le statut enseignant",
+      disable: "Retirer le statut enseignant",
+      submit: "Appliquer",
+      enabled: "Statut enseignant activé pour {email}.",
+      disabled: "Statut enseignant retiré à {email}. Ses classes restent en place.",
+      none: "Aucun enseignant pour l'instant.",
+      columns: {
+        email: "Courriel",
+        since: "Depuis le",
+        credits: "Crédits disponibles",
+        classes: "Classes",
+      },
+    },
     studiesTitle: "Études",
     noStudies: "Aucune étude pour l'instant.",
     columns: {

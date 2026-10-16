@@ -5,17 +5,21 @@
  *  Description: Accueil de l'assistant stratégie (/strategie) : présentation publique de la
  *               démarche en quatre temps (entreprise entière ou division, le livre servant
  *               de guide), puis, pour un utilisateur connecté, ses études et ses crédits
- *               d'étude disponibles, et les invitations reçues (S9a).
+ *               d'étude disponibles, et les invitations reçues (S9a). Mode enseignant
+ *               (S10a) : classes suivies par l'étudiant avec leurs études, et lien « Mes
+ *               classes » pour l'enseignant.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-15
- *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts, lib/auth/dal.ts
+ *  Version    : 1.4
+ *  Date       : 2026-10-16
+ *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
+ *               lib/strategy/class-queries.ts, lib/auth/dal.ts
  * =============================================================
  */
 
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { LeaveClassButton } from "@/components/strategy/classes/leave-class-button";
 import { InvitationResponse } from "@/components/strategy/team/invitation-response";
 import {
   BADGE,
@@ -27,6 +31,13 @@ import {
 import { getDictionary, interpolate } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { authPath, STRATEGY_HOME } from "@/lib/auth/routes";
+import {
+  type ClassStudy,
+  getStudentClasses,
+  isTeacher,
+  listMyClassStudies,
+} from "@/lib/strategy/class-queries";
+import type { StudentClass } from "@/lib/strategy/classes";
 import { countAvailableCredits, listMyStudies } from "@/lib/strategy/queries";
 import { PHASES } from "@/lib/strategy/steps";
 import { getMyInvitations, type ReceivedInvitation } from "@/lib/strategy/team-queries";
@@ -35,6 +46,8 @@ const t = getDictionary();
 const s = t.strategy;
 
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
+/** Dates AAAA-MM-JJ (sans heure) : lues en UTC pour ne pas reculer d'un jour. */
+const DUE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeZone: "UTC" });
 
 export default function StrategyHomePage() {
   return (
@@ -87,10 +100,13 @@ async function MyStudies() {
     );
   }
 
-  const [studies, credits, invitations] = await Promise.all([
+  const [studies, credits, invitations, classes, classStudies, teacher] = await Promise.all([
     listMyStudies(user.id),
     countAvailableCredits(user.id),
     getMyInvitations(),
+    getStudentClasses(),
+    listMyClassStudies(user.id),
+    isTeacher(),
   ]);
 
   return (
@@ -101,11 +117,18 @@ async function MyStudies() {
           <h2 id="titre-etudes" className="font-serif text-h2 font-semibold">
             {s.studies.title}
           </h2>
-          {credits > 0 && (
-            <Link href="/strategie/nouvelle" className={BUTTON_PRIMARY}>
-              {s.studies.newStudy}
-            </Link>
-          )}
+          <span className="flex flex-wrap gap-3">
+            {teacher && (
+              <Link href="/strategie/classes" className={BUTTON_SECONDARY}>
+                {s.classes.nav}
+              </Link>
+            )}
+            {credits > 0 && (
+              <Link href="/strategie/nouvelle" className={BUTTON_PRIMARY}>
+                {s.studies.newStudy}
+              </Link>
+            )}
+          </span>
         </div>
         <p className="text-small text-ink-muted">
           {credits > 0
@@ -141,7 +164,66 @@ async function MyStudies() {
           </ul>
         )}
       </section>
+      <MyClasses classes={classes} studies={classStudies} />
     </>
+  );
+}
+
+/**
+ * Classes suivies par l'étudiant (S10a) : enseignant, date de remise, études distribuées et
+ * « Quitter la classe ».
+ * @param classes - Classes lues par strategy_student_classes
+ * @param studies - Études de classe dont l'utilisateur est membre
+ */
+function MyClasses({ classes, studies }: { classes: StudentClass[]; studies: ClassStudy[] }) {
+  if (classes.length === 0) return null;
+  const st = s.classes.student;
+  return (
+    <section className="flex flex-col gap-4" aria-labelledby="titre-classes">
+      <h2 id="titre-classes" className="font-serif text-h2 font-semibold">{st.title}</h2>
+      <ul className="flex flex-col gap-3">
+        {classes.map((row) => {
+          const own = studies.filter((study) => study.class_id === row.class_id);
+          return (
+            <li key={row.class_id} className={`${CARD} flex flex-col gap-3 p-4`}>
+              <div className="flex flex-col gap-1">
+                <span className="flex flex-wrap items-center gap-2 font-medium">
+                  {row.name}
+                  {row.status === "archived" && (
+                    <span className={BADGE}>{s.classes.archivedBadge}</span>
+                  )}
+                </span>
+                <span className="text-small text-ink-muted">
+                  {interpolate(st.teacher, {
+                    name: row.teacher_name ?? s.team.journal.someone,
+                  })}
+                  {row.due_date && ` · ${interpolate(st.due, {
+                    date: DUE_FORMAT.format(new Date(row.due_date)),
+                  })}`}
+                </span>
+              </div>
+              {own.length === 0 ? (
+                <p className="text-small text-ink-muted">{st.waiting}</p>
+              ) : (
+                <ul className="flex flex-col gap-1" aria-label={st.studiesTitle}>
+                  {own.map((study) => (
+                    <li key={study.id}>
+                      <Link
+                        href={`/strategie/etudes/${study.id}`}
+                        className="text-encre hover:underline"
+                      >
+                        {study.company_name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <LeaveClassButton classId={row.class_id} name={row.name} />
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 

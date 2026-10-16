@@ -12,9 +12,10 @@
  *               exportée pour le panneau des documents joints (S5b). À l'étape 5, onglet
  *               « Propositions » : les propositions cochées complètent la synthèse par la
  *               sauvegarde automatique, et les décisions sont notées en une fois (S6b).
+ *               Coach coupé par l'enseignant pour l'étape : panneau bloqué (S10a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-14
+ *  Version    : 1.5
+ *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/coach (actions, patch, queries, schemas),
  *               lib/strategy/synthesis-proposals.ts, coach-questions.tsx,
  *               coach-research.tsx, coach-score.tsx, coach-synthesis.tsx
@@ -284,7 +285,7 @@ export function CoachPanel<T>({
   const [busy, startTransition] = useTransition();
 
   const available = coach.available[tab];
-  const canAct = editor && !validated && usage.enabled;
+  const canAct = editor && !validated && usage.enabled && !coach.classDisabled;
   const rules = new Map(coach.rules.map((rule) => [rule.code, rule]));
   const tabs = COACH_FUNCTIONS.filter((fn) => isFunctionAvailable(fn, stepNo));
   const current = results[tab];
@@ -292,7 +293,8 @@ export function CoachPanel<T>({
   const date = current ? DATE_FORMAT.format(new Date(current.createdAt)) : "";
 
   let blocked: string | null = null;
-  if (!usage.enabled) blocked = c.disabled;
+  if (coach.classDisabled) blocked = c.classDisabled;
+  else if (!usage.enabled) blocked = c.disabled;
   else if (!available) blocked = c.notAvailable;
   else if (!editor) blocked = c.readOnly;
   else if (validated) blocked = c.validatedStep;

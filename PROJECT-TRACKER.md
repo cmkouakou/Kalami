@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.10.2 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S9b livrés, S9c codé)
+Version actuelle : v0.8.3 · Stratégie v0.11.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -31,7 +31,8 @@ Version actuelle : v0.8.3 · Stratégie v0.10.2 | Statut : 🟡 En cours (projet
 | #25 | 2026-10-15 | Stratégie S9a : équipe, invitations par courriel (Resend), responsables d'étape, journal | ~330 000 | ~1.98 $ |
 | #26 | 2026-10-15 | Stratégie S9b : commentaires par étape et par élément, mentions, notifications (cloche, page, courriel de mention) | ~300 000 | ~1.80 $ |
 | #27 | 2026-10-16 | Stratégie S9c : présence Realtime, verrouillage doux, copie de secours en cas de conflit | ~280 000 | ~1.68 $ |
-| **TOTAL** | | | **~6 950 000** | **~41.70 $** |
+| #28 | 2026-10-16 | Stratégie S10a : mode enseignant (classes, inscription, distribution, suivi, coach par étape) | ~420 000 | ~2.52 $ |
+| **TOTAL** | | | **~7 370 000** | **~44.22 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -111,5 +112,8 @@ Version actuelle : v0.8.3 · Stratégie v0.10.2 | Statut : 🟡 En cours (projet
 - [x] S9b — migration `20261027120000_strategy_comments.sql` appliquée (2026-10-16), historique réparé, intégration commentaires 11/11
 - [x] S9c — présence et verrouillage doux (Realtime), copie de secours en cas de conflit (Stratégie v0.10.2), unitaires 462/462
 - [x] S9c — migration `20261028120000_strategy_realtime.sql` appliquée (2026-10-16), historique réparé, intégration présence 6/6
+- [x] S10a — mode enseignant : statut admin, classes, lien et invitations, distribution par groupe, suivi, coach coupable par étape (Stratégie v0.11.0), unitaires 482/482
+- [x] S10a — migration `20261029120000_strategy_classes.sql` appliquée (2026-10-16, éditeur SQL, historique réparé), intégration classes 11/11, coach 7/7, équipe 10/10
+- [ ] S10b — cas Ajinomoto, Infosystem et corrigé (fichiers de l'auteur à fournir)
 - [ ] S12 — limiter le débit des exports du plan (aucun limiteur générique sans migration)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

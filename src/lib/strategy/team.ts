@@ -6,9 +6,10 @@
  *               invitation peut donner, validation du courriel et du nom affiché, phrases
  *               du journal d'activité et traduction des erreurs des fonctions SQL d'équipe.
  *               Utilisable côté serveur comme côté navigateur. 1.1 : commentaire (S9b).
+ *               1.2 : distribution par une classe (S10a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-15
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
  *  Dépendances: i18n, lib/strategy/steps.ts
  * =============================================================
  */
@@ -76,6 +77,7 @@ export const ACTIVITY_ACTIONS = [
   "step_reopened",
   "step_needs_review",
   "comment_added",
+  "class_assigned",
 ] as const;
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number];
 
@@ -109,6 +111,7 @@ export function describeActivity(entry: ActivityEntry): string {
     target: entry.target_name ?? tm.journal.someone,
     role: isInviteRole(role) ? s.studies.roles[role].toLowerCase() : "",
     step,
+    class: typeof entry.details.class === "string" ? entry.details.class : "",
   });
 }
 

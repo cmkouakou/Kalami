@@ -10,10 +10,11 @@
  *               Lectures de l'administrateur : réglages, consommation par étude, versions
  *               des consignes (dont « extract », S5b) et erreurs classiques avec leur historique.
  *               Dernières propositions de synthèse (synthesize) à l'étape 5 (S6b). État du
- *               coach du plan stratégique (étape 9, S8a).
+ *               coach du plan stratégique (étape 9, S8a). Coach coupé par l'enseignant
+ *               pour l'étape d'une étude de classe (S10a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-15
+ *  Version    : 1.6
+ *  Date       : 2026-10-16
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, coach/schemas.ts,
  *               coach/client.ts, coach/context.ts
  * =============================================================
@@ -21,6 +22,8 @@
 
 import "server-only";
 
+import { getStudyClass } from "@/lib/strategy/class-queries";
+import { coachDisabledFor } from "@/lib/strategy/classes";
 import { isCoachConfigured } from "@/lib/strategy/coach/client";
 import {
   isFunctionAvailable,
@@ -74,6 +77,8 @@ export type CoachRuleTitle = { code: string; title: string; bookExplanation: str
 /** État du coach transmis au gabarit par la page. */
 export type CoachState = {
   usage: CoachUsage;
+  /** Coach coupé par l'enseignant pour cette étape (étude de classe, S10a). */
+  classDisabled: boolean;
   /** Fonctions dont une consigne est publiée (les autres restent indisponibles). */
   available: Record<CoachFunction, boolean>;
   latest: CoachReview | null;
@@ -285,7 +290,7 @@ export async function getPlanCoachState(studyId: string): Promise<PlanCoachState
  */
 export async function getCoachState(studyId: string, stepNo: StepNo): Promise<CoachState> {
   const supabase = await createClient();
-  const [usage, available, latest, deepen, score, research, synthesize, rules] =
+  const [usage, available, latest, deepen, score, research, synthesize, rules, studyClass] =
     await Promise.all([
       getCoachUsage(studyId),
       availableFunctions(stepNo),
@@ -303,10 +308,12 @@ export async function getCoachState(studyId: string, stepNo: StepNo): Promise<Co
         .select("code, title, book_explanation")
         .eq("active", true)
         .returns<{ code: string; title: string; book_explanation: string }[]>(),
+      getStudyClass(studyId),
     ]);
 
   return {
     usage,
+    classDisabled: coachDisabledFor(studyClass, stepNo),
     available,
     latest,
     deepen,

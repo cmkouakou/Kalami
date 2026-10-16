@@ -5,11 +5,13 @@
  *  Description: Page Équipe d'une étude (S9a, cahier §6) : rôles, membres, invitation et
  *               invitations en attente (propriétaire), responsables des étapes et nom
  *               affiché de l'utilisateur. Ouverte à tous les membres ; les actions de
- *               gestion sont réservées au propriétaire.
+ *               gestion sont réservées au propriétaire. Étude de classe (S10a) : badge
+ *               « Enseignant », sans retrait ni changement de rôle.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-15
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
+ *               lib/strategy/class-queries.ts,
  *               components/strategy/team
  * =============================================================
  */
@@ -27,6 +29,7 @@ import { StepAssignments } from "@/components/strategy/team/step-assignments";
 import { CARD } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
+import { getStudyClass } from "@/lib/strategy/class-queries";
 import { getStudy } from "@/lib/strategy/queries";
 import { STEPS, type StepNo } from "@/lib/strategy/steps";
 import {
@@ -56,10 +59,11 @@ async function StudyTeam({ params }: { params: Promise<{ id: string }> }) {
   if (!study) notFound();
 
   const isOwner = study.role === "owner";
-  const [members, invitations, displayName] = await Promise.all([
+  const [members, invitations, displayName, studyClass] = await Promise.all([
     getStudyMembers(study.id),
     isOwner ? getPendingInvitations(study.id) : Promise.resolve([]),
     getMyDisplayName(user.id),
+    getStudyClass(study.id),
   ]);
   const assignees = {} as Record<StepNo, string | null>;
   for (const step of STEPS) assignees[step.no] = study.steps[step.no]?.assignee_id ?? null;
@@ -90,7 +94,13 @@ async function StudyTeam({ params }: { params: Promise<{ id: string }> }) {
       {/* ==================== MEMBRES ==================== */}
       <section aria-labelledby="membres" className={`${CARD} flex flex-col gap-3 p-4`}>
         <h2 id="membres" className="font-serif text-h3 font-semibold">{tm.members.title}</h2>
-        <MemberList studyId={study.id} members={members} userId={user.id} role={study.role} />
+        <MemberList
+          studyId={study.id}
+          members={members}
+          userId={user.id}
+          role={study.role}
+          teacherId={studyClass?.teacher_id ?? null}
+        />
       </section>
 
       {/* ==================== INVITATIONS ==================== */}

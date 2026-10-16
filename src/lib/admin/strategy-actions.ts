@@ -9,12 +9,12 @@
  *               prix et nombre de recherches par demande), supplément de
  *               plafond d'une étude, versions des consignes du coach (brouillon, publication,
  *               abandon, restauration ; « extract » sans étape, « plan » à l'étape 9 ou
- *               sans étape, S8a) et erreurs classiques. Les
+ *               sans étape, S8a), erreurs classiques et statut enseignant (S10a). Les
  *               fonctions SQL vérifient le rôle administrateur (aal2) et écrivent le journal
  *               d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
- *  Date       : 2026-10-15
+ *  Version    : 1.7
+ *  Date       : 2026-10-16
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -91,6 +91,29 @@ export async function grantStudyCredits(
   }
   refresh();
   return { message: interpolate(a.granted, { quantity: String(quantity), email }) };
+}
+
+/** Active ou retire le statut enseignant du compte désigné par son courriel (S10a). */
+export async function setStrategyTeacher(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const email = String(formData.get("email") ?? "").trim();
+  const enabled = formData.get("action") !== "disable";
+  if (!EMAIL_PATTERN.test(email)) return { error: a.userNotFound };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_strategy_set_teacher", {
+    p_email: email,
+    p_enabled: enabled,
+  });
+  if (error) {
+    if (error.message === "user_not_found") return { error: a.userNotFound };
+    return { error: t.strategy.errors.generic };
+  }
+  refresh();
+  return { message: interpolate(enabled ? a.teachers.enabled : a.teachers.disabled, { email }) };
 }
 
 /**

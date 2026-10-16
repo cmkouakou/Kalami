@@ -5,10 +5,11 @@
  *  Description: Membres de l'étude sur la page Équipe (S9a) : nom, courriel, rôle et date
  *               d'arrivée. Le propriétaire change le rôle des autres membres et les retire ;
  *               un contributeur ou un observateur peut quitter l'étude. Chaque retrait est
- *               confirmé par un second clic.
+ *               confirmé par un second clic. Étude de classe (S10a) : l'enseignant porte le
+ *               badge « Enseignant » et ne peut être ni retiré ni changé de rôle.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-15
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/team-actions.ts, lib/strategy/team.ts
  * =============================================================
  */
@@ -37,10 +38,12 @@ type MemberListProps = {
   /** Utilisateur connecté et son rôle. */
   userId: string;
   role: StudyRole;
+  /** Enseignant de la classe de l'étude (null hors classe). */
+  teacherId?: string | null;
 };
 
 /** Liste des membres avec les actions permises à l'utilisateur connecté. */
-export function MemberList({ studyId, members, userId, role }: MemberListProps) {
+export function MemberList({ studyId, members, userId, role, teacherId }: MemberListProps) {
   const [pending, startTransition] = useTransition();
   const [confirming, setConfirming] = useState<string | null>(null);
   const [state, setState] = useState<FormState>(undefined);
@@ -63,7 +66,8 @@ export function MemberList({ studyId, members, userId, role }: MemberListProps) 
         {members.map((member) => {
           const self = member.user_id === userId;
           const name = memberLabel(member);
-          const canRemove = member.role !== "owner" && (isOwner || self);
+          const teacher = member.user_id === teacherId;
+          const canRemove = !teacher && member.role !== "owner" && (isOwner || self);
           return (
             <li key={member.user_id} className="flex flex-col gap-3 py-3">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -79,7 +83,14 @@ export function MemberList({ studyId, members, userId, role }: MemberListProps) 
                     })}
                   </span>
                 </span>
-                {isOwner && member.role !== "owner" ? (
+                {teacher ? (
+                  <span className="flex flex-col gap-1 sm:items-end">
+                    <span className={`${BADGE} w-fit`}>{s.classes.study.teacher}</span>
+                    <span className="text-caption text-ink-muted sm:text-right">
+                      {s.classes.study.teacherHelp}
+                    </span>
+                  </span>
+                ) : isOwner && member.role !== "owner" ? (
                   <select
                     aria-label={interpolate(tm.members.roleLabel, { name })}
                     value={member.role}

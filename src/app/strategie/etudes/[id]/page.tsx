@@ -7,10 +7,12 @@
  *               étapes verrouillées indiquent ce qui manque pour les ouvrir. Liens Équipe et
  *               Journal, responsable de chaque étape et accès au plan stratégique (S9a).
  *               Présence (S9c) : membres connectés et avatars sur les cartes d'étape.
+ *               Étude de classe (S10a) : nom de la classe et date de remise indicative.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-16
- *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts, components/strategy
+ *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
+ *               lib/strategy/class-queries.ts, components/strategy
  * =============================================================
  */
 
@@ -26,6 +28,8 @@ import { IconCheck, IconPencil } from "@/components/ui/icons";
 import { BADGE, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
+import { getStudyClass } from "@/lib/strategy/class-queries";
+import { isLate, todayIso } from "@/lib/strategy/classes";
 import { missingProfileFields } from "@/lib/strategy/profile";
 import { getStudy, statusesOf } from "@/lib/strategy/queries";
 import {
@@ -42,6 +46,8 @@ const t = getDictionary();
 const s = t.strategy;
 
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
+/** Dates AAAA-MM-JJ (sans heure) : lues en UTC pour ne pas reculer d'un jour. */
+const DUE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeZone: "UTC" });
 
 export const metadata: Metadata = { title: s.map.kicker };
 
@@ -65,7 +71,10 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
   const missingFields = missingProfileFields(study.strategic_question, study.profile);
   const fieldLabels = s.profile.fields as Record<string, string>;
   const question = study.strategic_question.trim();
-  const members = await getStudyMembers(study.id);
+  const [members, studyClass] = await Promise.all([
+    getStudyMembers(study.id),
+    getStudyClass(study.id),
+  ]);
   const names = new Map(members.map((member) => [member.user_id, memberLabel(member)]));
   const selfName = names.get(user.id) ?? "";
   const planOpen = missingPrerequisites(PLAN_STEP, statuses, study.profileComplete).length === 0;
@@ -84,7 +93,22 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="font-serif text-h1 font-semibold">{study.company_name}</h1>
             <span className={BADGE}>{s.studies.roles[study.role]}</span>
+            {studyClass && (
+              <span className={BADGE}>
+                {interpolate(s.classes.study.badge, { name: studyClass.name })}
+              </span>
+            )}
           </div>
+          {studyClass?.due_date && (
+            <p className="text-small text-ink-muted">
+              {interpolate(s.classes.study.due, {
+                date: DUE_FORMAT.format(new Date(studyClass.due_date)),
+              })}
+              {isLate(STEPS.map((step) => statuses[step.no]), studyClass.due_date, todayIso()) && (
+                <span className="text-warning"> · {s.classes.study.late}</span>
+              )}
+            </p>
+          )}
           <p className="text-ink-muted">
             {question ? interpolate(s.map.questionLabel, { question }) : s.map.noQuestion}
           </p>
