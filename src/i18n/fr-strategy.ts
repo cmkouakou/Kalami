@@ -7,10 +7,10 @@
  *               et parties prenantes, coach IA, administration des crédits, des guides
  *               et du coach : réglages, consignes et erreurs classiques), recherche Web
  *               sourcée du coach, documents joints au profil (S5b), gabarit de synthèse
- *               SWOT, TOWS et enjeux (S6a), gabarits Cap et Choix (S7a). Rattachés à fr.ts
- *               sous « strategy ».
+ *               SWOT, TOWS et enjeux (S6a), gabarits Cap et Choix (S7a), gabarit Action
+ *               (S7b). Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.8
+ *  Version    : 1.9
  *  Date       : 2026-10-15
  * =============================================================
  */
@@ -882,6 +882,96 @@ const strategyFr = {
       retained: "Au moins une option retenue",
       statement: "Énoncé de la stratégie rédigé",
       renunciations: "Au moins un renoncement",
+    },
+  },
+
+  // ==================== GABARIT : ACTION ====================
+  action: {
+    roadmapTitle: "1. Feuille de route",
+    roadmapIntro:
+      "Traduisez les options retenues en chantiers : qui en répond, quand ils commencent et " +
+      "finissent. Découpez au besoin un chantier en phases.",
+    workstreamLabel: "Chantier {no}",
+    owner: "Responsable",
+    start: "Début",
+    end: "Fin",
+    phasesLegend: "Phases (facultatives)",
+    phaseLabel: "Phase {no}",
+    addPhase: "Ajouter une phase",
+    maxPhases: "{max} phases au plus.",
+    untitledPhase: "Phase sans nom",
+    optionLinks: "Met en œuvre les options",
+    optionsGroup: "Options retenues à l'étape 7",
+    noOptions: "Aucune option retenue à l'étape 7.",
+    objectiveLinks: "Contribue aux objectifs",
+    objectivesGroup: "Objectifs de l'étape 6",
+    noObjectives: "Aucun objectif rédigé à l'étape 6.",
+    warnings: {
+      badDates: "La fin précède le début.",
+      phaseOutside: "Une phase déborde du chantier ou a ses dates inversées.",
+      noOption: "Aucune option liée : quelle option retenue ce chantier met-il en œuvre ?",
+    },
+    addWorkstream: "Ajouter un chantier",
+    emptyWorkstreams: "Aucun chantier pour l'instant.",
+    maxWorkstreams: "{max} chantiers au plus.",
+    untitledWorkstream: "Chantier sans nom",
+    ganttTitle: "Vue Gantt",
+    ganttIntro: "Calculée à partir des dates des chantiers et de leurs phases.",
+    ganttEmpty: "Datez au moins un chantier (début et fin) pour afficher la vue Gantt.",
+    ganttTruncated: "Seuls les {max} premiers mois sont affichés.",
+    ganttPeriod: "{name} : de {start} à {end}",
+    scorecardTitle: "2. Tableau de bord équilibré",
+    scorecardIntro:
+      "Pour chaque perspective, choisissez les indicateurs qui diront si la stratégie avance. " +
+      "Mêlez indicateurs de résultat (ils constatent) et indicateurs avancés (ils annoncent).",
+    perspectives: {
+      financial: "Finances",
+      customer: "Clients",
+      internal: "Processus internes",
+      learning: "Apprentissage et croissance",
+    },
+    perspectiveHints: {
+      financial: "Comment la stratégie se traduit-elle en résultats financiers ou budgétaires ?",
+      customer: "Que doivent constater les clients ou les bénéficiaires ?",
+      internal: "Dans quels processus devons-nous exceller ?",
+      learning: "Quelles compétences, quels outils et quelle culture faut-il développer ?",
+    },
+    perspectiveCovered: "Perspective couverte",
+    indicatorName: "Indicateur",
+    definition: "Définition (mode de calcul)",
+    target: "Cible",
+    frequency: "Fréquence",
+    frequencyNone: "À choisir",
+    frequencies: {
+      monthly: "Mensuelle",
+      quarterly: "Trimestrielle",
+      semiannual: "Semestrielle",
+      annual: "Annuelle",
+    },
+    kind: "Type",
+    kindNone: "À choisir",
+    kinds: { lagging: "Résultat", leading: "Avancé" },
+    indicatorObjectives: "Suit les objectifs",
+    addIndicator: "Ajouter un indicateur",
+    emptyIndicators: "Aucun indicateur dans cette perspective.",
+    maxIndicators: "{max} indicateurs au plus, toutes perspectives confondues.",
+    untitledIndicator: "Indicateur sans nom",
+    risksTitle: "3. Risques (facultatif)",
+    risksIntro:
+      "Qu'est-ce qui pourrait faire dérailler la mise en œuvre ? Pour chaque risque, le signal " +
+      "qui doit alerter et la réponse prévue.",
+    riskLabel: "Risque {no}",
+    signal: "Signal d'alerte",
+    response: "Réponse prévue",
+    riskWorkstream: "Chantier exposé",
+    riskWorkstreamNone: "Aucun en particulier",
+    addRisk: "Ajouter un risque",
+    emptyRisks: "Aucun risque pour l'instant.",
+    maxRisks: "{max} risques au plus.",
+    untitledRisk: "Risque sans texte",
+    checklist: {
+      workstream: "Au moins un chantier avec un responsable, un début et une fin",
+      scorecard: "Au moins un indicateur nommé dans chacune des quatre perspectives",
     },
   },
 

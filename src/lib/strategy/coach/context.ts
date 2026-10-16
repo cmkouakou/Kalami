@@ -12,9 +12,9 @@
  *               Liste des fonctions dotées d'une consigne, dont « extract » (S5b).
  *               À l'étape 5, contenu des étapes 1 à 4 (bloc etapes) et fonction
  *               « synthesize » qui propose de quoi compléter la synthèse (S6b). Aux étapes
- *               6 et 7, même bloc avec les étapes en amont (S7a).
+ *               6 à 8, même bloc avec les étapes en amont (S7a, S7b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
+ *  Version    : 1.6
  *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts
  * =============================================================
@@ -62,7 +62,7 @@ export function isFunctionAvailable(fn: CoachFunction, stepNo: number): boolean 
   return true;
 }
 
-/** Contenu enregistré d'une étape antérieure (étapes 5 à 7). */
+/** Contenu enregistré d'une étape antérieure (étapes 5 à 8). */
 export type SourceStepContent = { stepNo: number; title: string; payload: unknown };
 
 /** Point de la liste de contrôle de l'étape, avec son libellé. */
@@ -81,7 +81,7 @@ export type ReviewContextInput = {
   checklist?: readonly ChecklistLine[];
   /** Cibles admises pour un fait (transmises pour la recherche). */
   targets?: readonly string[];
-  /** Étapes en amont : 1 à 4 pour l'étape 5, puis 5 (et 6) pour les étapes 6 et 7. */
+  /** Étapes en amont : 1 à 4 pour l'étape 5, puis 5 à 7 pour les étapes 6 à 8. */
   sources?: readonly SourceStepContent[];
 };
 

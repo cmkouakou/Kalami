@@ -14,9 +14,9 @@
  *               À l'étape 5, le contenu des étapes 1 à 4 est joint au message, et le
  *               préremplissage (synthesize) est nettoyé selon les éléments connus (S6b).
  *               Aux étapes 6 et 7, les étapes en amont déjà rédigées (synthèse, cap) sont
- *               jointes pour juger la cohérence (S7a).
+ *               jointes pour juger la cohérence (S7a) ; à l'étape 8, synthèse, cap et choix (S7b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
+ *  Version    : 1.6
  *  Date       : 2026-10-15
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
@@ -65,6 +65,7 @@ import { getSourcePayloads } from "@/lib/strategy/queries";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
 import { knownIds, type ProposalSources } from "@/lib/strategy/synthesis-proposals";
 import { checklistFor, hasTemplate, type TemplateStep } from "@/lib/strategy/templates";
+import { readChoice } from "@/lib/strategy/templates/choice";
 import { readDirection } from "@/lib/strategy/templates/direction";
 import { readForces } from "@/lib/strategy/templates/forces";
 import { readInternal } from "@/lib/strategy/templates/internal";
@@ -188,6 +189,7 @@ const CHECKLIST_LABELS: Record<TemplateStep, Record<string, string>> = {
   5: s.synthesis.checklist,
   6: s.direction.checklist,
   7: s.choice.checklist,
+  8: s.action.checklist,
 };
 
 /** Liste de contrôle lisible du contenu enregistré d'une étape. */
@@ -301,12 +303,14 @@ async function loadSynthesisContext(
 const UPSTREAM_STEPS: Partial<Record<StepNo, readonly StepNo[]>> = {
   6: [5],
   7: [5, 6],
+  8: [5, 6, 7],
 };
 
 /** Lecteurs tolérants des étapes en amont (contenu propre, sans champ inconnu). */
 const UPSTREAM_READERS: Partial<Record<StepNo, (raw: unknown) => unknown>> = {
   5: readSynthesis,
   6: readDirection,
+  7: readChoice,
 };
 
 /**

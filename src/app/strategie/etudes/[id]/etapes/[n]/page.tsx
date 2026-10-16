@@ -4,12 +4,13 @@
  *  Projet     : Kalami Stratégie
  *  Description: Page d'une étape : statut, guide de l'auteur (explication, chapitre,
  *               exemple), ce qui manque si elle est verrouillée, raisons « à revoir », puis
- *               le gabarit interactif (étapes 1 à 7 : PESTEL, cinq forces, analyse interne,
+ *               le gabarit interactif (étapes 1 à 8 : PESTEL, cinq forces, analyse interne,
  *               parties prenantes, synthèse SWOT-TOWS nourrie des étapes 1 à 3, cap et
- *               choix liés aux enjeux de l'étape 5) avec le panneau du coach IA ou, pour les autres étapes, les actions (commencer,
- *               valider, modifier) en attendant leur gabarit.
+ *               choix liés aux enjeux de l'étape 5, action liée aux options retenues et aux
+ *               objectifs) avec le panneau du coach IA ou, pour le plan, les actions
+ *               (commencer, valider, modifier) en attendant son gabarit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
+ *  Version    : 1.6
  *  Date       : 2026-10-15
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts
  * =============================================================
@@ -20,6 +21,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { ActionEditor } from "@/components/strategy/action/action-editor";
 import { ChoiceEditor } from "@/components/strategy/choice/choice-editor";
 import { DirectionEditor } from "@/components/strategy/direction/direction-editor";
 import { ForcesEditor } from "@/components/strategy/forces/forces-editor";
@@ -55,6 +57,7 @@ import {
   PROFILE_PREREQUISITE,
   type StepNo,
 } from "@/lib/strategy/steps";
+import { readAction } from "@/lib/strategy/templates/action";
 import { readChoice } from "@/lib/strategy/templates/choice";
 import { readDirection } from "@/lib/strategy/templates/direction";
 import { readForces } from "@/lib/strategy/templates/forces";
@@ -253,7 +256,32 @@ async function Template({
   }
   if (no === 5) return <Synthesis study={study} frame={frame} content={content} />;
   if (no === 6 || no === 7) return <Strategy study={study} frame={frame} content={content} />;
+  if (no === 8) return <Action frame={frame} content={content} />;
   return null;
+}
+
+/**
+ * Gabarit d'action (étape 8) : charge aussi les objectifs de l'étape 6 et les options
+ * retenues à l'étape 7, auxquels les chantiers et les indicateurs se rattachent.
+ */
+async function Action({ frame, content }: { frame: TemplateFrameProps; content: StepContent }) {
+  const sources = await getSourcePayloads(frame.studyId, [6, 7]);
+  const objectives: LinkOption[] = readDirection(sources[6]).objectives
+    .filter((objective) => objective.text.trim())
+    .map((objective) => ({ id: objective.id, text: objective.text }));
+  const options: LinkOption[] = readChoice(sources[7]).options
+    .filter((option) => option.decision === "retained" && option.text.trim())
+    .map((option) => ({ id: option.id, text: option.text }));
+  return (
+    <ActionEditor
+      key={content.revision}
+      {...frame}
+      initial={readAction(content.payload)}
+      revision={content.revision}
+      options={options}
+      objectives={objectives}
+    />
+  );
 }
 
 /**

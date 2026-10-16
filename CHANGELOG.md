@@ -1,5 +1,27 @@
 # Journal des modifications
 
+## [Stratégie v0.8.1] - 2026-10-15 — Action (S7b)
+### Ajouté
+- Migration `20261024120000_strategy_action.sql` : liste de contrôle de l'étape 8 dans
+  `strategy_checklist_ok` (mois AAAA-MM vérifiés, fin ≥ début). Étapes 1 à 7 inchangées.
+- Gabarit de l'étape 8, « Action » (`templates/action.ts`, `components/strategy/action/`) :
+  - chantiers (nom, responsable, début et fin au mois), avec phases facultatives et liens
+    indicatifs aux options retenues (étape 7) et aux objectifs (étape 6). Alertes sans
+    blocage : dates inversées, phase hors du chantier, aucune option liée ;
+  - vue Gantt en grille CSS au mois, avec les phases en sous-barres, une coupure à 60 mois
+    signalée et une liste équivalente pour les lecteurs d'écran ;
+  - tableau de bord équilibré en 4 perspectives (financière, clients, processus internes,
+    apprentissage). Chaque indicateur a une définition, une cible, une fréquence, un
+    responsable, un type (résultat ou avancé) et les objectifs qu'il suit ;
+  - risques facultatifs (signal d'alerte, réponse prévue, chantier exposé), source de la
+    section « Nos risques » du plan au S8.
+  - Minimums : 1 chantier complet et 1 indicateur nommé par perspective.
+- Tests : unitaires `strategy-action.test.ts` et intégration `strategy-action-rls.test.ts`
+  (ignorée tant que la migration n'est pas appliquée).
+### Modifié
+- Coach : libellés de la liste de contrôle de l'étape 8 ; contexte amont relu (étapes 5 à 7).
+- `strategy-templates.test.ts` : l'étape 8 a désormais un gabarit.
+
 ## [Stratégie v0.8.0] - 2026-10-15 — Cap et Choix (S7a)
 ### Ajouté
 - Migration `20261023120000_strategy_direction_choice.sql` : listes de contrôle des étapes 6

@@ -6,15 +6,17 @@
  *               contenu envoyé par le navigateur avant enregistrement, liste de contrôle
  *               d'un contenu enregistré (transmise au coach pour l'évaluation).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.5
  *  Date       : 2026-10-15
  *  Dépendances: templates/pestel.ts, forces.ts, internal.ts, stakeholders.ts,
- *               synthesis.ts (étape 5, S6a), direction.ts et choice.ts (étapes 6-7, S7a)
+ *               synthesis.ts (étape 5, S6a), direction.ts et choice.ts (étapes 6-7, S7a),
+ *               action.ts (étape 8, S7b)
  * =============================================================
  */
 
 import type { z } from "zod";
 
+import { actionChecklist, actionSchema, readAction } from "@/lib/strategy/templates/action";
 import { choiceChecklist, choiceSchema, readChoice } from "@/lib/strategy/templates/choice";
 import type { ChecklistItem } from "@/lib/strategy/templates/common";
 import {
@@ -42,7 +44,7 @@ import {
 import type { StepNo } from "@/lib/strategy/steps";
 
 /** Étapes dotées d'un gabarit interactif (les autres arrivent aux sprints suivants). */
-export const TEMPLATE_STEPS = [1, 2, 3, 4, 5, 6, 7] as const satisfies readonly StepNo[];
+export const TEMPLATE_STEPS = [1, 2, 3, 4, 5, 6, 7, 8] as const satisfies readonly StepNo[];
 
 export type TemplateStep = (typeof TEMPLATE_STEPS)[number];
 
@@ -55,6 +57,7 @@ const SCHEMAS: Record<TemplateStep, z.ZodType<Record<string, unknown>>> = {
   5: synthesisSchema,
   6: directionSchema,
   7: choiceSchema,
+  8: actionSchema,
 };
 
 /** Vrai si l'étape a un gabarit interactif. */
@@ -95,5 +98,7 @@ export function checklistFor(no: TemplateStep, raw: unknown): ChecklistItem[] {
       return directionChecklist(readDirection(raw));
     case 7:
       return choiceChecklist(readChoice(raw));
+    case 8:
+      return actionChecklist(readAction(raw));
   }
 }

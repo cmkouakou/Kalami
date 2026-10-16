@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.8.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S7a livrés)
+Version actuelle : v0.8.3 · Stratégie v0.8.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S7b livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -25,7 +25,8 @@ Version actuelle : v0.8.3 · Stratégie v0.8.0 | Statut : 🟡 En cours (projet 
 | #19 | 2026-10-14 | Stratégie S6a : synthèse SWOT, reprise des étapes 1 à 3, TOWS, enjeux | ~300 000 | ~1.80 $ |
 | #20 | 2026-10-14 | Stratégie S6b : propositions du coach pour la synthèse, décisions groupées | ~250 000 | ~1.50 $ |
 | #21 | 2026-10-15 | Stratégie S7a : gabarits Cap (test du nom, SMART) et Choix (Porter, Ansoff, évaluation) | ~300 000 | ~1.80 $ |
-| **TOTAL** | | | **~5 190 000** | **~31.14 $** |
+| #22 | 2026-10-15 | Stratégie S7b : gabarit Action (chantiers, Gantt au mois, tableau de bord équilibré, risques) | ~280 000 | ~1.68 $ |
+| **TOTAL** | | | **~5 470 000** | **~32.82 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -93,5 +94,6 @@ Version actuelle : v0.8.3 · Stratégie v0.8.0 | Statut : 🟡 En cours (projet 
 - [ ] S6b — consigne synthesize v1 à relire et publier
 - [x] S7a — Cap (vision et test du nom, mission, valeurs, objectifs SMART) et Choix (Porter, Ansoff, évaluation, énoncé, renoncements) (Stratégie v0.8.0)
 - [x] S7a — migration `20261023120000_strategy_direction_choice.sql` appliquée le 2026-10-15 (éditeur SQL ; `repair --status applied 20261023120000` avant un push CLI), intégration cap et choix 15/15
-- [ ] S7b — Action : Gantt au mois, tableau de bord équilibré (Stratégie v0.8.1)
+- [x] S7b — Action : chantiers et phases en Gantt au mois, tableau de bord équilibré (4 perspectives), risques (Stratégie v0.8.1)
+- [x] S7b — migration `20261024120000_strategy_action.sql` appliquée le 2026-10-15 (éditeur SQL ; `repair --status applied 20261024120000` avant un push CLI), intégration action 10/10
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse
