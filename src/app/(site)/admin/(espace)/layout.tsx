@@ -31,6 +31,7 @@ const LINKS = [
   { href: "/admin/categories", label: t.admin.nav.categories },
   { href: "/admin/soumissions", label: t.admin.nav.submissions },
   { href: "/admin/contrat", label: t.admin.nav.contract },
+  { href: "/admin/textes-legaux", label: t.admin.nav.legal },
   { href: "/admin/strategie", label: t.admin.nav.strategy },
   { href: "/", label: t.admin.nav.site },
 ];

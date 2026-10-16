@@ -89,6 +89,12 @@ kalami/
   seau privé `pdf-exports` puis supprimé (tâche `/api/cron/pdf`, `CRON_SECRET` requis dans
   Vercel). 3 téléchargements par droit. En local, définir `CHROME_EXECUTABLE_PATH`
   (Chrome installé) dans `.env.local`.
+- Textes légaux : publiés et versionnés depuis `/admin/textes-legaux` (table
+  `legal_documents`) ; les textes livrés sont provisoires, à faire relire avant la mise
+  en production. Bandeau des témoins : choix consigné dans `consent_records`.
+- Suppression de compte : exécutée 30 jours après la demande par `/api/cron/comptes`
+  (même `CRON_SECRET`). Elle emporte les études dont l'utilisateur est propriétaire,
+  même partagées (avertissement affiché avant la confirmation).
 
 ## 📅 Historique des versions
 Voir [CHANGELOG.md](CHANGELOG.md).

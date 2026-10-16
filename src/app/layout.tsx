@@ -15,6 +15,7 @@
 import type { Metadata } from "next";
 import { Literata, Source_Sans_3 } from "next/font/google";
 
+import { ConsentBanner } from "@/components/legal/consent-banner";
 import { getDictionary } from "@/i18n";
 import { APP_NAME, APP_URL } from "@/lib/config";
 
@@ -53,7 +54,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="fr"
       className={`${policeInterface.variable} ${policeLecture.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col font-sans">{children}</body>
+      <body className="flex min-h-full flex-col font-sans">
+        {children}
+        <ConsentBanner />
+      </body>
     </html>
   );
 }

@@ -18,6 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { LegalLinks } from "@/components/legal/legal-links";
 import { IconBell } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -117,6 +118,9 @@ async function StrategyUserMenu() {
             {interpolate(s.nav.signedInAs, { name: user.email })}
           </span>
         )}
+        <Link href={`${STRATEGY_HOME}/compte`} className={BUTTON_TERTIARY}>
+          {t.account.title}
+        </Link>
         <button type="submit" className={BUTTON_TERTIARY}>
           {s.nav.signOut}
         </button>
@@ -138,9 +142,12 @@ export function StrategyFooter() {
         <p>
           © {APP_NAME}. {s.footer.tagline}
         </p>
-        <Suspense>
-          <GuideBookLink />
-        </Suspense>
+        <nav aria-label={t.footer.legal} className="flex flex-wrap gap-x-4 gap-y-1">
+          <LegalLinks space="strategy" linkClassName="hover:text-encre hover:underline" />
+          <Suspense>
+            <GuideBookLink />
+          </Suspense>
+        </nav>
       </div>
     </footer>
   );

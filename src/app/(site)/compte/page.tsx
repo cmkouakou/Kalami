@@ -3,11 +3,13 @@
  *  Fichier    : page.tsx
  *  Projet     : Kalami
  *  Description: Espace « Mon compte » (/compte) : profil, accès à l'espace auteur (ou
- *               invitation à le devenir), administration et déconnexion.
+ *               invitation à le devenir), administration, données personnelles (export,
+ *               suppression du compte) et déconnexion.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-09
- *  Dépendances: lib/auth/dal.ts, components/account/profile-form.tsx
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
+ *  Dépendances: lib/auth/dal.ts, components/account/profile-form.tsx,
+ *               components/account/privacy-sections.tsx
  * =============================================================
  */
 
@@ -15,6 +17,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import {
+  AccountDeletionSection,
+  AccountPrivacySection,
+} from "@/components/account/privacy-sections";
 import { ProfileForm } from "@/components/account/profile-form";
 import { SubmitButton } from "@/components/ui/form";
 import { getDictionary } from "@/i18n";
@@ -66,6 +72,10 @@ async function AccountContent() {
           {t.account.adminLink}
         </Link>
       )}
+
+      {/* ==================== DONNÉES PERSONNELLES ==================== */}
+      <AccountPrivacySection space="site" />
+      <AccountDeletionSection userId={user.id} />
 
       <form action={signOut} className="max-w-xs">
         <SubmitButton variant="secondary">{t.auth.signOut}</SubmitButton>

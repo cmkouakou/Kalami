@@ -6,8 +6,8 @@
  *               connexion propres à Kalami Stratégie et filet de sécurité pour un code de
  *               connexion arrivé sur l'accueil.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-15
+ *  Version    : 1.5
+ *  Date       : 2026-10-16
  * =============================================================
  */
 
@@ -18,6 +18,7 @@ export const PROTECTED_PREFIXES = [
   "/strategie/etudes",
   "/strategie/nouvelle",
   "/strategie/invitation",
+  "/strategie/compte",
 ] as const;
 
 /** Vrai si le chemin exige une connexion. */

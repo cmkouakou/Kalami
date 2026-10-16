@@ -105,6 +105,7 @@ const fr = {
     rights: "Tous droits réservés.",
     tagline: "Lecture en ligne d'ouvrages d'auteurs africains et francophones.",
     explore: "Explorer",
+    legal: "Informations légales",
   },
   content: {
     openingTitle: "Début de l'ouvrage",
@@ -354,6 +355,41 @@ const fr = {
     becomeAuthorHelp:
       "Publiez vos livres sur Kalami : l'inscription est libre, chaque livre est relu " +
       "avant publication.",
+    privacy: {
+      title: "Mes données",
+      intro:
+        "Téléchargez une copie de vos renseignements personnels (format JSON) : profil, " +
+        "accès aux livres, lecture, annotations, études et consentements.",
+      export: "Télécharger mes données",
+      policyLink: "Politique de confidentialité",
+    },
+    deletion: {
+      title: "Supprimer mon compte",
+      intro:
+        "La suppression est définitive. Elle est exécutée 30 jours après votre demande ; " +
+        "vous pouvez l'annuler d'ici là.",
+      impactTitle: "Ce qui sera supprimé avec votre compte",
+      impactBase:
+        "Votre profil, vos accès aux livres, vos positions de lecture, signets, surlignages " +
+        "et notes.",
+      impactStudies: "{count} étude(s) Kalami Stratégie dont vous êtes propriétaire.",
+      impactShared:
+        "Dont {count} partagée(s) avec d'autres membres : elles disparaîtront aussi pour " +
+        "eux. Exportez les plans utiles avant la suppression.",
+      impactClasses: "{count} classe(s) que vous animez.",
+      impactAuthor:
+        "Votre fiche d'auteur et vos livres publiés restent en ligne, détachés de votre " +
+        "compte ; écrivez-nous pour les retirer.",
+      confirmLabel: "Pour confirmer, saisissez SUPPRIMER",
+      confirmWord: "SUPPRIMER",
+      confirmMismatch: "Saisissez SUPPRIMER en majuscules pour confirmer.",
+      request: "Demander la suppression",
+      requested: "Demande enregistrée.",
+      pending: "Votre compte sera supprimé le {date}.",
+      pendingHelp: "Vous changez d'avis ? Annulez la demande, votre compte reste intact.",
+      cancel: "Annuler la suppression",
+      cancelled: "Suppression annulée.",
+    },
   },
   author: {
     title: "Espace auteur",
@@ -468,6 +504,7 @@ const fr = {
       categories: "Catégories",
       submissions: "Soumissions",
       contract: "Contrat auteur",
+      legal: "Textes légaux",
       strategy: "Stratégie",
       site: "Voir le site",
     },
@@ -656,6 +693,23 @@ const fr = {
       published: "Nouvelle version publiée.",
       acceptances: "{count} acceptations",
     },
+    legal: {
+      title: "Textes légaux",
+      intro:
+        "Chaque publication crée une version numérotée, affichée aussitôt sur le site et " +
+        "dans Kalami Stratégie. Une version publiée n'est jamais modifiée.",
+      current: "Version en vigueur",
+      none: "Aucune version publiée.",
+      newVersion: "Publier une nouvelle version",
+      docTitle: "Titre",
+      body: "Texte (paragraphes séparés par une ligne vide)",
+      publish: "Publier cette version",
+      published: "Nouvelle version publiée.",
+      view: "Voir la page publique",
+      consents: "Registre des consentements",
+      consentsCount: "{accepted} acceptation(s) et {refused} refus enregistrés.",
+      deletions: "Suppressions de compte en attente : {count}.",
+    },
     mfa: {
       title: "Vérification en deux étapes",
       enrollIntro:
@@ -666,6 +720,30 @@ const fr = {
       code: "Code à 6 chiffres",
       verify: "Vérifier",
       invalidCode: "Code incorrect. Réessayez.",
+    },
+  },
+  legal: {
+    kinds: {
+      privacy: "Politique de confidentialité",
+      terms: "Conditions d'utilisation",
+      sales: "Conditions de vente",
+    },
+    version: "Version {version} — en vigueur depuis le {date}",
+    missing: "Ce texte sera publié prochainement.",
+    signupNotice: "En créant un compte, vous acceptez les {terms} et la {privacy}.",
+    signupTerms: "conditions d'utilisation",
+    signupPrivacy: "politique de confidentialité",
+    consent: {
+      title: "Témoins (cookies)",
+      text:
+        "Kalami n'utilise que les témoins nécessaires au fonctionnement du site (connexion, " +
+        "devise, ce choix). Aucun témoin de statistiques ni de publicité n'est déposé sans " +
+        "votre accord.",
+      more: "En savoir plus",
+      accept: "Accepter",
+      refuse: "Refuser",
+      manage: "Gérer les témoins",
+      error: "Votre choix n'a pas pu être enregistré. Réessayez.",
     },
   },
   strategy: strategyFr,

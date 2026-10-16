@@ -16,6 +16,7 @@ import { Suspense } from "react";
 
 import { CurrencySelector } from "@/components/catalog/currency-selector";
 import { Logo } from "@/components/layout/logo";
+import { LegalLinks } from "@/components/legal/legal-links";
 import { SignInLink, UserMenu } from "@/components/layout/user-menu";
 import { IconSearch } from "@/components/ui/icons";
 import { CONTROL, PAGE } from "@/components/ui/styles";
@@ -87,7 +88,7 @@ function SiteHeader() {
 function SiteFooter() {
   return (
     <footer data-theme="dark" className="mt-16 bg-paper text-ink">
-      <div className={`${PAGE} grid gap-8 py-12 sm:grid-cols-2`}>
+      <div className={`${PAGE} grid gap-8 py-12 sm:grid-cols-3`}>
         <div className="flex flex-col gap-3">
           <Logo height={32} />
           <p className="max-w-sm text-small text-ink-muted">{t.footer.tagline}</p>
@@ -100,6 +101,10 @@ function SiteFooter() {
           <Link href="/compte" className="text-small hover:text-encre">
             {t.account.title}
           </Link>
+        </div>
+        <div className="flex flex-col gap-2">
+          <p className="text-caption text-ink-muted uppercase">{t.footer.legal}</p>
+          <LegalLinks space="site" linkClassName="text-small hover:text-encre" />
         </div>
       </div>
       <p className={`${PAGE} border-t border-line py-6 text-small text-ink-muted`}>

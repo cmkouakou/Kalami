@@ -14,7 +14,7 @@ démarre après la v1.0.0 de la plateforme de lecture.
 | 7 | Annotations, citation (APA/MLA/Chicago), carte de partage | v0.6.0 | ✅ |
 | 8 | PDF filigrané : génération Chromium, lien signé 24 h, 3 téléchargements | v0.8.1 | ✅ |
 | 9 | Espace auteur : contrat, dépôt, aperçu, validation admin, tableau de bord | v0.8.0 | ✅ |
-| 11a | PWA, Loi 25 / RGPD, accessibilité | v0.9.0 | ⬜ |
+| 11a | Loi 25 / RGPD (textes légaux, témoins, export, suppression) ; PWA et accessibilité en 11a-2 (v0.9.1) | v0.9.0 | 🟡 |
 | 5 | Paiement carte : commandes, Stripe + Stripe Tax, webhook, droits, promos, reçus | v0.10.0 | ⬜ |
 | 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.11.0 | ⬜ |
 | 10 | Grand livre, remboursements, versements, administration, audit | v0.12.0 | ⬜ |

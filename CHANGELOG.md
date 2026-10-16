@@ -1,5 +1,36 @@
 # Journal des modifications
 
+## [v0.9.0] - 2026-10-16 — Textes légaux, consentement, données du compte (S11a-1)
+### Ajouté
+- Migration `20261031120000_legal_privacy.sql` :
+  - table `legal_documents` (confidentialité, conditions d'utilisation, conditions de
+    vente), versionnée, lisible par tous ; publication par `admin_publish_legal_document`
+    (journalisée) ; trois textes provisoires en version 1 ;
+  - registre `consent_records` alimenté par `record_consent` (visiteurs et membres,
+    20 choix par heure au plus) ;
+  - `account_deletion_requests` : suppression du compte 30 jours après la demande,
+    annulable (`request_account_deletion`, `cancel_account_deletion`), et
+    `account_deletion_impact` (études possédées et partagées, classes, fiche auteur).
+- Pages publiques `/confidentialite`, `/conditions`, `/conditions-de-vente` et leurs
+  équivalents `/strategie/...` (habillage de Kalami Stratégie) ; liens dans les deux
+  pieds de page.
+- Bandeau des témoins « Accepter / Refuser » (Loi 25 / RGPD) sur tout le site, rouvert
+  par « Gérer les témoins » ; choix mémorisé dans le témoin `kalami_consent` (version
+  de la liste de témoins + identifiant du visiteur).
+- Administration `/admin/textes-legaux` : version en vigueur, nouvelle version
+  préremplie, compteurs du registre et des suppressions en attente.
+- Compte (`/compte` et nouvelle page `/strategie/compte`) : « Mes données »
+  (téléchargement JSON par `GET /api/compte/export`) et « Supprimer mon compte »
+  (impact affiché, saisie de SUPPRIMER, annulation).
+- Tâche quotidienne `/api/cron/comptes` (vercel.json, 4 h 45) : supprime les fichiers
+  (pièces jointes des études possédées, PDF filigranés) puis le compte Auth ; les lignes
+  suivent par cascade.
+- Mention d'acceptation des conditions et de la politique sous l'inscription.
+- Tests unitaires `legal.test.ts` (10).
+### Modifié
+- `/strategie/compte` ajouté aux chemins protégés (`auth/routes.ts`) ; lien « Mon
+  compte » dans l'en-tête de Kalami Stratégie.
+
 ## [Stratégie v0.11.2] - 2026-10-16 — Diagnostic des courriels d'invitation
 ### Corrigé
 - Invitation créée mais courriel non envoyé sans explication : `email/send.ts` note

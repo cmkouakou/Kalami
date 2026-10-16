@@ -4,9 +4,10 @@
  *  Projet     : Kalami
  *  Description: Contenu des quatre pages d'authentification, partagé entre le site
  *               (/connexion…) et Kalami Stratégie (/strategie/connexion…). La page de
- *               retour par défaut garde l'utilisateur dans son espace.
+ *               retour par défaut garde l'utilisateur dans son espace. L'inscription
+ *               affiche la mention d'acceptation des textes légaux de l'espace.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-11
  *  Dépendances: components/auth/auth-forms.tsx, lib/auth/dal.ts, lib/auth/routes.ts
  * =============================================================
@@ -21,6 +22,7 @@ import {
   SignUpForm,
   type AuthSearchParams,
 } from "@/components/auth/auth-forms";
+import { SignUpLegalNotice } from "@/components/legal/legal-links";
 import { getDictionary } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { authPath } from "@/lib/auth/routes";
@@ -53,6 +55,7 @@ export function SignUpPageContent({ searchParams, defaultNext }: AuthPageProps) 
       <Suspense>
         <SignUpForm searchParams={searchParams} defaultNext={defaultNext} />
       </Suspense>
+      <SignUpLegalNotice space={defaultNext?.startsWith("/strategie") ? "strategy" : "site"} />
     </>
   );
 }
