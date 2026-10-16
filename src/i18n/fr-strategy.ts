@@ -8,9 +8,10 @@
  *               et du coach : réglages, consignes et erreurs classiques), recherche Web
  *               sourcée du coach, documents joints au profil (S5b), gabarit de synthèse
  *               SWOT, TOWS et enjeux (S6a), gabarits Cap et Choix (S7a), gabarit Action
- *               (S7b), plan stratégique (S8a). Rattachés à fr.ts sous « strategy ».
+ *               (S7b), plan stratégique (S8a), équipe, invitations et journal (S9a).
+ *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 2.0
+ *  Version    : 2.1
  *  Date       : 2026-10-15
  * =============================================================
  */
@@ -201,8 +202,8 @@ const strategyFr = {
     opensWhen: "S'ouvre quand {steps} sera validée.",
     opensWhenMany: "S'ouvre quand {steps} seront validées.",
     profileFirst: "S'ouvre quand le profil de l'entreprise sera complet.",
-    generate: "Générer la stratégie",
-    generateLater: "Disponible quand les 8 étapes seront validées",
+    generate: "Ouvrir le plan stratégique",
+    generateLater: "Disponible quand les 8 premières étapes seront validées.",
     members: "{count} membre(s) · dernière modification le {date}",
   },
   phases: {
@@ -1296,6 +1297,163 @@ const strategyFr = {
       document_too_long:
         "Ce document est trop long pour être analysé d'un bloc. Joignez un extrait (quelques " +
         "pages ou une feuille).",
+    },
+  },
+
+  // ==================== ÉQUIPE ET JOURNAL (S9a) ====================
+  team: {
+    navTeam: "Équipe",
+    navJournal: "Journal",
+    back: "Retour à l'étude",
+    cancel: "Ne rien changer",
+    kicker: "Travail en équipe",
+    title: "Équipe de l'étude",
+    intro:
+      "Invitez les personnes qui travailleront avec vous. Le propriétaire valide les étapes ; " +
+      "les contributeurs les remplissent ; les observateurs lisent sans modifier.",
+    roleHelp: {
+      owner: "Valide les étapes, invite et gère l'équipe.",
+      contributor: "Remplit les étapes et dialogue avec le coach.",
+      observer: "Lit l'étude et exporte le plan, sans rien modifier.",
+    },
+    members: {
+      title: "Membres",
+      you: "vous",
+      joined: "Membre depuis le {date}",
+      noName: "Nom non renseigné",
+      roleLabel: "Rôle de {name}",
+      changeRole: "Changer le rôle",
+      remove: "Retirer",
+      removeConfirm: "Retirer {name} de l'étude ? Ses attributions d'étapes seront retirées.",
+      removed: "Membre retiré.",
+      roleChanged: "Rôle modifié.",
+      leave: "Quitter l'étude",
+      leaveConfirm:
+        "Quitter l'étude ? Vous n'y aurez plus accès, sauf nouvelle invitation du propriétaire.",
+    },
+    invite: {
+      title: "Inviter une personne",
+      email: "Courriel",
+      role: "Rôle",
+      submit: "Envoyer l'invitation",
+      sending: "Envoi…",
+      sent: "Invitation envoyée à {email}. Le lien est valable 14 jours.",
+      notSent:
+        "Invitation créée, mais le courriel n'a pas pu partir. Transmettez vous-même ce lien " +
+        "(valable 14 jours) :",
+      copy: "Copier le lien",
+      copied: "Lien copié",
+      ownerOnly: "Seul le propriétaire invite de nouveaux membres.",
+    },
+    pending: {
+      title: "Invitations en attente",
+      none: "Aucune invitation en attente.",
+      expires: "Expire le {date}",
+      expired: "Expirée",
+      renew: "Renvoyer",
+      revoke: "Annuler l'invitation",
+      revokeConfirm: "Annuler l'invitation de {email} ? Son lien ne fonctionnera plus.",
+      renewed: "Invitation renvoyée à {email}. Le nouveau lien est valable 14 jours.",
+      revoked: "Invitation annulée.",
+    },
+    assign: {
+      title: "Responsables des étapes",
+      intro:
+        "Indicatif : la personne responsable d'une étape la fait avancer. Tous les " +
+        "contributeurs gardent le droit de la modifier.",
+      label: "Responsable de l'étape {no}",
+      none: "Personne",
+      saved: "Responsable enregistré.",
+      onCard: "Responsable : {name}",
+    },
+    name: {
+      title: "Votre nom dans l'équipe",
+      label: "Nom affiché",
+      help: "Sans nom, les autres membres voient votre courriel.",
+      save: "Enregistrer",
+      saved: "Nom enregistré.",
+    },
+    invitation: {
+      kicker: "Invitation",
+      title: "Rejoindre une étude stratégique",
+      body: "{inviter} vous invite à rejoindre l'étude « {company} » comme {role}.",
+      accept: "Accepter l'invitation",
+      decline: "Refuser",
+      declined: "Invitation refusée. Vous pouvez fermer cette page.",
+      notFound:
+        "Ce lien d'invitation n'est pas valide. Vérifiez qu'il est complet ou demandez une " +
+        "nouvelle invitation.",
+      expired: "Cette invitation a expiré. Demandez à {inviter} de vous la renvoyer.",
+      closed: "Cette invitation n'est plus valable.",
+      mismatch:
+        "Cette invitation est adressée à {email}. Connectez-vous avec ce courriel, confirmé, " +
+        "pour l'accepter.",
+      signOut: "Changer de compte",
+      alreadyMember: "Vous êtes déjà membre de cette étude.",
+      open: "Ouvrir l'étude",
+      home: "Mes études",
+    },
+    received: {
+      title: "Invitations reçues",
+      body: "{inviter} vous invite à l'étude « {company} » comme {role}.",
+      expires: "Valable jusqu'au {date}",
+    },
+    email: {
+      subject: "{inviter} vous invite à l'étude « {company} »",
+      greeting: "Bonjour,",
+      body:
+        "{inviter} vous invite à rejoindre l'étude stratégique « {company} » sur Kalami " +
+        "Stratégie, comme {role}.",
+      cta: "Voir l'invitation",
+      account:
+        "Pour accepter, connectez-vous (ou créez votre compte) avec cette adresse : {email}.",
+      validity:
+        "Ce lien est valable 14 jours. Si vous ne vous attendiez pas à cette invitation, " +
+        "ignorez ce courriel.",
+    },
+    journal: {
+      kicker: "Travail en équipe",
+      title: "Journal d'activité",
+      intro: "Les actions de l'équipe sur l'étude, de la plus récente à la plus ancienne.",
+      none: "Aucune activité enregistrée pour l'instant.",
+      more: "Entrées plus anciennes",
+      latest: "Revenir aux plus récentes",
+      someone: "Une personne",
+      actions: {
+        invitation_sent: "{actor} a invité une personne comme {role}.",
+        invitation_renewed: "{actor} a renvoyé une invitation ({role}).",
+        invitation_revoked: "{actor} a annulé une invitation ({role}).",
+        invitation_declined: "{actor} a refusé l'invitation.",
+        member_joined: "{actor} a rejoint l'étude comme {role}.",
+        member_role_changed: "{actor} a donné le rôle {role} à {target}.",
+        member_removed: "{actor} a retiré {target} de l'étude.",
+        member_left: "{actor} a quitté l'étude.",
+        step_assigned: "{actor} a confié l'étape {step} à {target}.",
+        step_unassigned: "{actor} a retiré le responsable de l'étape {step}.",
+        step_started: "{actor} a commencé l'étape {step}.",
+        step_validated: "{actor} a validé l'étape {step}.",
+        step_reopened: "{actor} a rouvert l'étape {step}.",
+        step_needs_review: "L'étape {step} est à revoir après une modification en amont.",
+      },
+    },
+    errors: {
+      invalid_email: "Ce courriel n'est pas valide.",
+      invalid_role: "Choisissez le rôle Contributeur ou Observateur.",
+      already_member: "Cette personne est déjà membre de l'étude.",
+      already_invited:
+        "Une invitation attend déjà la réponse de cette personne : renvoyez-la plutôt.",
+      invite_rate_limited: "Trop d'invitations envoyées en une heure. Réessayez plus tard.",
+      too_many_invitations:
+        "Cette étude compte déjà 30 invitations en attente : annulez-en une d'abord.",
+      invitation_closed: "Cette invitation n'est plus valable.",
+      invitation_expired: "Cette invitation a expiré.",
+      invitation_not_found: "Cette invitation n'existe pas.",
+      email_mismatch: "Cette invitation est adressée à un autre courriel.",
+      not_member: "Cette personne n'est plus membre de l'étude.",
+      owner_role: "Le rôle du propriétaire ne change pas et il ne quitte pas son étude.",
+      invalid_assignee: "Seul un propriétaire ou un contributeur peut être responsable.",
+      invalid_token: "Le lien d'invitation n'a pas pu être créé. Réessayez.",
+      invalid_name: "Le nom affiché compte 120 caractères au plus.",
     },
   },
 

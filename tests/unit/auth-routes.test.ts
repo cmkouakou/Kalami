@@ -33,6 +33,7 @@ describe("isProtectedPath", () => {
   it("protège les études stratégiques mais laisse publique la présentation", () => {
     expect(isProtectedPath("/strategie/etudes/abc/profil")).toBe(true);
     expect(isProtectedPath("/strategie/nouvelle")).toBe(true);
+    expect(isProtectedPath("/strategie/invitation/jeton")).toBe(true);
     expect(isProtectedPath("/strategie")).toBe(false);
   });
 });

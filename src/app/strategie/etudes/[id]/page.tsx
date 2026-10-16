@@ -4,11 +4,12 @@
  *  Projet     : Kalami Stratégie
  *  Description: Carte de l'étude (maquette 06) : entreprise, question de départ,
  *               progression, profil, puis les 9 étapes regroupées en quatre phases ; les
- *               étapes verrouillées indiquent ce qui manque pour les ouvrir.
+ *               étapes verrouillées indiquent ce qui manque pour les ouvrir. Liens Équipe et
+ *               Journal, responsable de chaque étape et accès au plan stratégique (S9a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
- *  Dépendances: lib/strategy/queries.ts, components/strategy
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
+ *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts, components/strategy
  * =============================================================
  */
 
@@ -19,12 +20,20 @@ import { Suspense } from "react";
 
 import { StepCard } from "@/components/strategy/step-card";
 import { IconCheck, IconPencil } from "@/components/ui/icons";
-import { BADGE, BUTTON_PRIMARY, CARD } from "@/components/ui/styles";
+import { BADGE, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { missingProfileFields } from "@/lib/strategy/profile";
 import { getStudy, statusesOf } from "@/lib/strategy/queries";
-import { missingPrerequisites, PHASES, STEPS, validatedCount } from "@/lib/strategy/steps";
+import {
+  missingPrerequisites,
+  PHASES,
+  PLAN_STEP,
+  STEPS,
+  validatedCount,
+} from "@/lib/strategy/steps";
+import { memberLabel } from "@/lib/strategy/team";
+import { getStudyMembers } from "@/lib/strategy/team-queries";
 
 const t = getDictionary();
 const s = t.strategy;
@@ -53,6 +62,9 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
   const missingFields = missingProfileFields(study.strategic_question, study.profile);
   const fieldLabels = s.profile.fields as Record<string, string>;
   const question = study.strategic_question.trim();
+  const members = await getStudyMembers(study.id);
+  const names = new Map(members.map((member) => [member.user_id, memberLabel(member)]));
+  const planOpen = missingPrerequisites(PLAN_STEP, statuses, study.profileComplete).length === 0;
 
   return (
     <main className="flex flex-col gap-8">
@@ -72,6 +84,14 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
             date: DATE_FORMAT.format(new Date(study.updated_at)),
           })}
         </p>
+        <nav className="flex flex-wrap gap-2" aria-label={s.team.title}>
+          <Link href={`/strategie/etudes/${study.id}/equipe`} className={BUTTON_SECONDARY}>
+            {s.team.navTeam}
+          </Link>
+          <Link href={`/strategie/etudes/${study.id}/journal`} className={BUTTON_SECONDARY}>
+            {s.team.navJournal}
+          </Link>
+        </nav>
       </header>
 
       {/* ==================== PROGRESSION ==================== */}
@@ -130,6 +150,7 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
                     step={step}
                     status={statuses[step.no]}
                     missing={missingPrerequisites(step.no, statuses, study.profileComplete)}
+                    assignee={names.get(study.steps[step.no]?.assignee_id ?? "")}
                   />
                 </li>
               ))}
@@ -140,10 +161,21 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
 
       {/* ==================== PLAN STRATÉGIQUE ==================== */}
       <div className="flex flex-col items-start gap-2">
-        <button type="button" className={BUTTON_PRIMARY} disabled>
-          {s.map.generate}
-        </button>
-        <p className="text-small text-ink-muted">{s.map.generateLater}</p>
+        {planOpen ? (
+          <Link
+            href={`/strategie/etudes/${study.id}/etapes/${PLAN_STEP}`}
+            className={BUTTON_PRIMARY}
+          >
+            {s.map.generate}
+          </Link>
+        ) : (
+          <>
+            <button type="button" className={BUTTON_PRIMARY} disabled>
+              {s.map.generate}
+            </button>
+            <p className="text-small text-ink-muted">{s.map.generateLater}</p>
+          </>
+        )}
       </div>
     </main>
   );

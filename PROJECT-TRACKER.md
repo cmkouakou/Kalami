@@ -28,7 +28,8 @@ Version actuelle : v0.8.3 · Stratégie v0.9.1 | Statut : 🟡 En cours (projet 
 | #22 | 2026-10-15 | Stratégie S7b : gabarit Action (chantiers, Gantt au mois, tableau de bord équilibré, risques) | ~280 000 | ~1.68 $ |
 | #23 | 2026-10-15 | Stratégie S8a : plan stratégique (8 sections assemblées, traçabilité, édition, coach de rédaction) | ~320 000 | ~1.92 $ |
 | #24 | 2026-10-15 | Stratégie S8b : export du plan en PDF et DOCX (Gantt, tableau de bord, traçabilité) | ~250 000 | ~1.50 $ |
-| **TOTAL** | | | **~6 040 000** | **~36.24 $** |
+| #25 | 2026-10-15 | Stratégie S9a : équipe, invitations par courriel (Resend), responsables d'étape, journal | ~330 000 | ~1.98 $ |
+| **TOTAL** | | | **~6 370 000** | **~38.22 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -102,5 +103,8 @@ Version actuelle : v0.8.3 · Stratégie v0.9.1 | Statut : 🟡 En cours (projet 
 - [x] S8a — migration `20261025120000_strategy_plan.sql` appliquée (2026-10-15), intégration du plan 5/5
 - [x] S8a — consigne plan v1 publiée (2026-10-15)
 - [x] S8b — export du plan en PDF et DOCX, Gantt et tableau de bord en annexe, pour tous les membres (Stratégie v0.9.1), unitaires 417/417
+- [x] S9a — équipe : invitations par lien et courriel (Resend), rôles, départ, responsables d'étape, journal d'activité (Stratégie v0.10.0), unitaires 432/432
+- [x] S9a — migration `20261026120000_strategy_team.sql` appliquée (2026-10-15), intégration équipe 10/10
+- [ ] S9b — commentaires, mentions, notifications, présence et verrouillage doux (Stratégie v0.10.1)
 - [ ] S12 — limiter le débit des exports du plan (aucun limiteur générique sans migration)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

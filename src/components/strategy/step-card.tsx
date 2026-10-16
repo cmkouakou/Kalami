@@ -4,10 +4,10 @@
  *  Projet     : Kalami Stratégie
  *  Description: Carte d'une étape sur la carte de l'étude (maquette 06) : lien vers l'étape
  *               si elle est ouverte, carte en pointillés avec le cadenas et ce qui manque
- *               pour l'ouvrir si elle est verrouillée.
+ *               pour l'ouvrir si elle est verrouillée. Responsable de l'étape (S9a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: components/strategy/step-status.tsx, lib/strategy/steps.ts
  * =============================================================
  */
@@ -32,6 +32,8 @@ type StepCardProps = {
   status: StepStatus;
   /** Prérequis manquants (0 = profil incomplet) ; vide si l'étape est ouverte. */
   missing: number[];
+  /** Nom du membre responsable de l'étape (S9a) ; absent = personne. */
+  assignee?: string | null;
 };
 
 // ==================== FONCTIONS UTILITAIRES ====================
@@ -59,7 +61,7 @@ function cardLook(status: StepStatus): string {
 // ==================== COMPOSANT ====================
 
 /** Carte d'une étape : ouverte (lien) ou verrouillée (pointillés). */
-export function StepCard({ studyId, step, status, missing }: StepCardProps) {
+export function StepCard({ studyId, step, status, missing, assignee }: StepCardProps) {
   const text = s.steps[step.no];
   const locked = missing.length > 0;
 
@@ -74,6 +76,11 @@ export function StepCard({ studyId, step, status, missing }: StepCardProps) {
       <span className="font-serif text-h3 font-semibold">{text.title}</span>
       <span className="text-small text-ink-muted">{text.tools}</span>
       {locked && <span className="text-small text-ink-muted">{opensWhen(missing)}</span>}
+      {assignee && (
+        <span className="text-small font-medium">
+          {interpolate(s.team.assign.onCard, { name: assignee })}
+        </span>
+      )}
     </>
   );
 

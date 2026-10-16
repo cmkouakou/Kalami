@@ -7,10 +7,11 @@
  *               complète (rôle, profil, étapes), contenu d'un gabarit et ses versions, vue
  *               d'ensemble de l'administrateur, guide d'une étape (explication, exemple,
  *               lien vers le chapitre si le lecteur y a droit) et réglages du guide.
- *               Contenu des étapes sources de la synthèse (S6a).
+ *               Contenu des étapes sources de la synthèse (S6a). Responsable de chaque
+ *               étape (S9a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-14
+ *  Version    : 1.4
+ *  Date       : 2026-10-15
  *  Dépendances: lib/supabase/server.ts, lib/strategy/steps.ts, lib/strategy/profile.ts
  * =============================================================
  */
@@ -44,6 +45,8 @@ export type StudyStep = {
   status: StepStatus;
   validated_at: string | null;
   review_reasons: ReviewReason[];
+  /** Membre responsable de l'étape (indicatif, S9a). */
+  assignee_id: string | null;
 };
 
 export type StudyDetail = {
@@ -180,7 +183,7 @@ export async function getStudy(studyId: string, userId: string): Promise<StudyDe
     supabase.from("company_profiles").select("data").eq("study_id", studyId).maybeSingle(),
     supabase
       .from("study_steps")
-      .select("step_no, status, validated_at, review_reasons")
+      .select("step_no, status, validated_at, review_reasons, assignee_id")
       .eq("study_id", studyId),
     supabase.from("strategy_steps").select("step_no, lock_reason"),
   ]);
@@ -197,6 +200,7 @@ export async function getStudy(studyId: string, userId: string): Promise<StudyDe
     status: StepStatus;
     validated_at: string | null;
     review_reasons: unknown;
+    assignee_id: string | null;
   }[];
   for (const row of rawSteps) {
     if (!isStepNo(row.step_no)) continue;
@@ -205,6 +209,7 @@ export async function getStudy(studyId: string, userId: string): Promise<StudyDe
       status: row.status,
       validated_at: row.validated_at,
       review_reasons: readReasons(row.review_reasons),
+      assignee_id: row.assignee_id ?? null,
     };
   }
 

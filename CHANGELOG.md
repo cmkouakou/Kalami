@@ -1,5 +1,32 @@
 # Journal des modifications
 
+## [Stratégie v0.10.0] - 2026-10-15 — Équipe et invitations (S9a)
+### Ajouté
+- Migration `20261026120000_strategy_team.sql` :
+  - tables `study_invitations` (seule l'empreinte SHA-256 du jeton est gardée, validité de
+    14 jours, une seule invitation en attente par courriel) et `study_activity` (journal) ;
+  - fonctions d'équipe : inviter, renvoyer, annuler, présenter un lien, invitations reçues,
+    accepter ou refuser (courriel confirmé et identique exigé), membres, changer de rôle,
+    retirer un membre ou partir, confier une étape, lire le journal ;
+  - limites : 10 invitations par heure et 30 en attente par étude ;
+  - déclencheur qui consigne les changements de statut des étapes.
+- Courriels par Resend (`lib/email/send.ts`, API REST, sans dépendance) : `RESEND_API_KEY`
+  et `EMAIL_FROM`. Sans configuration ou en cas d'échec, le lien d'invitation s'affiche à
+  copier.
+- Page **Équipe** (`/strategie/etudes/[id]/equipe`) : rôles expliqués, membres, invitation,
+  invitations en attente, responsables des étapes, nom affiché.
+- Page **Journal** (`/strategie/etudes/[id]/journal`), par pages de 50 entrées, sans courriel.
+- Page du lien d'invitation (`/strategie/invitation/[jeton]`, protégée) : lien inconnu,
+  échu ou déjà utilisé, autre compte (« Changer de compte »), accepter ou refuser.
+- « Invitations reçues » sur l'accueil Stratégie.
+- Carte de l'étude : liens Équipe et Journal, responsable sur chaque étape, accès au plan
+  stratégique quand les étapes 1 à 8 sont validées.
+- Tests : unitaires `strategy-team.test.ts` (15), intégration `strategy-team-rls.test.ts`
+  (ignorée tant que la migration n'est pas appliquée).
+### Modifié
+- `queries.ts` : `assignee_id` lu pour chaque étape ; `routes.ts` : `/strategie/invitation`
+  protégé ; `.env.example` : section Courriels (Resend).
+
 ## [Stratégie v0.9.1] - 2026-10-15 — Export du plan (S8b)
 ### Ajouté
 - Export du plan stratégique en **PDF** et en **DOCX**, pour tous les membres de l'étude
