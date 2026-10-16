@@ -7,7 +7,7 @@
  *               objectifs (étape 6). Dates inversées, phase hors du chantier ou chantier sans
  *               option liée sont signalés, sans bloquer.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: synthesis/link-picker.tsx, lib/strategy/templates/action.ts
  * =============================================================
@@ -16,6 +16,7 @@
 "use client";
 
 import { LinkPicker, type LinkOption } from "@/components/strategy/synthesis/link-picker";
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconAlert, IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -203,6 +204,10 @@ function WorkstreamItem({
             onChange={(event) => onChange({ name: event.target.value })}
           />
         </label>
+        <CommentBadge
+          targetId={workstream.id}
+          label={workstream.name.trim() || s.untitledWorkstream}
+        />
         {!readOnly && (
           <button
             type="button"

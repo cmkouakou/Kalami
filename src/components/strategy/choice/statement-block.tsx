@@ -5,7 +5,7 @@
  *  Description: Fin de l'étape 7 : énoncé de la stratégie retenue (avec le rappel des options
  *               retenues) et liste des renoncements, « ce que nous ne ferons pas ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: synthesis/link-picker.tsx, lib/strategy/templates/choice.ts
  * =============================================================
@@ -14,6 +14,7 @@
 "use client";
 
 import { shortLabel } from "@/components/strategy/synthesis/link-picker";
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import {
   BUTTON_ICON,
@@ -61,7 +62,10 @@ export function StatementBlock({
       {/* ==================== ÉNONCÉ ==================== */}
       <section className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <h2 className="font-serif text-h2 font-semibold">{s.statementTitle}</h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-serif text-h2 font-semibold">{s.statementTitle}</h2>
+            <CommentBadge targetId="statement" label={s.statementTitle} />
+          </div>
           <p className="text-small text-ink-muted">{s.statementIntro}</p>
         </div>
         <div className={`${PANEL_SAND} flex flex-col gap-1 p-3 text-small`}>
@@ -111,6 +115,7 @@ export function StatementBlock({
                     aria-label={label}
                     onChange={(event) => onChange(item.id, event.target.value)}
                   />
+                  <CommentBadge targetId={item.id} label={label} />
                   {!readOnly && (
                     <button
                       type="button"

@@ -1,5 +1,32 @@
 # Journal des modifications
 
+## [Stratégie v0.10.1] - 2026-10-15 — Commentaires, mentions et notifications (S9b)
+### Ajouté
+- Migration `20261027120000_strategy_comments.sql` :
+  - tables `study_comments` (fils d'un niveau, élément visé facultatif), mentions et
+    `notifications` (une par personne et par commentaire : mention, puis réponse, puis
+    commentaire sur une étape confiée) ; colonne `profiles.notify_email` ;
+  - fonctions : ajouter, modifier (auteur), supprimer (auteur ou propriétaire ; une racine
+    avec réponses garde sa place, sans texte), résoudre ou rouvrir un fil, lire une étape,
+    notifications paginées, nombre non lu, marquer comme lu ;
+  - limites : 2 000 caractères, 10 mentions, 30 commentaires par 10 minutes ; aucun accès
+    direct aux tables ; ajout consigné au journal (`comment_added`).
+- Section **Discussion** sous chaque étape déverrouillée : filtre par élément, fils résolus
+  repliés, réponse, modification, suppression confirmée, ancres `#commentaire-…`.
+- Pastilles de commentaires sur les éléments des étapes 1 à 9 (facteurs, forces, activités,
+  ressources, parties prenantes, SWOT, TOWS, enjeux, vision, mission, valeurs, objectifs,
+  choix, chantiers, indicateurs, risques, sections du plan).
+- Mentions `@Nom` avec autocomplétion des membres ; courriel de mention par Resend (texte
+  échappé), désactivable.
+- Cloche dans l'en-tête (nombre non lu) et page **Notifications**
+  (`/strategie/notifications`) : pages de 30, « Tout marquer comme lu », préférence de
+  courriel.
+- Tests : unitaires `strategy-comments.test.ts` (19), intégration
+  `strategy-comments-rls.test.ts` (11, ignorée tant que la migration n'est pas appliquée).
+### Modifié
+- `team.ts` (membres mentionnables), `icons.tsx` (cloche, bulle), `fr-strategy.ts`
+  (commentaires, notifications), `.env.example` (courriels de mention).
+
 ## [Stratégie v0.10.0] - 2026-10-15 — Équipe et invitations (S9a)
 ### Ajouté
 - Migration `20261026120000_strategy_team.sql` :

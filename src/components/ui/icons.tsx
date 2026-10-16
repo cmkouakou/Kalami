@@ -5,8 +5,8 @@
  *  Description: Icônes au trait (style Lucide, trait 1,75) : 20 px dans l'interface,
  *               24 px dans la barre de la liseuse. Couleur héritée (currentColor).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-11
+ *  Version    : 1.3
+ *  Date       : 2026-10-15
  * =============================================================
  */
 
@@ -230,5 +230,20 @@ export const IconPlus = (p: IconProps) => (
   <Icon {...p}>
     <path d="M12 5v14" />
     <path d="M5 12h14" />
+  </Icon>
+);
+
+// ==================== DISCUSSION (STRATÉGIE) ====================
+
+export const IconMessage = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12Z" />
+  </Icon>
+);
+
+export const IconBell = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
   </Icon>
 );

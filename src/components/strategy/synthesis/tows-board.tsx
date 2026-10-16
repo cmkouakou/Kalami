@@ -5,8 +5,8 @@
  *  Description: Matrice TOWS de l'étape 5 : quatre quadrants (SO, ST, WO, WT) ; chaque piste
  *               d'action est liée aux éléments des deux cases de la SWOT qu'elle croise.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-14
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: synthesis/link-picker.tsx, lib/strategy/templates/synthesis.ts
  * =============================================================
  */
@@ -14,6 +14,7 @@
 "use client";
 
 import { LinkPicker } from "@/components/strategy/synthesis/link-picker";
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -72,6 +73,7 @@ function TowsRow({
           aria-label={interpolate(s.towsLabel, { quadrant: s.quadrants[item.quadrant] })}
           onChange={(event) => onChange(item.id, { text: event.target.value })}
         />
+        <CommentBadge targetId={item.id} label={item.text.trim() || s.untitled} />
         {!readOnly && (
           <button
             type="button"

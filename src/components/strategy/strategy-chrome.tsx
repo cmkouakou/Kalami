@@ -5,10 +5,12 @@
  *  Description: En-tête et pied de page propres à Kalami Stratégie : l'application se
  *               suffit à elle-même (connexion, déconnexion et liens restent dans
  *               /strategie) ; seul un lien discret mène au livre guide, s'il est publié.
+ *               La cloche (S9b) mène aux notifications et compte celles non lues.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
- *  Dépendances: lib/auth/dal.ts, lib/auth/actions.ts, lib/catalog/queries.ts, i18n
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
+ *  Dépendances: lib/auth/dal.ts, lib/auth/actions.ts, lib/catalog/queries.ts,
+ *               lib/strategy/comments-queries.ts, i18n
  * =============================================================
  */
 
@@ -16,13 +18,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
+import { IconBell } from "@/components/ui/icons";
+import { BUTTON_ICON, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { signOut } from "@/lib/auth/actions";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { authPath, STRATEGY_HOME } from "@/lib/auth/routes";
 import { getBookBySlug } from "@/lib/catalog/queries";
 import { APP_NAME } from "@/lib/config";
+import { getUnreadCount } from "@/lib/strategy/comments-queries";
 import { GUIDE_BOOK_SLUG } from "@/lib/strategy/steps";
 
 const t = getDictionary();
@@ -81,23 +85,43 @@ function StrategySignInLink() {
   );
 }
 
-/** Nom de l'utilisateur et déconnexion (retour à l'accueil de l'application). */
+/** Cloche des notifications, nom de l'utilisateur et déconnexion (retour à l'accueil). */
 async function StrategyUserMenu() {
   const user = await getCurrentUser();
   if (!user) return <StrategySignInLink />;
+  const unread = await getUnreadCount();
+  const n = s.notifications;
 
   return (
-    <form action={signOut} className="flex flex-wrap items-center gap-x-3">
-      <input type="hidden" name="suivant" value={STRATEGY_HOME} />
-      {user.email && (
-        <span className="text-small text-ink-muted">
-          {interpolate(s.nav.signedInAs, { name: user.email })}
-        </span>
-      )}
-      <button type="submit" className={BUTTON_TERTIARY}>
-        {s.nav.signOut}
-      </button>
-    </form>
+    <div className="flex flex-wrap items-center gap-x-3">
+      <Link
+        href={`${STRATEGY_HOME}/notifications`}
+        className={`${BUTTON_ICON} relative`}
+        aria-label={unread > 0 ? interpolate(n.bellUnread, { count: String(unread) }) : n.bell}
+      >
+        <IconBell size={20} />
+        {unread > 0 && (
+          <span
+            aria-hidden="true"
+            className="absolute right-1 top-1 inline-flex min-w-5 items-center justify-center
+              rounded-full bg-encre px-1 text-caption font-semibold text-on-encre"
+          >
+            {unread > 99 ? "99+" : unread}
+          </span>
+        )}
+      </Link>
+      <form action={signOut} className="flex flex-wrap items-center gap-x-3">
+        <input type="hidden" name="suivant" value={STRATEGY_HOME} />
+        {user.email && (
+          <span className="text-small text-ink-muted">
+            {interpolate(s.nav.signedInAs, { name: user.email })}
+          </span>
+        )}
+        <button type="submit" className={BUTTON_TERTIARY}>
+          {s.nav.signOut}
+        </button>
+      </form>
+    </div>
   );
 }
 

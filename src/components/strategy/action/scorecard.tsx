@@ -6,7 +6,7 @@
  *               ses indicateurs (nom, définition, cible, fréquence, responsable, type
  *               résultat ou avancé, objectifs de l'étape 6 suivis).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: synthesis/link-picker.tsx, lib/strategy/templates/action.ts
  * =============================================================
@@ -15,6 +15,7 @@
 "use client";
 
 import { LinkPicker, type LinkOption } from "@/components/strategy/synthesis/link-picker";
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconCheck, IconPlus, IconTrash } from "@/components/ui/icons";
 import { BADGE, BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -85,6 +86,10 @@ function IndicatorItem({ indicator, objectives, readOnly, onChange, onRemove }: 
             onChange={(event) => onChange({ name: event.target.value })}
           />
         </label>
+        <CommentBadge
+          targetId={indicator.id}
+          label={indicator.name.trim() || s.untitledIndicator}
+        />
         {!readOnly && (
           <button
             type="button"

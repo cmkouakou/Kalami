@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.9.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S8b livrés)
+Version actuelle : v0.8.3 · Stratégie v0.10.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S9a livrés, S9b codé)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -29,7 +29,8 @@ Version actuelle : v0.8.3 · Stratégie v0.9.1 | Statut : 🟡 En cours (projet 
 | #23 | 2026-10-15 | Stratégie S8a : plan stratégique (8 sections assemblées, traçabilité, édition, coach de rédaction) | ~320 000 | ~1.92 $ |
 | #24 | 2026-10-15 | Stratégie S8b : export du plan en PDF et DOCX (Gantt, tableau de bord, traçabilité) | ~250 000 | ~1.50 $ |
 | #25 | 2026-10-15 | Stratégie S9a : équipe, invitations par courriel (Resend), responsables d'étape, journal | ~330 000 | ~1.98 $ |
-| **TOTAL** | | | **~6 370 000** | **~38.22 $** |
+| #26 | 2026-10-15 | Stratégie S9b : commentaires par étape et par élément, mentions, notifications (cloche, page, courriel de mention) | ~300 000 | ~1.80 $ |
+| **TOTAL** | | | **~6 670 000** | **~40.02 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -105,6 +106,8 @@ Version actuelle : v0.8.3 · Stratégie v0.9.1 | Statut : 🟡 En cours (projet 
 - [x] S8b — export du plan en PDF et DOCX, Gantt et tableau de bord en annexe, pour tous les membres (Stratégie v0.9.1), unitaires 417/417
 - [x] S9a — équipe : invitations par lien et courriel (Resend), rôles, départ, responsables d'étape, journal d'activité (Stratégie v0.10.0), unitaires 432/432
 - [x] S9a — migration `20261026120000_strategy_team.sql` appliquée (2026-10-15), intégration équipe 10/10
-- [ ] S9b — commentaires, mentions, notifications, présence et verrouillage doux (Stratégie v0.10.1)
+- [x] S9b — commentaires (étape et élément), mentions, notifications : cloche, page, courriel de mention (Stratégie v0.10.1), unitaires 451/451
+- [x] S9b — migration `20261027120000_strategy_comments.sql` appliquée (2026-10-16), historique réparé, intégration commentaires 11/11
+- [ ] S9c — présence et verrouillage doux (Realtime) (Stratégie v0.10.2)
 - [ ] S12 — limiter le débit des exports du plan (aucun limiteur générique sans migration)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

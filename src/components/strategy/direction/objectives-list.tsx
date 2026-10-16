@@ -6,7 +6,7 @@
  *               cinq critères cochés un à un par l'équipe et liens vers les enjeux de
  *               l'étape 5.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: synthesis/link-picker.tsx, lib/strategy/templates/direction.ts
  * =============================================================
@@ -15,6 +15,7 @@
 "use client";
 
 import { LinkPicker, type LinkOption } from "@/components/strategy/synthesis/link-picker";
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconCheck, IconPlus, IconTrash } from "@/components/ui/icons";
 import { BADGE, BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -85,6 +86,10 @@ export function ObjectivesList({
                       onChange={(event) => onChange(objective.id, { text: event.target.value })}
                     />
                   </label>
+                  <CommentBadge
+                    targetId={objective.id}
+                    label={objective.text.trim() || s.untitledObjective}
+                  />
                   {!readOnly && (
                     <button
                       type="button"

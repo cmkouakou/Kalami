@@ -8,7 +8,7 @@
  *               par le coach (chacune après confirmation). La proposition du coach s'affiche
  *               à part : « Remplacer la section » ou « Ignorer », décision notée au suivi.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/plan-actions.ts, lib/strategy/coach/actions.ts,
  *               lib/strategy/templates/plan.ts
@@ -19,6 +19,7 @@
 
 import { useState, useTransition } from "react";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import {
   BADGE,
@@ -278,7 +279,10 @@ export function PlanSection({
         <h3 id={headingId} className="font-serif text-h2 font-semibold">
           {p.sections[section.key]}
         </h3>
-        <span className={BADGE}>{p.origins[section.origin]}</span>
+        <div className="flex items-center gap-2">
+          <span className={BADGE}>{p.origins[section.origin]}</span>
+          <CommentBadge targetId={section.key} label={p.sections[section.key]} />
+        </div>
       </div>
 
       <Paragraphs

@@ -8,10 +8,11 @@
  *               et du coach : réglages, consignes et erreurs classiques), recherche Web
  *               sourcée du coach, documents joints au profil (S5b), gabarit de synthèse
  *               SWOT, TOWS et enjeux (S6a), gabarits Cap et Choix (S7a), gabarit Action
- *               (S7b), plan stratégique (S8a), équipe, invitations et journal (S9a).
+ *               (S7b), plan stratégique (S8a), équipe, invitations et journal (S9a),
+ *               discussion, mentions et notifications (S9b).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 2.1
+ *  Version    : 2.2
  *  Date       : 2026-10-15
  * =============================================================
  */
@@ -1434,6 +1435,7 @@ const strategyFr = {
         step_validated: "{actor} a validé l'étape {step}.",
         step_reopened: "{actor} a rouvert l'étape {step}.",
         step_needs_review: "L'étape {step} est à revoir après une modification en amont.",
+        comment_added: "{actor} a commenté l'étape {step}.",
       },
     },
     errors: {
@@ -1454,6 +1456,110 @@ const strategyFr = {
       invalid_assignee: "Seul un propriétaire ou un contributeur peut être responsable.",
       invalid_token: "Le lien d'invitation n'a pas pu être créé. Réessayez.",
       invalid_name: "Le nom affiché compte 120 caractères au plus.",
+    },
+  },
+
+  // ==================== DISCUSSION ET NOTIFICATIONS (S9b) ====================
+  comments: {
+    title: "Discussion",
+    intro:
+      "Échangez avec l'équipe sur cette étape. Tapez @ pour mentionner un membre ; il en est " +
+      "averti.",
+    about: "À propos de :",
+    wholeStep: "Toute l'étape",
+    clearTarget: "Commenter toute l'étape plutôt",
+    placeholder: "Votre commentaire…",
+    replyPlaceholder: "Votre réponse…",
+    label: "Commentaire",
+    counter: "{count} / 2 000",
+    submit: "Publier",
+    sending: "Envoi…",
+    reply: "Répondre",
+    edit: "Modifier",
+    save: "Enregistrer",
+    cancel: "Annuler",
+    delete: "Supprimer",
+    deleteConfirm: "Supprimer ce commentaire ?",
+    resolve: "Marquer résolu",
+    reopen: "Rouvrir",
+    resolvedBy: "Résolu par {name}",
+    edited: "modifié",
+    deletedBody: "Commentaire supprimé.",
+    none: "Aucun commentaire sur cette étape pour l'instant.",
+    noneForTarget: "Aucun fil sur cet élément.",
+    showAll: "Voir tous les fils",
+    filtered: "Fils sur : {label}",
+    showResolved: "Afficher les fils résolus ({count})",
+    hideResolved: "Masquer les fils résolus",
+    badgeAdd: "Commenter : {label}",
+    badgeCount: "{count} commentaire(s) en cours sur : {label}",
+    suggestions: "Membres à mentionner",
+    someone: "Une personne",
+    sections: {
+      factor: "Facteur",
+      criterion: "Critère",
+      activity: "Activité",
+      resource: "Ressource",
+      stakeholder: "Partie prenante",
+      tows: "Stratégie TOWS",
+      issue: "Enjeu",
+      vision: "Vision",
+      mission: "Mission",
+      value: "Valeur",
+      objective: "Objectif",
+      generic: "Stratégie générique",
+      option: "Option",
+      statement: "Énoncé stratégique",
+      renunciation: "Renoncement",
+      workstream: "Chantier",
+      indicator: "Indicateur",
+      risk: "Risque",
+    },
+    errors: {
+      invalid_comment: "Un commentaire compte entre 1 et 2 000 caractères.",
+      too_many_mentions: "Mentionnez 10 personnes au plus dans un commentaire.",
+      comment_rate_limited:
+        "Trop de commentaires en peu de temps. Réessayez dans quelques minutes.",
+      comment_not_found: "Ce commentaire n'existe plus.",
+      invalid_parent: "On répond au premier commentaire d'un fil seulement.",
+      invalid_target: "Cet élément n'est pas encore enregistré : réessayez dans un instant.",
+      not_author: "Seul l'auteur du commentaire, ou le propriétaire, peut faire cela.",
+    },
+  },
+  notifications: {
+    kicker: "Travail en équipe",
+    title: "Notifications",
+    intro:
+      "Mentions, réponses à vos fils et commentaires sur les étapes dont vous êtes responsable.",
+    bell: "Notifications",
+    bellUnread: "Notifications : {count} non lue(s)",
+    none: "Aucune notification pour l'instant.",
+    unread: "Non lue",
+    open: "Voir le commentaire",
+    markAll: "Tout marquer comme lu",
+    more: "Notifications plus anciennes",
+    latest: "Revenir aux plus récentes",
+    kinds: {
+      mention: "{actor} vous a mentionné à l'étape {step} de « {company} ».",
+      reply: "{actor} a répondu à un fil où vous écrivez, étape {step} de « {company} ».",
+      step_comment:
+        "{actor} a commenté l'étape {step} de « {company} », dont vous êtes responsable.",
+    },
+    preference: {
+      title: "Courriels",
+      label: "Recevoir un courriel quand un membre me mentionne",
+      help: "Les autres notifications restent sur cette page et dans la cloche.",
+      save: "Enregistrer",
+      saved: "Préférence enregistrée.",
+    },
+    email: {
+      subject: "{actor} vous a mentionné dans l'étude « {company} »",
+      greeting: "Bonjour,",
+      body: "{actor} vous a mentionné à l'étape {step} de l'étude « {company} » :",
+      cta: "Voir le commentaire",
+      footer:
+        "Vous recevez ce courriel parce qu'un membre de l'étude vous a mentionné. Vous pouvez " +
+        "désactiver ces courriels depuis vos notifications : {url}",
     },
   },
 

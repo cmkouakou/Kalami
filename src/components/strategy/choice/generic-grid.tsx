@@ -6,7 +6,7 @@
  *               valeur unique) × cible (large ou étroite), choix d'une position par boutons
  *               radio, et justification.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/choice.ts
  * =============================================================
@@ -14,6 +14,7 @@
 
 "use client";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { CONTROL } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import {
@@ -42,7 +43,10 @@ export function GenericGrid({ generic, readOnly, onChange }: GenericGridProps) {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 className="font-serif text-h2 font-semibold">{s.genericTitle}</h2>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="font-serif text-h2 font-semibold">{s.genericTitle}</h2>
+          <CommentBadge targetId="generic" label={s.genericTitle} />
+        </div>
         <p className="text-small text-ink-muted">{s.genericIntro}</p>
       </div>
       <fieldset className="flex flex-col gap-2">

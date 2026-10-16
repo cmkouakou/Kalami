@@ -7,7 +7,7 @@
  *               enregistrés automatiquement dans le cadre commun (liste de contrôle, actions,
  *               versions, coach).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: direction/*.tsx, template-frame.tsx, use-autosave.ts,
  *               lib/strategy/templates/direction.ts
@@ -16,6 +16,7 @@
 
 "use client";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { ObjectivesList } from "@/components/strategy/direction/objectives-list";
 import { ValuesList } from "@/components/strategy/direction/values-list";
 import { VisionBlock } from "@/components/strategy/direction/vision-block";
@@ -98,7 +99,10 @@ export function DirectionEditor({
       {/* ==================== MISSION ==================== */}
       <section className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <h2 className="font-serif text-h2 font-semibold">{s.missionTitle}</h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-serif text-h2 font-semibold">{s.missionTitle}</h2>
+            <CommentBadge targetId="mission" label={s.missionTitle} />
+          </div>
           <p className="text-small text-ink-muted">{s.missionIntro}</p>
         </div>
         <label className="flex flex-col gap-1 text-small font-semibold">

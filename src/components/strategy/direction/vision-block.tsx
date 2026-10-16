@@ -7,7 +7,7 @@
  *               « la phrase reste-t-elle vraie ? ». Le test est réussi si la réponse est
  *               « non » ; il est à refaire si la vision change ensuite.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/direction.ts
  * =============================================================
@@ -17,6 +17,7 @@
 
 import { useState } from "react";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { CARD, CONTROL, PILL, PILL_ACTIVE } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import {
@@ -80,7 +81,10 @@ export function VisionBlock({
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 className="font-serif text-h2 font-semibold">{s.visionTitle}</h2>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="font-serif text-h2 font-semibold">{s.visionTitle}</h2>
+          <CommentBadge targetId="vision" label={s.visionTitle} />
+        </div>
         <p className="text-small text-ink-muted">{s.visionIntro}</p>
       </div>
       <label className="flex flex-col gap-1 text-small font-semibold">

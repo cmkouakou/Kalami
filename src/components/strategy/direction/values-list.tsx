@@ -5,7 +5,7 @@
  *  Description: Valeurs de l'étape 6 : chaque valeur est nommée et accompagnée d'un geste
  *               concret qui la rend visible au quotidien.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/direction.ts
  * =============================================================
@@ -13,6 +13,7 @@
 
 "use client";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -71,6 +72,7 @@ export function ValuesList({ values, readOnly, onAdd, onChange, onRemove }: Valu
                   onChange={(event) => onChange(value.id, { gesture: event.target.value })}
                 />
               </label>
+              <CommentBadge targetId={value.id} label={value.name.trim() || s.untitledValue} />
               {!readOnly && (
                 <button
                   type="button"

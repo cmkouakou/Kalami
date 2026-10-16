@@ -6,8 +6,8 @@
  *               menaces), chaque élément modifiable avec l'étiquette de son étape d'origine
  *               (« É1 » à « É4 ») quand il a été repris.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-14
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/synthesis.ts
  * =============================================================
  */
@@ -16,6 +16,7 @@
 
 import type { ReactNode } from "react";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BADGE, BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -79,6 +80,7 @@ function SwotRow({
         aria-label={interpolate(s.itemLabel, { key: s.keys[swotKey] })}
         onChange={(event) => onChange(swotKey, item.id, event.target.value)}
       />
+      <CommentBadge targetId={item.id} label={item.text.trim() || s.untitled} />
       {!readOnly && (
         <button
           type="button"

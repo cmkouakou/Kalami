@@ -7,7 +7,7 @@
  *               décision de l'équipe et enjeux liés. Une option retenue malgré un « non »
  *               ou sans enjeu lié est signalée, sans être bloquée.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: synthesis/link-picker.tsx, lib/strategy/templates/choice.ts
  * =============================================================
@@ -16,6 +16,7 @@
 "use client";
 
 import { LinkPicker, type LinkOption } from "@/components/strategy/synthesis/link-picker";
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconAlert, IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -116,6 +117,10 @@ export function OptionsList({
                       onChange={(event) => onChange(option.id, { text: event.target.value })}
                     />
                   </label>
+                  <CommentBadge
+                    targetId={option.id}
+                    label={option.text.trim() || s.untitledOption}
+                  />
                   {!readOnly && (
                     <button
                       type="button"

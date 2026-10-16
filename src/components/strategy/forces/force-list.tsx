@@ -5,14 +5,15 @@
  *  Description: Les cinq forces : pour chacune, intensité (faible, moyenne, forte) et
  *               justification, avec une question d'aide.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/forces.ts
  * =============================================================
  */
 
 "use client";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { CARD, CONTROL, PILL, PILL_ACTIVE } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import {
@@ -44,7 +45,10 @@ export function ForceList({ forces, readOnly, onChange }: ForceListProps) {
         const force = forces[key];
         return (
           <fieldset key={key} className={`${CARD} flex flex-col gap-3 p-4`}>
-            <legend className="px-1 font-semibold">{f.names[key]}</legend>
+            <legend className="flex items-center gap-2 px-1 font-semibold">
+              {f.names[key]}
+              <CommentBadge targetId={key} label={f.names[key]} />
+            </legend>
             <p className="text-small text-ink-muted">{f.hints[key]}</p>
             <div role="radiogroup" aria-label={`${f.intensity} : ${f.names[key]}`}
               className="flex flex-wrap gap-2"

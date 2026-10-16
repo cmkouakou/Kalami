@@ -6,14 +6,15 @@
  *               en colonnes, note de 1 à 5 et commentaire facultatif par case, moyenne par
  *               acteur. Défilement horizontal limité au tableau sur petit écran.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/forces.ts
  * =============================================================
  */
 
 "use client";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -111,6 +112,7 @@ export function ComparisonTable({
                       readOnly={readOnly}
                       onChange={(event) => onRenameCriterion(criterion.id, event.target.value)}
                     />
+                    <CommentBadge targetId={criterion.id} label={criterion.name} />
                     {!readOnly && (
                       <button
                         type="button"

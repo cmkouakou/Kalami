@@ -5,8 +5,8 @@
  *  Description: Enjeux stratégiques de l'étape 5 (deux ou trois) : titre, explication et
  *               éléments de la SWOT ou pistes TOWS sur lesquels chaque enjeu s'appuie.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-14
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: synthesis/link-picker.tsx, lib/strategy/templates/synthesis.ts
  * =============================================================
  */
@@ -14,6 +14,7 @@
 "use client";
 
 import { LinkPicker, type LinkGroup } from "@/components/strategy/synthesis/link-picker";
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -83,6 +84,7 @@ export function IssuesList({ payload, readOnly, onAdd, onChange, onRemove }: Iss
                       onChange={(event) => onChange(issue.id, { title: event.target.value })}
                     />
                   </label>
+                  <CommentBadge targetId={issue.id} label={issue.title.trim() || s.untitledIssue} />
                   {!readOnly && (
                     <button
                       type="button"

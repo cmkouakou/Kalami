@@ -5,9 +5,9 @@
  *  Description: Règles du travail en équipe (S9a), sans accès à la base : rôles qu'une
  *               invitation peut donner, validation du courriel et du nom affiché, phrases
  *               du journal d'activité et traduction des erreurs des fonctions SQL d'équipe.
- *               Utilisable côté serveur comme côté navigateur.
+ *               Utilisable côté serveur comme côté navigateur. 1.1 : commentaire (S9b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: i18n, lib/strategy/steps.ts
  * =============================================================
@@ -75,6 +75,7 @@ export const ACTIVITY_ACTIONS = [
   "step_validated",
   "step_reopened",
   "step_needs_review",
+  "comment_added",
 ] as const;
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number];
 

@@ -5,7 +5,7 @@
  *  Description: Risques facultatifs de l'étape 8 : risque, signal d'alerte, réponse prévue
  *               et chantier exposé. Source de la section « Nos risques » du plan (S8).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/action.ts
  * =============================================================
@@ -14,6 +14,7 @@
 "use client";
 
 import { shortLabel } from "@/components/strategy/synthesis/link-picker";
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -84,6 +85,7 @@ export function RisksList({
                       onChange={(event) => onChange(risk.id, { text: event.target.value })}
                     />
                   </label>
+                  <CommentBadge targetId={risk.id} label={risk.text.trim() || s.untitledRisk} />
                   {!readOnly && (
                     <button
                       type="button"

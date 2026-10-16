@@ -7,14 +7,15 @@
  *               marginal) et commentée. Les activités se renomment, s'ajoutent et se
  *               retirent.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/internal.ts
  * =============================================================
  */
 
 "use client";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -67,6 +68,7 @@ function ActivityCard({
             onChange={(event) => onChange(activity.id, { name: event.target.value })}
           />
         </label>
+        <CommentBadge targetId={activity.id} label={activity.name || n.untitled} />
         {!readOnly && (
           <button
             type="button"

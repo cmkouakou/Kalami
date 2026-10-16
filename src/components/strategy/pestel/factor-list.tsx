@@ -5,14 +5,15 @@
  *  Description: Saisie des facteurs PESTEL regroupés par dimension : facteur, effet sur
  *               l'entreprise, opportunité ou menace, source facultative.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/pestel.ts
  * =============================================================
  */
 
 "use client";
 
+import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -65,6 +66,7 @@ function FactorCard({
             onChange={(event) => onChange(factor.id, { factor: event.target.value })}
           />
         </label>
+        <CommentBadge targetId={factor.id} label={factor.factor || p.untitled} />
         {!readOnly && (
           <button
             type="button"

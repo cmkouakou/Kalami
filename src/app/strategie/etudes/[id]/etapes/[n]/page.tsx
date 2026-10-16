@@ -8,21 +8,25 @@
  *               parties prenantes, synthèse SWOT-TOWS nourrie des étapes 1 à 3, cap et
  *               choix liés aux enjeux de l'étape 5, action liée aux options retenues et aux
  *               objectifs) avec le panneau du coach IA ou, pour l'étape 9, l'éditeur du plan
- *               stratégique (sections, coach de rédaction, annexe de traçabilité).
+ *               stratégique (sections, coach de rédaction, annexe de traçabilité). Sous le
+ *               gabarit : la discussion de l'équipe (S9b), pastilles sur chaque élément.
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
+ *  Version    : 1.8
  *  Date       : 2026-10-15
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts,
- *               lib/strategy/plan-inputs.ts, lib/strategy/plan-trace.ts
+ *               lib/strategy/plan-inputs.ts, lib/strategy/plan-trace.ts,
+ *               lib/strategy/comments-queries.ts
  * =============================================================
  */
 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { type ReactNode, Suspense } from "react";
 
 import { ActionEditor } from "@/components/strategy/action/action-editor";
+import { CommentsPanel } from "@/components/strategy/comments/comments-panel";
+import { CommentsProvider } from "@/components/strategy/comments/comments-context";
 import { ChoiceEditor } from "@/components/strategy/choice/choice-editor";
 import { DirectionEditor } from "@/components/strategy/direction/direction-editor";
 import { ForcesEditor } from "@/components/strategy/forces/forces-editor";
@@ -40,6 +44,8 @@ import { CARD } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getCoachState, getPlanCoachState } from "@/lib/strategy/coach/queries";
+import { commentTargets, countByTarget } from "@/lib/strategy/comments";
+import { getStepComments } from "@/lib/strategy/comments-queries";
 import { getPlanInputs } from "@/lib/strategy/plan-inputs";
 import { sourceCatalog } from "@/lib/strategy/plan-trace";
 import {
@@ -70,6 +76,8 @@ import { readPestel } from "@/lib/strategy/templates/pestel";
 import { readPlan } from "@/lib/strategy/templates/plan";
 import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
 import { readSynthesis } from "@/lib/strategy/templates/synthesis";
+import { memberLabel } from "@/lib/strategy/team";
+import { getStudyMembers } from "@/lib/strategy/team-queries";
 
 const t = getDictionary();
 const s = t.strategy;
@@ -162,19 +170,73 @@ async function StudyStep({ params }: { params: Promise<{ id: string; n: string }
             </p>
           )}
 
-          {/* ==================== CONTENU ==================== */}
-          {hasTemplate(no) ? (
-            <Template
-              study={study}
-              no={no}
-              affectedTitles={affected.map((down) => s.steps[down].title)}
-            />
-          ) : (
-            <Plan study={study} />
-          )}
+          {/* ==================== CONTENU ET DISCUSSION ==================== */}
+          <StepDiscussion study={study} no={no} userId={user.id}>
+            {hasTemplate(no) ? (
+              <Template
+                study={study}
+                no={no}
+                affectedTitles={affected.map((down) => s.steps[down].title)}
+              />
+            ) : (
+              <Plan study={study} />
+            )}
+          </StepDiscussion>
         </>
       )}
     </main>
+  );
+}
+
+/**
+ * Discussion de l'étape (S9b) : fournit aux gabarits les pastilles de commentaire et
+ * ajoute la section des fils. Si la discussion ne peut pas être chargée (migration absente,
+ * accès retiré), le gabarit s'affiche seul.
+ */
+async function StepDiscussion({
+  study,
+  no,
+  userId,
+  children,
+}: {
+  study: StudyDetail;
+  no: StepNo;
+  userId: string;
+  children: ReactNode;
+}) {
+  let loaded;
+  try {
+    const [comments, members, content] = await Promise.all([
+      getStepComments(study.id, no),
+      getStudyMembers(study.id),
+      getStepContent(study.id, no),
+    ]);
+    loaded = { comments, members, content };
+  } catch {
+    return children;
+  }
+
+  const { comments, members, content } = loaded;
+  const people = members.map((m) => ({ id: m.user_id, label: memberLabel(m) }));
+  const labels = Object.fromEntries(
+    commentTargets(no, content.payload).map((target) => [target.id, target.label]),
+  );
+
+  return (
+    <CommentsProvider counts={countByTarget(comments)} labels={labels}>
+      {children}
+      <CommentsPanel
+        comments={comments}
+        context={{
+          studyId: study.id,
+          stepNo: no,
+          userId,
+          isOwner: study.role === "owner",
+          members: people,
+          mentionable: people.filter((person) => person.id !== userId),
+        }}
+      />
+    </CommentsProvider>
   );
 }
 
