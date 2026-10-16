@@ -1,5 +1,32 @@
 # Journal des modifications
 
+## [Stratégie v0.8.0] - 2026-10-15 — Cap et Choix (S7a)
+### Ajouté
+- Migration `20261023120000_strategy_direction_choice.sql` : listes de contrôle des étapes 6
+  et 7 dans `strategy_checklist_ok`. Étapes 1 à 5 inchangées.
+- Gabarit de l'étape 6, « Cap » (`templates/direction.ts`, `components/strategy/direction/`) :
+  vision avec test du remplacement du nom (vision réécrite au nom d'un concurrent du profil
+  ou saisi ; réussi si « la phrase reste vraie » reçoit « non » ; à refaire si la vision
+  change), mission, valeurs avec geste concret, objectifs (indicateur, cible, échéance au
+  mois) cochés critère par critère SMART et liés aux enjeux de l'étape 5.
+  Minimums : vision et test réussi, mission, 2 valeurs avec geste, 1 objectif SMART.
+- Gabarit de l'étape 7, « Choix » (`templates/choice.ts`, `components/strategy/choice/`) :
+  grille de Porter 2 × 2, matrice d'Ansoff qui montre et accueille les options, évaluation
+  pertinence, acceptabilité, faisabilité (oui / partiel / non) et décision de l'équipe
+  (retenue ou écartée ; option retenue malgré un « non » ou sans enjeu lié signalée),
+  énoncé de la stratégie avec rappel des options retenues, renoncements. Minimums :
+  position, 2 options évaluées, 1 retenue, énoncé, 1 renoncement.
+- Tests : unitaires `strategy-direction-choice.test.ts` et intégration
+  `strategy-direction-choice-rls.test.ts` (ignorée tant que la migration n'est pas
+  appliquée).
+### Modifié
+- Coach : libellés des listes de contrôle des étapes 6 et 7 ; contexte amont relu (étape 5
+  pour l'étape 6, étapes 5 et 6 pour l'étape 7).
+- `LinkPicker` : limite et message vide paramétrables (liens aux enjeux, 3 au plus).
+### Corrigé
+- `strategy-rls.test.ts` : l'étape 5 reçoit une synthèse complète avant validation
+  (échec depuis la liste de contrôle de S6a).
+
 ## [Stratégie v0.7.1] - 2026-10-14 — Synthèse : propositions du coach (S6b)
 ### Ajouté
 - Migration `20261022120000_strategy_coach_synthesis.sql` : fonction du coach « synthesize »

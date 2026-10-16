@@ -4,13 +4,13 @@
  *  Projet     : Kalami Stratégie
  *  Description: Page d'une étape : statut, guide de l'auteur (explication, chapitre,
  *               exemple), ce qui manque si elle est verrouillée, raisons « à revoir », puis
- *               le gabarit interactif (étapes 1 à 5 : PESTEL, cinq forces, analyse interne,
- *               parties prenantes, synthèse SWOT-TOWS nourrie des étapes 1 à 3) avec le
- *               panneau du coach IA ou, pour les autres étapes, les actions (commencer,
+ *               le gabarit interactif (étapes 1 à 7 : PESTEL, cinq forces, analyse interne,
+ *               parties prenantes, synthèse SWOT-TOWS nourrie des étapes 1 à 3, cap et
+ *               choix liés aux enjeux de l'étape 5) avec le panneau du coach IA ou, pour les autres étapes, les actions (commencer,
  *               valider, modifier) en attendant leur gabarit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-14
+ *  Version    : 1.5
+ *  Date       : 2026-10-15
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts
  * =============================================================
  */
@@ -20,6 +20,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { ChoiceEditor } from "@/components/strategy/choice/choice-editor";
+import { DirectionEditor } from "@/components/strategy/direction/direction-editor";
 import { ForcesEditor } from "@/components/strategy/forces/forces-editor";
 import { InternalEditor } from "@/components/strategy/internal/internal-editor";
 import { PestelEditor } from "@/components/strategy/pestel/pestel-editor";
@@ -28,6 +30,7 @@ import { SynthesisEditor } from "@/components/strategy/synthesis/synthesis-edito
 import { StepActions } from "@/components/strategy/step-actions";
 import { StepGuide } from "@/components/strategy/step-guide";
 import { StepStatusBadge } from "@/components/strategy/step-status";
+import type { LinkOption } from "@/components/strategy/synthesis/link-picker";
 import type { TemplateFrameProps } from "@/components/strategy/template-frame";
 import { IconLock } from "@/components/ui/icons";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
@@ -52,6 +55,8 @@ import {
   PROFILE_PREREQUISITE,
   type StepNo,
 } from "@/lib/strategy/steps";
+import { readChoice } from "@/lib/strategy/templates/choice";
+import { readDirection } from "@/lib/strategy/templates/direction";
 import { readForces } from "@/lib/strategy/templates/forces";
 import { hasTemplate } from "@/lib/strategy/templates";
 import { readInternal } from "@/lib/strategy/templates/internal";
@@ -246,7 +251,51 @@ async function Template({
       />
     );
   }
-  return <Synthesis study={study} frame={frame} content={content} />;
+  if (no === 5) return <Synthesis study={study} frame={frame} content={content} />;
+  if (no === 6 || no === 7) return <Strategy study={study} frame={frame} content={content} />;
+  return null;
+}
+
+/**
+ * Gabarits de cap et de choix (étapes 6 et 7) : charge aussi les enjeux de l'étape 5,
+ * auxquels les objectifs et les options se rattachent.
+ */
+async function Strategy({
+  study,
+  frame,
+  content,
+}: {
+  study: StudyDetail;
+  frame: TemplateFrameProps;
+  content: StepContent;
+}) {
+  const sources = await getSourcePayloads(study.id, [5]);
+  const issues: LinkOption[] = readSynthesis(sources[5]).issues.map((issue, index) => ({
+    id: issue.id,
+    text: issue.title.trim() || `${s.synthesis.issueTitle} ${index + 1}`,
+  }));
+  if (frame.stepNo === 6) {
+    return (
+      <DirectionEditor
+        key={content.revision}
+        {...frame}
+        initial={readDirection(content.payload)}
+        revision={content.revision}
+        companyName={study.company_name}
+        competitors={study.profile.competitors}
+        issues={issues}
+      />
+    );
+  }
+  return (
+    <ChoiceEditor
+      key={content.revision}
+      {...frame}
+      initial={readChoice(content.payload)}
+      revision={content.revision}
+      issues={issues}
+    />
+  );
 }
 
 /**

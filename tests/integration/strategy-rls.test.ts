@@ -8,9 +8,10 @@
  *              clés manquent ou si la migration Stratégie n'est pas encore appliquée. Avec
  *              la migration des gabarits (S2), les étapes 1 à 4 reçoivent d'abord un
  *              contenu qui remplit leur liste de contrôle (S3 pour les étapes 3 et 4 ;
- *              avant elle, ce contenu est simplement accepté).
+ *              avant elle, ce contenu est simplement accepté). Depuis S6a, l'étape 5 reçoit
+ *              aussi une synthèse complète.
  * Auteur     : Claude Marcel
- * Date       : 2026-10-11
+ * Date       : 2026-10-15
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
@@ -26,6 +27,13 @@ import {
 } from "@/lib/strategy/templates/internal";
 import { emptyPestel, newFactor } from "@/lib/strategy/templates/pestel";
 import { newStakeholder } from "@/lib/strategy/templates/stakeholders";
+import {
+  emptySynthesis,
+  newIssue,
+  newSwotItem,
+  newTowsItem,
+  SWOT_KEYS,
+} from "@/lib/strategy/templates/synthesis";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -91,6 +99,18 @@ function filledStakeholders() {
   };
 }
 
+/** Synthèse qui remplit la liste de contrôle de l'étape 5 (SWOT, une piste, deux enjeux). */
+function filledSynthesis() {
+  const synthesis = emptySynthesis();
+  for (const key of SWOT_KEYS) synthesis.swot[key] = [newSwotItem(`s-${key}`, `Élément ${key}`)];
+  synthesis.tows = [{ ...newTowsItem("t1", "so"), text: "Piste" }];
+  synthesis.issues = [
+    { ...newIssue("e1"), title: "Enjeu A" },
+    { ...newIssue("e2"), title: "Enjeu B" },
+  ];
+  return synthesis;
+}
+
 const PROFILE = {
   sector: "Ébénisterie",
   employees: 40,
@@ -139,11 +159,11 @@ describe.skipIf(!ready)("RLS — assistant stratégie", () => {
   }
 
   /**
-   * Enregistre un contenu qui remplit la liste de contrôle des étapes 1 à 4 (si la
+   * Enregistre un contenu qui remplit la liste de contrôle des étapes 1 à 5 (si la
    * migration des gabarits est appliquée ; sinon rien à faire).
    */
   async function fillTemplate(client: SupabaseClient, stepNo: number): Promise<void> {
-    if (!templates || stepNo < 1 || stepNo > 4) return;
+    if (!templates || stepNo < 1 || stepNo > 5) return;
     let payload: object;
     if (stepNo === 1) {
       const pestel = emptyPestel();
@@ -155,8 +175,10 @@ describe.skipIf(!ready)("RLS — assistant stratégie", () => {
       payload = forces;
     } else if (stepNo === 3) {
       payload = filledInternal();
-    } else {
+    } else if (stepNo === 4) {
       payload = filledStakeholders();
+    } else {
+      payload = filledSynthesis();
     }
     const current = await service
       .from("study_steps")

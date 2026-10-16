@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.7.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S6b livrés)
+Version actuelle : v0.8.3 · Stratégie v0.8.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S7a livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -24,7 +24,8 @@ Version actuelle : v0.8.3 · Stratégie v0.7.1 | Statut : 🟡 En cours (projet 
 | #18 | 2026-10-14 | Stratégie S5b : pièces jointes du profil, analyse par le coach, préremplissage | ~320 000 | ~1.92 $ |
 | #19 | 2026-10-14 | Stratégie S6a : synthèse SWOT, reprise des étapes 1 à 3, TOWS, enjeux | ~300 000 | ~1.80 $ |
 | #20 | 2026-10-14 | Stratégie S6b : propositions du coach pour la synthèse, décisions groupées | ~250 000 | ~1.50 $ |
-| **TOTAL** | | | **~4 890 000** | **~29.34 $** |
+| #21 | 2026-10-15 | Stratégie S7a : gabarits Cap (test du nom, SMART) et Choix (Porter, Ansoff, évaluation) | ~300 000 | ~1.80 $ |
+| **TOTAL** | | | **~5 190 000** | **~31.14 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -90,4 +91,7 @@ Version actuelle : v0.8.3 · Stratégie v0.7.1 | Statut : 🟡 En cours (projet 
 - [x] S6b — préremplissage par le coach (SWOT, pistes TOWS, enjeux), contexte des étapes 1 à 4 (Stratégie v0.7.1), unitaires 359/359
 - [ ] S6b — appliquer `20261022120000_strategy_coach_synthesis.sql`, puis lancer l'intégration synthèse du coach (4 tests)
 - [ ] S6b — consigne synthesize v1 à relire et publier
+- [x] S7a — Cap (vision et test du nom, mission, valeurs, objectifs SMART) et Choix (Porter, Ansoff, évaluation, énoncé, renoncements) (Stratégie v0.8.0)
+- [x] S7a — migration `20261023120000_strategy_direction_choice.sql` appliquée le 2026-10-15 (éditeur SQL ; `repair --status applied 20261023120000` avant un push CLI), intégration cap et choix 15/15
+- [ ] S7b — Action : Gantt au mois, tableau de bord équilibré (Stratégie v0.8.1)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

@@ -7,10 +7,11 @@
  *               et parties prenantes, coach IA, administration des crédits, des guides
  *               et du coach : réglages, consignes et erreurs classiques), recherche Web
  *               sourcée du coach, documents joints au profil (S5b), gabarit de synthèse
- *               SWOT, TOWS et enjeux (S6a). Rattachés à fr.ts sous « strategy ».
+ *               SWOT, TOWS et enjeux (S6a), gabarits Cap et Choix (S7a). Rattachés à fr.ts
+ *               sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
- *  Date       : 2026-10-14
+ *  Version    : 1.8
+ *  Date       : 2026-10-15
  * =============================================================
  */
 
@@ -711,6 +712,176 @@ const strategyFr = {
       swot: "Au moins un élément dans chaque case de la SWOT",
       tows: "Au moins une piste TOWS",
       issues: "Deux ou trois enjeux stratégiques nommés",
+    },
+  },
+
+  // ==================== GABARIT : CAP ====================
+  direction: {
+    visionTitle: "1. Vision",
+    visionIntro:
+      "Où serez-vous dans 5 à 10 ans ? Une phrase qui donne une direction et qui n'appartient " +
+      "qu'à vous.",
+    visionLabel: "Vision",
+    nameTestTitle: "Test du remplacement du nom",
+    nameTestIntro:
+      "Remplacez le nom de l'organisation par celui d'un concurrent. Si la phrase reste " +
+      "vraie, elle ne dit rien de vous.",
+    competitorLabel: "Concurrent",
+    competitorHint: "Choisissez un concurrent du profil ou saisissez un autre nom.",
+    competitorOther: "Autre nom…",
+    competitorNone: "Choisir un concurrent",
+    competitorCustom: "Nom du concurrent",
+    rewritten: "Votre vision, au nom de {competitor} :",
+    rewrittenEmpty: "Rédigez la vision et choisissez un concurrent pour lancer le test.",
+    question: "Cette phrase reste-t-elle vraie pour ce concurrent ?",
+    answers: {
+      yes: "Oui, elle reste vraie",
+      no: "Non, elle ne lui va pas",
+    },
+    states: {
+      pending: "Test à faire.",
+      stale: "La vision a changé depuis le test : refaites-le.",
+      passed: "Test réussi : votre vision vous distingue.",
+      failed:
+        "Test échoué : la vision pourrait être celle d'un concurrent. Précisez ce qui " +
+        "n'appartient qu'à vous, puis refaites le test.",
+    },
+    missionTitle: "2. Mission",
+    missionIntro: "Pourquoi existez-vous, et pour qui ?",
+    missionLabel: "Mission",
+    valuesTitle: "3. Valeurs",
+    valuesIntro:
+      "Comment vous comportez-vous ? Pour chaque valeur, un geste concret qui la rend visible " +
+      "au quotidien.",
+    valueName: "Valeur",
+    valueGesture: "Geste concret",
+    addValue: "Ajouter une valeur",
+    emptyValues: "Aucune valeur pour l'instant.",
+    maxValues: "{max} valeurs au plus.",
+    untitledValue: "Valeur sans nom",
+    objectivesTitle: "4. Objectifs SMART",
+    objectivesIntro:
+      "Spécifiques, mesurables, atteignables, réalistes, temporellement définis. Vérifiez " +
+      "chaque critère et reliez l'objectif aux enjeux de la synthèse.",
+    objectiveLabel: "Objectif {no}",
+    objectiveIndicator: "Indicateur",
+    objectiveTarget: "Cible",
+    objectiveDeadline: "Échéance",
+    smartLegend: "Critères SMART",
+    smart: {
+      specific: "Spécifique",
+      measurable: "Mesurable",
+      achievable: "Atteignable",
+      realistic: "Réaliste",
+      timeBound: "Temporellement défini",
+    },
+    smartHints: {
+      specific: "Il dit précisément ce qui doit changer.",
+      measurable: "Un chiffre ou un fait permet de dire s'il est atteint.",
+      achievable: "L'équipe a une prise réelle sur le résultat.",
+      realistic: "Il tient compte des moyens et des contraintes.",
+      timeBound: "Il a une échéance.",
+    },
+    smartCount: "{count} critère(s) sur 5",
+    smartOk: "Objectif SMART",
+    issueLinks: "Répond aux enjeux",
+    noIssues: "Aucun enjeu nommé à l'étape 5.",
+    issuesGroup: "Enjeux de la synthèse",
+    addObjective: "Ajouter un objectif",
+    emptyObjectives: "Aucun objectif pour l'instant.",
+    maxObjectives: "{max} objectifs au plus.",
+    untitledObjective: "Objectif sans texte",
+    checklist: {
+      vision: "Vision rédigée",
+      nameTest: "Test du remplacement du nom réussi sur la vision actuelle",
+      mission: "Mission rédigée",
+      values: "Au moins deux valeurs, chacune avec un geste concret",
+      objectives: "Au moins un objectif coché sur les cinq critères SMART",
+    },
+  },
+
+  // ==================== GABARIT : CHOIX ====================
+  choice: {
+    genericTitle: "1. Stratégie générique",
+    genericIntro:
+      "Sur quoi repose votre avantage (coûts plus bas ou valeur unique), et pour quelle cible " +
+      "(large ou étroite) ?",
+    genericLegend: "Position retenue",
+    axisAdvantage: "Avantage",
+    axisTarget: "Cible",
+    advantages: { cost: "Coûts plus bas", differentiation: "Valeur unique" },
+    targets: { broad: "Large", narrow: "Étroite" },
+    positions: {
+      cost: "Domination par les coûts",
+      differentiation: "Différenciation",
+      focusCost: "Focalisation par les coûts",
+      focusDifferentiation: "Focalisation par la différenciation",
+    },
+    justification: "Pourquoi cette position ?",
+    ansoffTitle: "2. Options et matrice d'Ansoff",
+    ansoffIntro:
+      "Listez les options envisagées et placez chacune dans une case : produits actuels ou " +
+      "nouveaux, marchés actuels ou nouveaux.",
+    axisProducts: "Produits",
+    axisMarkets: "Marchés",
+    current: "Actuels",
+    new: "Nouveaux",
+    cells: {
+      penetration: "Pénétration du marché",
+      productDevelopment: "Développement de produits",
+      marketDevelopment: "Développement de marchés",
+      diversification: "Diversification",
+    },
+    cellNone: "Case à choisir",
+    cellEmpty: "Aucune option.",
+    unplaced: "Options sans case : {count}",
+    optionsTitle: "3. Évaluation des options",
+    optionsIntro:
+      "Pertinence : l'option répond-elle aux enjeux ? Acceptabilité : les parties prenantes " +
+      "clés l'accepteront-elles ? Faisabilité : en avez-vous les moyens ? Puis décidez.",
+    optionLabel: "Option {no}",
+    ansoffLabel: "Case d'Ansoff",
+    criteria: {
+      relevance: "Pertinence",
+      acceptability: "Acceptabilité",
+      feasibility: "Faisabilité",
+    },
+    ratings: { yes: "Oui", partial: "Partiel", no: "Non" },
+    ratingNone: "–",
+    comment: "Commentaire",
+    decisionLabel: "Décision",
+    decisions: { retained: "Retenue", rejected: "Écartée" },
+    decisionNone: "À décider",
+    issueLinks: "Répond aux enjeux",
+    noIssues: "Aucun enjeu nommé à l'étape 5.",
+    issuesGroup: "Enjeux de la synthèse",
+    warnings: {
+      failedCriterion: "Option retenue malgré un « non » ({criteria}) : est-ce voulu ?",
+      noIssue: "Option retenue sans enjeu lié : à quel enjeu répond-elle ?",
+    },
+    addOption: "Ajouter une option",
+    emptyOptions: "Aucune option pour l'instant.",
+    maxOptions: "{max} options au plus.",
+    untitledOption: "Option sans texte",
+    statementTitle: "4. Stratégie retenue",
+    statementIntro:
+      "Énoncez en quelques phrases la stratégie que vous retenez : la position, la direction " +
+      "de croissance et les options choisies.",
+    statementLabel: "Énoncé de la stratégie",
+    retainedSummary: "Options retenues",
+    retainedNone: "Aucune option retenue pour l'instant.",
+    renunciationsTitle: "5. Ce que nous ne ferons pas",
+    renunciationsIntro: "Une stratégie, c'est aussi dire ce qu'on ne fera pas.",
+    renunciationLabel: "Renoncement {no}",
+    addRenunciation: "Ajouter un renoncement",
+    emptyRenunciations: "Aucun renoncement pour l'instant.",
+    maxRenunciations: "{max} renoncements au plus.",
+    checklist: {
+      generic: "Position dans les stratégies génériques choisie",
+      options: "Au moins deux options évaluées sur les trois critères",
+      retained: "Au moins une option retenue",
+      statement: "Énoncé de la stratégie rédigé",
+      renunciations: "Au moins un renoncement",
     },
   },
 

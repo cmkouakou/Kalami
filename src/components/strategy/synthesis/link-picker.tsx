@@ -4,10 +4,11 @@
  *  Projet     : Kalami Stratégie
  *  Description: Choix des éléments liés à une piste TOWS ou à un enjeu (étape 5) : cases à
  *               cocher regroupées (case de la SWOT, quadrant TOWS), repliables, avec le
- *               nombre d'éléments liés et une limite.
+ *               nombre d'éléments liés et une limite. Réutilisé aux étapes 6 et 7 (liens aux
+ *               enjeux) avec sa propre limite et son propre message.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-14
+ *  Version    : 1.1
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/templates/synthesis.ts
  * =============================================================
  */
@@ -37,6 +38,10 @@ type LinkPickerProps = {
   selected: string[];
   readOnly: boolean;
   onChange: (links: string[]) => void;
+  /** Nombre maximal d'éléments liés (LINKS_MAX par défaut). */
+  max?: number;
+  /** Message affiché quand aucun élément ne peut être lié. */
+  emptyText?: string;
 };
 
 /** Libellé court d'un élément (texte tronqué, ou mention « sans texte »). */
@@ -54,9 +59,11 @@ export function LinkPicker({
   selected,
   readOnly,
   onChange,
+  max = LINKS_MAX,
+  emptyText = s.linksNone,
 }: LinkPickerProps) {
   const available = groups.filter((group) => group.options.length > 0);
-  const full = selected.length >= LINKS_MAX;
+  const full = selected.length >= max;
 
   /** Coche ou décoche un élément. */
   const toggle = (id: string, checked: boolean) =>
@@ -68,7 +75,7 @@ export function LinkPicker({
         {title} ({selected.length})
       </summary>
       {available.length === 0 ? (
-        <p className="mt-2 text-small text-ink-muted">{s.linksNone}</p>
+        <p className="mt-2 text-small text-ink-muted">{emptyText}</p>
       ) : (
         <div className="mt-2 flex flex-col gap-3">
           {available.map((group) => (

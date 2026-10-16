@@ -11,10 +11,11 @@
  *               instructions. Seule l'étude demandée est transmise. Fonctions pures.
  *               Liste des fonctions dotées d'une consigne, dont « extract » (S5b).
  *               À l'étape 5, contenu des étapes 1 à 4 (bloc etapes) et fonction
- *               « synthesize » qui propose de quoi compléter la synthèse (S6b).
+ *               « synthesize » qui propose de quoi compléter la synthèse (S6b). Aux étapes
+ *               6 et 7, même bloc avec les étapes en amont (S7a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-14
+ *  Version    : 1.5
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts
  * =============================================================
  */
@@ -61,7 +62,7 @@ export function isFunctionAvailable(fn: CoachFunction, stepNo: number): boolean 
   return true;
 }
 
-/** Contenu enregistré d'une étape antérieure, transmis à l'étape 5. */
+/** Contenu enregistré d'une étape antérieure (étapes 5 à 7). */
 export type SourceStepContent = { stepNo: number; title: string; payload: unknown };
 
 /** Point de la liste de contrôle de l'étape, avec son libellé. */
@@ -80,7 +81,7 @@ export type ReviewContextInput = {
   checklist?: readonly ChecklistLine[];
   /** Cibles admises pour un fait (transmises pour la recherche). */
   targets?: readonly string[];
-  /** Étapes 1 à 4 (transmises à l'étape 5, pour toutes les fonctions). */
+  /** Étapes en amont : 1 à 4 pour l'étape 5, puis 5 (et 6) pour les étapes 6 et 7. */
   sources?: readonly SourceStepContent[];
 };
 

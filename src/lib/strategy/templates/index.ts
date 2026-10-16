@@ -6,16 +6,22 @@
  *               contenu envoyé par le navigateur avant enregistrement, liste de contrôle
  *               d'un contenu enregistré (transmise au coach pour l'évaluation).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-14
+ *  Version    : 1.4
+ *  Date       : 2026-10-15
  *  Dépendances: templates/pestel.ts, forces.ts, internal.ts, stakeholders.ts,
- *               synthesis.ts (étape 5, S6a)
+ *               synthesis.ts (étape 5, S6a), direction.ts et choice.ts (étapes 6-7, S7a)
  * =============================================================
  */
 
 import type { z } from "zod";
 
+import { choiceChecklist, choiceSchema, readChoice } from "@/lib/strategy/templates/choice";
 import type { ChecklistItem } from "@/lib/strategy/templates/common";
+import {
+  directionChecklist,
+  directionSchema,
+  readDirection,
+} from "@/lib/strategy/templates/direction";
 import { forcesChecklist, forcesSchema, readForces } from "@/lib/strategy/templates/forces";
 import {
   internalChecklist,
@@ -36,7 +42,7 @@ import {
 import type { StepNo } from "@/lib/strategy/steps";
 
 /** Étapes dotées d'un gabarit interactif (les autres arrivent aux sprints suivants). */
-export const TEMPLATE_STEPS = [1, 2, 3, 4, 5] as const satisfies readonly StepNo[];
+export const TEMPLATE_STEPS = [1, 2, 3, 4, 5, 6, 7] as const satisfies readonly StepNo[];
 
 export type TemplateStep = (typeof TEMPLATE_STEPS)[number];
 
@@ -47,6 +53,8 @@ const SCHEMAS: Record<TemplateStep, z.ZodType<Record<string, unknown>>> = {
   3: internalSchema,
   4: stakeholdersSchema,
   5: synthesisSchema,
+  6: directionSchema,
+  7: choiceSchema,
 };
 
 /** Vrai si l'étape a un gabarit interactif. */
@@ -83,5 +91,9 @@ export function checklistFor(no: TemplateStep, raw: unknown): ChecklistItem[] {
       return stakeholdersChecklist(readStakeholders(raw));
     case 5:
       return synthesisChecklist(readSynthesis(raw));
+    case 6:
+      return directionChecklist(readDirection(raw));
+    case 7:
+      return choiceChecklist(readChoice(raw));
   }
 }

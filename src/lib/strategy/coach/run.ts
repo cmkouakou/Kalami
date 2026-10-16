@@ -13,9 +13,11 @@
  *               Briques exportées pour l'analyse des pièces jointes (extract.ts, S5b).
  *               À l'étape 5, le contenu des étapes 1 à 4 est joint au message, et le
  *               préremplissage (synthesize) est nettoyé selon les éléments connus (S6b).
+ *               Aux étapes 6 et 7, les étapes en amont déjà rédigées (synthèse, cap) sont
+ *               jointes pour juger la cohérence (S7a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-14
+ *  Version    : 1.5
+ *  Date       : 2026-10-15
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
  * =============================================================
@@ -63,6 +65,7 @@ import { getSourcePayloads } from "@/lib/strategy/queries";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
 import { knownIds, type ProposalSources } from "@/lib/strategy/synthesis-proposals";
 import { checklistFor, hasTemplate, type TemplateStep } from "@/lib/strategy/templates";
+import { readDirection } from "@/lib/strategy/templates/direction";
 import { readForces } from "@/lib/strategy/templates/forces";
 import { readInternal } from "@/lib/strategy/templates/internal";
 import { readPestel } from "@/lib/strategy/templates/pestel";
@@ -183,6 +186,8 @@ const CHECKLIST_LABELS: Record<TemplateStep, Record<string, string>> = {
   3: s.internal.checklist,
   4: s.stakeholders.checklist,
   5: s.synthesis.checklist,
+  6: s.direction.checklist,
+  7: s.choice.checklist,
 };
 
 /** Liste de contrôle lisible du contenu enregistré d'une étape. */
@@ -292,6 +297,38 @@ async function loadSynthesisContext(
   };
 }
 
+/** Étapes en amont jointes au message, par étape (contexte de cohérence). */
+const UPSTREAM_STEPS: Partial<Record<StepNo, readonly StepNo[]>> = {
+  6: [5],
+  7: [5, 6],
+};
+
+/** Lecteurs tolérants des étapes en amont (contenu propre, sans champ inconnu). */
+const UPSTREAM_READERS: Partial<Record<StepNo, (raw: unknown) => unknown>> = {
+  5: readSynthesis,
+  6: readDirection,
+};
+
+/**
+ * Lit les étapes en amont de l'étape (session de l'utilisateur, donc RLS).
+ * @param studyId - Identifiant de l'étude (déjà vérifié)
+ * @param stepNo  - Étape demandée
+ * @returns Contenu des étapes en amont, ou undefined si l'étape n'en a pas
+ */
+async function loadUpstreamContext(
+  studyId: string,
+  stepNo: StepNo,
+): Promise<SourceStepContent[] | undefined> {
+  const steps = UPSTREAM_STEPS[stepNo];
+  if (!steps) return undefined;
+  const raw = await getSourcePayloads(studyId, steps);
+  return steps.map((no) => ({
+    stepNo: no,
+    title: s.steps[no].title,
+    payload: UPSTREAM_READERS[no]?.(raw[no]) ?? raw[no],
+  }));
+}
+
 /**
  * Réserve la demande dans la base ; renvoie la réservation ou la clé du refus.
  * @param fn           - Fonction demandée
@@ -395,6 +432,7 @@ export async function runCoach<F extends CoachFunction>(
   const synthesis = stepNo === SYNTHESIS_STEP
     ? await loadSynthesisContext(studyId, loaded.study.company_name, profile)
     : null;
+  const upstream = synthesis ? undefined : await loadUpstreamContext(studyId, stepNo);
   const message = buildCoachMessage(fn, {
     companyName: loaded.study.company_name,
     strategicQuestion: loaded.study.strategic_question,
@@ -405,7 +443,7 @@ export async function runCoach<F extends CoachFunction>(
     rules,
     checklist: fn === "score" ? checklistLines(stepNo, loaded.payload) : undefined,
     targets: fn === "research" ? researchTargets(stepNo) : undefined,
-    sources: synthesis?.message,
+    sources: synthesis?.message ?? upstream,
   });
   // Recherche : marge pour les résultats renvoyés (le prix des recherches est ajouté en SQL)
   const searchChars = fn === "research"
