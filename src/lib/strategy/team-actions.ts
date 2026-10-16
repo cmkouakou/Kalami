@@ -9,8 +9,8 @@
  *               appliqués par les fonctions SQL ; ici, chaque argument est vérifié et
  *               chaque erreur traduite.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-15
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/email/send.ts, lib/strategy/team.ts, lib/strategy/team-email.ts
  * =============================================================
  */
@@ -92,7 +92,9 @@ async function deliverInvitation(
       url,
     }),
   );
-  return result === "sent" ? { message: sentMessage } : { message: tm.invite.notSent, link: url };
+  if (result === "sent") return { message: sentMessage };
+  const message = result === "not_configured" ? tm.invite.notConfigured : tm.invite.notSent;
+  return { message, link: url };
 }
 
 // ==================== INVITATIONS (PROPRIÉTAIRE) ====================

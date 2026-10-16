@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.11.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.8.3 · Stratégie v0.11.2 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -117,6 +117,7 @@ Version actuelle : v0.8.3 · Stratégie v0.11.1 | Statut : 🟡 En cours (projet
 - [x] S10a — migration `20261029120000_strategy_classes.sql` appliquée (2026-10-16, éditeur SQL, historique réparé), intégration classes 11/11, coach 7/7, équipe 10/10
 - [x] v0.11.1 — forfaits du coach : verrou par étude, jauge en %, page de consommation, forfaits « Paiement bientôt », admin des forfaits, mémoire des relectures ; unitaires 485/485, build OK
 - [x] v0.11.1 — migration `20261030120000_strategy_coach_packs.sql` appliquée (2026-10-16, éditeur SQL, historique réparé), intégration coach 9/9, classes 11/11, pièces jointes 6/6, plan 5/5, synthèse 4/4, recherche 3/3
+- [x] v0.11.2 — diagnostic des courriels d'invitation (raison du refus de Resend dans les journaux Vercel, message distinct), unitaires 489/489
 - [ ] S10b — cas Ajinomoto, Infosystem et corrigé (fichiers de l'auteur à fournir)
 - [ ] S12 — limiter le débit des exports du plan (aucun limiteur générique sans migration)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

@@ -1395,8 +1395,11 @@ const strategyFr = {
       sending: "Envoi…",
       sent: "Invitation envoyée à {email}. Le lien est valable 14 jours.",
       notSent:
-        "Invitation créée, mais le courriel n'a pas pu partir. Transmettez vous-même ce lien " +
-        "(valable 14 jours) :",
+        "Invitation créée, mais le service d'envoi a refusé le courriel (raison notée dans " +
+        "les journaux du serveur). Transmettez vous-même ce lien (valable 14 jours) :",
+      notConfigured:
+        "Invitation créée, mais l'envoi de courriels n'est pas configuré sur ce site. " +
+        "Transmettez vous-même ce lien (valable 14 jours) :",
       copy: "Copier le lien",
       copied: "Lien copié",
       ownerOnly: "Seul le propriétaire invite de nouveaux membres.",

@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## [Stratégie v0.11.2] - 2026-10-16 — Diagnostic des courriels d'invitation
+### Corrigé
+- Invitation créée mais courriel non envoyé sans explication : `email/send.ts` note
+  désormais dans les journaux du serveur (Vercel) la raison du refus de Resend (code HTTP,
+  nom et message de l'erreur) ou la variable absente (`RESEND_API_KEY`, `EMAIL_FROM`),
+  sans jamais écrire la clé.
+- Équipe : message distinct si l'envoi de courriels n'est pas configuré ou si le service
+  d'envoi a refusé le courriel (`team-actions.ts`, `fr-strategy.ts`).
+### Ajouté
+- Tests unitaires `email-send.test.ts` (4).
+
 ## [Stratégie v0.11.1] - 2026-10-16 — Forfaits du coach
 ### Ajouté
 - Migration `20261030120000_strategy_coach_packs.sql` :
