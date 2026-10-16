@@ -9,9 +9,10 @@
  *               écartée) ou un fait trouvé (ajouté, écarté). Rôle, débit et plafond sont
  *               vérifiés en SQL. Décisions groupées sur les propositions de synthèse (S6b).
  *               Rédaction d'une section du plan stratégique (étape 9, S8a).
+ *               Forfait absent ou épuisé : « pay » renvoie vers la page du coach (v0.11.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-15
+ *  Version    : 1.5
+ *  Date       : 2026-10-16
  *  Dépendances: coach/run.ts, coach/plan.ts, coach/queries.ts, lib/auth/dal.ts,
  *               lib/supabase/server.ts
  * =============================================================
@@ -25,6 +26,7 @@ import { requireUser } from "@/lib/auth/dal";
 import {
   COACH_FUNCTIONS,
   isFunctionAvailable,
+  needsPack,
   type CoachFunction,
 } from "@/lib/strategy/coach/context";
 import { getCoachUsage, type CoachDecision, type CoachUsage } from "@/lib/strategy/coach/queries";
@@ -42,7 +44,7 @@ const c = getDictionary().strategy.coach;
 
 export type CoachActionResult<F extends CoachFunction> =
   | { ok: true; requestId: string; output: CoachOutputs[F]; usage: CoachUsage | null }
-  | { ok: false; error: string; usage: CoachUsage | null };
+  | { ok: false; error: string; usage: CoachUsage | null; pay?: boolean };
 
 // ==================== DEMANDES ====================
 
@@ -67,14 +69,16 @@ export async function requestCoach<F extends CoachFunction>(
 
   const result = await runCoach(fn, studyId, stepNo);
   const usage = await getCoachUsage(studyId).catch(() => null);
-  if (!result.ok) return { ok: false, error: c.errors[result.error], usage };
+  if (!result.ok) {
+    return { ok: false, error: c.errors[result.error], usage, pay: needsPack(result.error) };
+  }
   return { ok: true, requestId: result.requestId, output: result.output, usage };
 }
 
 /** Résultat d'une demande de rédaction d'une section du plan. */
 export type PlanActionResult =
   | { ok: true; requestId: string; output: PlanProposal; usage: CoachUsage | null }
-  | { ok: false; error: string; usage: CoachUsage | null };
+  | { ok: false; error: string; usage: CoachUsage | null; pay?: boolean };
 
 /**
  * Demande au coach de rédiger une section du plan stratégique (proposition seulement).
@@ -93,7 +97,9 @@ export async function requestPlanSection(
 
   const result = await runPlanCoach(studyId, section as PlanSectionKey);
   const usage = await getCoachUsage(studyId).catch(() => null);
-  if (!result.ok) return { ok: false, error: c.errors[result.error], usage };
+  if (!result.ok) {
+    return { ok: false, error: c.errors[result.error], usage, pay: needsPack(result.error) };
+  }
   return { ok: true, requestId: result.requestId, output: result.output, usage };
 }
 

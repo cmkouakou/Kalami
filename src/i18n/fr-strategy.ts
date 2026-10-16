@@ -10,10 +10,11 @@
  *               SWOT, TOWS et enjeux (S6a), gabarits Cap et Choix (S7a), gabarit Action
  *               (S7b), plan stratégique (S8a), équipe, invitations et journal (S9a),
  *               discussion, mentions et notifications (S9b), mode enseignant : classes,
- *               inscription, distribution, suivi et statut enseignant (S10a).
+ *               inscription, distribution, suivi et statut enseignant (S10a), page du coach
+ *               d'une étude et forfaits du coach (v0.11.1).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 2.3
+ *  Version    : 2.4
  *  Date       : 2026-10-16
  * =============================================================
  */
@@ -1275,14 +1276,17 @@ const strategyFr = {
         rejected: "Écartée",
       },
     },
-    usage: "Budget IA de l'étude : {spent} $ US utilisés sur {budget} $ US",
-    usageNear:
-      "Le budget IA de cette étude est presque épuisé. Contactez l'administrateur pour " +
-      "obtenir un supplément.",
+    usage: "Forfait du coach : {pct} % utilisé (≈ {reviews} relectures restantes)",
+    usageNear: "Le forfait du coach de cette étude est presque épuisé.",
+    locked: "Le coach de cette étude est verrouillé : un forfait l'ouvre pour toute l'équipe.",
+    pageLink: "Forfait et consommation",
+    estimate: "≈ {pct} % du forfait",
     errors: {
       unavailable: "Le coach n'est pas disponible pour le moment.",
       coach_disabled: "Le coach est désactivé par l'administrateur.",
       coach_disabled_step: "Coach désactivé par l'enseignant pour cette étape.",
+      coach_locked:
+        "Le coach de cette étude est verrouillé. Choisissez un forfait pour l'ouvrir.",
       forbidden: "Vous n'avez pas les droits nécessaires sur cette étude.",
       prerequisites_missing: "Des étapes préalables ne sont pas encore validées.",
       step_validated: "Cette étape est validée : rouvrez-la pour la faire relire.",
@@ -1290,8 +1294,7 @@ const strategyFr = {
         "Vous avez sollicité le coach plusieurs fois en peu de temps. Réessayez dans quelques " +
         "minutes.",
       budget_exhausted:
-        "Le budget IA de cette étude est atteint. Contactez l'administrateur pour obtenir un " +
-        "supplément.",
+        "Le forfait du coach de cette étude est épuisé. Rechargez-le pour continuer.",
       refused: "Le coach n'a pas pu traiter ce contenu. Reformulez-le puis réessayez.",
       timeout: "Le coach a mis trop de temps à répondre. Réessayez dans un instant.",
       busy: "Le service du coach est très sollicité. Réessayez dans un instant.",
@@ -1303,6 +1306,54 @@ const strategyFr = {
         "Ce document est trop long pour être analysé d'un bloc. Joignez un extrait (quelques " +
         "pages ou une feuille).",
     },
+  },
+
+  // ==================== PAGE DU COACH D'UNE ÉTUDE (v0.11.1) ====================
+  coachPage: {
+    title: "Coach IA de l'étude",
+    back: "Retour à l'étude",
+    intro:
+      "Le coach relit vos analyses, pose des questions, évalue vos gabarits et cherche des " +
+      "faits sourcés. Un forfait l'ouvre pour toute l'équipe de l'étude ; il se recharge à " +
+      "tout moment.",
+    lockedTitle: "Coach verrouillé",
+    lockedIntro:
+      "Cette étude n'a pas encore de forfait. Vous pouvez remplir toutes les étapes sans le " +
+      "coach ; il s'ouvre dès qu'un forfait est ajouté.",
+    exhaustedTitle: "Forfait épuisé",
+    exhaustedIntro: "Rechargez le forfait pour continuer à utiliser le coach.",
+    gaugeTitle: "Forfait en cours",
+    breakdownTitle: "Consommation par étape",
+    breakdownIntro: "Part du forfait utilisée par chaque fonction du coach.",
+    noUsage: "Le coach n'a pas encore été utilisé pour cette étude.",
+    columns: {
+      step: "Étape",
+      fn: "Fonction",
+      requests: "Demandes",
+      pct: "Part du forfait",
+    },
+    attachments: "Documents joints",
+    pct: "{pct} %",
+    functions: {
+      review: "Relecture",
+      deepen: "Questions",
+      score: "Évaluation",
+      research: "Recherche Web",
+      synthesize: "Propositions de synthèse",
+      extract: "Analyse d'un document",
+      plan: "Rédaction du plan",
+    },
+    offersTitle: "Forfaits",
+    rechargeTitle: "Recharger le forfait",
+    offersIntro:
+      "Un forfait s'ajoute à ce qui reste. Le nombre de relectures est indicatif : une " +
+      "recherche Web ou un long gabarit consomment davantage.",
+    approxReviews: "≈ {count} relectures",
+    paymentSoon: "Paiement bientôt",
+    paymentSoonHelp:
+      "Le paiement en ligne arrive bientôt. En attendant, écrivez à l'administrateur pour " +
+      "ouvrir ou recharger le coach de votre étude.",
+    noOffers: "Aucun forfait n'est proposé pour le moment.",
   },
 
   // ==================== ÉQUIPE ET JOURNAL (S9a) ====================
@@ -1907,7 +1958,6 @@ const strategyFr = {
       model: "Modèle (identifiant de l'API)",
       inputPrice: "Prix en entrée ($ US / million de jetons)",
       outputPrice: "Prix en sortie ($ US / million de jetons)",
-      budget: "Plafond inclus par étude ($ US)",
       rateLimit: "Demandes par utilisateur",
       rateWindow: "Fenêtre du débit (minutes)",
       searchPrice: "Prix d'une recherche Web ($ US)",
@@ -1917,15 +1967,17 @@ const strategyFr = {
       invalid: "Vérifiez les valeurs : un nombre positif est attendu dans chaque champ.",
       invalidModel:
         "Identifiant de modèle invalide (lettres minuscules, chiffres, points, tirets).",
-      allowanceTitle: "Accorder un supplément",
+      allowanceTitle: "Accorder un montant libre",
       allowanceIntro:
-        "S'ajoute au plafond inclus d'une étude, en attendant la recharge payante.",
+        "Ajoute un montant au forfait d'une étude (dédommagement, essai). Une étude sans " +
+        "forfait ni montant accordé garde le coach verrouillé.",
       study: "Étude",
       amount: "Montant ($ US)",
       note: "Note (facultatif)",
       grant: "Accorder",
-      granted: "Supplément de {amount} $ US accordé.",
+      granted: "Montant de {amount} $ US accordé.",
       invalidAmount: "Indiquez un montant entre 0,01 et 1000.",
+      packsLink: "Forfaits du coach",
       usageTitle: "Consommation par étude",
       usageIntro: "Chiffres seulement : le contenu des études n'est pas affiché ici.",
       noUsage: "Aucune demande au coach pour l'instant.",
@@ -1934,8 +1986,46 @@ const strategyFr = {
         owner: "Propriétaire",
         requests: "Demandes",
         spent: "Dépensé ($ US)",
-        budget: "Plafond ($ US)",
+        budget: "Forfaits ($ US)",
         last: "Dernière demande",
+      },
+    },
+    coachPacks: {
+      title: "Forfaits du coach",
+      back: "Retour au coach IA",
+      intro:
+        "Un forfait couvre un coût Anthropic en dollars US (jamais montré aux clients, qui " +
+        "voient un pourcentage et un nombre approximatif de relectures). Laissez les prix " +
+        "vides tant que le paiement n'est pas ouvert : le client voit « Paiement bientôt ».",
+      newTitle: "Nouveau forfait",
+      name: "Nom affiché",
+      cost: "Coût couvert ($ US)",
+      priceXof: "Prix en FCFA (facultatif)",
+      priceEur: "Prix en euros (facultatif)",
+      priceCad: "Prix en dollars canadiens (facultatif)",
+      active: "Proposé aux clients",
+      position: "Ordre d'affichage",
+      create: "Créer le forfait",
+      save: "Enregistrer",
+      saved: "Forfait enregistré.",
+      inactive: "Retiré",
+      approx: "≈ {count} relectures",
+      none: "Aucun forfait pour l'instant.",
+      grantTitle: "Accorder un forfait à une étude",
+      grantIntro:
+        "Ouvre ou recharge le coach pour toute l'équipe de l'étude, en attendant le paiement " +
+        "en ligne.",
+      study: "Étude",
+      pack: "Forfait",
+      note: "Note (facultatif)",
+      grant: "Accorder",
+      granted: "Forfait accordé : le coach de l'étude est ouvert.",
+      errors: {
+        invalid_name: "Indiquez un nom de 1 à 80 caractères.",
+        invalid_amount: "Le coût couvert est un montant entre 0,01 et 1000 $ US.",
+        invalid_price: "Un prix, s'il est indiqué, est un nombre positif (FCFA : entier).",
+        pack_not_found: "Ce forfait n'existe plus.",
+        study_not_found: "Cette étude n'existe plus.",
       },
     },
     coachPrompts: {

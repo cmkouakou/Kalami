@@ -7,14 +7,17 @@
  *               par la sauvegarde automatique du gabarit), questions d'approfondissement
  *               (traitées ou écartées), évaluation indicative et recherche Web sourcée
  *               (étapes 1 et 2 seulement ; un fait ajouté passe par la sauvegarde
- *               automatique). Jauge commune du budget IA de l'étude (alerte à 80 %). Une
+ *               automatique). Jauge commune du forfait de l'étude (alerte à 80 %). Une
  *               fonction sans consigne publiée est signalée comme indisponible. La jauge est
  *               exportée pour le panneau des documents joints (S5b). À l'étape 5, onglet
  *               « Propositions » : les propositions cochées complètent la synthèse par la
  *               sauvegarde automatique, et les décisions sont notées en une fois (S6b).
  *               Coach coupé par l'enseignant pour l'étape : panneau bloqué (S10a).
+ *               Verrouillage (v0.11.1) : jauge en %, panneau fermé sans forfait, part
+ *               typique du forfait près du bouton, renvoi vers la page du coach si le
+ *               forfait est absent ou épuisé.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
+ *  Version    : 1.6
  *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/coach (actions, patch, queries, schemas),
  *               lib/strategy/synthesis-proposals.ts, coach-questions.tsx,
@@ -24,6 +27,8 @@
 
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { CoachQuestions } from "@/components/strategy/coach-questions";
@@ -57,6 +62,7 @@ import type {
   CoachRuleTitle,
   CoachScore as CoachScoreResult,
   CoachState,
+  CoachUsage,
   CoachSynthesize,
 } from "@/lib/strategy/coach/queries";
 import type { Suggestion } from "@/lib/strategy/coach/schemas";
@@ -67,13 +73,15 @@ import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 const c = getDictionary().strategy.coach;
 
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
-const MONEY_FORMAT = new Intl.NumberFormat("fr-FR", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
+const PCT_FORMAT = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
 
-/** Part du budget à partir de laquelle l'alerte s'affiche. */
-const NEAR_BUDGET = 0.8;
+/** Part du forfait (en %) à partir de laquelle l'alerte s'affiche. */
+const NEAR_BUDGET_PCT = 80;
+
+/** Page du coach d'une étude (forfait, consommation, recharge). */
+export function coachPageHref(studyId: string): string {
+  return `/strategie/etudes/${studyId}/coach`;
+}
 
 type CoachPanelProps<T> = {
   studyId: string;
@@ -90,22 +98,54 @@ type CoachPanelProps<T> = {
 
 // ==================== SOUS-COMPOSANTS ====================
 
-/** Jauge du budget IA de l'étude. */
-export function UsageGauge({ spent, budget }: { spent: number; budget: number }) {
-  const near = budget > 0 && spent / budget >= NEAR_BUDGET;
+/**
+ * Jauge du forfait du coach de l'étude, en pourcentage (jamais de dollars).
+ * @param usage   - Consommation de l'étude
+ * @param studyId - Étude : ajoute le lien vers la page du coach (absent sur cette page)
+ */
+export function UsageGauge({ usage, studyId }: { usage: CoachUsage; studyId?: string }) {
+  const near = usage.usedPct >= NEAR_BUDGET_PCT;
   return (
     <div className="flex flex-col gap-1 text-small">
       <label className="flex flex-col gap-1">
         <span className="text-ink-muted">
           {interpolate(c.usage, {
-            spent: MONEY_FORMAT.format(spent),
-            budget: MONEY_FORMAT.format(budget),
+            pct: PCT_FORMAT.format(usage.usedPct),
+            reviews: String(usage.remainingReviews),
           })}
         </span>
-        <progress className="h-2 w-full" value={Math.min(spent, budget)} max={budget || 1} />
+        <progress className="h-2 w-full" value={Math.min(usage.usedPct, 100)} max={100} />
       </label>
       {near && <p className="text-warning">{c.usageNear}</p>}
+      {studyId && (
+        <Link href={coachPageHref(studyId)} className="w-fit text-encre hover:underline">
+          {c.pageLink}
+        </Link>
+      )}
     </div>
+  );
+}
+
+/** Coach verrouillé : l'étude n'a pas encore de forfait (lien vers la page du coach). */
+export function CoachLocked({ studyId }: { studyId: string }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-ink-muted">{c.locked}</p>
+      <Link href={coachPageHref(studyId)} className={`${BUTTON_SECONDARY} w-fit`}>
+        {c.pageLink}
+      </Link>
+    </div>
+  );
+}
+
+/** Part typique du forfait consommée par une fonction (rien si inconnue). */
+export function EstimateHint({ usage, fn }: { usage: CoachUsage; fn: string }) {
+  const pct = usage.estimates[fn];
+  if (pct === undefined) return null;
+  return (
+    <span className="text-small text-ink-muted">
+      {interpolate(c.estimate, { pct: PCT_FORMAT.format(pct) })}
+    </span>
   );
 }
 
@@ -283,6 +323,7 @@ export function CoachPanel<T>({
   });
   const [message, setMessage] = useState<{ error?: string; message?: string }>({});
   const [busy, startTransition] = useTransition();
+  const router = useRouter();
 
   const available = coach.available[tab];
   const canAct = editor && !validated && usage.enabled && !coach.classDisabled;
@@ -315,6 +356,7 @@ export function CoachPanel<T>({
       if (result.usage) setUsage(result.usage);
       if (!result.ok) {
         setMessage({ error: result.error });
+        if (result.pay) router.push(coachPageHref(studyId));
         return;
       }
       const next = {
@@ -439,14 +481,28 @@ export function CoachPanel<T>({
     });
   }
 
+  const header = (
+    <div className="flex flex-col gap-1">
+      <h2 className="font-semibold">{c.title}</h2>
+      <p className="text-small text-ink-muted">{c.intro}</p>
+    </div>
+  );
+
+  // Aucun forfait : le coach reste fermé, la page du coach permet de l'ouvrir
+  if (usage.enabled && !usage.unlocked && !coach.classDisabled) {
+    return (
+      <section className={`${CARD} flex flex-col gap-4 p-4`}>
+        {header}
+        <CoachLocked studyId={studyId} />
+      </section>
+    );
+  }
+
   return (
     <section className={`${CARD} flex flex-col gap-4 p-4`} aria-busy={busy}>
-      <div className="flex flex-col gap-1">
-        <h2 className="font-semibold">{c.title}</h2>
-        <p className="text-small text-ink-muted">{c.intro}</p>
-      </div>
+      {header}
 
-      <UsageGauge spent={usage.spent} budget={usage.budget} />
+      <UsageGauge usage={usage} studyId={studyId} />
 
       <div role="tablist" aria-label={c.title} className="flex flex-wrap gap-2">
         {tabs.map((fn) => (
@@ -476,6 +532,7 @@ export function CoachPanel<T>({
           >
             {current ? REQUEST_TEXTS[tab].again : REQUEST_TEXTS[tab].request}
           </button>
+          {!busy && blocked === null && <EstimateHint usage={usage} fn={tab} />}
           {busy && (
             <span role="status" className="text-small text-ink-muted">
               {REQUEST_TEXTS[tab].busy}

@@ -14,9 +14,12 @@
  *               « synthesize » qui propose de quoi compléter la synthèse (S6b). Aux étapes
  *               6 à 8, même bloc avec les étapes en amont (S7a, S7b). Fonction « plan »
  *               (S8a) et balises sources, section et brouillon neutralisées.
+ *               Mémoire des relectures (v0.11.1) : bloc historique des propositions
+ *               précédentes (relecture, questions) avec la décision de l'équipe.
+ *               Refus qui renvoient vers la page du forfait (needsPack).
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
- *  Date       : 2026-10-15
+ *  Version    : 1.9
+ *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts
  * =============================================================
  */
@@ -53,6 +56,15 @@ export const RESEARCH_STEPS: readonly number[] = [1, 2];
 export const SYNTHESIS_STEP = 5;
 
 /**
+ * Refus qui renvoient vers la page du coach pour ouvrir ou recharger le forfait.
+ * @param error - Code de refus renvoyé par la réservation
+ * @returns true si l'étude n'a aucun forfait ou l'a épuisé
+ */
+export function needsPack(error: string): boolean {
+  return error === "coach_locked" || error === "budget_exhausted";
+}
+
+/**
  * Vrai si la fonction est offerte à cette étape (la recherche seulement aux étapes 1 et 2,
  * le préremplissage seulement à l'étape 5).
  * @param fn     - Fonction du coach
@@ -85,6 +97,17 @@ export type ReviewContextInput = {
   targets?: readonly string[];
   /** Étapes en amont : 1 à 4 pour l'étape 5, puis 5 à 7 pour les étapes 6 à 8. */
   sources?: readonly SourceStepContent[];
+  /** Propositions de la demande précédente et décisions (relecture, questions). */
+  history?: readonly CoachHistoryItem[];
+};
+
+/** Fonctions dont la relance reçoit l'historique des propositions. */
+export const HISTORY_FUNCTIONS: readonly CoachFunction[] = ["review", "deepen"];
+
+/** Proposition précédente du coach et décision de l'équipe (null : sans suite). */
+export type CoachHistoryItem = {
+  text: string;
+  decision: "accepted" | "modified" | "rejected" | null;
 };
 
 // ==================== RÈGLES ====================
@@ -99,7 +122,7 @@ export function rulesForStep(rules: readonly CoachRule[], stepNo: StepNo): Coach
 /** Balises des blocs de données du message (toutes fonctions confondues). */
 const TAG_NAMES = [
   "profil", "gabarit", "question", "regles", "controle", "cibles", "document", "etapes",
-  "sources", "section", "brouillon",
+  "sources", "section", "brouillon", "historique",
 ] as const;
 
 /** Neutralise les balises de fermeture qu'une saisie pourrait contenir. */
@@ -189,6 +212,28 @@ function sourceLines(sources: readonly SourceStepContent[]): string {
     .join("\n\n");
 }
 
+/** Libellé de chaque décision dans le bloc historique. */
+const HISTORY_LABELS: Record<NonNullable<CoachHistoryItem["decision"]> | "none", string> = {
+  accepted: "acceptée",
+  modified: "acceptée après modification",
+  rejected: "rejetée",
+  none: "sans décision",
+};
+
+/** Consigne qui accompagne le bloc historique. */
+const HISTORY_ASK =
+  "Le bloc historique liste tes propositions précédentes pour cette étape et la décision de "
+  + "l'équipe. Ne répète ni ce qui a été accepté ni ce qui a été rejeté ; tiens compte des "
+  + "modifications. S'il ne reste rien d'important à signaler, dis-le dans ton résumé et ne "
+  + "propose rien de plus.";
+
+/** Propositions précédentes en lignes « [décision] texte ». */
+export function historyLines(items: readonly CoachHistoryItem[]): string {
+  return items
+    .map((item) => `[${HISTORY_LABELS[item.decision ?? "none"]}] ${item.text}`)
+    .join("\n");
+}
+
 /**
  * Construit le message utilisateur d'une demande au coach.
  *
@@ -211,6 +256,11 @@ export function buildCoachMessage(fn: CoachFunction, input: ReviewContextInput):
     : [];
   const sources = input.sources && input.sources.length > 0
     ? ["<etapes>", escapeTags(sourceLines(input.sources)), "</etapes>", ""]
+    : [];
+  const withHistory = HISTORY_FUNCTIONS.includes(fn) && input.history !== undefined
+    && input.history.length > 0;
+  const history = withHistory
+    ? ["<historique>", escapeTags(historyLines(input.history ?? [])), "</historique>", ""]
     : [];
   return [
     `${FRAMING[fn].head} : ${input.stepNo}. ${input.stepTitle}`,
@@ -236,6 +286,8 @@ export function buildCoachMessage(fn: CoachFunction, input: ReviewContextInput):
     ruleLines(rules),
     "</regles>",
     "",
+    ...history,
+    ...(withHistory ? [HISTORY_ASK, ""] : []),
     FRAMING[fn].ask,
   ].join("\n");
 }

@@ -8,8 +8,9 @@
  *               Journal, responsable de chaque étape et accès au plan stratégique (S9a).
  *               Présence (S9c) : membres connectés et avatars sur les cartes d'étape.
  *               Étude de classe (S10a) : nom de la classe et date de remise indicative.
+ *               Lien vers la page du coach : forfait et consommation (v0.11.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
  *               lib/strategy/class-queries.ts, components/strategy
@@ -124,6 +125,9 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
             </Link>
             <Link href={`/strategie/etudes/${study.id}/journal`} className={BUTTON_SECONDARY}>
               {s.team.navJournal}
+            </Link>
+            <Link href={`/strategie/etudes/${study.id}/coach`} className={BUTTON_SECONDARY}>
+              {s.coach.pageLink}
             </Link>
           </nav>
         </header>

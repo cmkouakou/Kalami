@@ -7,9 +7,10 @@
  *               l'action serveur l'enregistre. Chaque pièce peut être téléchargée, supprimée
  *               (en deux temps) et analysée par le coach (résumé et propositions pour le
  *               profil). Les observateurs consultent la liste et les résumés seulement.
+ *               Sans forfait, le coach est verrouillé et renvoie vers sa page (v0.11.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-14
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/supabase/client.ts, lib/strategy/attachment-actions.ts,
  *               lib/strategy/attachments.ts, coach-panel.tsx, prefill-review.tsx
  * =============================================================
@@ -20,7 +21,12 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type ChangeEvent } from "react";
 
-import { UsageGauge } from "@/components/strategy/coach-panel";
+import {
+  CoachLocked,
+  coachPageHref,
+  EstimateHint,
+  UsageGauge,
+} from "@/components/strategy/coach-panel";
 import { PrefillReview } from "@/components/strategy/prefill-review";
 import { FormMessage } from "@/components/ui/form";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
@@ -86,6 +92,7 @@ type AttachmentItemProps = {
 
 /** Une pièce jointe : actions, puis résumé et propositions de la dernière analyse. */
 function AttachmentItem({ studyId, attachment, profile, editor, blocked }: AttachmentItemProps) {
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [action, setAction] = useState<"analyze" | "delete" | "download" | null>(null);
   const [confirming, setConfirming] = useState(false);
@@ -125,11 +132,13 @@ function AttachmentItem({ studyId, attachment, profile, editor, blocked }: Attac
     });
   }
 
-  /** Demande au coach le résumé et les propositions. */
+  /** Demande au coach le résumé et les propositions (forfait absent : page du coach). */
   function analyze() {
     perform("analyze", async () => {
       const result = await analyzeAttachment(studyId, attachment.id);
-      return result.ok ? null : result.error;
+      if (result.ok) return null;
+      if (result.pay) router.push(coachPageHref(studyId));
+      return result.error;
     });
   }
 
@@ -227,6 +236,7 @@ export function AttachmentsPanel({ studyId, state, profile, editor }: Attachment
   let blocked: string | null = null;
   if (!canAnalyze) blocked = a.notAvailable;
   else if (!usage.enabled) blocked = s.coach.disabled;
+  else if (!usage.unlocked) blocked = s.coach.locked;
 
   /** Contrôle, envoie puis fait enregistrer le fichier choisi. */
   async function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -270,12 +280,17 @@ export function AttachmentsPanel({ studyId, state, profile, editor }: Attachment
         <p className="text-small text-ink-muted">{a.hint}</p>
       </header>
 
-      {editor ? (
-        <UsageGauge spent={usage.spent} budget={usage.budget} />
-      ) : (
+      {!editor ? (
         <p className={`${PANEL_SAND} p-4 text-small`}>{a.readOnly}</p>
+      ) : usage.enabled && !usage.unlocked ? (
+        <CoachLocked studyId={studyId} />
+      ) : (
+        <UsageGauge usage={usage} studyId={studyId} />
       )}
-      {editor && blocked && <p className="text-small text-ink-muted">{blocked}</p>}
+      {editor && blocked && blocked !== s.coach.locked && (
+        <p className="text-small text-ink-muted">{blocked}</p>
+      )}
+      {editor && !blocked && <EstimateHint usage={usage} fn="extract" />}
 
       {editor && (
         <div className="flex flex-col gap-2">

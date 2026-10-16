@@ -3,7 +3,7 @@
 Assistant d'analyse stratégique sous `/strategie`, mêmes comptes, même Supabase, même déploiement
 que la plateforme de lecture ([cahier](cahiers/CAHIER_DES_CHARGES_assistant_strategie.md)).
 Démarré le 2026-10-11 ; le projet 1 est en pause (reste : 11a, 5, 6, 10, 11b).
-S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11) ; S2 livré en Stratégie v0.3.0 (2026-10-11) ; S3 livré en Stratégie v0.4.0 (2026-10-11) ; S4a (coach : relecture) livré en Stratégie v0.5.0 (2026-10-13) ; S4b (questions, score, administration du coach) livré en Stratégie v0.5.1 (2026-10-13) ; S5a (recherche Web sourcée) livré en Stratégie v0.6.0 (2026-10-13) ; S5b (pièces jointes du profil) livré en Stratégie v0.6.1 (2026-10-14) ; S6a (synthèse SWOT, TOWS, enjeux) livré en Stratégie v0.7.0 (2026-10-14) ; S6b (propositions du coach pour la synthèse) livré en Stratégie v0.7.1 (2026-10-14) ; S7a (Cap et Choix) livré en Stratégie v0.8.0 (2026-10-15) ; S7b (Action) livré en Stratégie v0.8.1 (2026-10-15) ; S8a (plan stratégique : génération, édition, traçabilité) livré en Stratégie v0.9.0 (2026-10-15) ; S8b (export PDF et DOCX) livré en Stratégie v0.9.1 (2026-10-15) ; S10 coupé en deux : S10a (mode enseignant) livré en Stratégie v0.11.0 (2026-10-16).
+S0 et S1 ont été livrés ensemble (Stratégie v0.2.0, 2026-10-11) ; S2 livré en Stratégie v0.3.0 (2026-10-11) ; S3 livré en Stratégie v0.4.0 (2026-10-11) ; S4a (coach : relecture) livré en Stratégie v0.5.0 (2026-10-13) ; S4b (questions, score, administration du coach) livré en Stratégie v0.5.1 (2026-10-13) ; S5a (recherche Web sourcée) livré en Stratégie v0.6.0 (2026-10-13) ; S5b (pièces jointes du profil) livré en Stratégie v0.6.1 (2026-10-14) ; S6a (synthèse SWOT, TOWS, enjeux) livré en Stratégie v0.7.0 (2026-10-14) ; S6b (propositions du coach pour la synthèse) livré en Stratégie v0.7.1 (2026-10-14) ; S7a (Cap et Choix) livré en Stratégie v0.8.0 (2026-10-15) ; S7b (Action) livré en Stratégie v0.8.1 (2026-10-15) ; S8a (plan stratégique : génération, édition, traçabilité) livré en Stratégie v0.9.0 (2026-10-15) ; S8b (export PDF et DOCX) livré en Stratégie v0.9.1 (2026-10-15) ; S10 coupé en deux : S10a (mode enseignant) livré en Stratégie v0.11.0 (2026-10-16) ; forfaits du coach livrés en Stratégie v0.11.1 (2026-10-16).
 
 Version propre au module (« Stratégie vX.Y.Z »), indépendante de la version de l'application.
 Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés par l'administrateur**.
@@ -28,7 +28,8 @@ Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés pa
 | S9b | Collaboration : commentaires (étape et élément), mentions, notifications (cloche, page, courriel de mention) | v0.10.1 | ✅ |
 | S9c | Collaboration : présence et verrouillage doux (Realtime) | v0.10.2 | ✅ |
 | S10a | Mode enseignant : statut accordé par l'admin, classes, lien et invitations, distribution par groupe (un crédit par étude), enseignant observateur, suivi, coach coupable par étape | v0.11.0 | ✅ |
-| S10b | Cas d'entraînement Ajinomoto et Infosystem, corrigé (fichiers de l'auteur) | v0.11.1 | ⬜ |
+| — | Forfaits du coach : verrou par étude, jauge en %, consommation, recharges, admin des forfaits (paiement en S11) | v0.11.1 | ✅ |
+| S10b | Cas d'entraînement Ajinomoto et Infosystem, corrigé (fichiers de l'auteur) | v0.11.2 | ⬜ |
 | S11 | Paiement de l'étude (après les sprints 5-6 du projet 1) : prix par région, réduction livre, lots, recharges d'IA | v0.12.0 | ⬜ |
 | S12 | Critères d'acceptation §12, confidentialité, audit, accessibilité, mise en production ; clé API par fédération d'identité (WIF) au lieu d'une clé statique | v1.0.0 | ⬜ |
 
@@ -37,7 +38,7 @@ S4 et S10 pourront être coupés en deux (a/b) s'ils dépassent le quota d'une s
 ## À fournir par l'auteur (rien n'est inventé)
 - Clé API Anthropic (S4), à coller soi-même dans `.env.local` et Vercel (type « Secret »).
 - Explications des 9 outils, erreurs classiques du livre, exemple Infosystem (S3-S4).
-- Cas Ajinomoto et ses annexes, cas Infosystem et corrigé (S10b). Prix : étude, lot, recharge (S11).
+- Cas Ajinomoto et ses annexes, cas Infosystem et corrigé (S10b). Prix : étude, lot, forfaits du coach (S11).
 
 ## Tests critiques (cahier §11.3)
 - S1 : dépendances entre étapes, invalidation en cascade, permissions par rôle.

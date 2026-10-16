@@ -11,9 +11,11 @@
  *               des consignes (dont « extract », S5b) et erreurs classiques avec leur historique.
  *               Dernières propositions de synthèse (synthesize) à l'étape 5 (S6b). État du
  *               coach du plan stratégique (étape 9, S8a). Coach coupé par l'enseignant
- *               pour l'étape d'une étude de classe (S10a).
+ *               pour l'étape d'une étude de classe (S10a). Verrouillage (v0.11.1) : jauge
+ *               en pourcentage du forfait, consommation détaillée, forfaits proposés et
+ *               liste des forfaits pour l'administrateur ; jamais de dollars côté client.
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
+ *  Version    : 1.7
  *  Date       : 2026-10-16
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, coach/schemas.ts,
  *               coach/client.ts, coach/context.ts
@@ -51,8 +53,51 @@ import { createClient } from "@/lib/supabase/server";
 
 export type CoachDecision = "accepted" | "modified" | "rejected";
 
-/** Consommation d'une étude (dollars US). */
-export type CoachUsage = { spent: number; budget: number; enabled: boolean };
+/**
+ * Consommation d'une étude, en pourcentage de son forfait (jamais en dollars). Le coach
+ * est verrouillé tant que l'étude n'a aucun forfait.
+ */
+export type CoachUsage = {
+  usedPct: number;
+  /** Relectures encore possibles, à peu près. */
+  remainingReviews: number;
+  unlocked: boolean;
+  enabled: boolean;
+  /** Part typique du forfait consommée par une demande, par fonction. */
+  estimates: Partial<Record<string, number>>;
+};
+
+/** Consommation d'une étape et d'une fonction (step null : analyse des pièces jointes). */
+export type CoachBreakdownRow = {
+  stepNo: StepNo | null;
+  fn: string;
+  requests: number;
+  pct: number;
+};
+
+/** Forfait proposé : prix (vides tant que le paiement n'est pas ouvert), jamais le coût. */
+export type CoachPackOffer = {
+  id: string;
+  name: string;
+  priceXof: number | null;
+  priceEur: number | null;
+  priceCad: number | null;
+  approxReviews: number;
+};
+
+/** Forfait complet, pour l'administrateur (coût Anthropic couvert compris). */
+export type CoachPackAdmin = {
+  id: string;
+  name: string;
+  costUsd: number;
+  priceXof: number | null;
+  priceEur: number | null;
+  priceCad: number | null;
+  active: boolean;
+  position: number;
+  /** Relectures à peu près couvertes (null si le forfait est retiré). */
+  approxReviews: number | null;
+};
 
 /** Dernier résultat d'une fonction du coach, affiché dans le panneau. */
 export type CoachResult<T> = {
@@ -145,7 +190,7 @@ export type CoachUsageRow = {
   requests: number;
   spent: number;
   budget: number;
-  last_at: string;
+  last_at: string | null;
 };
 
 // ==================== FONCTIONS UTILITAIRES ====================
@@ -181,13 +226,76 @@ export function readDecisions(raw: unknown): Record<number, CoachDecision> {
  */
 export async function getCoachUsage(studyId: string): Promise<CoachUsage> {
   const supabase = await createClient();
-  const result = await supabase.rpc("coach_study_usage", { p_study_id: studyId });
-  const row = (check(result, "consommation du coach") as
-    { spent: number; budget: number; enabled: boolean }[])[0];
+  const [usage, estimates] = await Promise.all([
+    supabase.rpc("coach_study_usage", { p_study_id: studyId }),
+    supabase.rpc("coach_function_estimates", { p_study_id: studyId }),
+  ]);
+  const row = (check(usage, "consommation du coach") as {
+    used_pct: number;
+    remaining_reviews: number;
+    unlocked: boolean;
+    enabled: boolean;
+  }[])[0];
+  const typical: Partial<Record<string, number>> = {};
+  for (const entry of check(estimates, "estimations du coach") as
+    { function: string; pct: number }[]) {
+    typical[entry.function] = Number(entry.pct);
+  }
   return {
-    spent: Number(row?.spent ?? 0),
-    budget: Number(row?.budget ?? 0),
+    usedPct: Number(row?.used_pct ?? 0),
+    remainingReviews: Number(row?.remaining_reviews ?? 0),
+    unlocked: Boolean(row?.unlocked),
     enabled: Boolean(row?.enabled) && isCoachConfigured(),
+    estimates: typical,
+  };
+}
+
+/** Page du coach d'une étude : jauge, consommation détaillée et forfaits proposés. */
+export type CoachOverview = {
+  usage: CoachUsage;
+  breakdown: CoachBreakdownRow[];
+  offers: CoachPackOffer[];
+};
+
+/**
+ * Consommation détaillée et forfaits proposés (pourcentages seulement, jamais de dollars).
+ * @param studyId - Étude dont l'utilisateur est membre
+ */
+export async function getCoachOverview(studyId: string): Promise<CoachOverview> {
+  const supabase = await createClient();
+  const [usage, breakdown, offers] = await Promise.all([
+    getCoachUsage(studyId),
+    supabase.rpc("coach_study_breakdown", { p_study_id: studyId }),
+    supabase.rpc("coach_pack_offers"),
+  ]);
+  return {
+    usage,
+    breakdown: (check(breakdown, "consommation détaillée") as {
+      step_no: number | null;
+      function: string;
+      requests: number;
+      pct: number;
+    }[]).map((row) => ({
+      stepNo: isStepNo(row.step_no) ? row.step_no : null,
+      fn: row.function,
+      requests: row.requests,
+      pct: Number(row.pct),
+    })),
+    offers: (check(offers, "forfaits du coach") as {
+      id: string;
+      name: string;
+      price_xof: number | null;
+      price_eur: number | null;
+      price_cad: number | null;
+      approx_reviews: number;
+    }[]).map((row) => ({
+      id: row.id,
+      name: row.name,
+      priceXof: row.price_xof,
+      priceEur: row.price_eur === null ? null : Number(row.price_eur),
+      priceCad: row.price_cad === null ? null : Number(row.price_cad),
+      approxReviews: row.approx_reviews,
+    })),
   };
 }
 
@@ -372,6 +480,46 @@ export async function listCoachUsageForAdmin(): Promise<CoachUsageRow[]> {
   const rows = check(await supabase.rpc("admin_coach_usage"), "consommation du coach") as
     CoachUsageRow[];
   return rows.map((row) => ({ ...row, spent: Number(row.spent), budget: Number(row.budget) }));
+}
+
+/**
+ * Tous les forfaits, actifs ou non (RLS : administrateur seulement), avec le nombre
+ * approximatif de relectures des forfaits actifs.
+ */
+export async function listCoachPacksForAdmin(): Promise<CoachPackAdmin[]> {
+  const supabase = await createClient();
+  const offers = check(await supabase.rpc("coach_pack_offers"), "forfaits proposés") as
+    { id: string; approx_reviews: number }[];
+  const approx = new Map(offers.map((offer) => [offer.id, offer.approx_reviews]));
+  const rows = check(
+    await supabase
+      .from("coach_packs")
+      .select("id, name, cost_usd, price_xof, price_eur, price_cad, active, position")
+      .order("position")
+      .order("cost_usd")
+      .returns<{
+        id: string;
+        name: string;
+        cost_usd: number;
+        price_xof: number | null;
+        price_eur: number | null;
+        price_cad: number | null;
+        active: boolean;
+        position: number;
+      }[]>(),
+    "forfaits du coach",
+  ) ?? [];
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name,
+    costUsd: Number(row.cost_usd),
+    priceXof: row.price_xof,
+    priceEur: row.price_eur === null ? null : Number(row.price_eur),
+    priceCad: row.price_cad === null ? null : Number(row.price_cad),
+    active: row.active,
+    position: row.position,
+    approxReviews: approx.get(row.id) ?? null,
+  }));
 }
 
 /** Toutes les versions des consignes (RLS : administrateur seulement), récentes d'abord. */

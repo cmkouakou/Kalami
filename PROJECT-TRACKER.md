@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.11.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a livrés)
+Version actuelle : v0.8.3 · Stratégie v0.11.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -32,7 +32,8 @@ Version actuelle : v0.8.3 · Stratégie v0.11.0 | Statut : 🟡 En cours (projet
 | #26 | 2026-10-15 | Stratégie S9b : commentaires par étape et par élément, mentions, notifications (cloche, page, courriel de mention) | ~300 000 | ~1.80 $ |
 | #27 | 2026-10-16 | Stratégie S9c : présence Realtime, verrouillage doux, copie de secours en cas de conflit | ~280 000 | ~1.68 $ |
 | #28 | 2026-10-16 | Stratégie S10a : mode enseignant (classes, inscription, distribution, suivi, coach par étape) | ~420 000 | ~2.52 $ |
-| **TOTAL** | | | **~7 370 000** | **~44.22 $** |
+| #29 | 2026-10-16 | Stratégie v0.11.1 : forfaits du coach (verrou par étude, jauge en %, consommation, recharges, admin des forfaits, mémoire des relectures) | ~600 000 | ~3.60 $ |
+| **TOTAL** | | | **~7 970 000** | **~47.82 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -114,6 +115,8 @@ Version actuelle : v0.8.3 · Stratégie v0.11.0 | Statut : 🟡 En cours (projet
 - [x] S9c — migration `20261028120000_strategy_realtime.sql` appliquée (2026-10-16), historique réparé, intégration présence 6/6
 - [x] S10a — mode enseignant : statut admin, classes, lien et invitations, distribution par groupe, suivi, coach coupable par étape (Stratégie v0.11.0), unitaires 482/482
 - [x] S10a — migration `20261029120000_strategy_classes.sql` appliquée (2026-10-16, éditeur SQL, historique réparé), intégration classes 11/11, coach 7/7, équipe 10/10
+- [x] v0.11.1 — forfaits du coach : verrou par étude, jauge en %, page de consommation, forfaits « Paiement bientôt », admin des forfaits, mémoire des relectures ; unitaires 485/485, build OK
+- [x] v0.11.1 — migration `20261030120000_strategy_coach_packs.sql` appliquée (2026-10-16, éditeur SQL, historique réparé), intégration coach 9/9, classes 11/11, pièces jointes 6/6, plan 5/5, synthèse 4/4, recherche 3/3
 - [ ] S10b — cas Ajinomoto, Infosystem et corrigé (fichiers de l'auteur à fournir)
 - [ ] S12 — limiter le débit des exports du plan (aucun limiteur générique sans migration)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

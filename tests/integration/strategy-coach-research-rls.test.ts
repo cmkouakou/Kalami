@@ -7,8 +7,8 @@
  *              par les membres seulement et jamais écrites directement. Ignorés si les clés
  *              manquent, si le coach est désactivé ou si la migration S5a n'est pas appliquée.
  * Auteur     : Claude Marcel
- * Version    : 1.0
- * Date       : 2026-10-13
+ * Version    : 1.1
+ * Date       : 2026-10-16
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
@@ -80,6 +80,14 @@ describe.skipIf(!isReady)("RLS — recherche Web du coach IA", () => {
     });
     if (created.error) throw created.error;
     studyId = created.data as string;
+    // Forfait du coach (v0.11.1) : sans crédit, la réservation est refusée « coach_locked »
+    const allowance = await service.from("coach_allowances").insert({
+      study_id: studyId,
+      amount_usd: 5,
+      source: "admin_grant",
+      note: `test ${RUN}`,
+    });
+    if (allowance.error) throw allowance.error;
 
     const profile = await owner.rpc("strategy_save_profile", {
       p_study_id: studyId,

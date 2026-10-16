@@ -1,5 +1,37 @@
 # Journal des modifications
 
+## [Stratégie v0.11.1] - 2026-10-16 — Forfaits du coach
+### Ajouté
+- Migration `20261030120000_strategy_coach_packs.sql` :
+  - table `coach_packs` (nom, coût couvert, prix facultatifs en FCFA, euros et dollars
+    canadiens, état, ordre) et colonne `coach_allowances.pack_id` ;
+  - coach verrouillé par étude tant qu'aucun forfait n'est ouvert (refus `coach_locked`) ;
+    forfait de l'étude = somme de ses crédits, limitée par le plafond de la classe ;
+    recharges illimitées, partagées par toute l'équipe ;
+  - `coach_study_usage` renvoie un pourcentage et un nombre approximatif de relectures,
+    jamais de dollars ; nouvelles fonctions `coach_study_breakdown`,
+    `coach_function_estimates`, `coach_pack_offers` ;
+  - administration : `admin_save_coach_pack`, `admin_grant_coach_pack` ;
+    `admin_coach_usage` liste aussi les études ouvertes sans demande ;
+  - prix, jetons et coûts des demandes, crédits et forfaits illisibles par les membres ;
+  - forfaits de départ Essentiel, Approfondi et Intensif (prix à saisir) ; les études qui
+    ont déjà utilisé le coach reçoivent le forfait Essentiel.
+- Page `/strategie/etudes/[id]/coach` : état du forfait, consommation par étape et par
+  fonction (en %), forfaits proposés (« Paiement bientôt » tant que le paiement n'existe pas).
+- Panneaux du coach, pièces jointes et plan : bloc « coach verrouillé », estimation
+  « ≈ N % du forfait » près des boutons, renvoi vers la page du coach si le forfait manque
+  ou est épuisé.
+- Administration : page `/admin/strategie/coach/forfaits` (créer, modifier, accorder un
+  forfait à une étude).
+- Mémoire des relectures : la relance d'une relecture ou des questions reçoit les
+  propositions précédentes et les décisions de l'équipe.
+### Modifié
+- `coach/context.ts`, `coach/run.ts`, `coach/queries.ts`, `coach/actions.ts`,
+  `attachment-actions.ts`, `admin/strategy-actions.ts`, `fr-strategy.ts` (blocs
+  `coachPage`, `admin.coachPacks`), page admin du coach (le plafond par étude disparaît).
+- Tests : intégration du coach (verrou, recharge, forfaits sans coût, coûts illisibles) et
+  crédit ajouté aux tests qui réservent ; unitaires (historique, `needsPack`).
+
 ## [Stratégie v0.11.0] - 2026-10-16 — Mode enseignant (S10a)
 ### Ajouté
 - Migration `20261029120000_strategy_classes.sql` :

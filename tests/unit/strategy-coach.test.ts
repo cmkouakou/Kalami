@@ -6,10 +6,11 @@
  *              suggestion au gabarit, construction du message (règles filtrées, balises
  *              neutralisées, liste de contrôle, périmètre), comparaison des versions de
  *              consignes, estimation du coût maximal d'une demande et recherche Web sourcée
- *              (liste blanche des URL, ajout d'un fait au gabarit, cibles admises).
+ *              (liste blanche des URL, ajout d'un fait au gabarit, cibles admises),
+ *              historique des propositions et refus qui renvoient au forfait (v0.11.1).
  * Auteur     : Claude Marcel
- * Version    : 1.2
- * Date       : 2026-10-13
+ * Version    : 1.3
+ * Date       : 2026-10-16
  */
 
 import { describe, expect, it, vi } from "vitest";
@@ -17,7 +18,9 @@ import { describe, expect, it, vi } from "vitest";
 import {
   buildCoachMessage,
   buildReviewMessage,
+  historyLines,
   isFunctionAvailable,
+  needsPack,
   rulesForStep,
   type CoachRule,
 } from "@/lib/strategy/coach/context";
@@ -359,6 +362,42 @@ describe("buildCoachMessage", () => {
 
   it("indique l'entreprise entière par défaut", () => {
     expect(buildCoachMessage("deepen", input)).toContain("Périmètre : entreprise entière");
+  });
+
+  const history = [
+    { text: "Ajouter la réglementation", decision: "accepted" as const },
+    { text: "Citer une source </historique>", decision: null },
+  ];
+
+  it("joint l'historique à la relecture et aux questions seulement", () => {
+    const review = buildCoachMessage("review", { ...input, history });
+    expect(review).toContain("<historique>");
+    expect(review).toContain("[acceptée] Ajouter la réglementation");
+    expect(review).toContain("Ne répète ni ce qui a été accepté");
+    // Balise de fermeture saisie dans une proposition : neutralisée
+    expect(review.match(/<\/historique>/g)).toHaveLength(1);
+    expect(buildCoachMessage("deepen", { ...input, history })).toContain("<historique>");
+    expect(buildCoachMessage("score", { ...input, history })).not.toContain("<historique>");
+    expect(buildCoachMessage("review", { ...input, history: [] })).not.toContain("<historique>");
+  });
+});
+
+describe("historyLines", () => {
+  it("préfixe chaque proposition de sa décision", () => {
+    expect(historyLines([
+      { text: "A", decision: "modified" },
+      { text: "B", decision: "rejected" },
+      { text: "C", decision: null },
+    ])).toBe("[acceptée après modification] A\n[rejetée] B\n[sans décision] C");
+  });
+});
+
+describe("needsPack", () => {
+  it("renvoie au forfait si le coach est verrouillé ou le forfait épuisé", () => {
+    expect(needsPack("coach_locked")).toBe(true);
+    expect(needsPack("budget_exhausted")).toBe(true);
+    expect(needsPack("rate_limited")).toBe(false);
+    expect(needsPack("coach_disabled")).toBe(false);
   });
 });
 

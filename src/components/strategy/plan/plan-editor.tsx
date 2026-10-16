@@ -7,11 +7,12 @@
  *               avec le coach, annexe de traçabilité et historique des versions. Le plan
  *               s'enregistre automatiquement et ne se valide jamais. Lecture seule pour les
  *               observateurs. Export PDF / DOCX du plan pour tous les membres (S8b).
+ *               Sans forfait, le coach est verrouillé et renvoie vers sa page (v0.11.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-15
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
  *  Dépendances: use-autosave.ts, template-frame.tsx (SaveStatus), version-history.tsx,
- *               coach-panel.tsx (UsageGauge), plan-section.tsx, plan-annex.tsx,
+ *               coach-panel.tsx (UsageGauge, CoachLocked), plan-section.tsx, plan-annex.tsx,
  *               plan-export.tsx, lib/strategy/plan-actions.ts
  * =============================================================
  */
@@ -20,7 +21,7 @@
 
 import { useState, useTransition } from "react";
 
-import { UsageGauge } from "@/components/strategy/coach-panel";
+import { CoachLocked, UsageGauge } from "@/components/strategy/coach-panel";
 import { PlanAnnex } from "@/components/strategy/plan/plan-annex";
 import { PlanExport } from "@/components/strategy/plan/plan-export";
 import { PlanSection } from "@/components/strategy/plan/plan-section";
@@ -96,6 +97,7 @@ export function PlanEditor({
   let coachBlocked = "";
   if (!coach.available) coachBlocked = s.coach.errors.not_published;
   else if (!usage.enabled) coachBlocked = s.coach.disabled;
+  else if (!usage.unlocked) coachBlocked = s.coach.locked;
   else if (autosave.pending) coachBlocked = p.coachWaitSave;
 
   /** Assemble le plan entier depuis les étapes, puis l'enregistre. */
@@ -168,7 +170,9 @@ export function PlanEditor({
               </div>
             </div>
           )}
-          {editor && coach.available && <UsageGauge spent={usage.spent} budget={usage.budget} />}
+          {editor && coach.available && (usage.enabled && !usage.unlocked
+            ? <CoachLocked studyId={studyId} />
+            : <UsageGauge usage={usage} studyId={studyId} />)}
         </section>
       )}
 

@@ -7,7 +7,7 @@
  *              coach n'est admise qu'à l'étape 9 et sans pièce jointe. Ignorés si les clés
  *              manquent ou si la migration 20261025120000 n'est pas encore appliquée.
  * Auteur     : Claude Marcel
- * Date       : 2026-10-15
+ * Date       : 2026-10-16
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
@@ -103,6 +103,14 @@ describe.skipIf(!ready)("RLS — plan stratégique (S8a)", () => {
     });
     if (created.error) throw created.error;
     studyId = created.data as string;
+    // Forfait du coach (v0.11.1) : sans crédit, la réservation est refusée « coach_locked »
+    const allowance = await service.from("coach_allowances").insert({
+      study_id: studyId,
+      amount_usd: 5,
+      source: "admin_grant",
+      note: `test ${RUN}`,
+    });
+    if (allowance.error) throw allowance.error;
 
     const profile = await owner.rpc("strategy_save_profile", {
       p_study_id: studyId,

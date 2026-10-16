@@ -7,9 +7,10 @@
  *               ajout et retrait de paragraphes, régénération depuis les étapes et rédaction
  *               par le coach (chacune après confirmation). La proposition du coach s'affiche
  *               à part : « Remplacer la section » ou « Ignorer », décision notée au suivi.
+ *               Forfait du coach absent ou épuisé : renvoi vers la page du coach (v0.11.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-15
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/plan-actions.ts, lib/strategy/coach/actions.ts,
  *               lib/strategy/templates/plan.ts
  * =============================================================
@@ -17,8 +18,10 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { coachPageHref } from "@/components/strategy/coach-panel";
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import {
@@ -231,6 +234,7 @@ export function PlanSection({
   );
   const [error, setError] = useState("");
   const [busy, startTransition] = useTransition();
+  const router = useRouter();
   const headingId = `plan-section-${section.key}`;
 
   /** Réassemble la section depuis les étapes. */
@@ -256,8 +260,12 @@ export function PlanSection({
         return;
       }
       if (result.usage) onUsage(result.usage);
-      if (result.ok) setProposal({ requestId: result.requestId, output: result.output });
-      else setError(result.error);
+      if (!result.ok) {
+        setError(result.error);
+        if (result.pay) router.push(coachPageHref(studyId));
+        return;
+      }
+      setProposal({ requestId: result.requestId, output: result.output });
     });
   }
 

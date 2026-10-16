@@ -2,14 +2,14 @@
  * Fichier    : strategy-coach-rls.test.ts
  * Projet     : Kalami Stratégie
  * Description: Tests d'intégration du coach IA (S4a) sur la base de développement, sans appel
- *              au modèle : rôles autorisés à réserver, prérequis, débit par utilisateur,
- *              plafond par étude et supplément, fin de demande réservée au rôle service
- *              (coût calculé, nouvelle signature S5a), décisions, lecture des demandes et
- *              des consignes.
+ *              au modèle : rôles autorisés à réserver, prérequis, verrouillage sans forfait
+ *              (v0.11.1), débit par utilisateur, forfait épuisé et recharge, fin de demande
+ *              réservée au rôle service (coût calculé), décisions, lecture des demandes sans
+ *              prix ni coût, forfaits proposés sans coût et consignes.
  *              Ignorés si les clés manquent ou si la migration du coach n'est pas appliquée.
  * Auteur     : Claude Marcel
- * Version    : 1.1
- * Date       : 2026-10-13
+ * Version    : 1.2
+ * Date       : 2026-10-16
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
@@ -28,10 +28,12 @@ const TINY = 0.0001;
 
 type Settings = { coach_enabled: boolean; coach_rate_limit: number; coach_study_budget: number };
 
-/** Réglages du coach, ou null si la migration du coach n'est pas appliquée. */
+/** Réglages du coach, ou null si la migration des forfaits (v0.11.1) n'est pas appliquée. */
 async function coachSettings(): Promise<Settings | null> {
   if (!enabled) return null;
   const service = createClient(url!, secretKey!, NO_SESSION);
+  const packs = await service.from("coach_packs").select("id").limit(1);
+  if (packs.error) return null;
   const { data, error } = await service
     .from("strategy_settings")
     .select("coach_enabled, coach_rate_limit, coach_study_budget")
@@ -73,6 +75,22 @@ describe.skipIf(!ready)("RLS — coach IA de l'assistant stratégie", () => {
       p_function: "review",
       p_estimate: estimate,
     });
+  }
+
+  /** Accorde un crédit à l'étude (rôle service, comme un forfait acheté ou offert). */
+  async function grantAllowance(amount: number) {
+    const { error } = await service.from("coach_allowances").insert({
+      study_id: studyId,
+      amount_usd: amount,
+      source: "admin_grant",
+      note: `test ${RUN}`,
+    });
+    if (error) throw error;
+  }
+
+  /** Refus retourné par une réservation (null si acceptée). */
+  function refusal(data: unknown): string | null {
+    return (data as { refusal: string | null }[])[0].refusal;
   }
 
   /** Termine une demande réservée avec le client donné. */
@@ -153,6 +171,38 @@ describe.skipIf(!ready)("RLS — coach IA de l'assistant stratégie", () => {
     expect(error?.message).toBe("invalid_estimate");
   });
 
+  it("verrouille le coach sans forfait, puis l'ouvre après un crédit", async () => {
+    const locked = await reserve(owner, TINY);
+    expect(locked.error).toBeNull();
+    expect(refusal(locked.data)).toBe("coach_locked");
+
+    const before = await owner.rpc("coach_study_usage", { p_study_id: studyId });
+    const gauge = (before.data as { unlocked: boolean; used_pct: number }[])[0];
+    expect(gauge.unlocked).toBe(false);
+    expect(Number(gauge.used_pct)).toBe(0);
+
+    // Ni les crédits ni les forfaits ne sont lisibles par un membre (montants en dollars)
+    await grantAllowance(1);
+    expect((await owner.from("coach_allowances").select("id")).data).toEqual([]);
+    expect((await owner.from("coach_packs").select("id")).data).toEqual([]);
+
+    const after = await owner.rpc("coach_study_usage", { p_study_id: studyId });
+    const open = (after.data as { unlocked: boolean; remaining_reviews: number }[])[0];
+    expect(open.unlocked).toBe(true);
+    expect(open.remaining_reviews).toBeGreaterThan(0);
+  });
+
+  it("propose les forfaits actifs sans leur coût", async () => {
+    const { data, error } = await owner.rpc("coach_pack_offers");
+    expect(error).toBeNull();
+    const offers = data as Record<string, unknown>[];
+    expect(offers.length).toBeGreaterThan(0);
+    for (const offer of offers) {
+      expect(offer).not.toHaveProperty("cost_usd");
+      expect(Number(offer.approx_reviews)).toBeGreaterThan(0);
+    }
+  });
+
   it("réserve, puis seul le rôle service termine et calcule le coût", async () => {
     const { data, error } = await reserve(owner, TINY);
     expect(error).toBeNull();
@@ -201,6 +251,9 @@ describe.skipIf(!ready)("RLS — coach IA de l'assistant stratégie", () => {
     expect(asObserver.data?.length).toBeGreaterThan(0);
     const asOutsider = await outsider.from("coach_requests").select("id").eq("study_id", studyId);
     expect(asOutsider.data).toEqual([]);
+    // Prix, jetons et coûts réservés au rôle service
+    const costs = await owner.from("coach_requests").select("cost_usd").eq("study_id", studyId);
+    expect(costs.error).not.toBeNull();
 
     const prompts = await owner.from("coach_prompts").select("id");
     expect(prompts.data).toEqual([]);
@@ -218,29 +271,36 @@ describe.skipIf(!ready)("RLS — coach IA de l'assistant stratégie", () => {
     expect(after.data?.every((row) => Number(row.cost_usd) > 0)).toBe(true);
   });
 
-  it("refuse au-delà du plafond, puis accepte après un supplément", async () => {
-    const usage = await owner.rpc("coach_study_usage", { p_study_id: studyId });
-    const { spent, budget } = (usage.data as { spent: number; budget: number }[])[0];
-    const over = Number(budget) - Number(spent) + 0.01;
-
-    const refused = await reserve(owner, over);
+  it("refuse au-delà du forfait, puis accepte après une recharge", async () => {
+    // Forfait de 1 $ presque intact : une estimation de 2 $ le dépasse
+    const refused = await reserve(owner, 2);
     expect(refused.error).toBeNull();
-    expect((refused.data as { refusal: string }[])[0].refusal).toBe("budget_exhausted");
+    expect(refusal(refused.data)).toBe("budget_exhausted");
 
-    // Un membre ne peut pas s'accorder de supplément ; seul l'administrateur (aal2) le peut
+    // Un membre ne peut ni s'accorder de crédit ni de forfait ; seul l'administrateur (aal2)
     const self = await owner.rpc("admin_grant_coach_allowance", {
       p_study_id: studyId,
       p_amount: 5,
       p_note: "",
     });
     expect(self.error?.code).toBe("42501");
+    const offers = await owner.rpc("coach_pack_offers");
+    const pack = await owner.rpc("admin_grant_coach_pack", {
+      p_study_id: studyId,
+      p_pack_id: (offers.data as { id: string }[])[0].id,
+      p_note: "",
+    });
+    expect(pack.error?.code).toBe("42501");
 
-    const grant = await service
-      .from("coach_allowances")
-      .insert({ study_id: studyId, amount_usd: 1, source: "admin_grant", note: `test ${RUN}` });
-    expect(grant.error).toBeNull();
-    const accepted = await reserve(owner, over);
-    expect((accepted.data as { request_id: string | null }[])[0].request_id).toBeTruthy();
+    await grantAllowance(5);
+    const accepted = await reserve(owner, 2);
+    expect(refusal(accepted.data)).toBeNull();
+
+    // La réservation en cours compte dans la jauge (≈ 2 $ sur 6 $)
+    const usage = await owner.rpc("coach_study_usage", { p_study_id: studyId });
+    const pct = Number((usage.data as { used_pct: number }[])[0].used_pct);
+    expect(pct).toBeGreaterThan(30);
+    expect(pct).toBeLessThan(40);
   });
 
   it("limite le débit par utilisateur", async () => {

@@ -7,9 +7,10 @@
  *               (60 secondes), l'analyser (résumé et propositions du coach) et appliquer les
  *               propositions retenues au profil. Rôles, nombre de pièces, débit et plafond
  *               sont vérifiés en SQL ; l'application enregistre directement le profil.
+ *               Forfait absent ou épuisé : « pay » renvoie vers la page du coach (v0.11.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-14
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: coach/extract.ts, lib/strategy/prefill.ts, lib/strategy/profile.ts,
  *               lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
@@ -28,6 +29,7 @@ import {
   extensionOf,
   FILE_NAME_MAX,
 } from "@/lib/strategy/attachments";
+import { needsPack } from "@/lib/strategy/coach/context";
 import { runExtract } from "@/lib/strategy/coach/extract";
 import { getCoachUsage, type CoachUsage } from "@/lib/strategy/coach/queries";
 import { mergeProposals, readExtract, type Extract } from "@/lib/strategy/prefill";
@@ -43,7 +45,7 @@ export type AttachmentActionResult = { ok: true } | { ok: false; error: string }
 
 export type AnalyzeResult =
   | { ok: true; requestId: string; output: Extract; usage: CoachUsage | null }
-  | { ok: false; error: string; usage: CoachUsage | null };
+  | { ok: false; error: string; usage: CoachUsage | null; pay?: boolean };
 
 // ==================== FONCTIONS UTILITAIRES ====================
 
@@ -158,7 +160,10 @@ export async function analyzeAttachment(
 
   const result = await runExtract(studyId, attachmentId);
   const usage = await getCoachUsage(studyId).catch(() => null);
-  if (!result.ok) return { ok: false, error: s.coach.errors[result.error], usage };
+  if (!result.ok) {
+    const pay = needsPack(result.error);
+    return { ok: false, error: s.coach.errors[result.error], usage, pay };
+  }
   refresh();
   return { ok: true, requestId: result.requestId, output: result.output, usage };
 }

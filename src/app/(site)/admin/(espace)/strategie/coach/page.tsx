@@ -3,13 +3,13 @@
  *  Fichier    : page.tsx (admin/strategie/coach)
  *  Projet     : Kalami Stratégie
  *  Description: Administration du coach IA : réglages (activation, modèle, prix par million
- *               de jetons, plafond par étude, débit, prix et nombre des recherches Web),
- *               supplément de plafond pour une étude
- *               et consommation par étude (chiffres seulement, jamais le contenu). Liens
- *               vers les consignes et les erreurs classiques.
+ *               de jetons, débit, prix et nombre des recherches Web), montant libre accordé
+ *               à une étude et consommation par étude (chiffres seulement, jamais le
+ *               contenu). Liens vers les forfaits (v0.11.1), les consignes et les erreurs
+ *               classiques. L'ancien plafond gratuit est conservé tel quel (champ masqué).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-13
+ *  Version    : 1.3
+ *  Date       : 2026-10-16
  *  Dépendances: lib/admin/strategy-actions.ts, lib/strategy/coach/queries.ts
  * =============================================================
  */
@@ -43,6 +43,9 @@ export default function AdminCoachPage() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-serif text-3xl font-semibold">{c.title}</h1>
         <div className="flex flex-wrap gap-2">
+          <Link href="/admin/strategie/coach/forfaits" className={BUTTON_TERTIARY}>
+            {c.packsLink}
+          </Link>
           <Link href="/admin/strategie/coach/consignes" className={BUTTON_TERTIARY}>
             {c.promptsLink}
           </Link>
@@ -77,6 +80,7 @@ async function AdminCoach() {
         <h2 className="text-xl font-semibold">{c.settingsTitle}</h2>
         <p className="text-small text-ink-muted">{c.settingsIntro}</p>
         <ActionForm action={saveCoachSettings} submitLabel={c.save}>
+          <input type="hidden" name="budget" value={settings.budget} />
           <label className="flex min-h-11 items-center gap-3 text-sm">
             <input
               type="checkbox"
@@ -110,15 +114,6 @@ async function AdminCoach() {
               min={0}
               step="0.0001"
               defaultValue={settings.outputPrice}
-              required
-            />
-            <Field
-              name="budget"
-              type="number"
-              label={c.budget}
-              min={0.01}
-              step="0.01"
-              defaultValue={settings.budget}
               required
             />
             <Field
@@ -217,7 +212,9 @@ async function AdminCoach() {
                     <td className="py-2 pr-4">{row.requests}</td>
                     <td className="py-2 pr-4">{MONEY_FORMAT.format(row.spent)}</td>
                     <td className="py-2 pr-4">{MONEY_FORMAT.format(row.budget)}</td>
-                    <td className="py-2">{DATE_FORMAT.format(new Date(row.last_at))}</td>
+                    <td className="py-2">
+                      {row.last_at ? DATE_FORMAT.format(new Date(row.last_at)) : "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>

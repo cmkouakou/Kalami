@@ -9,11 +9,12 @@
  *               prix et nombre de recherches par demande), supplément de
  *               plafond d'une étude, versions des consignes du coach (brouillon, publication,
  *               abandon, restauration ; « extract » sans étape, « plan » à l'étape 9 ou
- *               sans étape, S8a), erreurs classiques et statut enseignant (S10a). Les
+ *               sans étape, S8a), erreurs classiques, statut enseignant (S10a) et forfaits du
+ *               coach (création, modification, octroi à une étude, v0.11.1). Les
  *               fonctions SQL vérifient le rôle administrateur (aal2) et écrivent le journal
  *               d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
+ *  Version    : 1.8
  *  Date       : 2026-10-16
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
@@ -242,6 +243,86 @@ export async function grantCoachAllowance(
   }
   refresh();
   return { message: interpolate(c.granted, { amount: amount.toFixed(2).replace(".", ",") }) };
+}
+
+// ==================== FORFAITS DU COACH ====================
+
+/** Messages des refus levés par les fonctions SQL des forfaits. */
+function packError(message: string): string {
+  const errors: Record<string, string> = a.coachPacks.errors;
+  return errors[message] ?? t.strategy.errors.generic;
+}
+
+/** Lit un prix facultatif : null si vide, NaN si invalide. */
+function readOptionalPrice(formData: FormData, name: string): number | null {
+  const raw = String(formData.get(name) ?? "").trim();
+  return raw === "" ? null : readNumber(formData, name);
+}
+
+/**
+ * Crée ou modifie un forfait du coach : nom, coût Anthropic couvert (dollars US), prix
+ * facultatifs (FCFA entier, euros et dollars canadiens à deux décimales), état et ordre.
+ */
+export async function saveCoachPack(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const errors = a.coachPacks.errors;
+  const rawId = String(formData.get("packId") ?? "").trim();
+  const name = String(formData.get("name") ?? "").trim();
+  const cost = readNumber(formData, "cost");
+  const priceXof = readOptionalPrice(formData, "priceXof");
+  const priceEur = readOptionalPrice(formData, "priceEur");
+  const priceCad = readOptionalPrice(formData, "priceCad");
+  const position = Number(formData.get("position") ?? 0);
+
+  if (rawId !== "" && !isUuid(rawId)) return { error: t.strategy.errors.generic };
+  if (name.length < 1 || name.length > 80) return { error: errors.invalid_name };
+  if (!Number.isFinite(cost) || cost < 0.01 || cost > AMOUNT_MAX) {
+    return { error: errors.invalid_amount };
+  }
+  const pricesOk = [priceXof, priceEur, priceCad].every(
+    (price) => price === null || (Number.isFinite(price) && price > 0 && price <= 10_000_000),
+  );
+  if (!pricesOk || (priceXof !== null && !Number.isInteger(priceXof))) {
+    return { error: errors.invalid_price };
+  }
+  if (!Number.isInteger(position) || position < 0 || position > POSITION_MAX) {
+    return { error: t.strategy.errors.generic };
+  }
+
+  const toCents = (price: number | null) => (price === null ? null : Math.round(price * 100) / 100);
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_save_coach_pack", {
+    p_id: rawId === "" ? null : rawId,
+    p_name: name,
+    p_cost: Math.round(cost * 100) / 100,
+    p_price_xof: priceXof,
+    p_price_eur: toCents(priceEur),
+    p_price_cad: toCents(priceCad),
+    p_active: formData.get("active") === "on",
+    p_position: position,
+  });
+  if (error) return { error: packError(error.message) };
+  refresh();
+  return { message: a.coachPacks.saved };
+}
+
+/** Accorde un forfait à une étude : ouvre ou recharge le coach pour toute l'équipe. */
+export async function grantCoachPack(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const studyId = String(formData.get("studyId") ?? "").trim();
+  const packId = String(formData.get("packId") ?? "").trim();
+  const note = String(formData.get("note") ?? "").trim().slice(0, NOTE_MAX);
+  if (!isUuid(studyId) || !isUuid(packId)) return { error: t.strategy.errors.generic };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_grant_coach_pack", {
+    p_study_id: studyId,
+    p_pack_id: packId,
+    p_note: note,
+  });
+  if (error) return { error: packError(error.message) };
+  refresh();
+  return { message: a.coachPacks.granted };
 }
 
 // ==================== CONSIGNES DU COACH ====================

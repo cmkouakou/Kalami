@@ -16,8 +16,11 @@
  *               Aux étapes 6 et 7, les étapes en amont déjà rédigées (synthèse, cap) sont
  *               jointes pour juger la cohérence (S7a) ; à l'étape 8, synthèse, cap et choix (S7b).
  *               Refus « coach_disabled_step » : coach coupé par l'enseignant (S10a).
+ *               Refus « coach_locked » : aucun forfait pour l'étude. Mémoire des
+ *               relectures : une relance de relecture ou de questions reçoit les
+ *               propositions précédentes et les décisions de l'équipe (v0.11.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
+ *  Version    : 1.8
  *  Date       : 2026-10-16
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
@@ -34,9 +37,11 @@ import { getDictionary } from "@/i18n";
 import { getCoachClient, isCoachConfigured } from "@/lib/strategy/coach/client";
 import {
   buildCoachMessage,
+  HISTORY_FUNCTIONS,
   rulesForStep,
   type ChecklistLine,
   type CoachFunction,
+  type CoachHistoryItem,
   type CoachRule,
   SYNTHESIS_STEP,
   type PromptFunction,
@@ -54,6 +59,8 @@ import {
   sanitizeSynthesize,
   scoreOutputSchema,
   synthesizeOutputSchema,
+  readDeepen,
+  readReview,
   type Deepen,
   type Research,
   type Review,
@@ -61,6 +68,7 @@ import {
   type SearchHit,
   type Synthesize,
 } from "@/lib/strategy/coach/schemas";
+import { readDecisions } from "@/lib/strategy/coach/queries";
 import { readProfileData, type ProfileData } from "@/lib/strategy/profile";
 import { getSourcePayloads } from "@/lib/strategy/queries";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
@@ -269,6 +277,39 @@ async function loadStudy(studyId: string, stepNo: StepNo) {
   return { study: study.data, payload: step.data.payload, revision: step.data.revision };
 }
 
+/**
+ * Propositions de la dernière demande réussie de la même fonction pour l'étape, avec la
+ * décision de l'équipe (session de l'utilisateur, donc RLS). Vide pour les autres fonctions.
+ * @param fn      - Fonction demandée
+ * @param studyId - Identifiant de l'étude (déjà vérifié)
+ * @param stepNo  - Étape demandée
+ */
+async function loadHistory(
+  fn: CoachFunction,
+  studyId: string,
+  stepNo: StepNo,
+): Promise<CoachHistoryItem[]> {
+  if (!HISTORY_FUNCTIONS.includes(fn)) return [];
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("coach_requests")
+    .select("output, decisions")
+    .eq("study_id", studyId)
+    .eq("step_no", stepNo)
+    .eq("function", fn)
+    .eq("status", "done")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle<{ output: unknown; decisions: unknown }>();
+  if (!data) return [];
+  const decisions = readDecisions(data.decisions);
+  const texts = fn === "review"
+    ? (readReview(data.output)?.suggestions ?? []).map((item) =>
+      item.proposal ? `${item.title} — ${item.proposal}` : item.title)
+    : (readDeepen(data.output)?.questions ?? []).map((item) => item.question);
+  return texts.map((text, index) => ({ text, decision: decisions[index] ?? null }));
+}
+
 /** Étapes antérieures relues, pour le message et pour le nettoyage des propositions. */
 type SynthesisContext = { sources: ProposalSources; message: SourceStepContent[] };
 
@@ -365,7 +406,7 @@ export async function reserve(
   const row = (data as Reservation[] | null)?.[0];
   if (!row) return "failed";
   if (row.refusal === "coach_disabled" || row.refusal === "coach_disabled_step"
-    || row.refusal === "rate_limited"
+    || row.refusal === "coach_locked" || row.refusal === "rate_limited"
     || row.refusal === "budget_exhausted") {
     return row.refusal;
   }
@@ -424,11 +465,12 @@ export async function runCoach<F extends CoachFunction>(
 ): Promise<CoachRunResult<F>> {
   if (!isCoachConfigured()) return { ok: false, error: "unavailable" };
 
-  const [loaded, prompt, rules, prices] = await Promise.all([
+  const [loaded, prompt, rules, prices, history] = await Promise.all([
     loadStudy(studyId, stepNo),
     activePrompt(fn, stepNo),
     activeRules(),
     currentPrices(),
+    loadHistory(fn, studyId, stepNo),
   ]);
   if (!loaded) return { ok: false, error: "forbidden" };
   if (!prompt) return { ok: false, error: "not_published" };
@@ -450,6 +492,7 @@ export async function runCoach<F extends CoachFunction>(
     checklist: fn === "score" ? checklistLines(stepNo, loaded.payload) : undefined,
     targets: fn === "research" ? researchTargets(stepNo) : undefined,
     sources: synthesis?.message ?? upstream,
+    history,
   });
   // Recherche : marge pour les résultats renvoyés (le prix des recherches est ajouté en SQL)
   const searchChars = fn === "research"
