@@ -12,6 +12,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
 - Paiement par carte (Stripe) et Mobile Money (validation manuelle en v1)
 - Liseuse : effet de page tournée, marque-page, surlignage, notes, citation, partage
 - PDF filigrané en option, espace auteur, grand livre et versements
+- Deux applications installables (PWA) : « Kalami » et « Kalami Stratégie », lecture du
+  catalogue déjà visité hors ligne
 - **Kalami Stratégie** (`/strategie`) : assistant d'analyse stratégique en 9 étapes, mêmes
   comptes, parcours et crédits propres — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 
@@ -95,6 +97,10 @@ kalami/
 - Suppression de compte : exécutée 30 jours après la demande par `/api/cron/comptes`
   (même `CRON_SECRET`). Elle emporte les études dont l'utilisateur est propriétaire,
   même partagées (avertissement affiché avant la confirmation).
+- Service worker (`public/sw.js`) actif en production seulement. Liste blanche dans
+  `public/sw-routes.js` : seuls les fichiers statiques, les couvertures et les pages publiques
+  du catalogue sont gardés sur l'appareil ; liseuse, études, comptes et API jamais. Changer
+  `VERSION` dans `sw.js` vide les anciens caches. Icônes : `node scripts/generer-icones.mjs`.
 
 ## 📅 Historique des versions
 Voir [CHANGELOG.md](CHANGELOG.md).

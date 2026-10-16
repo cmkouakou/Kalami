@@ -8,8 +8,8 @@
  *               3. rafraîchissement de la session Supabase ;
  *               4. renvoi vers /connexion des pages privées si personne n'est connecté.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-11
+ *  Version    : 1.4
+ *  Date       : 2026-10-16
  *  Dépendances: lib/config.ts, lib/domain-redirect.ts, lib/supabase/proxy-session.ts
  * =============================================================
  */
@@ -49,8 +49,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Exclut les fichiers statiques, les images optimisées et les icônes
+  // Exclut les fichiers statiques, les images optimisées, les icônes, le service worker
+  // (sw.js, sw-routes.js) et les manifestes : aucun n'a besoin de la session
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|icons/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|icons/|.*\\.(?:ico|svg|png|jpe?g|gif|webp|js|webmanifest)$).*)",
   ],
 };

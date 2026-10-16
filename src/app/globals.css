@@ -247,6 +247,29 @@ img {
   white-space: nowrap;
 }
 
+/* Lien « Aller au contenu » : invisible jusqu'au premier Tab */
+.lien-evitement {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 60;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background: var(--encre);
+  color: var(--on-encre);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.lien-evitement:focus {
+  transform: none;
+}
+
+/* Cible du lien d'évitement : focus programmatique sans anneau */
+#contenu:focus {
+  outline: none;
+}
+
 /* Logo : version inverse en thème Nuit */
 .logo-inverse {
   display: none;

@@ -116,7 +116,7 @@ function InvitationBody({
         <p role="alert" className="text-small text-danger">
           {interpolate(inv.mismatch, { email: invitation.email })}
         </p>
-        <form action={signOut}>
+        <form action={signOut} data-deconnexion>
           <input type="hidden" name="suivant" value={authPath("connexion", path)} />
           <button type="submit" className={BUTTON_SECONDARY}>{inv.signOut}</button>
         </form>

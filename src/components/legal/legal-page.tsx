@@ -5,7 +5,7 @@
  *  Description: Gabarit des pages légales publiques (/confidentialite, /conditions,
  *               /conditions-de-vente et leurs équivalents sous /strategie).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-16
  *  Dépendances: components/legal/legal-text.tsx
  * =============================================================
@@ -29,7 +29,7 @@ export function legalMetadata(kind: LegalKind): Metadata {
 /** Contenu d'une page légale, en largeur de lecture. */
 export function LegalPage({ kind }: { kind: LegalKind }) {
   return (
-    <main id="contenu" className="mx-auto flex w-full max-w-prose flex-col gap-6 px-4 py-10">
+    <main className="mx-auto flex w-full max-w-prose flex-col gap-6 px-4 py-10">
       <Suspense fallback={<div aria-hidden="true" className="h-96 animate-pulse" />}>
         <LegalText kind={kind} />
       </Suspense>

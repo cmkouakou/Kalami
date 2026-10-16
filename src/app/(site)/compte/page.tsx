@@ -77,7 +77,7 @@ async function AccountContent() {
       <AccountPrivacySection space="site" />
       <AccountDeletionSection userId={user.id} />
 
-      <form action={signOut} className="max-w-xs">
+      <form action={signOut} data-deconnexion className="max-w-xs">
         <SubmitButton variant="secondary">{t.auth.signOut}</SubmitButton>
       </form>
     </div>

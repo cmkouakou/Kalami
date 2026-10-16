@@ -1,5 +1,44 @@
 # Journal des modifications
 
+## [v0.9.1] - 2026-10-16 — PWA et accessibilité (S11a-2)
+### Ajouté
+- Deux applications installables :
+  - « Kalami » (`app/manifest.ts`, portée `/`) ;
+  - « Kalami Stratégie » (`/strategie/manifest.webmanifest`, portée et démarrage
+    `/strategie`), qui ne passe jamais par la librairie.
+  - Icônes 192, 512, masquable et Apple générées par `scripts/generer-icones.mjs`.
+- Service worker maison (`public/sw.js`, règles dans `public/sw-routes.js`), en
+  production seulement, construit sur une liste blanche :
+  - fichiers statiques et charte : cache d'abord ;
+  - couvertures (`/_next/image`) : copie servie puis rafraîchie ;
+  - pages publiques du catalogue visitées : réseau d'abord, avec copie de secours ;
+  - tout le reste (liseuse, études, comptes, administration, API) : réseau seul, jamais
+    conservé sur l'appareil ;
+  - page de repli propre à chaque espace (`/hors-ligne`, `/strategie/hors-ligne`) ;
+  - pages gardées effacées à la déconnexion (formulaires `data-deconnexion`).
+- Bandeau « hors ligne » (`experimental.useOffline`) : navigations et actions relancées
+  au retour de la connexion.
+- Bouton discret « Installer l'application » dans les deux pieds de page :
+  - invite native sur Chrome, Edge et Android ;
+  - consigne « Partager → Sur l'écran d'accueil » sur iPhone et iPad ;
+  - masqué une fois l'application installée.
+- Lien « Aller au contenu » sur toutes les pages, avec focus sur `#contenu`.
+- Pages 404 en français dans un repère `<main>` :
+  - celle de la librairie ;
+  - celle de Kalami Stratégie, y compris pour les adresses inconnues sous `/strategie`.
+- En-têtes `X-Content-Type-Options` et `Referrer-Policy` sur tout le site ; `sw.js`
+  jamais mis en cache par le navigateur.
+- Tests unitaires `sw-routes.test.ts` (12) : liste blanche, replis, manifestes.
+### Modifié
+- Le proxy ignore les fichiers `.js` et `.webmanifest` : ni le service worker ni les
+  manifestes ne rafraîchissent la session.
+### Vérifié
+- Audit axe (WCAG 2.1 AA et bonnes pratiques) : 0 violation sur les pages suivantes :
+  - accueil, catégorie, connexion, inscription, recherche, confidentialité ;
+  - `/strategie`, `/strategie/connexion`, les pages hors ligne et les 404.
+- Contrastes des jetons déjà couverts dans les trois thèmes (`contrast.test.ts`).
+- Fiche livre et liseuse non auditées : aucun livre n'est publié pour l'instant.
+
 ## [v0.9.0] - 2026-10-16 — Textes légaux, consentement, données du compte (S11a-1)
 ### Ajouté
 - Migration `20261031120000_legal_privacy.sql` :

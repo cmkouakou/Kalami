@@ -107,7 +107,7 @@ function JoinBody({
         <p role="alert" className="text-small text-danger">
           {interpolate(j.mismatch, { email: target.invitation_email ?? "" })}
         </p>
-        <form action={signOut}>
+        <form action={signOut} data-deconnexion>
           <input type="hidden" name="suivant" value={authPath("connexion", path)} />
           <button type="submit" className={BUTTON_SECONDARY}>{j.signOut}</button>
         </form>

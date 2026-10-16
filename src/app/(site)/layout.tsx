@@ -3,10 +3,11 @@
  *  Fichier    : layout.tsx (site)
  *  Projet     : Kalami
  *  Description: Gabarit de la plateforme de lecture : en-tête (logo, recherche, devise,
- *               compte) et pied de page sombre. Kalami Stratégie a son propre gabarit.
+ *               compte) et pied de page sombre (avec « Installer l'application »).
+ *               Kalami Stratégie a son propre gabarit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: i18n, components/catalog, components/layout, components/ui
  * =============================================================
  */
@@ -18,6 +19,7 @@ import { CurrencySelector } from "@/components/catalog/currency-selector";
 import { Logo } from "@/components/layout/logo";
 import { LegalLinks } from "@/components/legal/legal-links";
 import { SignInLink, UserMenu } from "@/components/layout/user-menu";
+import { InstallButton } from "@/components/pwa/install-button";
 import { IconSearch } from "@/components/ui/icons";
 import { CONTROL, PAGE } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
@@ -31,7 +33,10 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <SiteHeader />
-      <div className="flex-1">{children}</div>
+      {/* Cible du lien « Aller au contenu » (gabarit racine) */}
+      <div id="contenu" tabIndex={-1} className="flex-1">
+        {children}
+      </div>
       <SiteFooter />
     </>
   );
@@ -101,6 +106,7 @@ function SiteFooter() {
           <Link href="/compte" className="text-small hover:text-encre">
             {t.account.title}
           </Link>
+          <InstallButton className="self-start text-small hover:text-encre" />
         </div>
         <div className="flex flex-col gap-2">
           <p className="text-caption text-ink-muted uppercase">{t.footer.legal}</p>

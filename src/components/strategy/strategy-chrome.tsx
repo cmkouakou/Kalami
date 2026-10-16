@@ -6,9 +6,10 @@
  *               suffit à elle-même (connexion, déconnexion et liens restent dans
  *               /strategie) ; seul un lien discret mène au livre guide, s'il est publié.
  *               La cloche (S9b) mène aux notifications et compte celles non lues.
+ *               Pied de page : « Installer l'application » (PWA Kalami Stratégie).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-15
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
  *  Dépendances: lib/auth/dal.ts, lib/auth/actions.ts, lib/catalog/queries.ts,
  *               lib/strategy/comments-queries.ts, i18n
  * =============================================================
@@ -19,6 +20,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { LegalLinks } from "@/components/legal/legal-links";
+import { InstallButton } from "@/components/pwa/install-button";
 import { IconBell } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -111,7 +113,7 @@ async function StrategyUserMenu() {
           </span>
         )}
       </Link>
-      <form action={signOut} className="flex flex-wrap items-center gap-x-3">
+      <form action={signOut} data-deconnexion className="flex flex-wrap items-center gap-x-3">
         <input type="hidden" name="suivant" value={STRATEGY_HOME} />
         {user.email && (
           <span className="text-small text-ink-muted">
@@ -147,6 +149,7 @@ export function StrategyFooter() {
           <Suspense>
             <GuideBookLink />
           </Suspense>
+          <InstallButton className="hover:text-encre hover:underline" />
         </nav>
       </div>
     </footer>

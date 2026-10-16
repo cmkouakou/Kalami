@@ -746,6 +746,37 @@ const fr = {
       error: "Votre choix n'a pas pu être enregistré. Réessayez.",
     },
   },
+  pwa: {
+    strategyShortName: "Stratégie",
+    install: "Installer l'application",
+    installIosTitle: "Installer sur iPhone ou iPad",
+    installIosSteps:
+      "Dans Safari, touchez le bouton Partager, puis « Sur l'écran d'accueil ». " +
+      "L'application s'ouvrira ensuite comme les autres, sans barre d'adresse.",
+    close: "Fermer",
+    offlineBanner:
+      "Vous êtes hors ligne. Les pages déjà visitées restent consultables ; le reste se " +
+      "chargera au retour de la connexion.",
+    offlineTitle: "Vous êtes hors ligne",
+    offlineText:
+      "Cette page n'a pas encore été enregistrée sur cet appareil. Vérifiez votre " +
+      "connexion, puis réessayez.",
+    offlineReader:
+      "La lecture des livres exige une connexion : le contenu n'est jamais conservé sur " +
+      "l'appareil.",
+    offlineStrategy:
+      "Vos études ne sont pas conservées sur l'appareil, par confidentialité : retrouvez-les " +
+      "dès le retour de la connexion.",
+    retry: "Réessayer",
+    backHome: "Retour à l'accueil",
+  },
+  a11y: {
+    skipToContent: "Aller au contenu",
+  },
+  notFound: {
+    title: "Page introuvable",
+    text: "Cette adresse ne correspond à aucune page, ou la page n'est plus disponible.",
+  },
   strategy: strategyFr,
 };
 
