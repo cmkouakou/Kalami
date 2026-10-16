@@ -26,7 +26,7 @@ Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés pa
 | S8b | Plan stratégique : export PDF et DOCX | v0.9.1 | ✅ |
 | S9a | Collaboration : invitations (lien et courriel Resend), rôles, départ, responsables d'étape, journal d'activité | v0.10.0 | ✅ |
 | S9b | Collaboration : commentaires (étape et élément), mentions, notifications (cloche, page, courriel de mention) | v0.10.1 | ✅ |
-| S9c | Collaboration : présence et verrouillage doux (Realtime) | v0.10.2 | ⬜ |
+| S9c | Collaboration : présence et verrouillage doux (Realtime) | v0.10.2 | ✅ |
 | S10 | Mode enseignant et cas d'entraînement (Ajinomoto, Infosystem, corrigé) | v0.11.0 | ⬜ |
 | S11 | Paiement de l'étude (après les sprints 5-6 du projet 1) : prix par région, réduction livre, lots, recharges d'IA | v0.12.0 | ⬜ |
 | S12 | Critères d'acceptation §12, confidentialité, audit, accessibilité, mise en production ; clé API par fédération d'identité (WIF) au lieu d'une clé statique | v1.0.0 | ⬜ |

@@ -9,10 +9,11 @@
  *               choix liés aux enjeux de l'étape 5, action liée aux options retenues et aux
  *               objectifs) avec le panneau du coach IA ou, pour l'étape 9, l'éditeur du plan
  *               stratégique (sections, coach de rédaction, annexe de traçabilité). Sous le
- *               gabarit : la discussion de l'équipe (S9b), pastilles sur chaque élément.
+ *               gabarit : la discussion de l'équipe (S9b), pastilles sur chaque élément ;
+ *               présence des membres et verrouillage doux (S9c).
  *  Auteur     : Claude Marcel
- *  Version    : 1.8
- *  Date       : 2026-10-15
+ *  Version    : 1.9
+ *  Date       : 2026-10-16
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts,
  *               lib/strategy/plan-inputs.ts, lib/strategy/plan-trace.ts,
  *               lib/strategy/comments-queries.ts
@@ -33,6 +34,8 @@ import { ForcesEditor } from "@/components/strategy/forces/forces-editor";
 import { InternalEditor } from "@/components/strategy/internal/internal-editor";
 import { PestelEditor } from "@/components/strategy/pestel/pestel-editor";
 import { PlanEditor } from "@/components/strategy/plan/plan-editor";
+import { PresenceBar } from "@/components/strategy/presence/presence-bar";
+import { PresenceProvider } from "@/components/strategy/presence/presence-context";
 import { StakeholdersEditor } from "@/components/strategy/stakeholders/stakeholders-editor";
 import { SynthesisEditor } from "@/components/strategy/synthesis/synthesis-editor";
 import { StepGuide } from "@/components/strategy/step-guide";
@@ -190,7 +193,8 @@ async function StudyStep({ params }: { params: Promise<{ id: string; n: string }
 
 /**
  * Discussion de l'étape (S9b) : fournit aux gabarits les pastilles de commentaire et
- * ajoute la section des fils. Si la discussion ne peut pas être chargée (migration absente,
+ * ajoute la section des fils. Présence de l'équipe (S9c) : membres sur l'étape, éléments
+ * en cours de modification et mise à jour quand un autre membre enregistre. Si la discussion ne peut pas être chargée (migration absente,
  * accès retiré), le gabarit s'affiche seul.
  */
 async function StepDiscussion({
@@ -218,12 +222,14 @@ async function StepDiscussion({
 
   const { comments, members, content } = loaded;
   const people = members.map((m) => ({ id: m.user_id, label: memberLabel(m) }));
+  const self = people.find((person) => person.id === userId);
   const labels = Object.fromEntries(
     commentTargets(no, content.payload).map((target) => [target.id, target.label]),
   );
 
-  return (
+  const discussion = (
     <CommentsProvider counts={countByTarget(comments)} labels={labels}>
+      <PresenceBar />
       {children}
       <CommentsPanel
         comments={comments}
@@ -237,6 +243,18 @@ async function StepDiscussion({
         }}
       />
     </CommentsProvider>
+  );
+  if (!self) return discussion;
+
+  return (
+    <PresenceProvider
+      studyId={study.id}
+      self={{ id: self.id, name: self.label }}
+      stepNo={no}
+      canEdit={study.role === "owner" || study.role === "contributor"}
+    >
+      {discussion}
+    </PresenceProvider>
   );
 }
 

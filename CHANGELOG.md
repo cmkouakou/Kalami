@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## [Stratégie v0.10.2] - 2026-10-16 — Présence et verrouillage doux (S9c)
+### Ajouté
+- Migration `20261028120000_strategy_realtime.sql` :
+  - canal Realtime privé `study:<uuid>` par étude : fonction `strategy_topic_role`,
+    politiques sur `realtime.messages` (lecture et présence pour les membres, diffusion
+    réservée au propriétaire et aux contributeurs) ;
+  - raison de version `conflict` et fonction `strategy_save_conflict_copy` (éditeurs,
+    une copie par personne toutes les 10 s au plus).
+- Présence (`presence/`) : barre « Aussi sur cette étape » et « Aussi dans l'étude »,
+  avatars des membres sur les cartes d'étape, indicateur « X modifie cet élément » à côté de
+  la pastille de commentaire (avertissement seul, les champs restent modifiables).
+- Travail simultané sans perte : chaque enregistrement est diffusé ; la page se met à jour
+  si rien n'est en attente, sinon la saisie refusée est gardée en « Copie de secours
+  (conflit) », restaurable depuis l'historique des versions.
+- Tests : unitaires `strategy-presence.test.ts` (11), intégration
+  `strategy-realtime-rls.test.ts` (6/6 sur la base de développement).
+### Modifié
+- `use-autosave.ts` (diffusion, mise à jour, copie de secours), `comments-context.tsx`
+  (repère d'élément), `step-card.tsx`, pages de l'étude et de l'étape, `actions.ts`
+  (`saveConflictCopy`), `queries.ts`, `fr-strategy.ts` (bloc `presence`).
+
 ## [Stratégie v0.10.1] - 2026-10-15 — Commentaires, mentions et notifications (S9b)
 ### Ajouté
 - Migration `20261027120000_strategy_comments.sql` :

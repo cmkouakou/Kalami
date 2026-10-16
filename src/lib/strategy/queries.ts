@@ -63,7 +63,7 @@ export type StudyDetail = {
   lockReasons: Record<StepNo, string>;
 };
 
-export type VersionReason = "auto" | "validation" | "restore";
+export type VersionReason = "auto" | "validation" | "restore" | "conflict";
 
 export type StepVersion = {
   id: string;

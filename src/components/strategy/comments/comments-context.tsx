@@ -6,10 +6,11 @@
  *               cours par élément, libellés des éléments enregistrés et élément choisi pour
  *               commenter. La pastille CommentBadge, placée sur chaque élément d'un gabarit,
  *               ouvre la discussion sur cet élément ; sans fournisseur (étape verrouillée,
- *               discussion indisponible), elle n'affiche rien.
+ *               discussion indisponible), elle n'affiche rien. S9c : elle porte le repère
+ *               de l'élément (présence) et l'indicateur « X modifie cet élément ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-15
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/comments.ts
  * =============================================================
  */
@@ -18,6 +19,8 @@
 
 import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
 
+import { ElementEditors } from "@/components/strategy/presence/element-editors";
+import { ELEMENT_ATTRIBUTE } from "@/components/strategy/presence/presence-context";
 import { IconMessage } from "@/components/ui/icons";
 import { getDictionary, interpolate } from "@/i18n";
 import type { CommentTarget } from "@/lib/strategy/comments";
@@ -91,19 +94,23 @@ export function CommentBadge({ targetId, label }: { targetId: string; label: str
   const active = comments.target?.id === targetId;
 
   return (
-    <button
-      type="button"
-      className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1
-        rounded-md px-2 text-small transition-colors duration-150 ease-kalami hover:bg-sand
-        ${count > 0 || active ? "text-encre" : "text-ink-muted"}
-        ${active ? "bg-encre-soft" : ""}`}
-      aria-label={count > 0
-        ? interpolate(cm.badgeCount, { count: String(count), label: name })
-        : interpolate(cm.badgeAdd, { label: name })}
-      onClick={() => comments.select({ id: targetId, label: name })}
-    >
-      <IconMessage size={18} />
-      {count > 0 && <span className="font-semibold">{count}</span>}
-    </button>
+    <>
+      <ElementEditors targetId={targetId} />
+      <button
+        type="button"
+        {...{ [ELEMENT_ATTRIBUTE]: targetId }}
+        className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1
+          rounded-md px-2 text-small transition-colors duration-150 ease-kalami hover:bg-sand
+          ${count > 0 || active ? "text-encre" : "text-ink-muted"}
+          ${active ? "bg-encre-soft" : ""}`}
+        aria-label={count > 0
+          ? interpolate(cm.badgeCount, { count: String(count), label: name })
+          : interpolate(cm.badgeAdd, { label: name })}
+        onClick={() => comments.select({ id: targetId, label: name })}
+      >
+        <IconMessage size={18} />
+        {count > 0 && <span className="font-semibold">{count}</span>}
+      </button>
+    </>
   );
 }

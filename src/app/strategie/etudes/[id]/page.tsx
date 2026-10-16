@@ -6,9 +6,10 @@
  *               progression, profil, puis les 9 étapes regroupées en quatre phases ; les
  *               étapes verrouillées indiquent ce qui manque pour les ouvrir. Liens Équipe et
  *               Journal, responsable de chaque étape et accès au plan stratégique (S9a).
+ *               Présence (S9c) : membres connectés et avatars sur les cartes d'étape.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-15
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts, components/strategy
  * =============================================================
  */
@@ -18,6 +19,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { PresenceBar, StepPeers } from "@/components/strategy/presence/presence-bar";
+import { PresenceProvider } from "@/components/strategy/presence/presence-context";
 import { StepCard } from "@/components/strategy/step-card";
 import { IconCheck, IconPencil } from "@/components/ui/icons";
 import { BADGE, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
@@ -64,119 +67,130 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
   const question = study.strategic_question.trim();
   const members = await getStudyMembers(study.id);
   const names = new Map(members.map((member) => [member.user_id, memberLabel(member)]));
+  const selfName = names.get(user.id) ?? "";
   const planOpen = missingPrerequisites(PLAN_STEP, statuses, study.profileComplete).length === 0;
 
   return (
-    <main className="flex flex-col gap-8">
-      {/* ==================== EN-TÊTE ==================== */}
-      <header className="flex flex-col gap-2">
-        <p className="text-caption uppercase text-ink-muted">{s.map.kicker}</p>
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="font-serif text-h1 font-semibold">{study.company_name}</h1>
-          <span className={BADGE}>{s.studies.roles[study.role]}</span>
-        </div>
-        <p className="text-ink-muted">
-          {question ? interpolate(s.map.questionLabel, { question }) : s.map.noQuestion}
-        </p>
-        <p className="text-small text-ink-muted">
-          {interpolate(s.map.members, {
-            count: String(study.member_count),
-            date: DATE_FORMAT.format(new Date(study.updated_at)),
-          })}
-        </p>
-        <nav className="flex flex-wrap gap-2" aria-label={s.team.title}>
-          <Link href={`/strategie/etudes/${study.id}/equipe`} className={BUTTON_SECONDARY}>
-            {s.team.navTeam}
-          </Link>
-          <Link href={`/strategie/etudes/${study.id}/journal`} className={BUTTON_SECONDARY}>
-            {s.team.navJournal}
-          </Link>
-        </nav>
-      </header>
+    <PresenceProvider
+      studyId={study.id}
+      self={{ id: user.id, name: selfName }}
+      stepNo={null}
+      canEdit={study.role === "owner" || study.role === "contributor"}
+    >
+      <main className="flex flex-col gap-8">
+        {/* ==================== EN-TÊTE ==================== */}
+        <header className="flex flex-col gap-2">
+          <p className="text-caption uppercase text-ink-muted">{s.map.kicker}</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="font-serif text-h1 font-semibold">{study.company_name}</h1>
+            <span className={BADGE}>{s.studies.roles[study.role]}</span>
+          </div>
+          <p className="text-ink-muted">
+            {question ? interpolate(s.map.questionLabel, { question }) : s.map.noQuestion}
+          </p>
+          <p className="text-small text-ink-muted">
+            {interpolate(s.map.members, {
+              count: String(study.member_count),
+              date: DATE_FORMAT.format(new Date(study.updated_at)),
+            })}
+          </p>
+          <nav className="flex flex-wrap gap-2" aria-label={s.team.title}>
+            <Link href={`/strategie/etudes/${study.id}/equipe`} className={BUTTON_SECONDARY}>
+              {s.team.navTeam}
+            </Link>
+            <Link href={`/strategie/etudes/${study.id}/journal`} className={BUTTON_SECONDARY}>
+              {s.team.navJournal}
+            </Link>
+          </nav>
+        </header>
 
-      {/* ==================== PROGRESSION ==================== */}
-      <div className="flex flex-col gap-2">
-        <p className="text-label">{interpolate(s.map.progress, { count: String(count) })}</p>
-        <div
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={9}
-          aria-valuenow={count}
-          aria-label={s.map.kicker}
-          className="h-2 w-full overflow-hidden rounded-full bg-sand"
-        >
-          <div className="h-full bg-encre" style={{ width: `${(count / 9) * 100}%` }} />
-        </div>
-      </div>
+        <PresenceBar />
 
-      {/* ==================== PROFIL ==================== */}
-      <Link
-        href={`/strategie/etudes/${study.id}/profil`}
-        className={`${CARD} flex flex-col gap-2 p-4 hover:border-encre sm:flex-row
-          sm:items-center sm:justify-between`}
-      >
-        <span className="flex flex-col gap-1">
-          <span className="font-semibold">{s.map.profileCard}</span>
-          {missingFields.length > 0 && (
-            <span className="text-small text-ink-muted">
-              {interpolate(s.profile.incomplete, {
-                fields: missingFields.map((name) => fieldLabels[name]).join(", "),
-              })}
-            </span>
-          )}
-        </span>
-        <span className="inline-flex items-center gap-1.5 text-small font-semibold">
-          {study.profileComplete ? <IconCheck size={16} /> : <IconPencil size={16} />}
-          {study.profileComplete ? s.map.profileComplete : s.map.profileIncomplete}
-        </span>
-      </Link>
-
-      {/* ==================== PHASES ET ÉTAPES ==================== */}
-      {PHASES.map((phase) => {
-        const steps = STEPS.filter((step) => step.phase === phase);
-        return (
-          <section key={phase} className="flex flex-col gap-3" aria-labelledby={`phase-${phase}`}>
-            <h2 id={`phase-${phase}`} className="font-serif text-h2 font-semibold">
-              {s.phases[phase]}
-            </h2>
-            <p className="text-small text-ink-muted">
-              {phase === "understand" ? s.map.parallel : s.phaseIntro[phase]}
-            </p>
-            <ul className={`grid gap-3 ${steps.length > 1 ? "sm:grid-cols-2" : ""}`}>
-              {steps.map((step) => (
-                <li key={step.no}>
-                  <StepCard
-                    studyId={study.id}
-                    step={step}
-                    status={statuses[step.no]}
-                    missing={missingPrerequisites(step.no, statuses, study.profileComplete)}
-                    assignee={names.get(study.steps[step.no]?.assignee_id ?? "")}
-                  />
-                </li>
-              ))}
-            </ul>
-          </section>
-        );
-      })}
-
-      {/* ==================== PLAN STRATÉGIQUE ==================== */}
-      <div className="flex flex-col items-start gap-2">
-        {planOpen ? (
-          <Link
-            href={`/strategie/etudes/${study.id}/etapes/${PLAN_STEP}`}
-            className={BUTTON_PRIMARY}
+        {/* ==================== PROGRESSION ==================== */}
+        <div className="flex flex-col gap-2">
+          <p className="text-label">{interpolate(s.map.progress, { count: String(count) })}</p>
+          <div
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={9}
+            aria-valuenow={count}
+            aria-label={s.map.kicker}
+            className="h-2 w-full overflow-hidden rounded-full bg-sand"
           >
-            {s.map.generate}
-          </Link>
-        ) : (
-          <>
-            <button type="button" className={BUTTON_PRIMARY} disabled>
+            <div className="h-full bg-encre" style={{ width: `${(count / 9) * 100}%` }} />
+          </div>
+        </div>
+
+        {/* ==================== PROFIL ==================== */}
+        <Link
+          href={`/strategie/etudes/${study.id}/profil`}
+          className={`${CARD} flex flex-col gap-2 p-4 hover:border-encre sm:flex-row
+            sm:items-center sm:justify-between`}
+        >
+          <span className="flex flex-col gap-1">
+            <span className="font-semibold">{s.map.profileCard}</span>
+            {missingFields.length > 0 && (
+              <span className="text-small text-ink-muted">
+                {interpolate(s.profile.incomplete, {
+                  fields: missingFields.map((name) => fieldLabels[name]).join(", "),
+                })}
+              </span>
+            )}
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-small font-semibold">
+            {study.profileComplete ? <IconCheck size={16} /> : <IconPencil size={16} />}
+            {study.profileComplete ? s.map.profileComplete : s.map.profileIncomplete}
+          </span>
+        </Link>
+
+        {/* ==================== PHASES ET ÉTAPES ==================== */}
+        {PHASES.map((phase) => {
+          const steps = STEPS.filter((step) => step.phase === phase);
+          return (
+            <section key={phase} className="flex flex-col gap-3" aria-labelledby={`phase-${phase}`}>
+              <h2 id={`phase-${phase}`} className="font-serif text-h2 font-semibold">
+                {s.phases[phase]}
+              </h2>
+              <p className="text-small text-ink-muted">
+                {phase === "understand" ? s.map.parallel : s.phaseIntro[phase]}
+              </p>
+              <ul className={`grid gap-3 ${steps.length > 1 ? "sm:grid-cols-2" : ""}`}>
+                {steps.map((step) => (
+                  <li key={step.no}>
+                    <StepCard
+                      studyId={study.id}
+                      step={step}
+                      status={statuses[step.no]}
+                      missing={missingPrerequisites(step.no, statuses, study.profileComplete)}
+                      assignee={names.get(study.steps[step.no]?.assignee_id ?? "")}
+                      presence={<StepPeers stepNo={step.no} />}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
+
+        {/* ==================== PLAN STRATÉGIQUE ==================== */}
+        <div className="flex flex-col items-start gap-2">
+          {planOpen ? (
+            <Link
+              href={`/strategie/etudes/${study.id}/etapes/${PLAN_STEP}`}
+              className={BUTTON_PRIMARY}
+            >
               {s.map.generate}
-            </button>
-            <p className="text-small text-ink-muted">{s.map.generateLater}</p>
-          </>
-        )}
-      </div>
-    </main>
+            </Link>
+          ) : (
+            <>
+              <button type="button" className={BUTTON_PRIMARY} disabled>
+                {s.map.generate}
+              </button>
+              <p className="text-small text-ink-muted">{s.map.generateLater}</p>
+            </>
+          )}
+        </div>
+      </main>
+    </PresenceProvider>
   );
 }

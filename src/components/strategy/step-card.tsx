@@ -4,15 +4,17 @@
  *  Projet     : Kalami Stratégie
  *  Description: Carte d'une étape sur la carte de l'étude (maquette 06) : lien vers l'étape
  *               si elle est ouverte, carte en pointillés avec le cadenas et ce qui manque
- *               pour l'ouvrir si elle est verrouillée. Responsable de l'étape (S9a).
+ *               pour l'ouvrir si elle est verrouillée. Responsable de l'étape (S9a) et
+ *               membres présents sur l'étape (S9c).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-15
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
  *  Dépendances: components/strategy/step-status.tsx, lib/strategy/steps.ts
  * =============================================================
  */
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { StepStatusBadge } from "@/components/strategy/step-status";
 import { getDictionary, interpolate } from "@/i18n";
@@ -34,6 +36,8 @@ type StepCardProps = {
   missing: number[];
   /** Nom du membre responsable de l'étape (S9a) ; absent = personne. */
   assignee?: string | null;
+  /** Membres présents sur l'étape (S9c), rendu côté client. */
+  presence?: ReactNode;
 };
 
 // ==================== FONCTIONS UTILITAIRES ====================
@@ -61,7 +65,14 @@ function cardLook(status: StepStatus): string {
 // ==================== COMPOSANT ====================
 
 /** Carte d'une étape : ouverte (lien) ou verrouillée (pointillés). */
-export function StepCard({ studyId, step, status, missing, assignee }: StepCardProps) {
+export function StepCard({
+  studyId,
+  step,
+  status,
+  missing,
+  assignee,
+  presence,
+}: StepCardProps) {
   const text = s.steps[step.no];
   const locked = missing.length > 0;
 
@@ -81,6 +92,7 @@ export function StepCard({ studyId, step, status, missing, assignee }: StepCardP
           {interpolate(s.team.assign.onCard, { name: assignee })}
         </span>
       )}
+      {presence}
     </>
   );
 

@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.10.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S9a livrés, S9b codé)
+Version actuelle : v0.8.3 · Stratégie v0.10.2 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S9b livrés, S9c codé)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -30,7 +30,8 @@ Version actuelle : v0.8.3 · Stratégie v0.10.1 | Statut : 🟡 En cours (projet
 | #24 | 2026-10-15 | Stratégie S8b : export du plan en PDF et DOCX (Gantt, tableau de bord, traçabilité) | ~250 000 | ~1.50 $ |
 | #25 | 2026-10-15 | Stratégie S9a : équipe, invitations par courriel (Resend), responsables d'étape, journal | ~330 000 | ~1.98 $ |
 | #26 | 2026-10-15 | Stratégie S9b : commentaires par étape et par élément, mentions, notifications (cloche, page, courriel de mention) | ~300 000 | ~1.80 $ |
-| **TOTAL** | | | **~6 670 000** | **~40.02 $** |
+| #27 | 2026-10-16 | Stratégie S9c : présence Realtime, verrouillage doux, copie de secours en cas de conflit | ~280 000 | ~1.68 $ |
+| **TOTAL** | | | **~6 950 000** | **~41.70 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -108,6 +109,7 @@ Version actuelle : v0.8.3 · Stratégie v0.10.1 | Statut : 🟡 En cours (projet
 - [x] S9a — migration `20261026120000_strategy_team.sql` appliquée (2026-10-15), intégration équipe 10/10
 - [x] S9b — commentaires (étape et élément), mentions, notifications : cloche, page, courriel de mention (Stratégie v0.10.1), unitaires 451/451
 - [x] S9b — migration `20261027120000_strategy_comments.sql` appliquée (2026-10-16), historique réparé, intégration commentaires 11/11
-- [ ] S9c — présence et verrouillage doux (Realtime) (Stratégie v0.10.2)
+- [x] S9c — présence et verrouillage doux (Realtime), copie de secours en cas de conflit (Stratégie v0.10.2), unitaires 462/462
+- [x] S9c — migration `20261028120000_strategy_realtime.sql` appliquée (2026-10-16), historique réparé, intégration présence 6/6
 - [ ] S12 — limiter le débit des exports du plan (aucun limiteur générique sans migration)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

@@ -214,6 +214,33 @@ export async function saveStepPayload(
 }
 
 /**
+ * Garde une saisie refusée pour conflit de révision comme version « copie de secours »
+ * (S9c), restaurable depuis l'historique. Ne change pas le contenu de l'étape.
+ * @param studyId - Identifiant de l'étude
+ * @param stepNo  - Étape dotée d'un gabarit
+ * @param payload - Contenu refusé (validé ici par Zod)
+ * @returns Vrai si la copie est gardée (faux : invalide, refusée ou trop rapprochée)
+ */
+export async function saveConflictCopy(
+  studyId: string,
+  stepNo: number,
+  payload: unknown,
+): Promise<boolean> {
+  await requireUser(`/strategie/etudes/${studyId}`);
+  if (!isUuid(studyId) || !isEditableStep(stepNo)) return false;
+  const data = parseStepPayload(stepNo, payload);
+  if (!data) return false;
+
+  const supabase = await createClient();
+  const { data: kept, error } = await supabase.rpc("strategy_save_conflict_copy", {
+    p_study_id: studyId,
+    p_step_no: stepNo,
+    p_payload: data,
+  });
+  return !error && kept === true;
+}
+
+/**
  * Restaure une version du gabarit ; la page est rafraîchie pour afficher son contenu.
  * @param studyId   - Identifiant de l'étude
  * @param stepNo    - Étape concernée

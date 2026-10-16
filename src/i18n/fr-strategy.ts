@@ -316,6 +316,7 @@ const strategyFr = {
         auto: "Enregistrement",
         validation: "Validation",
         restore: "Restauration",
+        conflict: "Copie de secours (conflit)",
       },
       revision: "révision {revision}",
       restore: "Restaurer",
@@ -1525,6 +1526,26 @@ const strategyFr = {
       invalid_target: "Cet élément n'est pas encore enregistré : réessayez dans un instant.",
       not_author: "Seul l'auteur du commentaire, ou le propriétaire, peut faire cela.",
     },
+  },
+
+  // ==================== PRÉSENCE (S9c) ====================
+  presence: {
+    onStep: "Aussi sur cette étape :",
+    inStudy: "Aussi dans l'étude :",
+    alone: "Personne d'autre n'est connecté en ce moment.",
+    editing: "modifie « {label} »",
+    editingElement: "{names} modifie cet élément",
+    editingElementMany: "{names} modifient cet élément",
+    and: " et ",
+    stepPeers: "Sur cette étape : {names}",
+    remoteSaved: "{name} a enregistré cette étape à {time} ; la page est à jour.",
+    conflictKept:
+      "{name} a enregistré cette étape entre-temps. Votre saisie est gardée dans l'historique " +
+      "des versions (« Copie de secours ») : rechargez la page, puis restaurez-la au besoin.",
+    conflictNotKept:
+      "Cette étape a été enregistrée ailleurs entre-temps et votre saisie n'a pas pu être " +
+      "gardée en copie : copiez vos derniers changements avant de recharger la page.",
+    someone: "Un autre membre",
   },
   notifications: {
     kicker: "Travail en équipe",

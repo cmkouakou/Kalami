@@ -6,18 +6,27 @@
  *               modification, un seul envoi à la fois (les modifications faites pendant
  *               l'envoi repartent ensuite), arrêt sur conflit de révision, envoi immédiat
  *               quand l'onglet passe en arrière-plan et alerte avant de quitter la page.
+ *               Travail en équipe (S9c) : chaque enregistrement est diffusé aux membres
+ *               présents ; l'enregistrement d'un autre met la page à jour si rien n'est en
+ *               attente, sinon la saisie refusée est gardée en « copie de secours ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
- *  Dépendances: lib/strategy/actions.ts (saveStepPayload)
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
+ *  Dépendances: lib/strategy/actions.ts (saveStepPayload, saveConflictCopy),
+ *               presence/presence-context.tsx
  * =============================================================
  */
 
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { saveStepPayload } from "@/lib/strategy/actions";
+import { usePresence } from "@/components/strategy/presence/presence-context";
+import { getDictionary, interpolate } from "@/i18n";
+import { saveConflictCopy, saveStepPayload } from "@/lib/strategy/actions";
+
+const pr = getDictionary().strategy.presence;
 
 // ==================== TYPES ====================
 
@@ -73,6 +82,33 @@ export function useAutosave<T>(initial: T, options: AutosaveOptions): Autosave<T
   const inFlight = useRef(false);
   const blocked = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Révision annoncée par un autre onglet ou membre (0 : aucune). */
+  const remoteRevision = useRef(0);
+
+  const router = useRouter();
+  const presence = usePresence();
+  const announceSaved = presence?.announceSaved;
+  const onSaved = presence?.onSaved;
+  const remoteName = useRef<string | null>(null);
+  useEffect(() => {
+    remoteName.current = presence?.lastRemote?.name ?? null;
+  }, [presence?.lastRemote]);
+
+  /** Conflit de révision : garde la saisie refusée en copie de secours, puis l'annonce. */
+  const keepConflictCopy = useCallback(async () => {
+    let kept = false;
+    try {
+      kept = await saveConflictCopy(studyId, stepNo, latest.current);
+    } catch {
+      kept = false;
+    }
+    const name = remoteName.current ?? pr.someone;
+    setStatus({
+      kind: "error",
+      message: kept ? interpolate(pr.conflictKept, { name }) : pr.conflictNotKept,
+      conflict: true,
+    });
+  }, [studyId, stepNo]);
 
   /** Envoie le contenu courant ; repart si des modifications sont arrivées entre-temps. */
   const save = useCallback(async () => {
@@ -97,14 +133,31 @@ export function useAutosave<T>(initial: T, options: AutosaveOptions): Autosave<T
         dirty.current = true;
         blocked.current = true;
         setStatus({ kind: "error", message: result.error, conflict: result.conflict });
+        if (result.conflict) void keepConflictCopy();
         return;
       }
       revisionRef.current = result.revision;
       setRevision(result.revision);
+      announceSaved?.(stepNo, result.revision);
       if (!dirty.current) setStatus({ kind: "saved", at: result.savedAt });
     }
     inFlight.current = false;
-  }, [studyId, stepNo]);
+    // Un autre membre a enregistré pendant l'envoi : on reprend sa version
+    if (remoteRevision.current > revisionRef.current) router.refresh();
+  }, [studyId, stepNo, keepConflictCopy, announceSaved, router]);
+
+  // Enregistrement d'un autre onglet ou membre sur la même étape
+  useEffect(() => {
+    if (!onSaved) return;
+    return onSaved((event) => {
+      if (event.stepNo !== stepNo || event.revision <= revisionRef.current) return;
+      remoteRevision.current = Math.max(remoteRevision.current, event.revision);
+      if (blocked.current || inFlight.current) return;
+      // Saisie en attente : on l'envoie tout de suite ; le conflit la garde en copie
+      if (dirty.current) void save();
+      else router.refresh();
+    });
+  }, [onSaved, stepNo, save, router]);
 
   const update = useCallback(
     (change: (previous: T) => T) => {
