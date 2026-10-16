@@ -12,9 +12,10 @@
  *               Liste des fonctions dotées d'une consigne, dont « extract » (S5b).
  *               À l'étape 5, contenu des étapes 1 à 4 (bloc etapes) et fonction
  *               « synthesize » qui propose de quoi compléter la synthèse (S6b). Aux étapes
- *               6 à 8, même bloc avec les étapes en amont (S7a, S7b).
+ *               6 à 8, même bloc avec les étapes en amont (S7a, S7b). Fonction « plan »
+ *               (S8a) et balises sources, section et brouillon neutralisées.
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
+ *  Version    : 1.7
  *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts
  * =============================================================
@@ -39,9 +40,10 @@ export type CoachFunction = (typeof COACH_FUNCTIONS)[number];
 
 /**
  * Fonctions dotées d'une consigne (coach_prompts.function) : celles du coach, plus
- * l'extraction d'une pièce jointe du profil (sans étape).
+ * l'extraction d'une pièce jointe du profil (sans étape) et la rédaction d'une section du
+ * plan stratégique (étape 9, S8a), qui ont chacune leur propre lancement.
  */
-export const PROMPT_FUNCTIONS = [...COACH_FUNCTIONS, "extract"] as const;
+export const PROMPT_FUNCTIONS = [...COACH_FUNCTIONS, "extract", "plan"] as const;
 export type PromptFunction = (typeof PROMPT_FUNCTIONS)[number];
 
 /** Étapes où la recherche Web est proposée : PESTEL (1) et cinq forces (2). */
@@ -94,9 +96,15 @@ export function rulesForStep(rules: readonly CoachRule[], stepNo: StepNo): Coach
 
 // ==================== MISE EN FORME ====================
 
+/** Balises des blocs de données du message (toutes fonctions confondues). */
+const TAG_NAMES = [
+  "profil", "gabarit", "question", "regles", "controle", "cibles", "document", "etapes",
+  "sources", "section", "brouillon",
+] as const;
+
 /** Neutralise les balises de fermeture qu'une saisie pourrait contenir. */
 export function escapeTags(text: string): string {
-  const tags = /<\/?(profil|gabarit|question|regles|controle|cibles|document|etapes)\b/gi;
+  const tags = new RegExp(`</?(${TAG_NAMES.join("|")})\\b`, "gi");
   return text.replace(tags, (match) => match.replace("<", "‹"));
 }
 

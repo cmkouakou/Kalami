@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.8.3 · Stratégie v0.8.1 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S7b livrés)
+Version actuelle : v0.8.3 · Stratégie v0.9.0 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S8a livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -26,7 +26,8 @@ Version actuelle : v0.8.3 · Stratégie v0.8.1 | Statut : 🟡 En cours (projet 
 | #20 | 2026-10-14 | Stratégie S6b : propositions du coach pour la synthèse, décisions groupées | ~250 000 | ~1.50 $ |
 | #21 | 2026-10-15 | Stratégie S7a : gabarits Cap (test du nom, SMART) et Choix (Porter, Ansoff, évaluation) | ~300 000 | ~1.80 $ |
 | #22 | 2026-10-15 | Stratégie S7b : gabarit Action (chantiers, Gantt au mois, tableau de bord équilibré, risques) | ~280 000 | ~1.68 $ |
-| **TOTAL** | | | **~5 470 000** | **~32.82 $** |
+| #23 | 2026-10-15 | Stratégie S8a : plan stratégique (8 sections assemblées, traçabilité, édition, coach de rédaction) | ~320 000 | ~1.92 $ |
+| **TOTAL** | | | **~5 790 000** | **~34.74 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -96,4 +97,8 @@ Version actuelle : v0.8.3 · Stratégie v0.8.1 | Statut : 🟡 En cours (projet 
 - [x] S7a — migration `20261023120000_strategy_direction_choice.sql` appliquée le 2026-10-15 (éditeur SQL ; `repair --status applied 20261023120000` avant un push CLI), intégration cap et choix 15/15
 - [x] S7b — Action : chantiers et phases en Gantt au mois, tableau de bord équilibré (4 perspectives), risques (Stratégie v0.8.1)
 - [x] S7b — migration `20261024120000_strategy_action.sql` appliquée le 2026-10-15 (éditeur SQL ; `repair --status applied 20261024120000` avant un push CLI), intégration action 10/10
+- [x] S8a — plan stratégique : 8 sections assemblées sans IA, annexe de traçabilité, édition, régénération, coach par section (Stratégie v0.9.0), unitaires 407/407
+- [x] S8a — migration `20261025120000_strategy_plan.sql` appliquée (2026-10-15), intégration du plan 5/5
+- [ ] S8a — consigne plan v1 à relire et publier
+- [ ] S8b — export du plan en PDF et DOCX (Stratégie v0.9.1)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

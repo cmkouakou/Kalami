@@ -7,12 +7,13 @@
  *               le gabarit interactif (étapes 1 à 8 : PESTEL, cinq forces, analyse interne,
  *               parties prenantes, synthèse SWOT-TOWS nourrie des étapes 1 à 3, cap et
  *               choix liés aux enjeux de l'étape 5, action liée aux options retenues et aux
- *               objectifs) avec le panneau du coach IA ou, pour le plan, les actions
- *               (commencer, valider, modifier) en attendant son gabarit.
+ *               objectifs) avec le panneau du coach IA ou, pour l'étape 9, l'éditeur du plan
+ *               stratégique (sections, coach de rédaction, annexe de traçabilité).
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
+ *  Version    : 1.7
  *  Date       : 2026-10-15
- *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts
+ *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts,
+ *               lib/strategy/plan-inputs.ts, lib/strategy/plan-trace.ts
  * =============================================================
  */
 
@@ -27,18 +28,20 @@ import { DirectionEditor } from "@/components/strategy/direction/direction-edito
 import { ForcesEditor } from "@/components/strategy/forces/forces-editor";
 import { InternalEditor } from "@/components/strategy/internal/internal-editor";
 import { PestelEditor } from "@/components/strategy/pestel/pestel-editor";
+import { PlanEditor } from "@/components/strategy/plan/plan-editor";
 import { StakeholdersEditor } from "@/components/strategy/stakeholders/stakeholders-editor";
 import { SynthesisEditor } from "@/components/strategy/synthesis/synthesis-editor";
-import { StepActions } from "@/components/strategy/step-actions";
 import { StepGuide } from "@/components/strategy/step-guide";
 import { StepStatusBadge } from "@/components/strategy/step-status";
 import type { LinkOption } from "@/components/strategy/synthesis/link-picker";
 import type { TemplateFrameProps } from "@/components/strategy/template-frame";
 import { IconLock } from "@/components/ui/icons";
-import { CARD, PANEL_SAND } from "@/components/ui/styles";
+import { CARD } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
-import { getCoachState } from "@/lib/strategy/coach/queries";
+import { getCoachState, getPlanCoachState } from "@/lib/strategy/coach/queries";
+import { getPlanInputs } from "@/lib/strategy/plan-inputs";
+import { sourceCatalog } from "@/lib/strategy/plan-trace";
 import {
   getSourcePayloads,
   getStepContent,
@@ -64,6 +67,7 @@ import { readForces } from "@/lib/strategy/templates/forces";
 import { hasTemplate } from "@/lib/strategy/templates";
 import { readInternal } from "@/lib/strategy/templates/internal";
 import { readPestel } from "@/lib/strategy/templates/pestel";
+import { readPlan } from "@/lib/strategy/templates/plan";
 import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
 import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 
@@ -166,19 +170,7 @@ async function StudyStep({ params }: { params: Promise<{ id: string; n: string }
               affectedTitles={affected.map((down) => s.steps[down].title)}
             />
           ) : (
-            <>
-              <p className={`${PANEL_SAND} p-4 text-small`}>
-                {no === PLAN_STEP ? s.step.planSoon : s.step.templateSoon}
-              </p>
-              <StepActions
-                studyId={study.id}
-                stepNo={no}
-                status={current.status}
-                role={study.role}
-                isPlan={no === PLAN_STEP}
-                affectedTitles={affected.map((down) => s.steps[down].title)}
-              />
-            </>
+            <Plan study={study} />
           )}
         </>
       )}
@@ -351,6 +343,31 @@ async function Synthesis({
         forces: readForces(sources[2], study.company_name, study.profile.competitors),
         internal: readInternal(sources[3]),
       }}
+    />
+  );
+}
+
+/**
+ * Plan stratégique (étape 9) : charge le plan enregistré, la matière des étapes (catalogue
+ * des éléments citables de l'annexe) et l'état du coach du plan.
+ */
+async function Plan({ study }: { study: StudyDetail }) {
+  const [content, inputs, coach] = await Promise.all([
+    getStepContent(study.id, PLAN_STEP),
+    getPlanInputs(study.id),
+    getPlanCoachState(study.id),
+  ]);
+  if (!inputs) notFound();
+  return (
+    <PlanEditor
+      key={content.revision}
+      studyId={study.id}
+      role={study.role}
+      initial={readPlan(content.payload)}
+      revision={content.revision}
+      versions={content.versions}
+      catalog={sourceCatalog(inputs)}
+      coach={coach}
     />
   );
 }

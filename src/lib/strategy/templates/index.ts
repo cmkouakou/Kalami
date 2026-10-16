@@ -5,12 +5,14 @@
  *  Description: Point d'entrée des gabarits : étapes qui en ont un, validation stricte du
  *               contenu envoyé par le navigateur avant enregistrement, liste de contrôle
  *               d'un contenu enregistré (transmise au coach pour l'évaluation).
+ *               Étapes enregistrables : les gabarits, plus le plan de l'étape 9 (S8a), qui
+ *               n'a ni liste de contrôle ni coach d'étape.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
+ *  Version    : 1.6
  *  Date       : 2026-10-15
  *  Dépendances: templates/pestel.ts, forces.ts, internal.ts, stakeholders.ts,
  *               synthesis.ts (étape 5, S6a), direction.ts et choice.ts (étapes 6-7, S7a),
- *               action.ts (étape 8, S7b)
+ *               action.ts (étape 8, S7b), plan.ts (étape 9, S8a)
  * =============================================================
  */
 
@@ -31,6 +33,7 @@ import {
   readInternal,
 } from "@/lib/strategy/templates/internal";
 import { pestelChecklist, pestelSchema, readPestel } from "@/lib/strategy/templates/pestel";
+import { planSchema } from "@/lib/strategy/templates/plan";
 import {
   readStakeholders,
   stakeholdersChecklist,
@@ -41,7 +44,7 @@ import {
   synthesisChecklist,
   synthesisSchema,
 } from "@/lib/strategy/templates/synthesis";
-import type { StepNo } from "@/lib/strategy/steps";
+import { PLAN_STEP, type StepNo } from "@/lib/strategy/steps";
 
 /** Étapes dotées d'un gabarit interactif (les autres arrivent aux sprints suivants). */
 export const TEMPLATE_STEPS = [1, 2, 3, 4, 5, 6, 7, 8] as const satisfies readonly StepNo[];
@@ -73,6 +76,26 @@ export function hasTemplate(no: number): no is TemplateStep {
  */
 export function parsePayload(no: TemplateStep, raw: unknown): Record<string, unknown> | null {
   const parsed = SCHEMAS[no].safeParse(raw);
+  return parsed.success ? parsed.data : null;
+}
+
+/** Étapes dont le contenu s'enregistre (autosave, versions) : gabarits et plan. */
+export type EditableStep = TemplateStep | typeof PLAN_STEP;
+
+/** Vrai si le contenu de l'étape s'enregistre (gabarit ou plan stratégique). */
+export function isEditableStep(no: number): no is EditableStep {
+  return hasTemplate(no) || no === PLAN_STEP;
+}
+
+/**
+ * Valide strictement le contenu d'une étape enregistrable (gabarit ou plan).
+ * @param no  - Étape concernée
+ * @param raw - Contenu reçu du navigateur
+ * @returns Contenu validé, ou null s'il est invalide
+ */
+export function parseStepPayload(no: EditableStep, raw: unknown): Record<string, unknown> | null {
+  if (no !== PLAN_STEP) return parsePayload(no, raw);
+  const parsed = planSchema.safeParse(raw);
   return parsed.success ? parsed.data : null;
 }
 

@@ -7,9 +7,10 @@
  *               sont revérifiés par les fonctions SQL ; ici on n'affiche que l'utile.
  *               Sur une étape à gabarit, la saisie démarre l'étape et la validation attend
  *               la fin de l'enregistrement.
+ *               Le plan (étape 9) a son propre éditeur et ne passe pas par ici.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-11
+ *  Version    : 1.2
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/actions.ts
  * =============================================================
  */
@@ -33,8 +34,6 @@ type StepActionsProps = {
   stepNo: StepNo;
   status: StepStatus;
   role: StudyRole;
-  /** Étape du plan : générée plus tard, jamais validée à la main. */
-  isPlan: boolean;
   /** Titres des étapes en aval déjà commencées (passeront « à revoir »). */
   affectedTitles: string[];
   /** Étape à gabarit : la première saisie la démarre (pas de bouton « Commencer »). */
@@ -49,7 +48,6 @@ export function StepActions({
   stepNo,
   status,
   role,
-  isPlan,
   affectedTitles,
   startByEditing = false,
   validateBlocked,
@@ -80,7 +78,7 @@ export function StepActions({
             {s.step.start}
           </button>
         )}
-        {!isPlan && status !== "todo" && status !== "validated" && role === "owner" && (
+        {status !== "todo" && status !== "validated" && role === "owner" && (
           <button
             type="button"
             className={BUTTON_PRIMARY}
@@ -110,7 +108,7 @@ export function StepActions({
       {validateBlocked && role === "owner" && status !== "validated" && (
         <p className="text-small text-ink-muted">{validateBlocked}</p>
       )}
-      {!isPlan && status !== "validated" && role !== "owner" && (
+      {status !== "validated" && role !== "owner" && (
         <p className="text-small text-ink-muted">{s.step.validateOwnerOnly}</p>
       )}
       <FormMessage {...state} />

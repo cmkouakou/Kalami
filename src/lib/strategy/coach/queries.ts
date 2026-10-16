@@ -9,10 +9,11 @@
  *               disponibles (consigne publiée, recherche aux étapes 1 et 2 seulement).
  *               Lectures de l'administrateur : réglages, consommation par étude, versions
  *               des consignes (dont « extract », S5b) et erreurs classiques avec leur historique.
- *               Dernières propositions de synthèse (synthesize) à l'étape 5 (S6b).
+ *               Dernières propositions de synthèse (synthesize) à l'étape 5 (S6b). État du
+ *               coach du plan stratégique (étape 9, S8a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-14
+ *  Version    : 1.5
+ *  Date       : 2026-10-15
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, coach/schemas.ts,
  *               coach/client.ts, coach/context.ts
  * =============================================================
@@ -39,7 +40,7 @@ import {
   type Score,
   type Synthesize,
 } from "@/lib/strategy/coach/schemas";
-import { isStepNo, type StepNo } from "@/lib/strategy/steps";
+import { isStepNo, PLAN_STEP, type StepNo } from "@/lib/strategy/steps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -251,6 +252,29 @@ async function availableFunctions(stepNo: StepNo): Promise<Record<CoachFunction,
     research: available("research"),
     synthesize: available("synthesize"),
   };
+}
+
+/** État du coach du plan stratégique : consommation et consigne « plan » publiée. */
+export type PlanCoachState = { usage: CoachUsage; available: boolean };
+
+/**
+ * État du coach pour le plan (étape 9). Lecture de la consigne avec le rôle service : seule
+ * sa présence sort, jamais son texte.
+ * @param studyId - Étude dont l'utilisateur est membre
+ */
+export async function getPlanCoachState(studyId: string): Promise<PlanCoachState> {
+  const [usage, prompts] = await Promise.all([
+    getCoachUsage(studyId),
+    createAdminClient()
+      .from("coach_prompts")
+      .select("id")
+      .eq("function", "plan")
+      .not("published_at", "is", null)
+      .or(`step_no.eq.${PLAN_STEP},step_no.is.null`)
+      .limit(1)
+      .returns<{ id: string }[]>(),
+  ]);
+  return { usage, available: (check(prompts, "consigne du plan") ?? []).length > 0 };
 }
 
 /**

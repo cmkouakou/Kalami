@@ -4,10 +4,11 @@
  *  Projet     : Kalami Stratégie
  *  Description: Cadre commun des gabarits : avis de lecture seule, état de la sauvegarde
  *               automatique, contenu du gabarit, panneau du coach IA, liste de contrôle
- *               avant validation, actions de l'étape et historique des versions.
+ *               avant validation, actions de l'étape et historique des versions. L'état de
+ *               la sauvegarde est exporté pour l'éditeur du plan (S8a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-13
+ *  Version    : 1.2
+ *  Date       : 2026-10-15
  *  Dépendances: step-actions.tsx, version-history.tsx, coach-panel.tsx, use-autosave.ts
  * =============================================================
  */
@@ -58,7 +59,11 @@ type FrameProps<T> = TemplateFrameProps & {
 // ==================== SOUS-COMPOSANTS ====================
 
 /** Ligne d'état de la sauvegarde automatique (annoncée aux lecteurs d'écran). */
-function SaveStatus({ autosave }: { autosave: Pick<Autosave<unknown>, "status" | "retry"> }) {
+export function SaveStatus({
+  autosave,
+}: {
+  autosave: Pick<Autosave<unknown>, "status" | "retry">;
+}) {
   const { status } = autosave;
   let text: string = tpl.autosave.idle;
   if (status.kind === "dirty") text = tpl.autosave.dirty;
@@ -179,7 +184,6 @@ export function TemplateFrame<T>({
         stepNo={stepNo}
         status={effectiveStatus}
         role={role}
-        isPlan={false}
         affectedTitles={affectedTitles}
         startByEditing
         validateBlocked={validateBlocked}

@@ -67,8 +67,8 @@ export const STEPS: readonly StepDefinition[] = [
 
 export const PHASES: readonly StepPhase[] = ["understand", "synthesize", "decide", "act"];
 
-/** Étape du plan stratégique : générée (S8), jamais validée à la main. */
-export const PLAN_STEP: StepNo = 9;
+/** Étape du plan stratégique : assemblée depuis les étapes validées (S8a), jamais validée. */
+export const PLAN_STEP = 9 as const satisfies StepNo;
 
 /** Marqueur « profil incomplet » dans une liste de prérequis manquants (comme en SQL). */
 export const PROFILE_PREREQUISITE = 0;

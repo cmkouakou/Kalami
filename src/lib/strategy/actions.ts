@@ -6,10 +6,11 @@
  *               profil de l'entreprise, démarrage, validation et réouverture d'une étape,
  *               enregistrement et restauration du contenu des gabarits. Les droits et les
  *               dépendances sont appliqués par les fonctions SQL ; ici, chaque argument est
- *               vérifié et chaque erreur traduite.
+ *               vérifié et chaque erreur traduite. Le plan de l'étape 9 s'enregistre et se
+ *               restaure comme un gabarit (S8a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-11
+ *  Version    : 1.2
+ *  Date       : 2026-10-15
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -25,7 +26,7 @@ import type { FormState } from "@/lib/auth/actions";
 import { requireUser } from "@/lib/auth/dal";
 import { COMPANY_NAME_MAX, parseProfileForm, QUESTION_MAX } from "@/lib/strategy/profile";
 import { isStepNo } from "@/lib/strategy/steps";
-import { hasTemplate, parsePayload } from "@/lib/strategy/templates";
+import { isEditableStep, parseStepPayload } from "@/lib/strategy/templates";
 import { createClient } from "@/lib/supabase/server";
 
 const t = getDictionary();
@@ -194,10 +195,11 @@ export async function saveStepPayload(
   revision: number,
 ): Promise<SaveResult> {
   await requireUser(`/strategie/etudes/${studyId}`);
-  if (!isUuid(studyId) || !hasTemplate(stepNo) || !Number.isInteger(revision) || revision < 0) {
+  if (!isUuid(studyId) || !isEditableStep(stepNo) || !Number.isInteger(revision)
+    || revision < 0) {
     return { ok: false, error: s.errors.generic, conflict: false };
   }
-  const data = parsePayload(stepNo, payload);
+  const data = parseStepPayload(stepNo, payload);
   if (!data) return { ok: false, error: s.errors.invalid_payload, conflict: false };
 
   const supabase = await createClient();
@@ -225,7 +227,7 @@ export async function restoreStepVersion(
   revision: number,
 ): Promise<SaveResult> {
   await requireUser(`/strategie/etudes/${studyId}`);
-  if (!isUuid(studyId) || !isUuid(versionId) || !hasTemplate(stepNo)
+  if (!isUuid(studyId) || !isUuid(versionId) || !isEditableStep(stepNo)
     || !Number.isInteger(revision)) {
     return { ok: false, error: s.errors.generic, conflict: false };
   }

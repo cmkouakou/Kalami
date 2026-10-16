@@ -8,9 +8,9 @@
  *               et du coach : réglages, consignes et erreurs classiques), recherche Web
  *               sourcée du coach, documents joints au profil (S5b), gabarit de synthèse
  *               SWOT, TOWS et enjeux (S6a), gabarits Cap et Choix (S7a), gabarit Action
- *               (S7b). Rattachés à fr.ts sous « strategy ».
+ *               (S7b), plan stratégique (S8a). Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.9
+ *  Version    : 2.0
  *  Date       : 2026-10-15
  * =============================================================
  */
@@ -246,7 +246,6 @@ const strategyFr = {
     templateSoon:
       "Le gabarit interactif de cette étape arrive dans une prochaine version. Vous pouvez " +
       "déjà suivre son statut et la valider.",
-    planSoon: "La génération du plan stratégique arrive dans une prochaine version.",
     reviewTitle: "Étape à revoir",
     reviewBecause: "L'étape {no} ({title}) a été modifiée après validation le {date}.",
     start: "Commencer l'étape",
@@ -265,7 +264,8 @@ const strategyFr = {
     generic: "L'opération n'a pas abouti. Réessayez dans un instant.",
     no_credit: "Aucun crédit d'étude disponible.",
     not_owner: "Seul le propriétaire de l'étude peut faire cette action.",
-    plan_step: "Le plan stratégique se valide en le générant.",
+    plan_step: "Le plan stratégique ne se valide pas : il se complète et se modifie librement.",
+    invalid_step: "Cette étape n'existe pas.",
     prerequisites_missing: "Des étapes préalables ne sont pas encore validées.",
     not_started: "Commencez l'étape avant de la valider.",
     not_validated: "Cette étape n'est pas validée.",
@@ -975,6 +975,131 @@ const strategyFr = {
     },
   },
 
+  // ==================== PLAN STRATÉGIQUE (ÉTAPE 9) ====================
+  plan: {
+    intro:
+      "Le plan rassemble votre travail des étapes 1 à 8 en huit sections. Chaque paragraphe " +
+      "garde ses sources : l'annexe de traçabilité montre d'où vient chaque affirmation.",
+    notGenerated:
+      "Le plan n'a pas encore été généré. La génération assemble vos étapes validées, sans " +
+      "IA ; vous pourrez ensuite modifier chaque section ou demander au coach de la rédiger.",
+    generate: "Générer le plan",
+    generating: "Génération…",
+    generatedAt: "Plan généré le {date}.",
+    neverValidated:
+      "Le plan ne se valide pas : modifiez-le librement. L'export PDF et DOCX arrive dans la " +
+      "prochaine version.",
+    regenerateAll: "Tout régénérer depuis les étapes",
+    regenerateAllConfirm:
+      "Les huit sections seront remplacées par un nouvel assemblage des étapes. Le contenu " +
+      "actuel reste disponible dans l'historique des versions.",
+    sections: {
+      situation: "1. Où en sommes-nous",
+      issues: "2. Nos enjeux",
+      direction: "3. Notre cap",
+      strategy: "4. Notre stratégie et ce que nous ne ferons pas",
+      workstreams: "5. Nos chantiers",
+      objectives: "6. Nos objectifs et indicateurs",
+      risks: "7. Nos risques",
+      monitoring: "8. Notre suivi",
+    },
+    origins: {
+      assembled: "Assemblée depuis les étapes",
+      coach: "Rédigée avec le coach",
+      edited: "Modifiée",
+    },
+    regenerateSection: "Régénérer depuis les étapes",
+    regenerateConfirm:
+      "Le contenu actuel de cette section sera remplacé. Il reste disponible dans " +
+      "l'historique des versions.",
+    coachWrite: "Rédiger avec le coach",
+    coachWriting: "Le coach rédige cette section…",
+    coachWaitSave: "Attendez la fin de l'enregistrement pour solliciter le coach.",
+    coachConfirm:
+      "Le coach rédige une proposition à partir de vos étapes, en citant ses sources. Elle " +
+      "utilise une partie du budget de coach de l'étude ; vous choisirez ensuite de remplacer " +
+      "la section ou non.",
+    confirm: "Confirmer",
+    cancel: "Annuler",
+    proposalTitle: "Proposition du coach",
+    proposalReplace: "Remplacer la section",
+    proposalIgnore: "Ignorer",
+    proposalDropped: "{count} paragraphe(s) sans source vérifiable écarté(s).",
+    proposalEmpty: "Le coach n'a rien proposé d'utilisable pour cette section.",
+    paragraph: "Paragraphe {no}",
+    addParagraph: "Ajouter un paragraphe",
+    removeParagraph: "Retirer le paragraphe {no}",
+    maxParagraphs: "{max} paragraphes au plus par section.",
+    emptySection: "Cette section est vide.",
+    sourcesCount: "{count} source(s)",
+    noSource: "Sans source",
+    annexTitle: "Annexe : traçabilité",
+    annexIntro:
+      "Chaque paragraphe du plan renvoie à l'étape et à l'élément d'où il vient. Un élément " +
+      "supprimé depuis est signalé : relisez le paragraphe concerné.",
+    annexEmpty: "Aucun paragraphe ne cite de source pour l'instant.",
+    annexParagraph: "§ {no}",
+    readOnly: "Vous consultez le plan en lecture seule.",
+
+    // Textes du plan assemblé (repris tels quels dans le contenu)
+    assembled: {
+      scopeCompany: "L'analyse porte sur l'ensemble de l'organisation {name}.",
+      scopeUnit: "L'analyse porte sur {name}, au sein de {parent}.",
+      question: "Question stratégique : {question}",
+      noIssues: "Aucun enjeu n'a été nommé dans la synthèse (étape 5).",
+      vision: "Vision : {text}",
+      mission: "Mission : {text}",
+      values: "Nos valeurs :",
+      gesture: "au quotidien",
+      objectives: "Nos objectifs :",
+      position: "Position retenue : {position}.",
+      retained: "Options retenues :",
+      renunciations: "Ce que nous ne ferons pas :",
+      noRenunciations: "Aucun renoncement n'a été formulé à l'étape 7.",
+      owner: "responsable",
+      period: "période",
+      range: "de {start} à {end}",
+      noWorkstreams: "Aucun chantier n'a été défini à l'étape 8.",
+      measuredObjectives: "Objectifs mesurés :",
+      indicator: "indicateur",
+      target: "cible",
+      deadline: "échéance",
+      signal: "signal d'alerte",
+      response: "réponse prévue",
+      noRisks: "Aucun risque n'a été formalisé à l'étape 8.",
+      frequency: "Suivi à fréquence {frequency} :",
+      milestones: "Jalons (fin des chantiers) :",
+      milestone: "{name} : {date}",
+      noMonitoring: "Aucun rythme de suivi ni jalon n'a été défini à l'étape 8.",
+    },
+
+    // Libellés de l'annexe de traçabilité
+    trace: {
+      profile: "Profil",
+      scopeUnit: "{name}, au sein de {parent}",
+      from: "(issu de É{step})",
+      missing: "É{step} · élément introuvable (supprimé depuis)",
+      kinds: {
+        scope: "périmètre",
+        question: "question stratégique",
+        tows: "piste TOWS",
+        issue: "enjeu",
+        vision: "vision",
+        mission: "mission",
+        value: "valeur",
+        objective: "objectif",
+        generic: "position générique",
+        statement: "énoncé de stratégie",
+        retained: "option retenue",
+        option: "option",
+        renunciation: "renoncement",
+        workstream: "chantier",
+        indicator: "indicateur",
+        risk: "risque",
+      },
+    },
+  },
+
   // ==================== COACH IA ====================
   coach: {
     title: "Coach",
@@ -1252,6 +1377,7 @@ const strategyFr = {
         research: "Recherche Web sourcée (étapes 1 et 2)",
         extract: "Analyse des documents joints",
         synthesize: "Propositions pour la synthèse (étape 5)",
+        plan: "Rédaction d'une section du plan (étape 9)",
       },
       general: "Toutes les étapes",
       profileScope: "Profil de l'organisation",

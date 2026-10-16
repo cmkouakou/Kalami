@@ -8,12 +8,13 @@
  *               guide, réglages du coach IA (modèle, prix, plafond, débit, recherche Web :
  *               prix et nombre de recherches par demande), supplément de
  *               plafond d'une étude, versions des consignes du coach (brouillon, publication,
- *               abandon, restauration ; « extract » sans étape) et erreurs classiques. Les
+ *               abandon, restauration ; « extract » sans étape, « plan » à l'étape 9 ou
+ *               sans étape, S8a) et erreurs classiques. Les
  *               fonctions SQL vérifient le rôle administrateur (aal2) et écrivent le journal
  *               d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-14
+ *  Version    : 1.6
+ *  Date       : 2026-10-15
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -248,10 +249,13 @@ export async function saveCoachPromptDraft(
   const note = String(formData.get("note") ?? "").trim().slice(0, NOTE_MAX);
 
   // L'analyse des pièces jointes (extract) n'a qu'une consigne générale, sans étape ;
-  // le préremplissage (synthesize) ne sert qu'à l'étape 5
+  // le préremplissage (synthesize) ne sert qu'à l'étape 5 ; le plan (S8a), qu'à l'étape 9, seule
+  // étape qui lui soit réservée
   if (!(PROMPT_FUNCTIONS as readonly string[]).includes(fn) || stepNo === undefined
     || (fn === "extract" && stepNo !== null)
-    || (fn === "synthesize" && stepNo !== null && stepNo !== 5)) {
+    || (fn === "synthesize" && stepNo !== null && stepNo !== 5)
+    || (fn === "plan" && stepNo !== null && stepNo !== 9)
+    || (fn !== "plan" && stepNo === 9)) {
     return { error: p.invalid };
   }
   if (body === "") return { error: p.emptyBody };

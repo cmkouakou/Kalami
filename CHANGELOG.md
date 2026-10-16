@@ -1,5 +1,30 @@
 # Journal des modifications
 
+## [Stratégie v0.9.0] - 2026-10-15 — Plan stratégique (S8a)
+### Ajouté
+- Migration `20261025120000_strategy_plan.sql` :
+  - `strategy_save_step` accepte l'étape 9 (sinon `invalid_step`) ;
+  - `strategy_validate_step` refuse toujours l'étape 9 (`plan_step`) : le plan ne se valide pas ;
+  - fonction de coach « plan », admise seulement à l'étape 9 et sans pièce jointe ;
+  - consigne « plan v1 » en brouillon, à relire et publier.
+- Plan stratégique, étape 9 (`templates/plan.ts`, `components/strategy/plan/`) :
+  - 8 sections (situation, enjeux, cap, stratégie et renoncements, chantiers, objectifs et
+    indicateurs, risques, suivi), assemblées depuis le profil et les étapes 5 à 8, **sans IA**
+    (`plan-assemble.ts`) ; rien n'est inventé si une étape est vide ;
+  - chaque paragraphe garde ses sources (étape et élément) ; annexe de traçabilité
+    (`plan-trace.ts`) qui signale un élément supprimé depuis ;
+  - sections éditables (ajout, retrait de paragraphes), régénérables une à une ou en bloc,
+    après confirmation ; enregistrement automatique et historique des versions ;
+  - « Rédiger avec le coach » par section : le coach cite le catalogue des éléments ; les
+    sources inconnues sont rejetées et les paragraphes sans source écartés
+    (`coach/plan-output.ts`). L'équipe choisit « Remplacer la section » ou « Ignorer ».
+- Tests : unitaires `strategy-plan.test.ts` (16) et intégration `strategy-plan-rls.test.ts`
+  (5, ignorée tant que la migration n'est pas appliquée).
+### Modifié
+- `StepActions` : la prop `isPlan` disparaît, le plan a son propre éditeur.
+- Coach : balises `<sources>`, `<section>`, `<brouillon>` neutralisées dans les données.
+- Administration des consignes : fonction « plan » (étape 9 seulement).
+
 ## [Stratégie v0.8.1] - 2026-10-15 — Action (S7b)
 ### Ajouté
 - Migration `20261024120000_strategy_action.sql` : liste de contrôle de l'étape 8 dans

@@ -8,10 +8,12 @@
  *               prise sur une suggestion (acceptée, modifiée, rejetée), une question (traitée,
  *               écartée) ou un fait trouvé (ajouté, écarté). Rôle, débit et plafond sont
  *               vérifiés en SQL. Décisions groupées sur les propositions de synthèse (S6b).
+ *               Rédaction d'une section du plan stratégique (étape 9, S8a).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-14
- *  Dépendances: coach/run.ts, coach/queries.ts, lib/auth/dal.ts, lib/supabase/server.ts
+ *  Version    : 1.4
+ *  Date       : 2026-10-15
+ *  Dépendances: coach/run.ts, coach/plan.ts, coach/queries.ts, lib/auth/dal.ts,
+ *               lib/supabase/server.ts
  * =============================================================
  */
 
@@ -26,8 +28,12 @@ import {
   type CoachFunction,
 } from "@/lib/strategy/coach/context";
 import { getCoachUsage, type CoachDecision, type CoachUsage } from "@/lib/strategy/coach/queries";
+import type { PlanProposal } from "@/lib/strategy/coach/plan-output";
+import { runPlanCoach } from "@/lib/strategy/coach/plan";
 import { runCoach, type CoachOutputs } from "@/lib/strategy/coach/run";
+import { PLAN_STEP } from "@/lib/strategy/steps";
 import { hasTemplate } from "@/lib/strategy/templates";
+import { PLAN_SECTIONS, type PlanSectionKey } from "@/lib/strategy/templates/plan";
 import { createClient } from "@/lib/supabase/server";
 
 const c = getDictionary().strategy.coach;
@@ -60,6 +66,32 @@ export async function requestCoach<F extends CoachFunction>(
   }
 
   const result = await runCoach(fn, studyId, stepNo);
+  const usage = await getCoachUsage(studyId).catch(() => null);
+  if (!result.ok) return { ok: false, error: c.errors[result.error], usage };
+  return { ok: true, requestId: result.requestId, output: result.output, usage };
+}
+
+/** Résultat d'une demande de rédaction d'une section du plan. */
+export type PlanActionResult =
+  | { ok: true; requestId: string; output: PlanProposal; usage: CoachUsage | null }
+  | { ok: false; error: string; usage: CoachUsage | null };
+
+/**
+ * Demande au coach de rédiger une section du plan stratégique (proposition seulement).
+ * @param studyId - Identifiant de l'étude
+ * @param section - Clé de la section (situation, issues…)
+ * @returns Proposition et consommation à jour, ou message d'erreur
+ */
+export async function requestPlanSection(
+  studyId: string,
+  section: string,
+): Promise<PlanActionResult> {
+  await requireUser(`/strategie/etudes/${studyId}/etapes/${PLAN_STEP}`);
+  if (!isUuid(studyId) || !(PLAN_SECTIONS as readonly string[]).includes(section)) {
+    return { ok: false, error: c.errors.failed, usage: null };
+  }
+
+  const result = await runPlanCoach(studyId, section as PlanSectionKey);
   const usage = await getCoachUsage(studyId).catch(() => null);
   if (!result.ok) return { ok: false, error: c.errors[result.error], usage };
   return { ok: true, requestId: result.requestId, output: result.output, usage };
