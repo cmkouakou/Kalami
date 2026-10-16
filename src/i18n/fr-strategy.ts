@@ -243,6 +243,11 @@ const strategyFr = {
   // ==================== PAGE D'UNE ÉTAPE ====================
   step: {
     back: "Retour à la carte",
+    navLabel: "Navigation entre les étapes",
+    previous: "Étape précédente",
+    next: "Étape suivante",
+    stepLabel: "{no}. {title}",
+    profile: "Profil de l'entreprise",
     module: "Module {module} du livre",
     missingTitle: "Cette étape n'est pas encore ouverte",
     missingProfile: "Profil de l'entreprise à compléter",

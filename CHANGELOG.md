@@ -70,6 +70,15 @@
 - `/strategie/compte` ajouté aux chemins protégés (`auth/routes.ts`) ; lien « Mon
   compte » dans l'en-tête de Kalami Stratégie.
 
+## [Stratégie v0.11.3] - 2026-10-16 — Export PDF réparé, navigation entre les étapes
+### Corrigé
+- Export PDF du plan (et PDF filigrané des livres) en erreur 500 sur Vercel : le binaire
+  compressé de Chromium (`@sparticuz/chromium/bin`) n'était pas inclus dans la fonction.
+  Il est désormais ajouté par `outputFileTracingIncludes` (`next.config.ts`).
+### Ajouté
+- Bas de chaque étape : liens « Étape précédente », « Retour à la carte » et « Étape
+  suivante » (`step-nav.tsx`) ; plus besoin de remonter en haut de la page.
+
 ## [Stratégie v0.11.2] - 2026-10-16 — Diagnostic des courriels d'invitation
 ### Corrigé
 - Invitation créée mais courriel non envoyé sans explication : `email/send.ts` note

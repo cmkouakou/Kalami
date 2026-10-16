@@ -10,9 +10,10 @@
  *               objectifs) avec le panneau du coach IA ou, pour l'étape 9, l'éditeur du plan
  *               stratégique (sections, coach de rédaction, annexe de traçabilité). Sous le
  *               gabarit : la discussion de l'équipe (S9b), pastilles sur chaque élément ;
- *               présence des membres et verrouillage doux (S9c).
+ *               présence des membres et verrouillage doux (S9c). En bas : liens vers
+ *               l'étape précédente et l'étape suivante.
  *  Auteur     : Claude Marcel
- *  Version    : 1.9
+ *  Version    : 1.10
  *  Date       : 2026-10-16
  *  Dépendances: components/strategy, lib/strategy/queries.ts, lib/strategy/steps.ts,
  *               lib/strategy/plan-inputs.ts, lib/strategy/plan-trace.ts,
@@ -39,6 +40,7 @@ import { PresenceProvider } from "@/components/strategy/presence/presence-contex
 import { StakeholdersEditor } from "@/components/strategy/stakeholders/stakeholders-editor";
 import { SynthesisEditor } from "@/components/strategy/synthesis/synthesis-editor";
 import { StepGuide } from "@/components/strategy/step-guide";
+import { StepNav } from "@/components/strategy/step-nav";
 import { StepStatusBadge } from "@/components/strategy/step-status";
 import type { LinkOption } from "@/components/strategy/synthesis/link-picker";
 import type { TemplateFrameProps } from "@/components/strategy/template-frame";
@@ -187,6 +189,9 @@ async function StudyStep({ params }: { params: Promise<{ id: string; n: string }
           </StepDiscussion>
         </>
       )}
+
+      {/* ==================== NAVIGATION ENTRE LES ÉTAPES ==================== */}
+      <StepNav studyId={study.id} no={no} />
     </main>
   );
 }

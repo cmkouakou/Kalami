@@ -6,7 +6,7 @@
  *               catalogue servies par Supabase Storage, Tailwind via Turbopack, polices des PDF,
  *               PWA (useOffline, en-têtes du service worker) et en-têtes de sécurité.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-16
  * =============================================================
  */
@@ -20,10 +20,17 @@ const nextConfig: NextConfig = {
     // Bandeau « hors ligne » et relance automatique des navigations et actions serveur
     useOffline: true,
   },
-  // Polices Literata lues à l'exécution par la génération des PDF (livres et plan stratégique)
+  // Fichiers lus à l'exécution par la génération des PDF (livres et plan stratégique) :
+  // polices Literata et binaire compressé de Chromium (le traçage ne suit que le JavaScript)
   outputFileTracingIncludes: {
-    "/api/livres/\\[id\\]/pdf": ["./src/lib/pdf/fonts/**/*"],
-    "/api/strategie/etudes/\\[id\\]/plan/\\[format\\]": ["./src/lib/pdf/fonts/**/*"],
+    "/api/livres/\\[id\\]/pdf": [
+      "./src/lib/pdf/fonts/**/*",
+      "./node_modules/@sparticuz/chromium/bin/**/*",
+    ],
+    "/api/strategie/etudes/\\[id\\]/plan/\\[format\\]": [
+      "./src/lib/pdf/fonts/**/*",
+      "./node_modules/@sparticuz/chromium/bin/**/*",
+    ],
   },
   images: {
     // Couvertures et photos d'auteurs : seau public « covers » de Supabase Storage
