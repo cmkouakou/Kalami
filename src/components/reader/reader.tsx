@@ -7,11 +7,13 @@
  *               clavier, la lecture à voix haute et l'enregistrement de la position
  *               (appareil pour tous, serveur pour un lecteur connecté), les surlignages et
  *               notes (couche d'annotation, panneau) et le partage du livre.
+ *               v1.3 : accès rapide (curseur, début et fin du livre), table des matières
+ *               du livre cliquable.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-10
- *  Dépendances: flip-view, scroll-view, panels, lock-screen, annotation-layer, use-*,
- *               storage, lib/reader, lib/config, components/ui
+ *  Version    : 1.3
+ *  Date       : 2026-10-17
+ *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
+ *               use-*, storage, lib/reader, lib/config, components/ui
  * =============================================================
  */
 
@@ -20,6 +22,7 @@
 import Link from "next/link";
 import {
   type CSSProperties,
+  type MouseEvent,
   type ReactNode,
   useCallback,
   useEffect,
@@ -52,6 +55,7 @@ import {
   isChapterReadable,
   nextChapter,
   previousChapter,
+  progressTarget,
   resolveStartPosition,
 } from "@/lib/reader/position";
 import {
@@ -79,6 +83,7 @@ import {
   TocPanel,
 } from "./panels";
 import { ScrollView } from "./scroll-view";
+import { SeekBar } from "./seek-bar";
 import {
   loadLocalPosition,
   loadSettings,
@@ -107,8 +112,11 @@ const NOTICE_CLASS =
   "liseuse-message fixed inset-x-4 bottom-20 z-40 mx-auto w-fit max-w-md rounded-md px-4 " +
   "py-2 text-small shadow-pop";
 
-/** Chapitre affiché et position d'ouverture de sa vue ; « serial » force un nouveau montage. */
-type Opening = ReaderPosition & { serial: number };
+/**
+ * Chapitre affiché et position d'ouverture de sa vue ; « serial » force un nouveau montage.
+ * « fraction » (accès rapide) : part du chapitre, convertie en bloc par la vue.
+ */
+type Opening = ReaderPosition & { serial: number; fraction?: number };
 
 /** Avancement affiché dans la barre du bas. */
 type Display = { fraction: number; page?: { current: number; total: number } };
@@ -223,7 +231,7 @@ export function Reader({ data, price }: ReaderProps) {
   // ==================== NAVIGATION ====================
 
   /** Ouvre un chapitre (nouvelle vue) à la position donnée. */
-  const openAt = useCallback((position: ReaderPosition) => {
+  const openAt = useCallback((position: ReaderPosition & { fraction?: number }) => {
     setEnded(false);
     setDisplay({ fraction: 0 });
     setOpening((current) => ({ ...position, serial: current.serial + 1 }));
@@ -250,6 +258,45 @@ export function Reader({ data, price }: ReaderProps) {
     if (ended) openAt({ chapter, block: END_BLOCK, offset: 0 });
     else if (previous !== null) openAt({ chapter: previous, block: END_BLOCK, offset: 0 });
   }, [chapter, ended, previous, openAt]);
+
+  /** Accès rapide : saut à un avancement du livre (0 à 1). */
+  const seek = useCallback(
+    (value: number) => {
+      const target = progressTarget(toc, value);
+      if (!target) return;
+      if (target.chapter === chapter && !ended && controls.current) {
+        controls.current.goToFraction(target.fraction);
+      } else {
+        openAt({ chapter: target.chapter, block: 0, offset: 0, fraction: target.fraction });
+      }
+    },
+    [toc, chapter, ended, openAt],
+  );
+
+  const goBookStart = useCallback(() => {
+    if (toc.length) jumpTo({ chapter: toc[0].chapter_position, block: 0, offset: 0 });
+  }, [toc, jumpTo]);
+
+  const goBookEnd = useCallback(() => {
+    const last = toc[toc.length - 1];
+    if (last) openAt({ chapter: last.chapter_position, block: END_BLOCK, offset: 0 });
+  }, [toc, openAt]);
+
+  /** Entrée de la table des matières du livre : saut au chapitre et au bloc visés. */
+  const onTextClick = useCallback(
+    (event: MouseEvent<HTMLElement>) => {
+      if (!(event.target instanceof Element)) return;
+      const entry = event.target.closest<HTMLElement>(".liseuse-texte [data-chapitre]");
+      if (!entry) return;
+      const target = Number(entry.dataset.chapitre);
+      const block = Number(entry.dataset.bloc ?? 0);
+      if (!Number.isInteger(target) || !toc.some((item) => item.chapter_position === target)) {
+        return;
+      }
+      jumpTo({ chapter: target, block: Number.isInteger(block) ? block : 0, offset: 0 });
+    },
+    [toc, jumpTo],
+  );
 
   /** Page suivante (pages à tourner) ou défilement d'un écran. */
   const pageNext = useCallback(() => {
@@ -406,7 +453,7 @@ export function Reader({ data, price }: ReaderProps) {
 
   // ==================== RENDU ====================
 
-  const percent = ended ? 100 : Math.round(bookProgress(toc, chapter, display.fraction) * 100);
+  const progress = ended ? 1 : bookProgress(toc, chapter, display.fraction);
   const lock = (
     <LockScreen title={book.title} slug={book.slug} price={price} signedIn={signedIn} />
   );
@@ -443,7 +490,7 @@ export function Reader({ data, price }: ReaderProps) {
     );
   } else {
     const viewKey = `${chapter}:${settings.mode}:${opening.serial}`;
-    const initial = { block: opening.block, offset: opening.offset };
+    const initial = { block: opening.block, offset: opening.offset, fraction: opening.fraction };
     main =
       settings.mode === "flip" ? (
         <FlipView
@@ -573,6 +620,7 @@ export function Reader({ data, price }: ReaderProps) {
       {/* ==================== TEXTE ==================== */}
       <main
         ref={zoneRef}
+        onClick={onTextClick}
         className="liseuse-zone relative flex min-h-0 flex-1 flex-col overflow-hidden"
       >
         {main}
@@ -603,7 +651,7 @@ export function Reader({ data, price }: ReaderProps) {
                 slug={book.slug}
                 bookmarks={bookmarks}
                 toc={toc}
-                defaultLabel={`${chapterTitle} (${percent} %)`}
+                defaultLabel={`${chapterTitle} (${Math.round(progress * 100)} %)`}
                 onAdd={onAddBookmark}
                 onDelete={onDeleteBookmark}
                 onSelect={select}
@@ -658,24 +706,17 @@ export function Reader({ data, price }: ReaderProps) {
         >
           <IconChevronLeft size={ICON_SIZE} />
         </button>
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div
-            role="progressbar"
-            aria-label={t.reader.progressLabel}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={percent}
-            className="h-1 overflow-hidden rounded-full bg-line"
-          >
-            <div className="liseuse-avancement h-full" style={{ width: `${percent}%` }} />
-          </div>
-          <p className="flex justify-between gap-2 text-caption text-ink-muted tabular-nums">
-            <span>{interpolate(t.reader.progress, { percent: String(percent) })}</span>
-            {settings.mode === "flip" && display.page && !ended && (
-              <span>{`${display.page.current} / ${display.page.total}`}</span>
-            )}
-          </p>
-        </div>
+        <SeekBar
+          toc={toc}
+          value={progress}
+          page={settings.mode === "flip" && display.page && !ended ? display.page : null}
+          disabled={!toc.length}
+          buttonClass={TOOL_BUTTON}
+          iconSize={ICON_SIZE}
+          onSeek={seek}
+          onStart={goBookStart}
+          onEnd={goBookEnd}
+        />
         <button
           type="button"
           onClick={settings.mode === "flip" ? pageNext : goNextChapter}

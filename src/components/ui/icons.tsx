@@ -5,8 +5,8 @@
  *  Description: Icônes au trait (style Lucide, trait 1,75) : 20 px dans l'interface,
  *               24 px dans la barre de la liseuse. Couleur héritée (currentColor).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-15
+ *  Version    : 1.4
+ *  Date       : 2026-10-17
  * =============================================================
  */
 
@@ -55,6 +55,22 @@ export const IconChevronLeft = (p: IconProps) => (
 export const IconChevronRight = (p: IconProps) => (
   <Icon {...p}>
     <path d="m9 18 6-6-6-6" />
+  </Icon>
+);
+
+/** Début du livre (chevron vers une barre). */
+export const IconToStart = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m17 18-6-6 6-6" />
+    <path d="M7 6v12" />
+  </Icon>
+);
+
+/** Fin du livre. */
+export const IconToEnd = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m7 18 6-6-6-6" />
+    <path d="M17 6v12" />
   </Icon>
 );
 

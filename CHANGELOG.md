@@ -1,5 +1,29 @@
 # Journal des modifications
 
+## [v0.9.6] - 2026-10-17 — Ouvertures de module, sommaire cliquable et accès rapide
+### Ajouté
+- Accès rapide dans la liseuse (`components/reader/seek-bar.tsx`) : curseur sur tout le livre
+  (le chapitre visé s'affiche pendant le glissement, saut au relâchement), boutons « Début du
+  livre » et « Fin du livre ».
+- Table des matières du livre cliquable : chaque entrée mène à son chapitre ou à son
+  intertitre (`lib/content/contents-links.ts`) ; les « À vous de jouer » répétés restent dans
+  leur module. Le surtitre « MODULE N » précède l'entrée du module.
+- Mode livre : un clic dans la marge tourne la page ; glisser sur la première ou la dernière
+  double page ouvre le chapitre voisin.
+- Tests unitaires : ouvertures de chapitre, sommaire, liste blanche, accès rapide (7 tests).
+
+### Corrigé
+- Import Word : le titre « MODULE N », qui terminait le module précédent sans mise en forme,
+  ouvre désormais son module (surtitre au-dessus du titre) ; le résumé en italique qui suit
+  le titre devient un chapeau mis en valeur (liseuse et PDF).
+- Table des matières : numéros de page Word retirés (ils ne correspondaient pas aux pages de
+  la liseuse), entrées alignées et hiérarchisées.
+- Mode livre : certaines pages ne tournaient qu'avec la flèche du bas (aux limites du
+  chapitre, et en cliquant sur le texte).
+
+### À faire après déploiement
+- Réimporter le manuscrit V5 pour appliquer les surtitres, chapeaux et liens du sommaire.
+
 ## [v0.9.5] - 2026-10-17 — Schémas à la bonne taille en mode livre
 ### Corrigé
 - Liseuse (mode livre) : les images sont décodées avant la pagination ; un schéma ne déborde

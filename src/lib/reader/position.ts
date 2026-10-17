@@ -5,8 +5,9 @@
  *  Description: Calculs de position de la liseuse (fonctions pures) : avancement dans le
  *               chapitre et dans le livre, chapitres lisibles, choix de la position de
  *               départ entre l'URL, le serveur (autres appareils) et l'appareil.
+ *               v1.1 : positions de l'accès rapide (part du chapitre, du livre).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-09
  *  Dépendances: types.ts
  * =============================================================
@@ -33,6 +34,55 @@ export function chapterFraction(blockLengths: number[], block: number, offset: n
   const before = blockLengths.slice(0, block).reduce((sum, length) => sum + length, 0);
   const inside = Math.min(offset, blockLengths[block] ?? 0);
   return Math.min(1, (before + inside) / total);
+}
+
+/**
+ * Position correspondant à une part du chapitre (inverse de chapterFraction).
+ * @param blockLengths - Longueur du texte de chaque bloc
+ * @param fraction     - Part du chapitre (0 à 1)
+ * @returns Bloc et décalage dans ce bloc
+ *
+ * Exemple : positionAtFraction([10, 10], 0.75) → { block: 1, offset: 5 }
+ */
+export function positionAtFraction(
+  blockLengths: number[],
+  fraction: number,
+): { block: number; offset: number } {
+  const total = blockLengths.reduce((sum, length) => sum + length, 0);
+  let remaining = Math.min(1, Math.max(0, fraction)) * total;
+  for (let block = 0; block < blockLengths.length; block++) {
+    if (remaining < blockLengths[block]) return { block, offset: Math.floor(remaining) };
+    remaining -= blockLengths[block];
+  }
+  const last = Math.max(0, blockLengths.length - 1);
+  return { block: last, offset: blockLengths[last] ?? 0 };
+}
+
+/**
+ * Chapitre et part de ce chapitre correspondant à un avancement dans le livre (inverse de
+ * bookProgress), pour l'accès rapide.
+ * @param toc   - Sommaire (nombre de mots par chapitre)
+ * @param value - Avancement dans le livre (0 à 1)
+ * @returns Chapitre visé et part de ce chapitre, ou null si le sommaire est vide
+ *
+ * Exemple : progressTarget(toc, 0.5) → { chapter: 6, fraction: 0.3 }
+ */
+export function progressTarget(
+  toc: TocEntry[],
+  value: number,
+): { chapter: number; fraction: number } | null {
+  if (!toc.length) return null;
+  const clamped = Math.min(1, Math.max(0, value));
+  const total = toc.reduce((sum, entry) => sum + entry.word_count, 0);
+  let remaining = clamped * (total || toc.length);
+  for (const entry of toc) {
+    const size = total ? entry.word_count : 1;
+    if (size > 0 && remaining < size) {
+      return { chapter: entry.chapter_position, fraction: remaining / size };
+    }
+    remaining -= size;
+  }
+  return { chapter: toc[toc.length - 1].chapter_position, fraction: 1 };
 }
 
 /**

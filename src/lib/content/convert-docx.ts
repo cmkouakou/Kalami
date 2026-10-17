@@ -7,11 +7,12 @@
  *               à défaut de titre 1, au niveau 2 ; à défaut, le livre forme un seul chapitre.
  *               v1.1 : sans styles « Titre », titres repérés à leur allure (headings.ts).
  *               v1.2 : images (schémas, illustrations) et encadrés conservés.
+ *               v1.3 : ouvertures de module et table des matières cliquable.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-17
- *  Dépendances: mammoth, htmlparser2, docx-images.ts, docx-layout.ts, headings.ts,
- *               sanitize.ts, zip.ts
+ *  Dépendances: mammoth, htmlparser2, contents-links.ts, docx-images.ts, docx-layout.ts,
+ *               headings.ts, sanitize.ts, zip.ts
  * =============================================================
  */
 
@@ -20,6 +21,7 @@ import "server-only";
 import { parseDocument } from "htmlparser2";
 import mammoth from "mammoth";
 
+import { linkContents } from "./contents-links";
 import { createImageConverter } from "./docx-images";
 import { arrangeLayout, BOX_STYLE_MAP, markBoxes } from "./docx-layout";
 import { promoteHeadings } from "./headings";
@@ -99,6 +101,7 @@ export async function convertDocx(
     ? splitByHeading(nodes, level, titles.opening)
     : splitByHeading(nodes, 1, titles.book);
 
+  linkContents(chapters);
   assertLimits(chapters);
   return chapters;
 }

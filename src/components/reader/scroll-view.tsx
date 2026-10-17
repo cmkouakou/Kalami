@@ -6,9 +6,10 @@
  *               continu, bouton « Chapitre suivant » en bas. La position suivie est le
  *               premier bloc visible ; le filigrane se déplace légèrement toutes les minutes.
  *               Les surlignages sont dessinés dans les blocs (texte inchangé).
+ *               v1.2 : surtitre de module, ouverture à une part du chapitre (accès rapide).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-10
+ *  Version    : 1.2
+ *  Date       : 2026-10-17
  *  Dépendances: flip-view.tsx (types communs), highlight-dom.ts
  * =============================================================
  */
@@ -18,9 +19,10 @@
 import { type ReactNode, type RefObject, useEffect, useRef, useState } from "react";
 
 import type { ChapterPayload } from "@/lib/content/types";
+import { chapterKicker } from "@/lib/reader/opening";
 import type { Highlight } from "@/lib/reader/types";
 
-import type { ViewControls, ViewPosition } from "./flip-view";
+import type { ViewControls, ViewOpening, ViewPosition } from "./flip-view";
 import { paintHighlights } from "./highlight-dom";
 
 /** Intervalle de déplacement du filigrane (ms). */
@@ -30,7 +32,7 @@ const PAGE_SCROLL_RATIO = 0.9;
 
 type ScrollViewProps = {
   chapter: ChapterPayload;
-  initial: { block: number; offset: number };
+  initial: ViewOpening;
   watermark: string | null;
   /** Surlignages du chapitre, du plus ancien au plus récent */
   highlights: Highlight[];
@@ -54,6 +56,7 @@ export function ScrollView({
   const articleRef = useRef<HTMLElement>(null);
   const onPositionRef = useRef(onPosition);
   const [shift, setShift] = useState(0);
+  const kicker = chapterKicker(chapter.blocks);
 
   useEffect(() => {
     onPositionRef.current = onPosition;
@@ -81,6 +84,10 @@ export function ScrollView({
       onPositionRef.current({ block, offset: 0, fraction });
     };
 
+    /** Fait défiler jusqu'à une part du chapitre. */
+    const scrollToFraction = (fraction: number) => {
+      scroller.scrollTop = fraction * (scroller.scrollHeight - scroller.clientHeight);
+    };
     const scrollScreen = (direction: 1 | -1) =>
       scroller.scrollBy({
         top: direction * scroller.clientHeight * PAGE_SCROLL_RATIO,
@@ -93,11 +100,16 @@ export function ScrollView({
         blockAt(block)?.scrollIntoView({ block: "start" });
         report();
       },
+      goToFraction: (fraction) => {
+        scrollToFraction(fraction);
+        report();
+      },
     };
 
     // Bloc au-delà de la fin (retour au chapitre précédent) : ouverture en bas du texte
     const opening = initial.block > 0 ? blockAt(initial.block) : null;
-    if (opening) opening.scrollIntoView({ block: "start" });
+    if (initial.fraction !== undefined) scrollToFraction(initial.fraction);
+    else if (opening) opening.scrollIntoView({ block: "start" });
     else scroller.scrollTop = initial.block > 0 ? scroller.scrollHeight : 0;
     report();
 
@@ -135,7 +147,10 @@ export function ScrollView({
           ref={articleRef}
           className="liseuse-texte mx-auto max-w-[42rem] px-5 py-10 sm:px-8"
         >
-          <h1 className="liseuse-titre-chapitre">{chapter.title}</h1>
+          <h1 className="liseuse-titre-chapitre">
+            {kicker && <span className="liseuse-surtitre">{kicker}</span>}
+            {chapter.title}
+          </h1>
           {chapter.blocks.map((html, index) => (
             <div
               key={index}

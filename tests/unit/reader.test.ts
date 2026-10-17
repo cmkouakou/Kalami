@@ -21,7 +21,9 @@ import {
   isChapterReadable,
   nextChapter,
   parsePosition,
+  positionAtFraction,
   previousChapter,
+  progressTarget,
   resolveStartPosition,
 } from "@/lib/reader/position";
 import { parseSearchQuery, searchChapters } from "@/lib/reader/search";
@@ -222,5 +224,23 @@ describe("recherche", () => {
     expect(allowed).toEqual([{ position: 1, title: "Un", blocks: ["<p>chat</p>"] }]);
     expect(searchChapters(allowed, "chat")).toHaveLength(1);
     expect(authorizedChapters(chapters, rule, true)).toEqual(chapters);
+  });
+});
+
+// ==================== ACCÈS RAPIDE ====================
+
+describe("accès rapide", () => {
+  it("convertit une part du chapitre en bloc et décalage", () => {
+    expect(positionAtFraction([10, 10], 0)).toEqual({ block: 0, offset: 0 });
+    expect(positionAtFraction([10, 10], 0.75)).toEqual({ block: 1, offset: 5 });
+    expect(positionAtFraction([10, 10], 1)).toEqual({ block: 1, offset: 10 });
+    expect(positionAtFraction([], 0.5)).toEqual({ block: 0, offset: 0 });
+  });
+
+  it("convertit un avancement du livre en chapitre (inverse de bookProgress)", () => {
+    expect(progressTarget(TOC, 0)).toEqual({ chapter: 1, fraction: 0 });
+    expect(progressTarget(TOC, 0.25)).toEqual({ chapter: 2, fraction: 0.5 });
+    expect(progressTarget(TOC, 1)).toEqual({ chapter: 3, fraction: 1 });
+    expect(progressTarget([], 0.5)).toBeNull();
   });
 });

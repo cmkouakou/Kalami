@@ -7,7 +7,8 @@
  *               de premier niveau et en chapitres, comptage des mots, limites de taille.
  *  Auteur     : Claude Marcel
  *               v1.1 : images intégrées (WebP, PNG, JPEG), encadrés, illustrations.
- *  Version    : 1.1
+ *               v1.2 : ouvertures de chapitre, entrées de sommaire cliquables (data-*).
+ *  Version    : 1.2
  *  Date       : 2026-10-17
  *  Dépendances: sanitize-html, htmlparser2, domhandler, domutils, dom-serializer
  * =============================================================
@@ -54,6 +55,22 @@ const IMAGE_SOURCE = /^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+=*$/;
 /** Image intégrée dans un bloc (retirée du décompte du texte). */
 const IMAGE_DATA = /data:image\/[a-z]+;base64,[A-Za-z0-9+/]+=*/g;
 
+/** Attributs de cible d'une entrée de sommaire (chapitre, bloc) : entiers seulement. */
+const TARGET_ATTRIBUTES = ["data-chapitre", "data-bloc"];
+
+/**
+ * Retire d'un paragraphe toute cible de sommaire qui n'est pas un entier positif.
+ * @param tagName - Balise (p)
+ * @param attribs - Attributs d'origine
+ */
+function keepNumericTargets(tagName: string, attribs: sanitizeHtml.Attributes) {
+  const kept = { ...attribs };
+  for (const name of TARGET_ATTRIBUTES) {
+    if (name in kept && !/^\d{1,6}$/.test(kept[name])) delete kept[name];
+  }
+  return { tagName, attribs: kept };
+}
+
 /** Liste blanche appliquée à chaque bloc. Les liens ne sont pas conservés. */
 const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
@@ -67,7 +84,7 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
     td: ["colspan", "rowspan"],
     th: ["colspan", "rowspan", "scope"],
     img: ["src", "alt", "width", "height"],
-    p: ["class"],
+    p: ["class", "data-chapitre", "data-bloc"],
     span: ["class"],
     figure: ["class"],
   },
@@ -75,16 +92,16 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedClasses: {
     p: [
       "vers", "encadre", "encadre-fond", "encadre-trait", "encadre-debut", "encadre-fin",
-      "encadre-titre",
+      "encadre-titre", "chapitre-surtitre", "chapitre-chapeau", "sommaire-1", "sommaire-2",
     ],
-    span: ["encadre-label"],
+    span: ["encadre-label", "sommaire-surtitre"],
     figure: ["illustration"],
   },
   allowedSchemesByTag: { img: ["data"] },
   // Image sans source intégrée valide (lien externe, format inconnu) : retirée
   exclusiveFilter: (frame) => frame.tag === "img" && !IMAGE_SOURCE.test(frame.attribs.src ?? ""),
   // Le titre du chapitre est rendu à part : un h1 restant dans le texte devient h2
-  transformTags: { h1: "h2" },
+  transformTags: { h1: "h2", p: keepNumericTargets },
   disallowedTagsMode: "discard",
 };
 

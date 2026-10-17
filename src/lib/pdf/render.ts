@@ -7,14 +7,16 @@
  *               nom, le courriel et la référence de l'acheteur en pied de page (marges
  *               @page) et en filigrane diagonal léger. Toutes les valeurs saisies sont
  *               échappées ; le texte des chapitres est renettoyé par la liste blanche.
+ *               v1.2 : surtitre de module au-dessus du titre, chapeau et sommaire du livre.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-17
- *  Dépendances: lib/content/sanitize.ts
+ *  Dépendances: lib/content/sanitize.ts, lib/reader/opening.ts
  * =============================================================
  */
 
 import { sanitizeBlock } from "@/lib/content/sanitize";
+import { chapterKicker } from "@/lib/reader/opening";
 
 // ==================== TYPES ====================
 
@@ -146,10 +148,23 @@ body { margin: 0; }
 .chapitre p.encadre-trait.encadre-fin { border-bottom-width: 0.5pt; }
 .chapitre p.encadre-titre { font-weight: bold; text-align: left; break-after: avoid; }
 .chapitre .encadre-label { display: block; font-size: 7.5pt; letter-spacing: 0.08em; }
-.chapitre .encadre-label { color: #a8521a; }`;
+.chapitre .encadre-label { color: #a8521a; }
+.chapitre .surtitre { display: block; margin-bottom: 4pt; font-size: 9pt; }
+.chapitre .surtitre { letter-spacing: 0.14em; text-transform: uppercase; color: #a8521a; }
+.chapitre p.chapitre-surtitre { display: none; }
+.chapitre p.chapitre-chapeau { margin: -8pt 0 16pt; font-size: 11pt; color: #4a4239; }
+.chapitre p.sommaire-1 { margin: 8pt 0 2pt; font-weight: bold; text-align: left; }
+.chapitre p.sommaire-2 { margin: 0 0 2pt 14pt; text-align: left; }
+.chapitre .sommaire-surtitre { font-size: 8pt; letter-spacing: 0.1em; color: #a8521a; }`;
 }
 
 // ==================== GABARIT ====================
+
+/** Surtitre (« MODULE 3 ») imprimé au-dessus du titre du chapitre, ou chaîne vide. */
+function kickerHtml(blocks: string[]): string {
+  const kicker = chapterKicker(blocks);
+  return kicker ? `<span class="surtitre">${escapeHtml(kicker)}</span>` : "";
+}
 
 /** Libellés imprimés, fournis par le dictionnaire. */
 export type PdfLabels = {
@@ -183,7 +198,7 @@ export function buildPdfHtml(
     .map(
       (ch) =>
         `<section class="chapitre" id="chapitre-${ch.position}">\n` +
-        `<h1>${escapeHtml(ch.title)}</h1>\n` +
+        `<h1>${kickerHtml(ch.blocks)}${escapeHtml(ch.title)}</h1>\n` +
         ch.blocks.map(sanitizeBlock).join("\n") +
         "\n</section>",
     )

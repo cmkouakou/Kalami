@@ -13,8 +13,11 @@
  *               v1.2 : marges portées par le bloc de texte (page-flip effaçait celles de la
  *               page), pli central entre les deux pages. v1.3 : images décodées avant la
  *               mesure (un schéma ne déborde plus de sa page).
+ *               v1.4 : aux limites du chapitre, glisser ou tourner le coin ouvre le chapitre
+ *               voisin ; un clic dans la marge tourne la page ; surtitre de module ;
+ *               ouverture à une part du chapitre (accès rapide).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-17
  *  Dépendances: page-flip, dom.ts, highlight-dom.ts, lib/reader/paginate.ts,
  *               lib/reader/position.ts
@@ -23,12 +26,14 @@
 
 "use client";
 
+import type { PageFlip as PageFlipInstance } from "page-flip/dist/js/page-flip.module.js";
 import { type RefObject, useEffect, useRef, useState } from "react";
 
 import { getDictionary, interpolate } from "@/i18n";
 import type { ChapterPayload } from "@/lib/content/types";
 import { pageIndexOf, pageStart, paginate } from "@/lib/reader/paginate";
-import { chapterFraction } from "@/lib/reader/position";
+import { chapterKicker } from "@/lib/reader/opening";
+import { chapterFraction, positionAtFraction } from "@/lib/reader/position";
 import type { Highlight, Page, ReaderSettings } from "@/lib/reader/types";
 
 import {
@@ -51,13 +56,24 @@ const MAX_PAGE_WIDTH = 640;
 const PADDING = { x: 40, xSmall: 20, top: 36, bottom: 48 };
 /** Délai avant de repaginer après un redimensionnement (ms). */
 const RESIZE_DELAY = 250;
+/** Distance horizontale minimale d'un glissement qui tourne la page (px). */
+const SWIPE_MIN = 50;
+/** Déplacement maximal d'un simple clic (px). */
+const TAP_MAX = 6;
+/** Éléments dont le clic ne tourne jamais la page. */
+const NO_TURN = ".liseuse-page-texte, a, button, input, textarea";
 
 /** Commandes appelées par la barre d'outils, le clavier et la lecture à voix haute. */
 export type ViewControls = {
   next: () => void;
   previous: () => void;
   goTo: (block: number, offset: number) => void;
+  /** Va à une part du chapitre (0 = début, 1 = fin) */
+  goToFraction: (fraction: number) => void;
 };
+
+/** Position d'ouverture d'une vue : bloc et décalage, ou part du chapitre. */
+export type ViewOpening = { block: number; offset: number; fraction?: number };
 
 /** Position signalée à la liseuse après chaque changement de page. */
 export type ViewPosition = {
@@ -71,7 +87,7 @@ type FlipViewProps = {
   chapter: ChapterPayload;
   settings: ReaderSettings;
   /** Position d'ouverture (lue une seule fois : la vue est recréée à chaque chapitre) */
-  initial: { block: number; offset: number };
+  initial: ViewOpening;
   watermark: string | null;
   /** Surlignages du chapitre, du plus ancien au plus récent */
   highlights: Highlight[];
@@ -175,6 +191,75 @@ function anchoredPage(elements: HTMLElement[], page: Page): HTMLElement[] {
   return rendered;
 }
 
+// ==================== GESTES ====================
+
+type GestureOptions = {
+  isFirst: (index: number) => boolean;
+  isLast: (index: number) => boolean;
+  controls: ViewControls;
+  callbacks: RefObject<{ onNextChapter: () => void; onPreviousChapter: () => void }>;
+};
+
+/**
+ * Complète les gestes de page-flip :
+ * - aux limites du chapitre, page-flip ne tourne rien : glisser vers la gauche sur la
+ *   dernière double page ouvre le chapitre suivant, vers la droite sur la première, le
+ *   précédent (un glissement qui sélectionne du texte est ignoré) ;
+ * - un clic dans une marge (hors du texte) tourne la page, selon le côté du livre.
+ * @param container - Élément du livre
+ * @param flip      - Instance page-flip
+ * @param options   - Limites du chapitre, commandes et rappels de changement de chapitre
+ * @returns Fonction qui retire les écouteurs
+ */
+function watchGestures(
+  container: HTMLElement,
+  flip: PageFlipInstance,
+  { isFirst, isLast, controls, callbacks }: GestureOptions,
+): () => void {
+  let gesture: { x: number; y: number; index: number; flipped: boolean } | null = null;
+
+  // Une page tournée par page-flip pendant le geste : rien à ajouter
+  flip.on("changeState", (event) => {
+    if (gesture && event.data === "flipping") gesture.flipped = true;
+  });
+
+  const onDown = (event: PointerEvent) => {
+    if (event.button !== 0) return;
+    const index = flip.getCurrentPageIndex();
+    gesture = { x: event.clientX, y: event.clientY, index, flipped: false };
+  };
+
+  const onUp = (event: PointerEvent) => {
+    const start = gesture;
+    gesture = null;
+    if (!start || start.flipped) return;
+    if (!(window.getSelection()?.isCollapsed ?? true)) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+
+    if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > Math.abs(dy)) {
+      if (flip.getCurrentPageIndex() !== start.index) return;
+      if (dx < 0 && isLast(start.index)) callbacks.current?.onNextChapter();
+      else if (dx > 0 && isFirst(start.index)) callbacks.current?.onPreviousChapter();
+      return;
+    }
+    const target = event.target instanceof Element ? event.target : null;
+    if (Math.abs(dx) > TAP_MAX || Math.abs(dy) > TAP_MAX || target?.closest(NO_TURN)) return;
+    const rect = container.getBoundingClientRect();
+    if (event.clientX >= rect.left + rect.width / 2) controls.next();
+    else controls.previous();
+  };
+
+  // Phase de capture : le texte arrête la propagation (sélection) avant page-flip
+  container.addEventListener("pointerdown", onDown, true);
+  container.addEventListener("pointerup", onUp, true);
+  return () => {
+    flip.off("changeState");
+    container.removeEventListener("pointerdown", onDown, true);
+    container.removeEventListener("pointerup", onUp, true);
+  };
+}
+
 // ==================== COMPOSANT ====================
 
 /** Livre à pages tournantes pour un chapitre. */
@@ -196,6 +281,8 @@ export function FlipView({
   // Position courante (élément de pagination : 0 = titre, n = bloc n-1), mise à jour à
   // chaque page ; sert à rester au même endroit après une repagination
   const positionRef = useRef({ element: initial.block + 1, offset: initial.offset });
+  // Ouverture à une part du chapitre (accès rapide) : convertie une fois les blocs mesurés
+  const fractionRef = useRef(initial.fraction);
   const callbacks = useRef({ onPosition, onNextChapter, onPreviousChapter });
   const [layoutKey, setLayoutKey] = useState(0);
 
@@ -246,7 +333,10 @@ export function FlipView({
       const { PageFlip } = await import("page-flip/dist/js/page-flip.module.js");
       if (cancelled) return;
 
-      const elements = [titleElement(chapter.title), ...chapter.blocks.map(parseBlock)];
+      const elements = [
+        titleElement(chapter.title, chapterKicker(chapter.blocks)),
+        ...chapter.blocks.map(parseBlock),
+      ];
       // Les schémas doivent avoir leur vraie hauteur au moment de la mesure
       const images = await preloadImages(elements);
       if (cancelled) return;
@@ -258,6 +348,11 @@ export function FlipView({
       images.length = 0;
 
       const lengths = elements.slice(1).map((element) => element.textContent?.length ?? 0);
+      if (fractionRef.current !== undefined) {
+        const target = positionAtFraction(lengths, fractionRef.current);
+        positionRef.current = { element: target.block + 1, offset: target.offset };
+        fractionRef.current = undefined;
+      }
       const items = pages.map((page, index) =>
         buildPage(
           anchoredPage(elements, page),
@@ -319,7 +414,7 @@ export function FlipView({
       flip.on("flip", (event) => report(event.data));
       report(startPage);
 
-      controlsRef.current = {
+      const controls: ViewControls = {
         next: () => {
           const index = flip.getCurrentPageIndex();
           if (isLastSpread(index)) callbacks.current.onNextChapter();
@@ -334,10 +429,22 @@ export function FlipView({
           if (index !== flip.getCurrentPageIndex()) flip.turnToPage(index);
           report(index);
         },
+        goToFraction: (fraction) => {
+          const target = positionAtFraction(lengths, fraction);
+          controls.goTo(target.block, target.offset);
+        },
       };
+      controlsRef.current = controls;
+      const removeGestures = watchGestures(container, flip, {
+        isFirst: (index) => index === 0,
+        isLast: isLastSpread,
+        controls,
+        callbacks,
+      });
 
       dispose = () => {
         bookRef.current = null;
+        removeGestures();
         flip.destroy();
         container.remove();
       };

@@ -3,7 +3,8 @@
  * Projet     : Kalami
  * Description: Tests de la mise en page Word conservée : repérage des encadrés dans le XML,
  *              regroupement (début, fin, titre, étiquette « SUR LE TERRAIN »), illustrations
- *              et légendes, liste blanche des images intégrées, recompression WebP.
+ *              et légendes, liste blanche des images intégrées, recompression WebP,
+ *              ouvertures de chapitre (surtitre, chapeau) et table des matières cliquable.
  * Auteur     : Claude Marcel
  * Date       : 2026-10-17
  */
@@ -14,6 +15,7 @@ import sharp from "sharp";
 import { describe, expect, it, vi } from "vitest";
 
 import { createImageConverter } from "@/lib/content/docx-images";
+import { linkContents } from "@/lib/content/contents-links";
 import { arrangeLayout, markBoxes } from "@/lib/content/docx-layout";
 import { assertLimits, nodesToBlocks, sanitizeBlock } from "@/lib/content/sanitize";
 
@@ -191,5 +193,83 @@ describe("createImageConverter", () => {
     });
     expect(emf.src).toBe("");
     expect(broken.src).toBe("");
+  });
+});
+
+// ==================== OUVERTURES DE CHAPITRE ====================
+
+describe("arrangeLayout — ouvertures de chapitre", () => {
+  it("rattache le surtitre au chapitre qu'il annonce et marque le chapeau", () => {
+    const html = arrange(
+      "<p>Fin du module précédent.</p><p><strong>MODULE 2</strong></p>" +
+        '<h1><a id="_Toc1"></a>Le diagnostic</h1><p><em>Un court résumé.</em></p><p>Texte.</p>',
+    );
+    expect(html).toBe(
+      "<p>Fin du module précédent.</p>" +
+        '<h1><a id="_Toc1"></a>Le diagnostic</h1>' +
+        '<p class="chapitre-surtitre">MODULE 2</p>' +
+        '<p class="chapitre-chapeau"><em>Un court résumé.</em></p><p>Texte.</p>',
+    );
+  });
+
+  it("laisse un paragraphe ordinaire et un titre sans surtitre", () => {
+    const html = arrange("<p>Module de gestion</p><h1>Titre</h1><p>Texte <em>mêlé</em>.</p>");
+    expect(html).toBe("<p>Module de gestion</p><h1>Titre</h1><p>Texte <em>mêlé</em>.</p>");
+  });
+});
+
+// ==================== TABLE DES MATIÈRES ====================
+
+describe("table des matières", () => {
+  it("retire le lien Word et le numéro de page", () => {
+    const html = arrange('<p class="sommaire-1"><a href="#_Toc1">Préface\t11</a></p>');
+    expect(html).toBe('<p class="sommaire-1">Préface</p>');
+  });
+
+  it("vise les chapitres et les intertitres, « À vous de jouer » dans son module", () => {
+    const chapters = [
+      {
+        title: "Sommaire",
+        blocks: [
+          '<p class="sommaire-1">Le diagnostic</p>',
+          '<p class="sommaire-2">À vous de jouer</p>',
+          '<p class="sommaire-1">La décision</p>',
+          '<p class="sommaire-2">À vous de jouer</p>',
+          '<p class="sommaire-2">Introuvable</p>',
+        ],
+        word_count: 0,
+      },
+      {
+        title: "Le diagnostic",
+        blocks: ['<p class="chapitre-surtitre">MODULE 1</p>', "<h2>À vous de jouer</h2>"],
+        word_count: 0,
+      },
+      {
+        title: "La décision",
+        blocks: ["<p>Texte.</p>", "<p>Suite.</p>", "<h2>À vous de jouer</h2>"],
+        word_count: 0,
+      },
+    ];
+    linkContents(chapters);
+    expect(chapters[0].blocks).toEqual([
+      '<p class="sommaire-1" data-chapitre="2" data-bloc="0">' +
+        '<span class="sommaire-surtitre">MODULE 1</span> Le diagnostic</p>',
+      '<p class="sommaire-2" data-chapitre="2" data-bloc="1">À vous de jouer</p>',
+      '<p class="sommaire-1" data-chapitre="3" data-bloc="0">La décision</p>',
+      '<p class="sommaire-2" data-chapitre="3" data-bloc="2">À vous de jouer</p>',
+      '<p class="sommaire-2">Introuvable</p>',
+    ]);
+  });
+
+  it("garde les cibles numériques et les classes d'ouverture à la liste blanche", () => {
+    expect(sanitizeBlock('<p class="sommaire-2" data-chapitre="3" data-bloc="12">x</p>')).toBe(
+      '<p class="sommaire-2" data-chapitre="3" data-bloc="12">x</p>',
+    );
+    expect(sanitizeBlock('<p data-chapitre="javascript:x" data-bloc="1e3">x</p>')).toBe(
+      "<p>x</p>",
+    );
+    expect(sanitizeBlock('<p class="chapitre-chapeau"><em>x</em></p>')).toBe(
+      '<p class="chapitre-chapeau"><em>x</em></p>',
+    );
   });
 });

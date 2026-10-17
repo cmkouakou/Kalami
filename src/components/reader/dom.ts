@@ -7,8 +7,9 @@
  *               en forme est conservée) et mesure d'une page pour la pagination.
  *               Les décalages portent sur textContent, comme la recherche côté serveur.
  *               v1.1 : préchargement des images avant la mesure.
+ *               v1.2 : surtitre de chapitre (« MODULE 3 ») au-dessus du titre.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-17
  *  Dépendances: lib/reader/paginate.ts, lib/reader/types.ts
  * =============================================================
@@ -67,11 +68,21 @@ export async function preloadImages(elements: HTMLElement[]): Promise<HTMLImageE
   return images;
 }
 
-/** Élément de titre du chapitre, placé avant le premier bloc. */
-export function titleElement(title: string): HTMLElement {
+/**
+ * Élément de titre du chapitre, placé avant le premier bloc.
+ * @param title  - Titre du chapitre
+ * @param kicker - Surtitre affiché au-dessus (« MODULE 3 »), ou null
+ */
+export function titleElement(title: string, kicker: string | null = null): HTMLElement {
   const heading = document.createElement("h1");
   heading.className = "liseuse-titre-chapitre";
-  heading.textContent = title;
+  if (kicker) {
+    const label = document.createElement("span");
+    label.className = "liseuse-surtitre";
+    label.textContent = kicker;
+    heading.append(label);
+  }
+  heading.append(title);
   return heading;
 }
 
