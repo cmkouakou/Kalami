@@ -4,10 +4,10 @@
   Projet     : Kalami
   Description: Styles de la liseuse : thèmes (clair, sépia, sombre), typographie du texte,
                pages à tourner, défilement, filigrane, annotations (couleurs, notes, menu,
-               fenêtres), protection (sélection, impression).
+               fenêtres), protection (sélection, impression). v1.4 : poèmes, ornement.
   Auteur     : Claude Marcel
-  Version    : 1.2
-  Date       : 2026-10-10
+  Version    : 1.4
+  Date       : 2026-10-16
   Dépend de  : globals.css (jetons de la charte, polices --police-lecture / --police-interface)
 =============================================================
 */
@@ -152,6 +152,37 @@
   text-indent: 0;
 }
 
+/* Poème : vers alignés à gauche, sans retrait ni justification, strophes espacées */
+.liseuse-texte p.vers {
+  margin: 0.8em 0 0.8em 1.5em;
+  text-align: left;
+  text-indent: 0;
+  hyphens: manual;
+}
+
+/* Note de bas de page d'un PDF (paragraphe réduit à un texte en petits caractères) */
+.liseuse-texte p:has(> small:only-child) {
+  margin: 0.4em 0;
+  color: var(--liseuse-doux);
+  font-size: 0.8em;
+  line-height: 1.4;
+  text-indent: 0;
+}
+
+.liseuse-texte p > small:only-child {
+  font-size: 1em;
+}
+
+/* Strophe coupée entre deux pages : pas de ligne vide en haut de la page suivante */
+.liseuse-texte p.vers.suite {
+  margin-top: 0;
+}
+
+.liseuse-texte p.vers.suite > br:first-child,
+.liseuse-texte p.vers.coupe > br:last-child {
+  display: none;
+}
+
 .liseuse-titre-chapitre {
   margin: 0 0 1.5em;
   font-size: 1.6em;
@@ -222,11 +253,24 @@
   text-align: left;
 }
 
+/* Séparateur de scène : ornement centré (« *** » du manuscrit) */
 .liseuse-texte hr {
-  margin: 1.2em auto;
-  width: 30%;
+  margin: 1em auto;
+  height: auto;
   border: 0;
-  border-top: 1px solid var(--liseuse-bordure);
+  overflow: visible;
+  color: var(--liseuse-doux);
+  text-align: center;
+}
+
+.liseuse-texte hr::after {
+  content: "⁂";
+  font-size: 1.1em;
+  letter-spacing: 0.2em;
+}
+
+.liseuse-texte hr + p {
+  text-indent: 0;
 }
 
 .liseuse-texte figure {
@@ -263,6 +307,32 @@
   overflow: hidden;
   background: var(--liseuse-page);
   color: var(--liseuse-texte);
+}
+
+/* Zone de texte : placée par flip-view.tsx aux mêmes dimensions que la page de mesure */
+.liseuse-page-texte {
+  position: absolute;
+}
+
+/* Pli central de la double page : légère ombre du côté de la reliure */
+.--landscape .liseuse-page.--left::after,
+.--landscape .liseuse-page.--right::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 28px;
+  content: "";
+  pointer-events: none;
+}
+
+.--landscape .liseuse-page.--left::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(42, 37, 32, 0.1), transparent);
+}
+
+.--landscape .liseuse-page.--right::after {
+  left: 0;
+  background: linear-gradient(to right, rgba(42, 37, 32, 0.1), transparent);
 }
 
 .liseuse-numero {

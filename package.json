@@ -1,6 +1,6 @@
 {
   "name": "kalami",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -34,6 +34,7 @@
     "react-dom": "19.3.0",
     "sanitize-html": "^2.18.0",
     "server-only": "^0.0.1",
+    "unpdf": "1.8.1",
     "zod": "^4.6.6"
   },
   "devDependencies": {

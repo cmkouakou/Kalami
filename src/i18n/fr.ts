@@ -602,14 +602,17 @@ const fr = {
     content: {
       title: "Contenu du livre",
       manuscript: "Manuscrit",
-      choose: "Choisir un fichier DOCX ou EPUB (20 Mo max.)",
+      choose: "Choisir un fichier Word, PDF ou EPUB (20 Mo max.)",
       help:
-        "DOCX : chaque « Titre 1 » ouvre un chapitre. EPUB : les chapitres suivent la table " +
-        "des matières. Les images ne sont pas conservées pour l'instant.",
+        "Word : chaque « Titre 1 » ouvre un chapitre ; sans styles, les lignes « Chapitre 2 » " +
+        "ou en gras sont reconnues. PDF : les titres sont repérés à leur taille, les en-têtes " +
+        "et numéros de page retirés. EPUB : les chapitres suivent la table des matières. La " +
+        "typographie est harmonisée ; vérifiez le résultat dans l'aperçu. Les images ne sont " +
+        "pas conservées pour l'instant.",
       uploading: "Envoi du fichier…",
       converting: "Conversion en cours…",
       converted: "Conversion réussie : {count} chapitres.",
-      invalidType: "Format refusé : DOCX ou EPUB uniquement.",
+      invalidType: "Format refusé : Word (DOCX), PDF ou EPUB uniquement.",
       tooLarge: "Fichier trop lourd (20 Mo maximum).",
       noVersion: "Aucun manuscrit converti pour le moment.",
       currentVersion: "Version {number} ({format}) — {chapters} chapitres, {words} mots",
@@ -653,7 +656,10 @@ const fr = {
         pdfDisabled: "L'option PDF n'est pas activée pour ce livre.",
       },
       errors: {
-        invalid_file: "Fichier illisible : ce n'est pas un DOCX ou un EPUB valide.",
+        invalid_file: "Fichier illisible : ce n'est pas un DOCX, un PDF ou un EPUB valide.",
+        scanned:
+          "Ce PDF ne contient pas de texte (document numérisé) : envoyez le fichier Word " +
+          "d'origine ou un PDF exporté depuis votre traitement de texte.",
         empty: "Aucun texte trouvé dans le fichier.",
         too_large: "Livre trop volumineux pour être converti.",
         too_many_chapters: "Trop de chapitres (500 maximum).",

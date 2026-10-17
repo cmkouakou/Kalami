@@ -5,10 +5,11 @@
  *  Description: Conversion d'un manuscrit DOCX en chapitres HTML nettoyés (mammoth).
  *               Un chapitre commence à chaque titre de niveau 1 (style « Titre 1 » de Word) ;
  *               à défaut de titre 1, au niveau 2 ; à défaut, le livre forme un seul chapitre.
+ *               v1.1 : sans styles « Titre », titres repérés à leur allure (headings.ts).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-08
- *  Dépendances: mammoth, htmlparser2, sanitize.ts, zip.ts
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
+ *  Dépendances: mammoth, htmlparser2, headings.ts, sanitize.ts, zip.ts
  * =============================================================
  */
 
@@ -17,6 +18,7 @@ import "server-only";
 import { parseDocument } from "htmlparser2";
 import mammoth from "mammoth";
 
+import { promoteHeadings } from "./headings";
 import { assertLimits, flattenNodes, isHeading, splitByHeading } from "./sanitize";
 import { ConversionError, type ConvertedChapter } from "./types";
 import { openZip } from "./zip";
@@ -58,7 +60,13 @@ export async function convertDocx(
   }
 
   const nodes = flattenNodes(parseDocument(html).children);
-  const level = [1, 2].find((n) => nodes.some((node) => isHeading(node, n)));
+  let level = [1, 2].find((n) => nodes.some((node) => isHeading(node, n)));
+  // Manuscrit sans styles « Titre » : titres repérés à leur allure (gras, « Chapitre 2 »…) ;
+  // seuls les marqueurs de chapitre (h1) découpent, les autres restent des intertitres
+  if (!level) {
+    promoteHeadings(nodes);
+    level = nodes.some((node) => isHeading(node, 1)) ? 1 : undefined;
+  }
 
   const chapters = level
     ? splitByHeading(nodes, level, titles.opening)

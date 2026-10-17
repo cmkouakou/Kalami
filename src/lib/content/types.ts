@@ -4,8 +4,8 @@
  *  Projet     : Kalami
  *  Description: Types partagés de la conversion des manuscrits et du service des chapitres.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-08
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: (aucune)
  * =============================================================
  */
@@ -18,12 +18,13 @@ export type ConvertedChapter = {
 };
 
 /** Formats de manuscrit acceptés. */
-export const MANUSCRIPT_FORMATS = ["docx", "epub"] as const;
+export const MANUSCRIPT_FORMATS = ["docx", "pdf", "epub"] as const;
 export type ManuscriptFormat = (typeof MANUSCRIPT_FORMATS)[number];
 
 /** Types MIME enregistrés dans le seau « manuscripts » (identiques à allowed_mime_types). */
 export const MANUSCRIPT_MIME_TYPES: Record<ManuscriptFormat, string> = {
   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  pdf: "application/pdf",
   epub: "application/epub+zip",
 };
 
@@ -32,7 +33,12 @@ export const MANUSCRIPTS_BUCKET = "manuscripts";
 export const MANUSCRIPT_MAX_BYTES = 20 * 1024 * 1024;
 
 /** Causes d'échec de conversion, traduites dans le dictionnaire (admin.content.errors). */
-export type ConversionErrorCode = "invalid_file" | "empty" | "too_large" | "too_many_chapters";
+export type ConversionErrorCode =
+  | "invalid_file"
+  | "scanned"
+  | "empty"
+  | "too_large"
+  | "too_many_chapters";
 
 /** Erreur de conversion attendue (fichier invalide, vide ou hors limites). */
 export class ConversionError extends Error {

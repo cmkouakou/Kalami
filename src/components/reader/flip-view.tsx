@@ -10,9 +10,11 @@
  *               Les surlignages sont dessinés après la découpe : ils ne changent jamais
  *               la pagination. Les pages se tournent par les coins, le glissement, les
  *               flèches et le clavier (un clic sert à sélectionner du texte).
+ *               v1.2 : marges portées par le bloc de texte (page-flip effaçait celles de la
+ *               page), pli central entre les deux pages.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-10
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
  *  Dépendances: page-flip, dom.ts, highlight-dom.ts, lib/reader/paginate.ts,
  *               lib/reader/position.ts
  * =============================================================
@@ -101,6 +103,7 @@ function watermarkOffset(chapter: number, page: number): { top: number; left: nu
  * @param total     - Nombre de pages du chapitre
  * @param chapter   - Numéro du chapitre (variation du filigrane)
  * @param watermark - Texte du filigrane, ou null
+ * @param padX      - Marge latérale (px)
  */
 function buildPage(
   content: HTMLElement[],
@@ -112,10 +115,15 @@ function buildPage(
 ): HTMLElement {
   const page = document.createElement("div");
   page.className = "liseuse-page";
-  page.style.padding = `${PADDING.top}px ${padX}px ${PADDING.bottom}px`;
 
+  // page-flip réécrit le style de la page (position, taille) : les marges sont portées
+  // par le bloc de texte, placé exactement dans la zone mesurée pendant la pagination
   const text = document.createElement("div");
-  text.className = "liseuse-texte";
+  text.className = "liseuse-texte liseuse-page-texte";
+  text.style.top = `${PADDING.top}px`;
+  text.style.right = `${padX}px`;
+  text.style.bottom = `${PADDING.bottom}px`;
+  text.style.left = `${padX}px`;
   text.append(...content);
   // page-flip annule le mousedown (début de glissement) : le texte reste sélectionnable
   text.addEventListener("mousedown", (event) => event.stopPropagation());

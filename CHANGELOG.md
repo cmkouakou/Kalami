@@ -1,5 +1,36 @@
 # Journal des modifications
 
+## [v0.9.3] - 2026-10-16 — Manuscrits PDF et belle mise en page
+### Ajouté
+- Dépôt de manuscrits PDF (`lib/content/convert-pdf.ts`, bibliothèque `unpdf`), en plus
+  du Word et de l'EPUB :
+  - pages de titre, en-têtes, pieds de page et numéros de page retirés ;
+  - titres repérés par leur taille de police : chapitres (taille répétée sur plusieurs
+    pages) et intertitres ;
+  - lignes recollées en paragraphes, mots coupés en fin de ligne réunis ;
+  - notes de bas de page placées après leur paragraphe, numérotées ;
+  - changement de récit (texte qui reprend plus bas sur une nouvelle page) → ornement ;
+  - PDF numérisé (sans texte) refusé avec un message clair (`scanned`).
+- Migration `20261102120000_pdf_manuscripts.sql` : format `pdf` accepté pour les versions
+  de livre et dans le dépôt de stockage `manuscripts`.
+- Finition commune à tous les formats (`lib/content/typography.ts`) :
+  - typographie française (guillemets « », espaces insécables avant : ; ! ?, tiret de
+    dialogue, points de suspension, apostrophe courbe) ou anglaise (“ ”) selon la langue ;
+  - « *** » et autres séparateurs → ornement ⁂ ;
+  - poèmes repérés (lignes courtes) et gardés vers par vers ;
+  - retraits et espaces tapés au clavier retirés, titre répété en tête de chapitre retiré.
+- Repérage des titres des Word sans styles (`lib/content/headings.ts`) : « Chapitre 3 »,
+  « Prologue », « IV » ouvrent un chapitre ; lignes courtes en gras ou en capitales →
+  intertitres (sauf si elles sont trop nombreuses, comme dans un poème).
+- Tests unitaires `content-layout.test.ts` (PDF d'essai construits avec pdf-lib).
+
+### Corrigé
+- Liseuse : les pages ne tournaient plus en mode livre (marges déplacées sur la zone de
+  texte, que page-flip ne réécrit pas).
+- Liseuse : styles des poèmes, des notes et de l'ornement de scène ; pas de retrait après
+  un ornement.
+
+
 ## [v0.9.2] - 2026-10-16 — Dépôt fermé aux auteurs externes
 ### Ajouté
 - Interrupteur « Ouvrir le dépôt aux auteurs externes » dans Administration → Auteurs.

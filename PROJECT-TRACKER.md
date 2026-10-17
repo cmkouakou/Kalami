@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.9.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.9.3 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -36,7 +36,8 @@ Version actuelle : v0.9.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet
 | #30 | 2026-10-16 | Sprint 11a-1 : textes légaux versionnés, bandeau des témoins, registre, export JSON, suppression du compte (30 jours) | ~350 000 | ~2.10 $ |
 | #31 | 2026-10-16 | Sprint 11a-2 : PWA (deux applis installables, service worker en liste blanche, hors ligne), accessibilité (évitement, 404, audit axe) | ~300 000 | ~1.80 $ |
 | #32 | 2026-10-16 | Stratégie v0.11.3-v0.11.4 : export PDF réparé, navigation entre les étapes, refonte des exports Word et PDF du plan ; v0.9.2 : dépôt fermé aux auteurs externes | ~780 000 | ~4.68 $ |
-| **TOTAL** | | | **~9 400 000** | **~56.40 $** |
+| #33 | 2026-10-16 | v0.9.3 : manuscrits PDF, mise en page soignée (typographie, titres, poèmes, notes, ornements), liseuse réparée | ~650 000 | ~3.90 $ |
+| **TOTAL** | | | **~10 050 000** | **~60.30 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -55,6 +56,7 @@ Version actuelle : v0.9.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet
 - [x] Sprint 3 — contenu protégé : conversion, extrait, API 403/429, droits (v0.4.0)
 - [x] Sprint 3 — migration `20261008120000_content.sql` appliquée, tests d'intégration 85/85
 - [ ] Sprint 3 — essai réel : dépôt d'un DOCX et d'un EPUB en administration
+- [ ] v0.9.3 — appliquer `20261102120000_pdf_manuscripts.sql`, puis déposer un PDF et un DOCX réels
 - [x] Sprint 4 — liseuse : page tournée, défilement, réglages, signets, recherche (v0.5.0)
 - [x] Sprint 4 — migration `20261009120000_reader.sql` appliquée, tests d'intégration 23/23
 - [ ] Sprint 4 — essai réel de la liseuse (ordinateur, tablette, téléphone)

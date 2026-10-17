@@ -2,13 +2,14 @@
  * =============================================================
  *  Fichier    : manuscript.ts
  *  Projet     : Kalami
- *  Description: Conversion d'un manuscrit déposé dans le seau privé (DOCX/EPUB) puis
+ *  Description: Conversion d'un manuscrit déposé dans le seau privé (DOCX/PDF/EPUB), puis
  *               enregistrement de la version par une fonction SQL : version courante
  *               (administrateur) ou version en attente de validation (auteur). Serveur
- *               uniquement ; l'appelant vérifie la session.
+ *               uniquement ; l'appelant vérifie la session. v1.1 : PDF et mise en forme
+ *               commune (typography.ts).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/content/convert-*.ts, lib/content/types.ts, supabase
  * =============================================================
  */
@@ -20,6 +21,8 @@ import type { Supabase } from "@/lib/admin/audit";
 import type { FormState } from "@/lib/auth/actions";
 import { convertDocx } from "@/lib/content/convert-docx";
 import { convertEpub } from "@/lib/content/convert-epub";
+import { convertPdf } from "@/lib/content/convert-pdf";
+import { type BookLanguage, polishChapters } from "@/lib/content/typography";
 import {
   ConversionError,
   MANUSCRIPT_MAX_BYTES,
@@ -35,7 +38,7 @@ const e = t.admin.errors;
 /** Chemin d'un manuscrit envoyé par le navigateur : « livres/{livre}/{uuid}.{ext} ». */
 const UUID_SOURCE = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 const MANUSCRIPT_PATH_PATTERN = new RegExp(
-  `^livres/(${UUID_SOURCE})/${UUID_SOURCE}[.](docx|epub)$`,
+  `^livres/(${UUID_SOURCE})/${UUID_SOURCE}[.](docx|pdf|epub)$`,
 );
 
 /** Fonction SQL qui enregistre la version convertie. */
@@ -61,9 +64,9 @@ function convert(
   data: Uint8Array,
   bookTitle: string,
 ): Promise<ConvertedChapter[]> {
-  if (format === "docx") {
-    return convertDocx(data, { book: bookTitle, opening: t.content.openingTitle });
-  }
+  const titles = { book: bookTitle, opening: t.content.openingTitle };
+  if (format === "docx") return convertDocx(data, titles);
+  if (format === "pdf") return convertPdf(data, titles);
   const chapter = (n: number) => interpolate(t.content.chapterTitle, { n: String(n) });
   return convertEpub(data, { chapter });
 }
@@ -92,9 +95,9 @@ export async function convertStoredManuscript(
 
   const { data: book } = await supabase
     .from("books")
-    .select("title")
+    .select("title, language")
     .eq("id", bookId)
-    .maybeSingle();
+    .maybeSingle<{ title: string; language: BookLanguage }>();
   if (!book) return { error: e.generic };
 
   const download = await supabase.storage.from(MANUSCRIPTS_BUCKET).download(path);
@@ -107,7 +110,8 @@ export async function convertStoredManuscript(
   let chapters: ConvertedChapter[];
   try {
     const data = new Uint8Array(await download.data.arrayBuffer());
-    chapters = await convert(format, data, book.title);
+    // Mise en forme commune à tous les formats : typographie, séparateurs, poèmes
+    chapters = polishChapters(await convert(format, data, book.title), book.language);
   } catch (error) {
     if (!(error instanceof ConversionError)) throw error;
     await supabase.storage.from(MANUSCRIPTS_BUCKET).remove([path]);
