@@ -138,6 +138,25 @@ export async function getLatestContract(): Promise<Contract | null> {
 }
 
 /**
+ * Le compte connecté peut-il s'inscrire, créer un livre et le soumettre ? Vrai si le dépôt
+ * est ouvert aux auteurs externes ou si c'est l'administrateur (fonction SQL, v0.9.2).
+ */
+export const getDepositAllowed = cache(async (): Promise<boolean> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("author_deposit_allowed");
+  if (error) throw new Error(`Lecture de l'état du dépôt impossible : ${error.message}`);
+  return data === true;
+});
+
+/** Dépôt ouvert aux auteurs externes ? (réglage de l'administrateur, fermé par défaut) */
+export async function getAuthorsOpen(): Promise<boolean> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("authors_open");
+  if (error) throw new Error(`Lecture de l'état du dépôt impossible : ${error.message}`);
+  return data === true;
+}
+
+/**
  * Fiche auteur de l'utilisateur, contrat en vigueur et acceptation (une lecture par requête).
  * @param nextPath - Page de retour après connexion
  */

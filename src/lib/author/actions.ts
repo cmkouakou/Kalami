@@ -6,9 +6,10 @@
  *               fiche publique, coordonnées de versement, fiche d'un livre, images,
  *               manuscrit et demande de validation. Les droits sont appliqués par la base
  *               (RLS, déclencheurs de garde, fonctions SQL) ; chaque argument est vérifié.
+ *               Dépôt fermé aux auteurs externes : message « authors_closed » (v0.9.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/author/validation.ts, lib/catalog/writes.ts, lib/content/manuscript.ts
  * =============================================================
  */
@@ -192,6 +193,8 @@ export async function createAuthorBook(
       .insert({ ...book, slug: bookSlug(book.title, attempt), author_id: authorId })
       .select("id")
       .single<{ id: string }>();
+    // 42501 : la politique RLS refuse l'insertion (dépôt fermé aux auteurs externes)
+    if (error?.code === "42501") return { error: a.errors.authors_closed };
     if (error && error.code !== "23505") return { error: e.generic };
     bookId = data?.id ?? null;
   }

@@ -417,6 +417,9 @@ const fr = {
         "Créez votre fiche d'auteur. Elle sera visible des lecteurs dès la publication de " +
         "votre premier livre.",
       closed: "Les inscriptions des auteurs ouvrent bientôt.",
+      closedExternal:
+        "Kalami publie pour l'instant les livres de son fondateur. Le dépôt par des " +
+        "auteurs externes ouvrira plus tard.",
       displayName: "Nom d'auteur (affiché aux lecteurs)",
       slug: "Adresse de votre page (laisser vide pour la générer)",
       bio: "Biographie (facultative)",
@@ -492,6 +495,8 @@ const fr = {
       incomplete: "Fiche incomplète : résumé, catégorie et au moins un prix sont requis.",
       submission_open: "Impossible de déposer une version pendant la validation.",
       notAuthor: "Créez d'abord votre fiche d'auteur.",
+      authors_closed:
+        "Le dépôt de livres par des auteurs externes est fermé pour le moment.",
     },
   },
   admin: {
@@ -546,6 +551,15 @@ const fr = {
       bio: "Biographie",
       photo: "Photo",
       books: "Livres",
+      depositTitle: "Dépôt par des auteurs externes",
+      depositOpen: "Ouvert : toute personne inscrite peut créer sa fiche et soumettre un livre.",
+      depositClosed:
+        "Fermé : seuls vos propres livres sont publiés. Les inscriptions, créations de " +
+        "livres et soumissions des autres comptes sont refusées.",
+      openDeposit: "Ouvrir le dépôt aux auteurs externes",
+      closeDeposit: "Fermer le dépôt",
+      depositOpened: "Dépôt ouvert aux auteurs externes.",
+      depositClosedDone: "Dépôt fermé aux auteurs externes.",
     },
     books: {
       title: "Livres",

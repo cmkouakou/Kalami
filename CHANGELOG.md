@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## [v0.9.2] - 2026-10-16 — Dépôt fermé aux auteurs externes
+### Ajouté
+- Interrupteur « Ouvrir le dépôt aux auteurs externes » dans Administration → Auteurs.
+  Il est fermé par défaut : Kalami publie d'abord les livres de son fondateur.
+- Migration `20261101120000_authors_switch.sql` :
+  - table `platform_settings` (ligne unique), lisible par tous ;
+  - fonctions `authors_open()`, `author_deposit_allowed()` et
+    `admin_set_authors_open(boolean)`, réservée à l'administrateur (aal2), avec journal
+    d'audit (`platform.authors.open` / `platform.authors.close`).
+
+### Modifié
+- Quand le dépôt est fermé (sauf pour l'administrateur) :
+  - `author_register` et `author_submit_book` refusent avec `authors_closed` ;
+  - la politique `books_author_insert` refuse la création d'un livre ;
+  - la page d'inscription affiche un avis au lieu du formulaire ;
+  - le lien « Devenir auteur » disparaît de « Mon compte » ;
+  - l'espace auteur masque « Nouveau livre » et affiche un avis.
+- Tests d'intégration de l'espace auteur : dépôt ouvert pendant les tests, état d'origine
+  rétabli à la fin, refus vérifiés dépôt fermé.
+
+
 ## [v0.9.1] - 2026-10-16 — PWA et accessibilité (S11a-2)
 ### Ajouté
 - Deux applications installables :

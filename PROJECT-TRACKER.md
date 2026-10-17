@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.9.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.9.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -35,8 +35,8 @@ Version actuelle : v0.9.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet
 | #29 | 2026-10-16 | Stratégie v0.11.1 : forfaits du coach (verrou par étude, jauge en %, consommation, recharges, admin des forfaits, mémoire des relectures) | ~600 000 | ~3.60 $ |
 | #30 | 2026-10-16 | Sprint 11a-1 : textes légaux versionnés, bandeau des témoins, registre, export JSON, suppression du compte (30 jours) | ~350 000 | ~2.10 $ |
 | #31 | 2026-10-16 | Sprint 11a-2 : PWA (deux applis installables, service worker en liste blanche, hors ligne), accessibilité (évitement, 404, audit axe) | ~300 000 | ~1.80 $ |
-| #32 | 2026-10-16 | Stratégie v0.11.3-v0.11.4 : export PDF réparé, navigation entre les étapes, refonte des exports Word et PDF du plan | ~700 000 | ~4.20 $ |
-| **TOTAL** | | | **~9 320 000** | **~55.92 $** |
+| #32 | 2026-10-16 | Stratégie v0.11.3-v0.11.4 : export PDF réparé, navigation entre les étapes, refonte des exports Word et PDF du plan ; v0.9.2 : dépôt fermé aux auteurs externes | ~780 000 | ~4.68 $ |
+| **TOTAL** | | | **~9 400 000** | **~56.40 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -73,6 +73,7 @@ Version actuelle : v0.9.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet
 - [x] Sprint 11a-1 — textes légaux, témoins, export et suppression du compte (v0.9.0, code)
 - [x] Sprint 11a-1 — migration 20261031120000 appliquée, historique réparé, tests RLS legal-rls (8/8)
 - [x] Sprint 11a-2 — PWA et accessibilité (v0.9.1), unitaires 511/511, axe 0 violation
+- [x] v0.9.2 — interrupteur « dépôt ouvert aux auteurs externes » (fermé par défaut), unitaires 518/518
 - [ ] Paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)

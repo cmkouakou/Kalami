@@ -2,10 +2,11 @@
  * =============================================================
  *  Fichier    : page.tsx (admin/auteurs)
  *  Projet     : Kalami
- *  Description: Liste des auteurs (avec leur nombre de livres) et formulaire d'ajout.
+ *  Description: Liste des auteurs (avec leur nombre de livres), interrupteur du dépôt par
+ *               des auteurs externes (fermé par défaut, v0.9.2) et formulaire d'ajout.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/auth/dal.ts, lib/admin/catalog-queries.ts, components/admin
  * =============================================================
  */
@@ -14,10 +15,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { ActionForm } from "@/components/admin/action-form";
 import { AuthorForm } from "@/components/admin/author-form";
 import { getDictionary } from "@/i18n";
+import { setAuthorsOpen } from "@/lib/admin/catalog-actions";
 import { listAuthorsAdmin } from "@/lib/admin/catalog-queries";
 import { requireAdmin } from "@/lib/auth/dal";
+import { getAuthorsOpen } from "@/lib/author/queries";
 
 const t = getDictionary();
 const l = t.admin.authors;
@@ -35,10 +39,10 @@ export default function AdminAuthorsPage() {
   );
 }
 
-/** Tableau des auteurs et création d'un nouvel auteur. */
+/** Tableau des auteurs, état du dépôt externe et création d'un nouvel auteur. */
 async function AuthorsContent() {
   await requireAdmin();
-  const authors = await listAuthorsAdmin();
+  const [authors, authorsOpen] = await Promise.all([listAuthorsAdmin(), getAuthorsOpen()]);
 
   return (
     <>
@@ -72,6 +76,19 @@ async function AuthorsContent() {
           </table>
         </div>
       )}
+      {/* ==================== DÉPÔT PAR DES AUTEURS EXTERNES ==================== */}
+      <section className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4">
+        <h2 className="text-xl font-semibold">{l.depositTitle}</h2>
+        <p className={authorsOpen ? "text-ink" : "text-ink-muted"}>
+          {authorsOpen ? l.depositOpen : l.depositClosed}
+        </p>
+        <ActionForm
+          action={setAuthorsOpen.bind(null, !authorsOpen)}
+          submitLabel={authorsOpen ? l.closeDeposit : l.openDeposit}
+        >
+          {null}
+        </ActionForm>
+      </section>
       <section className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-4">
         <h2 className="text-xl font-semibold">{l.new}</h2>
         <AuthorForm />

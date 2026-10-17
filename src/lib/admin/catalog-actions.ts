@@ -3,19 +3,19 @@
  *  Fichier    : catalog-actions.ts
  *  Projet     : Kalami
  *  Description: Actions serveur d'administration du catalogue (catégories, auteurs, livres,
- *               prix, images). Chaque action : requireAdmin → validation → écriture (RLS
- *               administrateur) → journal d'audit → invalidation du cache « catalogue ».
+ *               prix, images) et ouverture du dépôt aux auteurs externes. Chaque
+ *               action : requireAdmin → validation → écriture (RLS administrateur) → journal d'audit → invalidation du cache « catalogue ».
  *               Toute fonction exportée ici est une action publique : arguments vérifiés.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-07
+ *  Version    : 1.2
+ *  Date       : 2026-10-16
  *  Dépendances: lib/auth/dal.ts, lib/admin/validation.ts, lib/admin/audit.ts, supabase
  * =============================================================
  */
 
 "use server";
 
-import { updateTag } from "next/cache";
+import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getDictionary } from "@/i18n";
@@ -184,6 +184,23 @@ export async function setAuthorPhoto(id: string, path: string): Promise<FormStat
   await audit(supabase, "author.photo", "author", id, { path });
   updateTag(CATALOG_TAG);
   return { message: t.admin.upload.done };
+}
+
+/**
+ * Ouvre ou ferme le dépôt de livres aux auteurs externes (fermé par défaut, v0.9.2).
+ * La fonction SQL vérifie le rôle administrateur (aal2) et écrit le journal d'audit.
+ * @param open - true pour ouvrir le dépôt, false pour le fermer (lié par .bind)
+ */
+export async function setAuthorsOpen(open: boolean): Promise<FormState> {
+  await requireAdmin();
+  if (typeof open !== "boolean") return { error: e.generic };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_set_authors_open", { p_open: open });
+  if (error) return { error: e.generic };
+  refresh();
+  const l = t.admin.authors;
+  return { message: open ? l.depositOpened : l.depositClosedDone };
 }
 
 // ==================== LIVRES ====================

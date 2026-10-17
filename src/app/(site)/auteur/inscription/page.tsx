@@ -3,11 +3,12 @@
  *  Fichier    : page.tsx (auteur/inscription)
  *  Projet     : Kalami
  *  Description: Inscription d'un auteur (/auteur/inscription) : fiche publique et
- *               acceptation de la version en vigueur du contrat. Inscription libre ; chaque
+ *               acceptation de la version en vigueur du contrat. Inscription fermée tant que
+ *               l'administrateur n'ouvre pas le dépôt aux auteurs externes (v0.9.2) ; chaque
  *               livre est ensuite validé par l'administration avant publication.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/author/queries.ts, lib/author/actions.ts
  * =============================================================
  */
@@ -21,7 +22,7 @@ import { ContractText } from "@/components/author/contract-text";
 import { Field, TextArea } from "@/components/ui/form";
 import { getDictionary, interpolate } from "@/i18n";
 import { registerAuthor } from "@/lib/author/actions";
-import { getAuthorContext } from "@/lib/author/queries";
+import { getAuthorContext, getDepositAllowed } from "@/lib/author/queries";
 
 const t = getDictionary();
 const r = t.author.register;
@@ -44,8 +45,12 @@ export default function AuthorRegistrationPage() {
 
 /** Formulaire d'inscription, ou renvoi vers l'espace si la fiche existe déjà. */
 async function Registration() {
-  const { author, contract } = await getAuthorContext("/auteur/inscription");
+  const [{ author, contract }, allowed] = await Promise.all([
+    getAuthorContext("/auteur/inscription"),
+    getDepositAllowed(),
+  ]);
   if (author) redirect("/auteur");
+  if (!allowed) return <p className="text-ink-muted">{r.closedExternal}</p>;
   if (!contract) return <p className="text-ink-muted">{r.closed}</p>;
 
   return (

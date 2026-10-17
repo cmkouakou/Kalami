@@ -4,9 +4,10 @@
  *  Projet     : Kalami
  *  Description: Espace « Mon compte » (/compte) : profil, accès à l'espace auteur (ou
  *               invitation à le devenir), administration, données personnelles (export,
- *               suppression du compte) et déconnexion.
+ *               suppression du compte) et déconnexion. L'invitation à devenir auteur est
+ *               masquée tant que le dépôt est fermé aux auteurs externes (v0.9.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-16
  *  Dépendances: lib/auth/dal.ts, components/account/profile-form.tsx,
  *               components/account/privacy-sections.tsx
@@ -26,7 +27,7 @@ import { SubmitButton } from "@/components/ui/form";
 import { getDictionary } from "@/i18n";
 import { signOut } from "@/lib/auth/actions";
 import { getCurrentProfile, requireUser } from "@/lib/auth/dal";
-import { getAuthorContext } from "@/lib/author/queries";
+import { getAuthorContext, getDepositAllowed } from "@/lib/author/queries";
 
 const t = getDictionary();
 
@@ -35,9 +36,10 @@ export const metadata: Metadata = { title: t.account.title };
 /** Contenu privé : lu dans une zone Suspense (cookies de session). */
 async function AccountContent() {
   const user = await requireUser("/compte");
-  const [profile, { author }] = await Promise.all([
+  const [profile, { author }, depositAllowed] = await Promise.all([
     getCurrentProfile(),
     getAuthorContext("/compte"),
+    getDepositAllowed(),
   ]);
 
   return (
@@ -51,21 +53,23 @@ async function AccountContent() {
         />
       </section>
 
-      {/* ==================== ESPACE AUTEUR ==================== */}
-      <section className="rounded-lg border border-line bg-surface p-6">
-        {author ? (
-          <Link href="/auteur" className="text-encre underline">
-            {t.account.authorLink}
-          </Link>
-        ) : (
-          <>
-            <p className="mb-2 text-sm text-ink-muted">{t.account.becomeAuthorHelp}</p>
-            <Link href="/auteur/inscription" className="text-encre underline">
-              {t.account.becomeAuthor}
+      {/* ==================== ESPACE AUTEUR (masqué si le dépôt est fermé) ==================== */}
+      {(author || depositAllowed) && (
+        <section className="rounded-lg border border-line bg-surface p-6">
+          {author ? (
+            <Link href="/auteur" className="text-encre underline">
+              {t.account.authorLink}
             </Link>
-          </>
-        )}
-      </section>
+          ) : (
+            <>
+              <p className="mb-2 text-sm text-ink-muted">{t.account.becomeAuthorHelp}</p>
+              <Link href="/auteur/inscription" className="text-encre underline">
+                {t.account.becomeAuthor}
+              </Link>
+            </>
+          )}
+        </section>
+      )}
 
       {profile?.is_admin && (
         <Link href="/admin" className="text-encre underline">

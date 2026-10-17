@@ -6,6 +6,8 @@
  *              une fois soumis, coordonnées de versement privées, soumissions écrites par
  *              fonctions seulement. Ignorés si les clés manquent ou si la migration du
  *              Sprint 9 n'est pas encore appliquée. Le contrat publié n'est jamais modifié.
+ *              Dépôt aux auteurs externes (v0.9.2) : ouvert pendant les tests, état d'origine
+ *              rétabli à la fin ; vérifie aussi les refus quand il est fermé.
  * Auteur     : Claude Marcel
  * Date       : 2026-10-09
  */
@@ -40,6 +42,16 @@ describe.skipIf(!ready)("RLS — espace auteur", () => {
   let authorId = "";
   let otherAuthorId = "";
   let bookId = "";
+  /** Interrupteur du dépôt (v0.9.2) : présent sur la base, et son état avant les tests. */
+  let switchReady = false;
+  let previousOpen = false;
+
+  /** Ouvre ou ferme le dépôt aux auteurs externes (clé de service). */
+  async function setDeposit(open: boolean): Promise<void> {
+    const { error } = await service.from("platform_settings").update({ authors_open: open })
+      .eq("id", true);
+    if (error) throw error;
+  }
 
   /** Crée un utilisateur confirmé et retourne un client connecté. */
   async function signedInUser(label: string): Promise<SupabaseClient> {
@@ -56,6 +68,12 @@ describe.skipIf(!ready)("RLS — espace auteur", () => {
   beforeAll(async () => {
     service = createClient(url!, secretKey!, NO_SESSION);
     anon = createClient(url!, publishableKey!, NO_SESSION);
+    const settings = await service.from("platform_settings").select("authors_open").maybeSingle();
+    switchReady = !settings.error && settings.data !== null;
+    if (switchReady) {
+      previousOpen = settings.data!.authors_open === true;
+      await setDeposit(true);
+    }
     author = await signedInUser("auteur");
     other = await signedInUser("autre");
 
@@ -80,6 +98,7 @@ describe.skipIf(!ready)("RLS — espace auteur", () => {
     await service.from("books").delete().in("author_id", [authorId, otherAuthorId]);
     await service.from("authors").delete().in("id", [authorId, otherAuthorId]);
     for (const id of userIds) await service.auth.admin.deleteUser(id);
+    if (switchReady) await setDeposit(previousOpen);
   });
 
   it("refuse l'inscription aux visiteurs et une seconde fiche à un auteur", async () => {
@@ -161,5 +180,41 @@ describe.skipIf(!ready)("RLS — espace auteur", () => {
 
     const { data } = await other.from("author_payout_details").select("author_id");
     expect(data).toEqual([]);
+  });
+
+  // ==================== DÉPÔT FERMÉ AUX AUTEURS EXTERNES (v0.9.2) ====================
+
+  it("laisse lire l'état du dépôt mais réserve sa modification à l'administrateur", async () => {
+    if (!switchReady) return;
+    const { data } = await anon.from("platform_settings").select("authors_open").single();
+    expect(data?.authors_open).toBe(true);
+    const update = await author.from("platform_settings").update({ authors_open: false })
+      .eq("id", true).select("id");
+    expect(update.data ?? []).toEqual([]);
+    const rpc = await author.rpc("admin_set_authors_open", { p_open: false });
+    expect(rpc.error).not.toBeNull();
+  });
+
+  it("refuse inscription, création et soumission quand le dépôt est fermé", async () => {
+    if (!switchReady) return;
+    await setDeposit(false);
+    const register = await other.rpc("author_register", {
+      p_display_name: "Y",
+      p_slug: `zz-y-${RUN}`,
+      p_bio: "",
+      p_contract_id: null,
+    });
+    expect(register.error?.message).toBe("authors_closed");
+
+    const book = await author
+      .from("books")
+      .insert({ slug: `zz-ferme-${RUN}`, title: "Fermé", author_id: authorId })
+      .select("id");
+    expect(book.error?.code).toBe("42501");
+
+    const submit = await author.rpc("author_submit_book", { p_book_id: bookId });
+    expect(submit.error?.message).toBe("authors_closed");
+    const allowed = await author.rpc("author_deposit_allowed");
+    expect(allowed.data).toBe(false);
   });
 });

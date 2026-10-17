@@ -5,9 +5,10 @@
  *  Description: Tableau de bord de l'auteur (/auteur) : rappel du contrat à accepter,
  *               livres avec statut, lecteurs et surlignages, encart « ventes » en attendant
  *               l'ouverture des paiements. Sans fiche auteur : renvoi vers l'inscription.
+ *               Dépôt fermé aux auteurs externes (v0.9.2) : avis, pas de nouveau livre.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: lib/author/queries.ts, components/author
  * =============================================================
  */
@@ -19,7 +20,7 @@ import { Suspense } from "react";
 import { BookStatusBadge } from "@/components/author/book-status-badge";
 import { BUTTON_PRIMARY, CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
-import { listAuthorBooks, requireAuthor } from "@/lib/author/queries";
+import { getDepositAllowed, listAuthorBooks, requireAuthor } from "@/lib/author/queries";
 
 const t = getDictionary();
 const d = t.author.dashboard;
@@ -43,7 +44,10 @@ export default function AuthorDashboardPage() {
 /** Contenu privé : contrat, livres et statistiques de l'auteur connecté. */
 async function Dashboard() {
   const { author, contract, acceptedAt } = await requireAuthor("/auteur");
-  const books = await listAuthorBooks(author.id);
+  const [books, depositAllowed] = await Promise.all([
+    listAuthorBooks(author.id),
+    getDepositAllowed(),
+  ]);
 
   return (
     <>
@@ -60,10 +64,17 @@ async function Dashboard() {
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-xl font-semibold">{d.books}</h2>
-          <Link href="/auteur/livres/nouveau" className={BUTTON_PRIMARY}>
-            {d.newBook}
-          </Link>
+          {depositAllowed && (
+            <Link href="/auteur/livres/nouveau" className={BUTTON_PRIMARY}>
+              {d.newBook}
+            </Link>
+          )}
         </div>
+        {!depositAllowed && (
+          <p role="status" className="rounded-lg bg-warning/15 p-4 text-sm">
+            {t.author.errors.authors_closed}
+          </p>
+        )}
         {books.length === 0 ? (
           <p className="text-ink-muted">{d.noBooks}</p>
         ) : (
