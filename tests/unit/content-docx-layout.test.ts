@@ -252,20 +252,20 @@ describe("table des matières", () => {
     ];
     linkContents(chapters);
     expect(chapters[0].blocks).toEqual([
-      '<p class="sommaire-1" data-chapitre="2" data-bloc="0">' +
+      '<p class="sommaire-1" data-vers-chapitre="2" data-vers-bloc="0">' +
         '<span class="sommaire-surtitre">MODULE 1</span> Le diagnostic</p>',
-      '<p class="sommaire-2" data-chapitre="2" data-bloc="1">À vous de jouer</p>',
-      '<p class="sommaire-1" data-chapitre="3" data-bloc="0">La décision</p>',
-      '<p class="sommaire-2" data-chapitre="3" data-bloc="2">À vous de jouer</p>',
+      '<p class="sommaire-2" data-vers-chapitre="2" data-vers-bloc="1">À vous de jouer</p>',
+      '<p class="sommaire-1" data-vers-chapitre="3" data-vers-bloc="0">La décision</p>',
+      '<p class="sommaire-2" data-vers-chapitre="3" data-vers-bloc="2">À vous de jouer</p>',
       '<p class="sommaire-2">Introuvable</p>',
     ]);
   });
 
   it("garde les cibles numériques et les classes d'ouverture à la liste blanche", () => {
-    expect(sanitizeBlock('<p class="sommaire-2" data-chapitre="3" data-bloc="12">x</p>')).toBe(
-      '<p class="sommaire-2" data-chapitre="3" data-bloc="12">x</p>',
+    expect(sanitizeBlock('<p class="sommaire-2" data-vers-chapitre="3" data-vers-bloc="12">x</p>')).toBe(
+      '<p class="sommaire-2" data-vers-chapitre="3" data-vers-bloc="12">x</p>',
     );
-    expect(sanitizeBlock('<p data-chapitre="javascript:x" data-bloc="1e3">x</p>')).toBe(
+    expect(sanitizeBlock('<p data-vers-chapitre="javascript:x" data-vers-bloc="1e3">x</p>')).toBe(
       "<p>x</p>",
     );
     expect(sanitizeBlock('<p class="chapitre-chapeau"><em>x</em></p>')).toBe(

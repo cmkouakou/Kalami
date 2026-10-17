@@ -286,10 +286,10 @@ export function Reader({ data, price }: ReaderProps) {
   const onTextClick = useCallback(
     (event: MouseEvent<HTMLElement>) => {
       if (!(event.target instanceof Element)) return;
-      const entry = event.target.closest<HTMLElement>(".liseuse-texte [data-chapitre]");
+      const entry = event.target.closest<HTMLElement>(".liseuse-texte [data-vers-chapitre]");
       if (!entry) return;
-      const target = Number(entry.dataset.chapitre);
-      const block = Number(entry.dataset.bloc ?? 0);
+      const target = Number(entry.dataset.versChapitre);
+      const block = Number(entry.dataset.versBloc ?? 0);
       if (!Number.isInteger(target) || !toc.some((item) => item.chapter_position === target)) {
         return;
       }

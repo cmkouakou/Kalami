@@ -4,8 +4,10 @@
  *  Projet     : Kalami
  *  Description: Table des matières cliquable : chaque entrée du sommaire Word (classes
  *               « sommaire-1 » et « sommaire-2 ») reçoit le chapitre et le bloc qu'elle
- *               annonce (data-chapitre, data-bloc), retrouvés par leur titre une fois le livre
- *               découpé. Une entrée de module reçoit aussi son surtitre (« MODULE 3 »).
+ *               annonce (data-vers-chapitre, data-vers-bloc), retrouvés par leur titre une
+ *               fois le livre découpé. Une entrée de module reçoit aussi son surtitre
+ *               (« MODULE 3 »). Attributs « data-vers-* » : la liseuse pose déjà data-bloc
+ *               sur chaque bloc affiché, ce qui écraserait la cible.
  *               Les blocs sont déjà nettoyés : seuls des attributs numériques sont ajoutés.
  *  Auteur     : Claude Marcel
  *  Version    : 1.0
@@ -88,7 +90,7 @@ function findSubheading(blocks: string[], text: string, from: number): number {
  * @param chapters - Chapitres convertis, dans l'ordre du livre
  *
  * Exemple : linkContents(chapitres) — « <p class="sommaire-1">Préface</p> » devient
- *           « <p class="sommaire-1" data-chapitre="4" data-bloc="0">Préface</p> »
+ *           « <p class="sommaire-1" data-vers-chapitre="4" data-vers-bloc="0">Préface</p> »
  */
 export function linkContents(chapters: ConvertedChapter[]): void {
   const titles = chapters.map((chapter) => comparable(chapter.title));
@@ -126,7 +128,8 @@ export function linkContents(chapters: ConvertedChapter[]): void {
           ? `<span class="sommaire-surtitre">${kicker[1]}</span> `
           : "";
       return (
-        `<p class="${level}" data-chapitre="${target.chapter}" data-bloc="${target.block}">` +
+        `<p class="${level}" data-vers-chapitre="${target.chapter}"` +
+        ` data-vers-bloc="${target.block}">` +
         `${prefix}${label}</p>`
       );
     });

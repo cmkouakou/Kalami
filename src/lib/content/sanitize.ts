@@ -56,7 +56,7 @@ const IMAGE_SOURCE = /^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+=*$/;
 const IMAGE_DATA = /data:image\/[a-z]+;base64,[A-Za-z0-9+/]+=*/g;
 
 /** Attributs de cible d'une entrée de sommaire (chapitre, bloc) : entiers seulement. */
-const TARGET_ATTRIBUTES = ["data-chapitre", "data-bloc"];
+const TARGET_ATTRIBUTES = ["data-vers-chapitre", "data-vers-bloc"];
 
 /**
  * Retire d'un paragraphe toute cible de sommaire qui n'est pas un entier positif.
@@ -84,7 +84,7 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
     td: ["colspan", "rowspan"],
     th: ["colspan", "rowspan", "scope"],
     img: ["src", "alt", "width", "height"],
-    p: ["class", "data-chapitre", "data-bloc"],
+    p: ["class", "data-vers-chapitre", "data-vers-bloc"],
     span: ["class"],
     figure: ["class"],
   },

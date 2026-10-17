@@ -463,14 +463,14 @@
   text-transform: uppercase;
 }
 
-.liseuse-texte [data-chapitre] {
+.liseuse-texte [data-vers-chapitre] {
   cursor: pointer;
   border-radius: 4px;
   transition: color 150ms ease;
 }
 
-.liseuse-texte [data-chapitre]:hover,
-.liseuse-texte [data-chapitre]:focus-visible {
+.liseuse-texte [data-vers-chapitre]:hover,
+.liseuse-texte [data-vers-chapitre]:focus-visible {
   color: var(--liseuse-accent-texte);
   text-decoration: underline;
   text-underline-offset: 0.2em;

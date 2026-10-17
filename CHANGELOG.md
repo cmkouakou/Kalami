@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## [v0.9.7] - 2026-10-17 — Liens du sommaire au bon endroit
+### Corrigé
+- Table des matières du livre : un clic ouvrait le chapitre plusieurs pages trop loin. La
+  cible de l'entrée (data-bloc) était écrasée par l'indice que la liseuse pose sur chaque
+  bloc affiché ; elle porte désormais ses propres attributs (data-vers-chapitre,
+  data-vers-bloc).
+
+### À faire après déploiement
+- Réimporter le manuscrit (V5) pour régénérer les liens du sommaire.
+
 ## [v0.9.6] - 2026-10-17 — Ouvertures de module, sommaire cliquable et accès rapide
 ### Ajouté
 - Accès rapide dans la liseuse (`components/reader/seek-bar.tsx`) : curseur sur tout le livre

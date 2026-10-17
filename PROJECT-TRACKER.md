@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.9.6 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.9.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -38,7 +38,7 @@ Version actuelle : v0.9.6 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet
 | #32 | 2026-10-16 | Stratégie v0.11.3-v0.11.4 : export PDF réparé, navigation entre les étapes, refonte des exports Word et PDF du plan ; v0.9.2 : dépôt fermé aux auteurs externes | ~780 000 | ~4.68 $ |
 | #33 | 2026-10-16 | v0.9.3 : manuscrits PDF, mise en page soignée (typographie, titres, poèmes, notes, ornements), liseuse réparée | ~650 000 | ~3.90 $ |
 | #34 | 2026-10-17 | v0.9.4 : schémas et illustrations (WebP intégré), encadrés « Sur le terrain », tableaux, aperçu complet depuis l'administration | ~450 000 | ~2.70 $ |
-| #35 | 2026-10-17 | v0.9.5-v0.9.6 : schémas en mode livre, ouvertures de module, sommaire cliquable, accès rapide, pages qui tournent partout | ~600 000 | ~3.60 $ |
+| #35 | 2026-10-17 | v0.9.5-v0.9.7 : schémas en mode livre, ouvertures de module, sommaire cliquable, accès rapide, pages qui tournent partout, liens du sommaire corrigés | ~600 000 | ~3.60 $ |
 | **TOTAL** | | | **~11 100 000** | **~66.60 $** |
 
 ## ✅ Fonctionnalités
