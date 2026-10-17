@@ -17,6 +17,8 @@ import {
   exportFileName,
   exportGantt,
   exportScorecard,
+  paragraphLayout,
+  splitDetails,
 } from "@/lib/strategy/plan-export";
 import { buildPlanDocx } from "@/lib/strategy/plan-export-docx";
 import { buildPlanHtml } from "@/lib/strategy/plan-export-html";
@@ -86,9 +88,9 @@ describe("buildPlanExport", () => {
     ]);
     const doc = buildPlanExport(plan, inputs, NOW);
     const risks = doc.sections.find((section) => section.key === "risks");
-    expect(risks?.paragraphs).toEqual([
-      { no: 1, text: "Premier" },
-      { no: 3, text: "Troisième" },
+    expect(risks?.paragraphs).toMatchObject([
+      { no: 1, text: "Premier", tone: "plain" },
+      { no: 3, text: "Troisième", tone: "plain" },
     ]);
     expect(doc.sections).toHaveLength(8);
   });
@@ -144,6 +146,55 @@ describe("exportGantt et exportScorecard", () => {
   });
 });
 
+describe("splitDetails", () => {
+  it("détache les précisions finales à libellé court", () => {
+    expect(splitDetails("Offre PME (cible : 10 % ; échéance : juin 2027)")).toEqual({
+      text: "Offre PME",
+      details: [{ label: "cible", value: "10 %" }, { label: "échéance", value: "juin 2027" }],
+    });
+  });
+
+  it("laisse intacte une parenthèse de texte ordinaire", () => {
+    const line = "Usine classée dans le top 10 (pertes réduites de 40 %)";
+    expect(splitDetails(line)).toEqual({ text: line, details: [] });
+  });
+});
+
+describe("paragraphLayout", () => {
+  it("fait d'une ligne terminée par « : » le titre de la liste qui suit", () => {
+    const layout = paragraphLayout("Forces :\n- Marque connue\n- Réseau (cible : 80 %)");
+    expect(layout.title).toBe("Forces");
+    expect(layout.lines).toEqual([]);
+    expect(layout.items.map((item) => item.text)).toEqual(["Marque connue", "Réseau"]);
+    expect(layout.items[1].details).toEqual([{ label: "cible", value: "80 %" }]);
+  });
+
+  it("sépare le libellé de tête d'une ligne de texte", () => {
+    expect(paragraphLayout("Vision : être la référence locale.")).toEqual({
+      title: "",
+      lines: [{ label: "Vision", text: "être la référence locale.", details: [] }],
+      items: [],
+    });
+  });
+
+  it("rattache le texte qui suit les puces à la dernière puce", () => {
+    const layout = paragraphLayout("- Première\n- Seconde\nsuite de la seconde");
+    expect(layout.items.map((item) => item.text))
+      .toEqual(["Première", "Seconde suite de la seconde"]);
+  });
+});
+
+describe("tons des paragraphes", () => {
+  it("met la vision en encadré et laisse les autres paragraphes simples", () => {
+    const inputs = emptyInputs();
+    inputs.direction.vision.text = "Devenir la référence régionale.";
+    const doc = buildPlanExport(assemblePlan(inputs, NOW), inputs, NOW);
+    const tones = doc.sections.flatMap((section) => section.paragraphs.map((p) => p.tone));
+    expect(tones.filter((tone) => tone === "highlight")).toHaveLength(1);
+    expect(tones.filter((tone) => tone === "caution")).toHaveLength(0);
+  });
+});
+
 // ==================== FICHIERS ====================
 
 describe("buildPlanHtml", () => {
@@ -156,6 +207,15 @@ describe("buildPlanHtml", () => {
     expect(html).toContain(e.scorecardTitle);
     expect(html).toContain(e.annexTitle);
     expect(html).toContain("Offre PME");
+  });
+
+  it("imprime la couverture, le pied « Page X sur Y » et la page paysage du Gantt", () => {
+    const inputs = actionInputs();
+    const html = buildPlanHtml(buildPlanExport(assemblePlan(inputs, NOW), inputs, NOW), null);
+    expect(html).toContain("class=\"couverture\"");
+    expect(html).toContain(`"${e.page} " counter(page)`);
+    expect(html).toContain("@page paysage");
+    expect(html).toContain("class=\"annee\"");
   });
 });
 

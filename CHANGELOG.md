@@ -70,6 +70,29 @@
 - `/strategie/compte` ajouté aux chemins protégés (`auth/routes.ts`) ; lien « Mon
   compte » dans l'en-tête de Kalami Stratégie.
 
+## [Stratégie v0.11.4] - 2026-10-16 — Refonte des exports Word et PDF du plan
+### Modifié
+- Export Word (`plan-export-docx.ts` v2.0) entièrement remis en page :
+  - couverture à bandeau vert pleine largeur, question stratégique en exergue ocre ;
+  - sommaire Word pré-rempli (numéros de page après « Mettre à jour les champs ») ;
+  - titres numérotés (numéro en ocre, filet sous le titre), en-tête au nom de
+    l'organisation, pied « Kalami Stratégie · Page X sur Y » ;
+  - vraies listes à puces, précisions (cible, échéance, responsable…) en retrait, une par
+    ligne, au lieu de longues lignes « - … (cible : … ; échéance : …) » ;
+  - vision, mission et énoncé de stratégie en encadré vert ; « Ce que nous ne ferons
+    pas » en encadré ocre ;
+  - forces, faiblesses, opportunités et menaces en grille SWOT 2 × 2 colorée ;
+  - Gantt en paysage avec ligne des années, responsable sous chaque chantier ;
+  - tableau de bord : vue d'ensemble 2 × 2 par perspective, puis tableaux détaillés à
+    en-tête coloré et lignes alternées ; traçabilité en liste compacte.
+- Export PDF (`plan-export-html.ts` v2.0) aligné sur le même design (mêmes blocs,
+  couleurs et pages ; pied « Page X sur Y » par les marges de page CSS).
+### Ajouté
+- `plan-export.ts` v1.1 : découpage de chaque paragraphe pour l'impression
+  (`paragraphLayout`, `splitDetails`) et ton (simple, encadré, réserve), partagés par
+  les deux formats ; le texte du plan n'est jamais modifié, seulement mis en forme.
+- 7 tests unitaires (découpage, précisions, tons, couverture et pied du PDF).
+
 ## [Stratégie v0.11.3] - 2026-10-16 — Export PDF réparé, navigation entre les étapes
 ### Corrigé
 - Export PDF du plan (et PDF filigrané des livres) en erreur 500 sur Vercel : le binaire

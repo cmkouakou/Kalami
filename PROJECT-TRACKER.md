@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.9.1 · Stratégie v0.11.3 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.9.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -35,7 +35,8 @@ Version actuelle : v0.9.1 · Stratégie v0.11.3 | Statut : 🟡 En cours (projet
 | #29 | 2026-10-16 | Stratégie v0.11.1 : forfaits du coach (verrou par étude, jauge en %, consommation, recharges, admin des forfaits, mémoire des relectures) | ~600 000 | ~3.60 $ |
 | #30 | 2026-10-16 | Sprint 11a-1 : textes légaux versionnés, bandeau des témoins, registre, export JSON, suppression du compte (30 jours) | ~350 000 | ~2.10 $ |
 | #31 | 2026-10-16 | Sprint 11a-2 : PWA (deux applis installables, service worker en liste blanche, hors ligne), accessibilité (évitement, 404, audit axe) | ~300 000 | ~1.80 $ |
-| **TOTAL** | | | **~8 620 000** | **~51.72 $** |
+| #32 | 2026-10-16 | Stratégie v0.11.3-v0.11.4 : export PDF réparé, navigation entre les étapes, refonte des exports Word et PDF du plan | ~700 000 | ~4.20 $ |
+| **TOTAL** | | | **~9 320 000** | **~55.92 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -124,6 +125,7 @@ Version actuelle : v0.9.1 · Stratégie v0.11.3 | Statut : 🟡 En cours (projet
 - [x] v0.11.1 — migration `20261030120000_strategy_coach_packs.sql` appliquée (2026-10-16, éditeur SQL, historique réparé), intégration coach 9/9, classes 11/11, pièces jointes 6/6, plan 5/5, synthèse 4/4, recherche 3/3
 - [x] v0.11.2 — diagnostic des courriels d'invitation (raison du refus de Resend dans les journaux Vercel, message distinct), unitaires 489/489
 - [x] v0.11.3 — export PDF réparé (binaire Chromium inclus dans la fonction Vercel), liens étape précédente / suivante ; unitaires 511/511, build OK
+- [x] v0.11.4 — refonte des exports Word et PDF du plan (couverture, puces et précisions, encadrés, grille SWOT, Gantt par années, tableau de bord 2 × 2) ; unitaires 518/518
 - [ ] S10b — cas Ajinomoto, Infosystem et corrigé (fichiers de l'auteur à fournir)
 - [ ] S12 — limiter le débit des exports du plan (aucun limiteur générique sans migration)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

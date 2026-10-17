@@ -5,10 +5,12 @@
  *  Description: Modèle d'export du plan stratégique (S8b), commun au PDF et au DOCX : page
  *               de titre (organisation, question, date), huit sections, feuille de route en
  *               Gantt au mois (étape 8), tableau de bord équilibré par perspective et annexe
- *               de traçabilité. Fonctions pures : aucun format de fichier ici.
+ *               de traçabilité. Chaque paragraphe est découpé pour la mise en page (titre de
+ *               liste, puces, précisions entre parenthèses, encadré) sans modifier le texte.
+ *               Fonctions pures : aucun format de fichier ici.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-15
+ *  Version    : 1.1
+ *  Date       : 2026-10-16
  *  Dépendances: i18n (fr-strategy.ts), plan-assemble.ts, plan-trace.ts, slug.ts,
  *               templates/plan.ts, templates/action.ts
  * =============================================================
@@ -34,8 +36,28 @@ export type ExportFormat = "pdf" | "docx";
 
 export const EXPORT_FORMATS: readonly ExportFormat[] = ["pdf", "docx"];
 
+/** Précision d'une ligne (« cible : 80 % »), tirée de sa parenthèse finale. */
+export type ExportDetail = { label: string; value: string };
+
+/** Ligne mise en page : libellé en tête éventuel, texte, puis ses précisions. */
+export type ExportLine = { label: string; text: string; details: ExportDetail[] };
+
+/**
+ * Paragraphe découpé pour l'impression : titre de liste (« Forces »), lignes de texte
+ * suivi, puis puces. Le texte d'origine reste intact dans ExportParagraph.text.
+ */
+export type ParagraphLayout = { title: string; lines: ExportLine[]; items: ExportLine[] };
+
+/** Mise en valeur : encadré clair (vision, mission, énoncé) ou d'avertissement (renoncements). */
+export type ParagraphTone = "plain" | "highlight" | "caution";
+
 /** Paragraphe imprimé ; son rang (à partir de 1) est celui que cite l'annexe. */
-export type ExportParagraph = { no: number; text: string };
+export type ExportParagraph = {
+  no: number;
+  text: string;
+  tone: ParagraphTone;
+  layout: ParagraphLayout;
+};
 
 /** Section du plan prête à imprimer (paragraphes non vides). */
 export type ExportSection = {
@@ -111,6 +133,21 @@ const DATE_FORMAT = new Intl.DateTimeFormat("fr-CA", { dateStyle: "long", timeZo
 /** Nom de fichier de secours si le nom de l'organisation ne donne aucun caractère utile. */
 const FILE_NAME_FALLBACK = "plan-strategique";
 
+/** Puce d'une liste assemblée (« - texte »). */
+const BULLET = /^\s*[-–•]\s+/;
+
+/** Libellé court d'une précision (« signal d'alerte »), suivi de « : ». */
+const DETAIL_LABEL = /^([\p{L}'’ ]{2,30}?) : ([\s\S]+)$/u;
+
+/** Séparateur de précisions : « ; » suivi d'un nouveau libellé (pas un « ; » du texte). */
+const DETAIL_SEPARATOR = /\s;\s(?=[\p{L}'’ ]{2,30} : )/u;
+
+/** Libellé en tête de paragraphe : sans ponctuation de phrase, au plus 100 caractères. */
+const LEAD_LABEL = /^([^.,;:!?()\n]{2,100}) : ([\s\S]+)$/;
+
+/** Sources dont le paragraphe est mis en valeur (étapes 6 et 7). */
+const HIGHLIGHT_SOURCES = new Set(["6:vision", "6:mission", "7:statement"]);
+
 // ==================== FONCTIONS UTILITAIRES ====================
 
 /** Date UTC du premier jour d'un mois AAAA-MM. */
@@ -141,6 +178,97 @@ function organisationName(inputs: PlanInputs): string {
     return interpolate(p.trace.scopeUnit, { name: inputs.companyName, parent: parentCompany });
   }
   return inputs.companyName;
+}
+
+/**
+ * Indice de la parenthèse ouvrante qui ferme la ligne, ou -1 si la ligne ne finit pas par
+ * une parenthèse équilibrée.
+ */
+function closingGroupStart(line: string): number {
+  if (!line.endsWith(")")) return -1;
+  let depth = 0;
+  for (let index = line.length - 1; index >= 0; index -= 1) {
+    if (line[index] === ")") depth += 1;
+    if (line[index] === "(") depth -= 1;
+    if (depth === 0) return index;
+  }
+  return -1;
+}
+
+/**
+ * Sépare une ligne de ses précisions finales (« Texte (cible : 80 % ; échéance : juin) »).
+ * La parenthèse n'est découpée que si chaque morceau commence par un libellé court.
+ * @param line - Ligne de texte
+ * @returns Texte principal et précisions (vides si la parenthèse est du texte ordinaire)
+ *
+ * Exemple : splitDetails("Offre (cible : 10 %)") → { text: "Offre", details: [cible] }
+ */
+export function splitDetails(line: string): { text: string; details: ExportDetail[] } {
+  const start = closingGroupStart(line);
+  if (start <= 0) return { text: line, details: [] };
+  const parts = line.slice(start + 1, -1).split(DETAIL_SEPARATOR);
+  const details: ExportDetail[] = [];
+  for (const part of parts) {
+    const match = DETAIL_LABEL.exec(part.trim());
+    if (!match) return { text: line, details: [] };
+    details.push({ label: match[1].trim(), value: match[2].trim() });
+  }
+  return { text: line.slice(0, start).trim(), details };
+}
+
+/** Ligne de texte suivi : libellé de tête (« Vision », titre d'un enjeu) et précisions. */
+function proseLine(line: string): ExportLine {
+  const { text, details } = splitDetails(line);
+  const match = LEAD_LABEL.exec(text);
+  return match
+    ? { label: match[1].trim(), text: match[2].trim(), details }
+    : { label: "", text, details };
+}
+
+/**
+ * Découpe un paragraphe pour l'impression : une première ligne terminée par « : » et suivie
+ * de puces devient le titre de la liste ; les lignes « - … » deviennent des puces.
+ * @param text - Texte du paragraphe (inchangé, seulement découpé)
+ *
+ * Exemple : paragraphLayout("Forces :\n- Marque connue") → titre « Forces », une puce
+ */
+export function paragraphLayout(text: string): ParagraphLayout {
+  const rows = text.split("\n").map((row) => row.trim()).filter(Boolean);
+  const hasItems = rows.some((row) => BULLET.test(row));
+  let title = "";
+  if (hasItems && rows.length > 1 && !BULLET.test(rows[0]) && rows[0].endsWith(":")) {
+    title = rows.shift()!.replace(/\s*:$/, "");
+  }
+  const lines: ExportLine[] = [];
+  const items: ExportLine[] = [];
+  for (const row of rows) {
+    if (BULLET.test(row)) {
+      const { text: item, details } = splitDetails(row.replace(BULLET, ""));
+      items.push({ label: "", text: item, details });
+    } else if (items.length === 0) {
+      lines.push(proseLine(row));
+    } else {
+      // Texte après les puces : rattaché à la dernière puce pour garder l'ordre de lecture
+      const last = items[items.length - 1];
+      last.text = `${last.text} ${row}`;
+    }
+  }
+  return { title, lines, items };
+}
+
+/**
+ * Ton d'un paragraphe selon ses sources : vision, mission et énoncé de stratégie en
+ * encadré ; renoncements (« ce que nous ne ferons pas ») en encadré d'avertissement.
+ */
+function paragraphTone(sources: { step: number; id: string }[], key: PlanSectionKey,
+  inputs: PlanInputs): ParagraphTone {
+  if (sources.some((source) => HIGHLIGHT_SOURCES.has(`${source.step}:${source.id}`))) {
+    return "highlight";
+  }
+  const renounced = new Set(inputs.choice.renunciations.map((item) => item.id));
+  const isRenunciation = sources.length > 0
+    && sources.every((source) => source.step === 7 && renounced.has(source.id));
+  return key === "strategy" && isRenunciation ? "caution" : "plain";
 }
 
 // ==================== PARTIES DU DOCUMENT ====================
@@ -228,7 +356,12 @@ export function buildPlanExport(plan: PlanPayload, inputs: PlanInputs, now: Date
       key: section.key,
       title: p.sections[section.key],
       paragraphs: section.blocks
-        .map((block, index) => ({ no: index + 1, text: block.text.trim() }))
+        .map((block, index) => ({
+          no: index + 1,
+          text: block.text.trim(),
+          tone: paragraphTone(block.sources, section.key, inputs),
+          layout: paragraphLayout(block.text.trim()),
+        }))
         .filter((paragraph) => paragraph.text),
     })),
     gantt: exportGantt(inputs),

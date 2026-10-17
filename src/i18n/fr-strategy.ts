@@ -1075,6 +1075,11 @@ const strategyFr = {
       workstream: "Chantier",
       period: "Période",
       none: "—",
+      brand: "Kalami Stratégie",
+      page: "Page",
+      pageOf: "sur",
+      overview: "Vue d'ensemble",
+      details: "Détail des indicateurs",
     },
 
     // Textes du plan assemblé (repris tels quels dans le contenu)
