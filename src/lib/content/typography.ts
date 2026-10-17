@@ -8,9 +8,10 @@
  *               (« *** » → ornement), poèmes (vers conservés ligne à ligne), espaces et
  *               retraits saisis au clavier retirés, titre répété en tête de chapitre retiré.
  *               S'applique aux blocs déjà nettoyés (liste blanche de sanitize.ts).
+ *               v1.1 : blocs réduits à une image gardés, classes d'encadré préservées.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-16
+ *  Version    : 1.1
+ *  Date       : 2026-10-17
  *  Dépendances: htmlparser2, domhandler, dom-serializer, lib/content/sanitize.ts
  * =============================================================
  */
@@ -19,7 +20,7 @@ import "server-only";
 
 import render from "dom-serializer";
 import { type ChildNode, type Element, isTag, isText, type Text } from "domhandler";
-import { textContent } from "domutils";
+import { findOne, textContent } from "domutils";
 import { parseDocument } from "htmlparser2";
 
 import { assertLimits, countWords } from "./sanitize";
@@ -145,7 +146,9 @@ export function polishBlock(html: string, language: BookLanguage): string {
 
   if (element.name === "p") {
     trimBreaks(element);
-    if (isVerse(element)) element.attribs.class = VERSE_CLASS;
+    if (isVerse(element)) {
+      element.attribs.class = [element.attribs.class, VERSE_CLASS].filter(Boolean).join(" ");
+    }
   }
 
   const quote = { open: false };
@@ -163,7 +166,8 @@ export function polishBlock(html: string, language: BookLanguage): string {
   }
   if (last) last.data = last.data.replace(/[\s\u00a0\u202f]+$/, "");
 
-  if (!textContent(element).trim() && element.name !== "hr") return "";
+  const hasImage = !!findOne((child) => child.name === "img", element.children);
+  if (!textContent(element).trim() && !hasImage) return "";
   return render(document, { encodeEntities: "utf8" }).trim();
 }
 

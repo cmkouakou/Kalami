@@ -565,6 +565,7 @@ const fr = {
       title: "Livres",
       new: "Nouveau livre",
       edit: "Modifier le livre",
+      readFull: "Lire le livre complet (aperçu)",
       bookTitle: "Titre",
       subtitle: "Sous-titre",
       edition: "Édition",

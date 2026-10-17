@@ -5,9 +5,10 @@
   Description: Styles de la liseuse : thèmes (clair, sépia, sombre), typographie du texte,
                pages à tourner, défilement, filigrane, annotations (couleurs, notes, menu,
                fenêtres), protection (sélection, impression). v1.4 : poèmes, ornement.
+               v1.5 : encadrés (« Sur le terrain »), illustrations, tableaux.
   Auteur     : Claude Marcel
-  Version    : 1.4
-  Date       : 2026-10-16
+  Version    : 1.5
+  Date       : 2026-10-17
   Dépend de  : globals.css (jetons de la charte, polices --police-lecture / --police-interface)
 =============================================================
 */
@@ -276,6 +277,125 @@
 .liseuse-texte figure {
   margin: 0.8em 0;
   text-align: center;
+}
+
+/* ==================== TABLEAUX, ILLUSTRATIONS, ENCADRÉS ==================== */
+
+/* Couleurs du livre (en-tête bleu nuit, accent orange) mêlées au thème : lisibles en
+   Papier, Sépia et Nuit sans couleur propre à chaque thème */
+.liseuse {
+  --liseuse-accent: #d9772b;
+  --liseuse-accent-texte: color-mix(in srgb, #d9772b 70%, var(--liseuse-texte));
+  --liseuse-encadre: color-mix(in srgb, #d9772b 13%, var(--liseuse-page));
+  --liseuse-entete: #1f3a5f;
+  --liseuse-rayure: color-mix(in srgb, var(--liseuse-texte) 5%, var(--liseuse-page));
+}
+
+.liseuse-texte thead th {
+  background: var(--liseuse-entete);
+  color: #ffffff;
+}
+
+.liseuse-texte tbody tr:nth-child(even) {
+  background: var(--liseuse-rayure);
+}
+
+/* Paragraphes de cellule : ni retrait ni justification */
+.liseuse-texte td p,
+.liseuse-texte th p {
+  text-align: left;
+  text-indent: 0;
+  hyphens: manual;
+}
+
+/* Schéma : réduit pour tenir dans une page, sur fond blanc (lisible en thème Nuit) */
+.liseuse-texte figure.illustration {
+  margin: 1em 0;
+}
+
+.liseuse-texte figure img {
+  display: block;
+  max-width: 100%;
+  max-height: 58vh;
+  width: auto;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.liseuse-texte figcaption {
+  margin-top: 0.5em;
+  color: var(--liseuse-doux);
+  font-family: var(--police-interface), "Segoe UI", system-ui, sans-serif;
+  font-size: 0.78em;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* Encadré : une suite de paragraphes dessinée comme un seul cadre (début, fin) ; coupé
+   entre deux pages, il reste ouvert en bas puis en haut de la page suivante */
+.liseuse-texte p.encadre {
+  margin: 0;
+  padding: 0.35em 1em 0;
+  text-indent: 0;
+  font-size: 0.94em;
+}
+
+.liseuse-texte p.encadre-fond {
+  background: var(--liseuse-encadre);
+  border-left: 4px solid var(--liseuse-accent);
+}
+
+.liseuse-texte p.encadre-trait {
+  border: 1px solid var(--liseuse-bordure);
+  border-width: 0 1px;
+}
+
+.liseuse-texte p.encadre-debut {
+  margin-top: 1.2em;
+  padding-top: 0.9em;
+}
+
+.liseuse-texte p.encadre-trait.encadre-debut {
+  border-top-width: 1px;
+}
+
+.liseuse-texte p.encadre-fin {
+  margin-bottom: 1.2em;
+  padding-bottom: 0.9em;
+}
+
+.liseuse-texte p.encadre-trait.encadre-fin {
+  border-bottom-width: 1px;
+}
+
+.liseuse-texte p.encadre-debut.suite {
+  margin-top: 0;
+  padding-top: 0.35em;
+  border-top-width: 0;
+}
+
+.liseuse-texte p.encadre-fin.coupe {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom-width: 0;
+}
+
+.liseuse-texte p.encadre-titre {
+  font-family: var(--police-interface), "Segoe UI", system-ui, sans-serif;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.liseuse-texte .encadre-label {
+  display: block;
+  margin-bottom: 0.2em;
+  color: var(--liseuse-accent-texte);
+  font-size: 0.75em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .liseuse-texte a {

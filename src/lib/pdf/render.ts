@@ -8,8 +8,8 @@
  *               @page) et en filigrane diagonal léger. Toutes les valeurs saisies sont
  *               échappées ; le texte des chapitres est renettoyé par la liste blanche.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-17
  *  Dépendances: lib/content/sanitize.ts
  * =============================================================
  */
@@ -129,7 +129,24 @@ body { margin: 0; }
 .chapitre blockquote { margin: 8pt 14pt; font-style: italic; }
 .chapitre table { border-collapse: collapse; width: 100%; font-size: 9pt; }
 .chapitre td, .chapitre th { border: 0.5pt solid #b9ae9f; padding: 3pt; }
-.chapitre pre { white-space: pre-wrap; font-size: 8.5pt; }`;
+.chapitre pre { white-space: pre-wrap; font-size: 8.5pt; }
+.chapitre thead th { background: #1f3a5f; color: #fff; }
+.chapitre td p, .chapitre th p { margin: 0; text-align: left; }
+.chapitre tbody tr:nth-child(even) { background: #f4f6f9; }
+.chapitre figure { margin: 10pt 0; text-align: center; break-inside: avoid; }
+.chapitre figure img { max-width: 100%; max-height: 170mm; height: auto; }
+.chapitre figcaption { margin-top: 4pt; font-size: 8.5pt; color: #6b6257; }
+.chapitre p.encadre { margin: 0; padding: 0 9pt 5pt; background: #fbefe4; }
+.chapitre p.encadre-fond { border-left: 3pt solid #d9772b; }
+.chapitre p.encadre-trait { background: none; border: 0.5pt solid #b9ae9f; }
+.chapitre p.encadre-trait { border-width: 0 0.5pt; }
+.chapitre p.encadre-debut { margin-top: 10pt; padding-top: 7pt; }
+.chapitre p.encadre-trait.encadre-debut { border-top-width: 0.5pt; }
+.chapitre p.encadre-fin { margin-bottom: 10pt; padding-bottom: 7pt; }
+.chapitre p.encadre-trait.encadre-fin { border-bottom-width: 0.5pt; }
+.chapitre p.encadre-titre { font-weight: bold; text-align: left; break-after: avoid; }
+.chapitre .encadre-label { display: block; font-size: 7.5pt; letter-spacing: 0.08em; }
+.chapitre .encadre-label { color: #a8521a; }`;
 }
 
 // ==================== GABARIT ====================

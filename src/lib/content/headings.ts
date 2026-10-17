@@ -101,7 +101,8 @@ export function promoteHeadings(nodes: ChildNode[]): ChildNode[] {
   const candidates: { element: Element; marker: boolean }[] = [];
   let paragraphs = 0;
   for (const node of nodes) {
-    if (!isTag(node) || node.name !== "p") continue;
+    // Les paragraphes d'encadré (classe posée par la conversion) ne sont pas des titres
+    if (!isTag(node) || node.name !== "p" || node.attribs.class) continue;
     const text = headingText(node);
     if (text) paragraphs++;
     if (!text || text.length > MAX_HEADING_LENGTH || SENTENCE_END.test(text)) continue;

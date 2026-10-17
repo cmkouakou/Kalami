@@ -1,5 +1,28 @@
 # Journal des modifications
 
+## [v0.9.4] - 2026-10-17 — Schémas, encadrés et lecture complète par l'auteur
+### Ajouté
+- Images des manuscrits Word conservées (`lib/content/docx-images.ts`, bibliothèque `sharp`) :
+  recompressées en WebP (largeur 1 200 px, 400 Ko au plus, 200 images par livre) et intégrées
+  au texte ; elles suivent donc les droits de lecture et la lecture hors ligne. Les formats
+  Word non lisibles (EMF, WMF) sont ignorés.
+- Illustrations : une image seule sur sa ligne devient une figure ; le paragraphe suivant
+  « Figure 2.1 – … » (ou « Schéma », « Graphique »…) devient sa légende et son texte de
+  remplacement (`lib/content/docx-layout.ts`).
+- Encadrés : paragraphes ombrés (« SUR LE TERRAIN ») ou seulement bordés repérés dans le
+  Word et regroupés en un seul cadre (début, fin, titre, étiquette). Un encadré coupé entre
+  deux pages reste ouvert en bas puis en haut de la page suivante.
+- Liseuse et PDF filigrané : styles des encadrés, des figures et des tableaux (en-tête bleu
+  nuit, lignes alternées), adaptés aux thèmes Papier, Sépia et Nuit.
+- Administration : lien « Lire le livre complet (aperçu) » sur la fiche d'un livre, publié ou
+  non (`/apercu/{id}`, version en attente comprise).
+- Tests unitaires `content-docx-layout.test.ts` (14 tests).
+
+### Modifié
+- Liste blanche du texte : images intégrées (WebP, PNG, JPEG uniquement), classes des encadrés
+  et des figures ; la limite de taille du livre ne compte que le texte, une limite par chapitre
+  (3,5 Mo) borne les images.
+
 ## [v0.9.3] - 2026-10-16 — Manuscrits PDF et belle mise en page
 ### Ajouté
 - Dépôt de manuscrits PDF (`lib/content/convert-pdf.ts`, bibliothèque `unpdf`), en plus

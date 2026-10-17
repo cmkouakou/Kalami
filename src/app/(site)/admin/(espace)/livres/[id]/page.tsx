@@ -4,10 +4,11 @@
  *  Projet     : Kalami
  *  Description: Fiche d'un livre en administration : informations, prix, statut de
  *               publication, couverture, puis contenu (manuscrit, extrait, droits de lecture).
- *               Une demande de validation ouverte s'affiche en tête (décision).
+ *               Une demande de validation ouverte s'affiche en tête (décision). Lien vers
+ *               l'aperçu : le livre entier dans la liseuse, même non public.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-09
+ *  Version    : 1.3
+ *  Date       : 2026-10-17
  *  Dépendances: lib/auth/dal.ts, lib/admin/catalog-queries.ts, components/admin
  * =============================================================
  */
@@ -62,11 +63,17 @@ async function BookContent({ params }: { params: Promise<{ id: string }> }) {
     <>
       <header className="flex flex-wrap items-baseline justify-between gap-2">
         <h1 className="font-serif text-3xl font-semibold">{book.title}</h1>
-        {book.status === "published" && (
-          <Link href={`/livres/${book.slug}`} className="text-sm text-encre hover:underline">
-            {t.admin.common.view}
+        <div className="flex flex-wrap gap-4">
+          {/* Livre entier dans la liseuse, publié ou non (version en attente comprise) */}
+          <Link href={`/apercu/${book.id}`} className="text-sm text-encre hover:underline">
+            {t.admin.books.readFull}
           </Link>
-        )}
+          {book.status === "published" && (
+            <Link href={`/livres/${book.slug}`} className="text-sm text-encre hover:underline">
+              {t.admin.common.view}
+            </Link>
+          )}
+        </div>
       </header>
       {submission && <SubmissionReview bookId={book.id} submission={submission} />}
       <div className="grid gap-8 md:grid-cols-[1fr_12rem]">

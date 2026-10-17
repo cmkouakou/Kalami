@@ -6,10 +6,12 @@
  *               Un chapitre commence à chaque titre de niveau 1 (style « Titre 1 » de Word) ;
  *               à défaut de titre 1, au niveau 2 ; à défaut, le livre forme un seul chapitre.
  *               v1.1 : sans styles « Titre », titres repérés à leur allure (headings.ts).
+ *               v1.2 : images (schémas, illustrations) et encadrés conservés.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-16
- *  Dépendances: mammoth, htmlparser2, headings.ts, sanitize.ts, zip.ts
+ *  Version    : 1.2
+ *  Date       : 2026-10-17
+ *  Dépendances: mammoth, htmlparser2, docx-images.ts, docx-layout.ts, headings.ts,
+ *               sanitize.ts, zip.ts
  * =============================================================
  */
 
@@ -18,6 +20,8 @@ import "server-only";
 import { parseDocument } from "htmlparser2";
 import mammoth from "mammoth";
 
+import { createImageConverter } from "./docx-images";
+import { arrangeLayout, BOX_STYLE_MAP, markBoxes } from "./docx-layout";
 import { promoteHeadings } from "./headings";
 import { assertLimits, flattenNodes, isHeading, splitByHeading } from "./sanitize";
 import { ConversionError, type ConvertedChapter } from "./types";
@@ -30,6 +34,26 @@ export type DocxTitles = {
   /** Titre du texte placé avant le premier chapitre (page de titre, avant-propos…). */
   opening: string;
 };
+
+/** Chemin du corps du document dans l'archive Word. */
+const DOCUMENT_PATH = "word/document.xml";
+
+/**
+ * Prépare l'archive pour mammoth : paragraphes d'encadré marqués d'un style fictif.
+ * @param data - Contenu binaire du fichier
+ * @returns Archive réécrite (ou d'origine si le corps est introuvable)
+ */
+async function prepareArchive(data: Uint8Array): Promise<Buffer> {
+  const zip = await openZip(data);
+  const document = zip.file(DOCUMENT_PATH);
+  if (!document) return Buffer.from(data);
+  try {
+    zip.file(DOCUMENT_PATH, markBoxes(await document.async("string")));
+    return await zip.generateAsync({ type: "nodebuffer" });
+  } catch {
+    throw new ConversionError("invalid_file");
+  }
+}
 
 /**
  * Convertit un fichier DOCX en chapitres.
@@ -45,21 +69,24 @@ export async function convertDocx(
   titles: DocxTitles,
 ): Promise<ConvertedChapter[]> {
   // Contrôle de l'archive avant que mammoth ne la décompresse
-  await openZip(data);
+  const buffer = await prepareArchive(data);
 
   let html: string;
   try {
     const result = await mammoth.convertToHtml(
-      { buffer: Buffer.from(data) },
-      // Images non conservées en v1 : on évite de les lire et de les encoder en base64
-      { convertImage: mammoth.images.imgElement(async () => ({ src: "" })) },
+      { buffer },
+      {
+        styleMap: BOX_STYLE_MAP,
+        // Schémas et illustrations recompressés en WebP, intégrés au texte
+        convertImage: mammoth.images.imgElement(createImageConverter()),
+      },
     );
     html = result.value;
   } catch {
     throw new ConversionError("invalid_file");
   }
 
-  const nodes = flattenNodes(parseDocument(html).children);
+  const nodes = arrangeLayout(flattenNodes(parseDocument(html).children));
   let level = [1, 2].find((n) => nodes.some((node) => isHeading(node, n)));
   // Manuscrit sans styles « Titre » : titres repérés à leur allure (gras, « Chapitre 2 »…) ;
   // seuls les marqueurs de chapitre (h1) découpent, les autres restent des intertitres

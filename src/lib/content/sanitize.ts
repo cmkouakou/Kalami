@@ -6,8 +6,9 @@
  *               liste blanche de balises, aplatissement des conteneurs, découpage en blocs
  *               de premier niveau et en chapitres, comptage des mots, limites de taille.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-08
+ *               v1.1 : images intégrées (WebP, PNG, JPEG), encadrés, illustrations.
+ *  Version    : 1.1
+ *  Date       : 2026-10-17
  *  Dépendances: sanitize-html, htmlparser2, domhandler, domutils, dom-serializer
  * =============================================================
  */
@@ -27,6 +28,8 @@ import { ConversionError, type ConvertedChapter } from "./types";
 export const MAX_CHAPTERS = 500;
 export const MAX_BLOCKS_PER_CHAPTER = 20000;
 export const MAX_TOTAL_CHARACTERS = 5_000_000;
+/** Taille maximale d'un chapitre, images comprises (réponse de l'API sous 4,5 Mo). */
+export const MAX_CHAPTER_CHARACTERS = 3_500_000;
 
 /** Longueur maximale d'un titre de chapitre (contrainte de la table chapters). */
 const MAX_TITLE_LENGTH = 300;
@@ -45,18 +48,41 @@ const CONTAINER_TAGS = new Set([
 /** Balises jamais conservées, contenu compris. */
 const DROPPED_TAGS = new Set(["head", "script", "style", "nav", "template", "noscript", "svg"]);
 
-/** Liste blanche appliquée à chaque bloc. Liens et images ne sont pas conservés en v1. */
+/** Seules images gardées : intégrées au bloc, recompressées par la conversion. */
+const IMAGE_SOURCE = /^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+=*$/;
+
+/** Image intégrée dans un bloc (retirée du décompte du texte). */
+const IMAGE_DATA = /data:image\/[a-z]+;base64,[A-Za-z0-9+/]+=*/g;
+
+/** Liste blanche appliquée à chaque bloc. Les liens ne sont pas conservés. */
 const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
     "p", "h2", "h3", "h4", "h5", "h6", "strong", "em", "b", "i", "u", "s", "sub", "sup",
     "small", "br", "ul", "ol", "li", "dl", "dt", "dd", "blockquote", "table", "caption",
     "thead", "tbody", "tfoot", "tr", "th", "td", "pre", "code", "hr", "figure", "figcaption",
+    "img", "span",
   ],
   allowedAttributes: {
     ol: ["start"],
     td: ["colspan", "rowspan"],
     th: ["colspan", "rowspan", "scope"],
+    img: ["src", "alt", "width", "height"],
+    p: ["class"],
+    span: ["class"],
+    figure: ["class"],
   },
+  // Classes posées par la conversion (encadrés, illustrations) ; toute autre est retirée
+  allowedClasses: {
+    p: [
+      "vers", "encadre", "encadre-fond", "encadre-trait", "encadre-debut", "encadre-fin",
+      "encadre-titre",
+    ],
+    span: ["encadre-label"],
+    figure: ["illustration"],
+  },
+  allowedSchemesByTag: { img: ["data"] },
+  // Image sans source intégrée valide (lien externe, format inconnu) : retirée
+  exclusiveFilter: (frame) => frame.tag === "img" && !IMAGE_SOURCE.test(frame.attribs.src ?? ""),
   // Le titre du chapitre est rendu à part : un h1 restant dans le texte devient h2
   transformTags: { h1: "h2" },
   disallowedTagsMode: "discard",
@@ -134,7 +160,7 @@ export function nodesToBlocks(nodes: ChildNode[]): string[] {
 
   const push = (html: string) => {
     const clean = sanitizeBlock(html);
-    if (clean && (plainText(clean) || clean.startsWith("<hr"))) blocks.push(clean);
+    if (clean && (plainText(clean) || /^<hr|<img /.test(clean))) blocks.push(clean);
   };
   const flushInline = () => {
     if (inline.length && textContent(inline).trim()) push(`<p>${render(inline)}</p>`);
@@ -221,10 +247,16 @@ export function assertLimits(chapters: ConvertedChapter[]): void {
   if (!chapters.length) throw new ConversionError("empty");
   if (chapters.length > MAX_CHAPTERS) throw new ConversionError("too_many_chapters");
 
+  // Le texte compte pour la limite du livre ; les images, pour celle de chaque chapitre
   let characters = 0;
   for (const chapter of chapters) {
     if (chapter.blocks.length > MAX_BLOCKS_PER_CHAPTER) throw new ConversionError("too_large");
-    for (const block of chapter.blocks) characters += block.length;
+    let chapterSize = 0;
+    for (const block of chapter.blocks) {
+      chapterSize += block.length;
+      characters += block.replace(IMAGE_DATA, "").length;
+    }
+    if (chapterSize > MAX_CHAPTER_CHARACTERS) throw new ConversionError("too_large");
   }
   if (characters > MAX_TOTAL_CHARACTERS) throw new ConversionError("too_large");
 }
