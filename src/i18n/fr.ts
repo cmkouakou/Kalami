@@ -608,8 +608,8 @@ const fr = {
         "Word : chaque « Titre 1 » ouvre un chapitre ; sans styles, les lignes « Chapitre 2 » " +
         "ou en gras sont reconnues. PDF : les titres sont repérés à leur taille, les en-têtes " +
         "et numéros de page retirés. EPUB : les chapitres suivent la table des matières. La " +
-        "typographie est harmonisée ; vérifiez le résultat dans l'aperçu. Les images ne sont " +
-        "pas conservées pour l'instant.",
+        "typographie est harmonisée ; vérifiez le résultat dans l'aperçu. Word : les schémas " +
+        "et les encadrés colorés sont conservés (pas les images d'un PDF ou d'un EPUB).",
       uploading: "Envoi du fichier…",
       converting: "Conversion en cours…",
       converted: "Conversion réussie : {count} chapitres.",

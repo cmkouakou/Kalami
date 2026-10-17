@@ -6,9 +6,10 @@
  *               HTML en éléments, découpe d'un bloc entre deux décalages de texte (la mise
  *               en forme est conservée) et mesure d'une page pour la pagination.
  *               Les décalages portent sur textContent, comme la recherche côté serveur.
+ *               v1.1 : préchargement des images avant la mesure.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-17
  *  Dépendances: lib/reader/paginate.ts, lib/reader/types.ts
  * =============================================================
  */
@@ -38,6 +39,32 @@ export function parseBlock(html: string): HTMLElement {
   const wrapper = document.createElement("div");
   wrapper.append(content);
   return wrapper;
+}
+
+/**
+ * Charge et décode les images des blocs avant la pagination : un bloc analysé dans un
+ * template ne charge pas ses images, et une image non décodée mesure 0 px de haut (le
+ * schéma « tiendrait » toujours et déborderait de la page). Une image déjà décodée a sa
+ * taille dès son insertion dans la page de mesure.
+ * @param elements - Éléments du chapitre
+ * @returns Images préchargées, à garder en vie pendant la pagination
+ */
+export async function preloadImages(elements: HTMLElement[]): Promise<HTMLImageElement[]> {
+  const sources = new Set<string>();
+  for (const element of elements) {
+    element.querySelectorAll("img").forEach((image) => {
+      const source = image.getAttribute("src");
+      if (source) sources.add(source);
+    });
+  }
+  const images = [...sources].map((source) => {
+    const image = new Image();
+    image.src = source;
+    return image;
+  });
+  // Image illisible : mesurée sans elle plutôt que de bloquer le chapitre
+  await Promise.all(images.map((image) => image.decode().catch(() => undefined)));
+  return images;
 }
 
 /** Élément de titre du chapitre, placé avant le premier bloc. */

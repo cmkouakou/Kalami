@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.9.5] - 2026-10-17 — Schémas à la bonne taille en mode livre
+### Corrigé
+- Liseuse (mode livre) : les images sont décodées avant la pagination ; un schéma ne déborde
+  plus en bas de sa page (il mesurait 0 px au moment de la mesure).
+- Administration : l'aide du dépôt de manuscrit indique que les schémas et encadrés Word
+  sont conservés.
+
 ## [v0.9.4] - 2026-10-17 — Schémas, encadrés et lecture complète par l'auteur
 ### Ajouté
 - Images des manuscrits Word conservées (`lib/content/docx-images.ts`, bibliothèque `sharp`) :

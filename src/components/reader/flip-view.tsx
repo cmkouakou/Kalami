@@ -11,10 +11,11 @@
  *               la pagination. Les pages se tournent par les coins, le glissement, les
  *               flèches et le clavier (un clic sert à sélectionner du texte).
  *               v1.2 : marges portées par le bloc de texte (page-flip effaçait celles de la
- *               page), pli central entre les deux pages.
+ *               page), pli central entre les deux pages. v1.3 : images décodées avant la
+ *               mesure (un schéma ne déborde plus de sa page).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-16
+ *  Version    : 1.3
+ *  Date       : 2026-10-17
  *  Dépendances: page-flip, dom.ts, highlight-dom.ts, lib/reader/paginate.ts,
  *               lib/reader/position.ts
  * =============================================================
@@ -30,7 +31,14 @@ import { pageIndexOf, pageStart, paginate } from "@/lib/reader/paginate";
 import { chapterFraction } from "@/lib/reader/position";
 import type { Highlight, Page, ReaderSettings } from "@/lib/reader/types";
 
-import { blockInfo, createMeasurer, parseBlock, renderPage, titleElement } from "./dom";
+import {
+  blockInfo,
+  createMeasurer,
+  parseBlock,
+  preloadImages,
+  renderPage,
+  titleElement,
+} from "./dom";
 import { paintHighlights } from "./highlight-dom";
 
 const t = getDictionary();
@@ -238,11 +246,16 @@ export function FlipView({
       const { PageFlip } = await import("page-flip/dist/js/page-flip.module.js");
       if (cancelled) return;
 
-      const layout = layoutFor(host.clientWidth, host.clientHeight);
       const elements = [titleElement(chapter.title), ...chapter.blocks.map(parseBlock)];
+      // Les schémas doivent avoir leur vraie hauteur au moment de la mesure
+      const images = await preloadImages(elements);
+      if (cancelled) return;
+
+      const layout = layoutFor(host.clientWidth, host.clientHeight);
       const measurer = createMeasurer(host, elements, layout.contentWidth, layout.contentHeight);
       const pages: Page[] = paginate(elements.map(blockInfo), measurer.fits);
       measurer.dispose();
+      images.length = 0;
 
       const lengths = elements.slice(1).map((element) => element.textContent?.length ?? 0);
       const items = pages.map((page, index) =>
