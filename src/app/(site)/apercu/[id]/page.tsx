@@ -53,7 +53,7 @@ async function PreviewContent({
   const data = await getPreviewData(id, requested ? parseChapterPosition(requested) : null);
   if (!data) notFound();
 
-  return <ReaderClient data={data} price={null} />;
+  return <ReaderClient data={data} price={null} buy={null} />;
 }
 
 /** Écran affiché pendant la préparation de la liseuse. */

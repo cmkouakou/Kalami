@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.9.8 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.10.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -40,7 +40,8 @@ Version actuelle : v0.9.8 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet
 | #34 | 2026-10-17 | v0.9.4 : schémas et illustrations (WebP intégré), encadrés « Sur le terrain », tableaux, aperçu complet depuis l'administration | ~450 000 | ~2.70 $ |
 | #35 | 2026-10-17 | v0.9.5-v0.9.7 : schémas en mode livre, ouvertures de module, sommaire cliquable, accès rapide, pages qui tournent partout, liens du sommaire corrigés | ~600 000 | ~3.60 $ |
 | #36 | 2026-10-17 | v0.9.8 : quatrième de couverture, liseuse ouverte sur la couverture et finie sur la quatrième, encart Kalami Stratégie (fiche, fin d'extrait, fins de module) | ~400 000 | ~2.40 $ |
-| **TOTAL** | | | **~11 500 000** | **~69.00 $** |
+| #37 | 2026-10-18 | v0.10.0 (Sprint 5a) : étude des prix, paiement par carte Stripe (Checkout, webhook signé, commandes, livraison unique, étude offerte), Mes achats | ~700 000 | ~4.20 $ |
+| **TOTAL** | | | **~12 200 000** | **~73.20 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -80,7 +81,10 @@ Version actuelle : v0.9.8 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet
 - [x] Sprint 11a-1 — migration 20261031120000 appliquée, historique réparé, tests RLS legal-rls (8/8)
 - [x] Sprint 11a-2 — PWA et accessibilité (v0.9.1), unitaires 511/511, axe 0 violation
 - [x] v0.9.2 — interrupteur « dépôt ouvert aux auteurs externes » (fermé par défaut), unitaires 518/518
-- [ ] Paiements 5, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 5a — paiement du livre par carte (Stripe Checkout, mode réel), commandes, Mes achats (v0.10.0) ; unitaires 573/573, intégration commandes 7/7, build OK
+- [x] Sprint 5a — migration `20261104120000_orders.sql` appliquée (2026-10-18), historique réparé
+- [ ] Sprint 5a — prix CAD du livre à 12,99 dans l'admin, variables Stripe dans Vercel, achat réel puis remboursement
+- [ ] Paiements 5b, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)

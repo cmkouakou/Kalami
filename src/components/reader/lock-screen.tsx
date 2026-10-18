@@ -3,12 +3,12 @@
  *  Fichier    : lock-screen.tsx (reader)
  *  Projet     : Kalami
  *  Description: Écrans de fin de la liseuse : fin de l'extrait gratuit (feuille avec prix,
- *               retour à la fiche du livre ; aucun paiement avant les sprints dédiés) et fin
- *               du livre.
+ *               achat, retour à la fiche du livre) et fin du livre.
  *               v1.2 : encart Kalami Stratégie en fin d'extrait du livre guide.
+ *               v1.3 : achat par carte depuis la fin de l'extrait.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-17
+ *  Version    : 1.3
+ *  Date       : 2026-10-18
  *  Dépendances: i18n, components/ui
  * =============================================================
  */
@@ -34,13 +34,22 @@ type LockScreenProps = {
   slug: string;
   /** Prix affiché dans la devise du lecteur (composant serveur PriceTag) */
   price: ReactNode;
+  /** Zone d'achat (composant serveur BuySection) */
+  buy: ReactNode;
   signedIn: boolean;
   /** Encart Kalami Stratégie (livre guide de la démarche) */
   promo?: boolean;
 };
 
 /** Fin de l'extrait : la suite est réservée aux acheteurs. */
-export function LockScreen({ title, slug, price, signedIn, promo = false }: LockScreenProps) {
+export function LockScreen({
+  title,
+  slug,
+  price,
+  buy,
+  signedIn,
+  promo = false,
+}: LockScreenProps) {
   const back = `/livres/${slug}`;
   return (
     <section aria-labelledby="titre-verrou" className={SHEET}>
@@ -53,10 +62,10 @@ export function LockScreen({ title, slug, price, signedIn, promo = false }: Lock
       </h2>
       <p className="text-body text-ink-muted">{interpolate(t.reader.lock.text, { title })}</p>
       <div className="text-h2 text-ocre-text">{price}</div>
-      <Link href={back} className={`${BUTTON_PRIMARY} w-full`}>
+      <div className="w-full">{buy}</div>
+      <Link href={back} className={BUTTON_TERTIARY}>
         {t.reader.lock.backToBook}
       </Link>
-      <p className="text-small text-ink-muted">{t.reader.lock.buySoon}</p>
       {!signedIn && (
         <Link
           href={`/connexion?suivant=${encodeURIComponent(`${back}/lire`)}`}

@@ -19,6 +19,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { BuySection } from "@/components/catalog/buy-section";
 import { PriceTag } from "@/components/catalog/price-tag";
 import { ReaderClient } from "@/components/reader/reader-client";
 import { getDictionary, interpolate } from "@/i18n";
@@ -65,7 +66,16 @@ async function ReaderContent({
   const data = await getReaderData(slug, requested ? parseChapterPosition(requested) : null);
   if (!data) notFound();
 
-  return <ReaderClient data={data} price={<PriceTag prices={data.book.prices} />} />;
+  const buy = (
+    <BuySection
+      bookId={data.book.id}
+      prices={data.book.prices}
+      returnPath={`/livres/${data.book.slug}/lire`}
+    />
+  );
+  return (
+    <ReaderClient data={data} price={<PriceTag prices={data.book.prices} />} buy={buy} />
+  );
 }
 
 /** Écran affiché pendant la préparation de la liseuse. */

@@ -1,5 +1,29 @@
 # Journal des modifications
 
+## [v0.10.0] - 2026-10-18 — Paiement par carte (Sprint 5a)
+### Ajouté
+- Achat d'un livre par carte bancaire avec Stripe Checkout (mode réel), en FCFA, € ou $ CAD
+  selon les prix du livre : bouton « Acheter » sur la fiche et sur l'écran de fin d'extrait.
+- Commandes (`orders`, `order_items`, `stripe_events`) : la commande est créée au prix de la
+  base ; Stripe n'en est jamais la source. Livraison par le seul webhook signé
+  (`/api/stripe/webhook`) : montant et devise contrôlés, chaque événement traité une fois ;
+  livre, PDF et étude Kalami Stratégie offerte (achats seulement) accordés une seule fois.
+- Compte Stripe partagé : seules les sessions marquées `metadata.app=kalami` sont traitées.
+- Page « Merci » (`/compte/achats/merci`) qui attend la confirmation du paiement, et page
+  « Mes achats » (`/compte/achats`) avec les reçus Stripe ; lien depuis « Mon compte ».
+- Variables `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` et `STRIPE_PRICE_*` (`.env.example`).
+- Étude des prix (`docs/ETUDE-PRIX.md`).
+- Tests : paiement (15 unitaires), commandes et RLS (7 d'intégration).
+
+### Modifié
+- La mention « Paiement bientôt disponible » est remplacée par le bouton d'achat.
+
+### À faire après déploiement
+- Migration `20261104120000_orders.sql` : déjà appliquée, historique réparé.
+- Mettre le prix CAD du livre guide à 12,99 dans l'administration.
+- Vérifier les variables Stripe dans Vercel (Production), puis faire un achat réel et le
+  rembourser depuis Stripe.
+
 ## [v0.9.8] - 2026-10-17 — Couvertures dans la liseuse et encart Kalami Stratégie
 ### Ajouté
 - Quatrième de couverture : nouvelle image du livre (colonne `books.back_cover_path`),

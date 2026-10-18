@@ -130,6 +130,8 @@ type ReaderProps = {
   data: ReaderBootstrap;
   /** Prix du livre (composant serveur), affiché à la fin de l'extrait */
   price: ReactNode;
+  /** Zone d'achat (composant serveur), affichée à la fin de l'extrait */
+  buy: ReactNode;
 };
 
 /** Vrai si la touche vient d'un champ de saisie (les flèches y gardent leur rôle). */
@@ -194,7 +196,7 @@ function usePositionSaver(bookId: string, signedIn: boolean) {
 // ==================== COMPOSANT ====================
 
 /** Liseuse plein écran d'un livre. */
-export function Reader({ data, price }: ReaderProps) {
+export function Reader({ data, price, buy }: ReaderProps) {
   const { book, toc, access, reader, watermark } = data;
   const signedIn = reader !== null;
 
@@ -465,6 +467,7 @@ export function Reader({ data, price }: ReaderProps) {
       title={book.title}
       slug={book.slug}
       price={price}
+      buy={buy}
       signedIn={signedIn}
       promo={hasStrategyPromo(book.slug)}
     />

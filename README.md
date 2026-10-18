@@ -97,6 +97,11 @@ kalami/
 - Suppression de compte : exécutée 30 jours après la demande par `/api/cron/comptes`
   (même `CRON_SECRET`). Elle emporte les études dont l'utilisateur est propriétaire,
   même partagées (avertissement affiché avant la confirmation).
+- Paiement par carte (v0.10.0) : `/api/paiement/checkout` crée la commande au prix de la
+  base (`create_book_order`) puis une session Stripe Checkout ; seul le webhook signé
+  `/api/stripe/webhook` livre l'achat (`stripe_process_event` : montant contrôlé, événement
+  traité une fois). Le compte Stripe est partagé : seules les sessions `metadata.app=kalami`
+  sont traitées. Variables `STRIPE_*` : voir `.env.example`. Historique : `/compte/achats`.
 - Service worker (`public/sw.js`) actif en production seulement. Liste blanche dans
   `public/sw-routes.js` : seuls les fichiers statiques, les couvertures et les pages publiques
   du catalogue sont gardés sur l'appareil ; liseuse, études, comptes et API jamais. Changer

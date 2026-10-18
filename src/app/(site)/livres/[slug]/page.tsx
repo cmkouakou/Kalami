@@ -4,12 +4,12 @@
  *  Projet     : Kalami
  *  Description: Fiche publique d'un livre : couverture, auteur, carte de prix, repères,
  *               résumé, sommaire (extrait gratuit) et auteur. Bouton « Lire » ou
- *               « Reprendre » selon le lecteur, bloc PDF pour qui a l'option ; achat aux
- *               sprints de paiement.
+ *               « Reprendre » selon le lecteur, bloc PDF pour qui a l'option.
  *               v2.2 : encart Kalami Stratégie sur la fiche du livre guide.
+ *               v2.3 : achat par carte (Stripe Checkout).
  *  Auteur     : Claude Marcel
- *  Version    : 2.2
- *  Date       : 2026-10-17
+ *  Version    : 2.3
+ *  Date       : 2026-10-18
  *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
  */
@@ -20,13 +20,13 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { BookCover } from "@/components/catalog/book-cover";
+import { BuySection } from "@/components/catalog/buy-section";
 import { PdfDownload } from "@/components/catalog/pdf-download";
 import { PriceTag } from "@/components/catalog/price-tag";
 import { StrategyPromo } from "@/components/reader/strategy-promo";
 import { IconLock } from "@/components/ui/icons";
 import {
   BADGE,
-  BUTTON_PRIMARY,
   BUTTON_SECONDARY,
   CARD,
   PAGE,
@@ -178,9 +178,11 @@ function BookHeader({ book }: { book: BookDetail }) {
       <div className={`${CARD} flex max-w-md flex-col gap-4 p-6`}>
         <PriceTag prices={book.book_prices} className="text-[30px] leading-9 text-ocre-text" />
         <div className="flex flex-col gap-3">
-          <button type="button" disabled className={`${BUTTON_PRIMARY} w-full`}>
-            {t.catalog.book.buy}
-          </button>
+          <BuySection
+            bookId={book.id}
+            prices={book.book_prices}
+            returnPath={`/livres/${book.slug}`}
+          />
           <Suspense
             fallback={<ReadLink slug={book.slug} label={t.catalog.book.readExcerpt} />}
           >
@@ -190,7 +192,7 @@ function BookHeader({ book }: { book: BookDetail }) {
         <Suspense fallback={null}>
           <PdfSection bookId={book.id} />
         </Suspense>
-        <p className="text-small text-ink-muted">{t.catalog.book.soon}</p>
+        <p className="text-small text-ink-muted">{t.catalog.purchase.secure}</p>
       </div>
     </header>
   );

@@ -30,7 +30,9 @@ const Reader = dynamic(() => import("./reader").then((module) => module.Reader),
   ),
 });
 
+type ReaderClientProps = { data: ReaderBootstrap; price: ReactNode; buy: ReactNode };
+
 /** Liseuse rendue côté client. */
-export function ReaderClient({ data, price }: { data: ReaderBootstrap; price: ReactNode }) {
-  return <Reader data={data} price={price} />;
+export function ReaderClient({ data, price, buy }: ReaderClientProps) {
+  return <Reader data={data} price={price} buy={buy} />;
 }

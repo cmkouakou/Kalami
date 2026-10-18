@@ -53,6 +53,10 @@ async function AccountContent() {
         />
       </section>
 
+      <Link href="/compte/achats" className="text-encre underline">
+        {t.account.purchasesLink}
+      </Link>
+
       {/* ==================== ESPACE AUTEUR (masqué si le dépôt est fermé) ==================== */}
       {(author || depositAllowed) && (
         <section className="rounded-lg border border-line bg-surface p-6">
