@@ -50,6 +50,7 @@ export type AdminBook = {
   status: BookStatus;
   rejection_reason: string | null;
   cover_path: string | null;
+  back_cover_path: string | null;
   book_prices: Price[];
 };
 
@@ -171,7 +172,7 @@ export async function getBookAdmin(id: string): Promise<AdminBook | null> {
       "id, slug, title, subtitle, edition, summary, keywords, language, author_id, " +
         "category_id, page_count, chapter_count, publication_year, is_featured, pdf_enabled, " +
         "status, " +
-        "rejection_reason, cover_path, book_prices(currency, amount_minor)",
+        "rejection_reason, cover_path, back_cover_path, book_prices(currency, amount_minor)",
     )
     .eq("id", id)
     .maybeSingle();

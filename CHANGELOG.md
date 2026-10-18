@@ -1,5 +1,25 @@
 # Journal des modifications
 
+## [v0.9.8] - 2026-10-17 — Couvertures dans la liseuse et encart Kalami Stratégie
+### Ajouté
+- Quatrième de couverture : nouvelle image du livre (colonne `books.back_cover_path`),
+  téléversée depuis la fiche admin ou la fiche auteur, à côté de la couverture.
+- Liseuse : le livre s'ouvre sur sa couverture (page rigide, seule sur sa double page) et se
+  termine sur sa quatrième de couverture ; en défilement, couverture au-dessus du premier
+  chapitre et quatrième sous le dernier. « Début du livre » ramène à la couverture.
+- Encart Kalami Stratégie, pour le livre guide seulement (`lib/reader/promo.ts`,
+  `components/reader/strategy-promo.tsx`) : sur la fiche du livre, à la fin de l'extrait
+  gratuit et à la fin de chaque module qui contient « À vous de jouer » (page dédiée en mode
+  livre, sous le texte en défilement). Jamais à la fin du livre. Aucun bloc ajouté : positions,
+  surlignages et lecture à voix haute inchangés.
+- Tests unitaires : encart Kalami Stratégie (6 tests).
+
+### À faire après déploiement
+- Appliquer la migration `20261103120000_back_cover.sql` (éditeur SQL), puis la réparation
+  de l'historique (`20261103120000`) — AVANT le déploiement : la fiche et la liseuse lisent
+  la nouvelle colonne.
+- Téléverser la quatrième de couverture du livre guide (fiche admin ou auteur).
+
 ## [v0.9.7] - 2026-10-17 — Liens du sommaire au bon endroit
 ### Corrigé
 - Table des matières du livre : un clic ouvrait le chapitre plusieurs pages trop loin. La

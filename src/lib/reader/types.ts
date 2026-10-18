@@ -140,6 +140,8 @@ export type ReaderBootstrap = {
     edition: string | null;
     publicationYear: number | null;
     coverUrl: string | null;
+    /** Quatrième de couverture (dernière page de la liseuse), ou null */
+    backCoverUrl: string | null;
   };
   toc: TocEntry[];
   access: ReaderAccess;

@@ -5,9 +5,10 @@
  *  Description: Écrans de fin de la liseuse : fin de l'extrait gratuit (feuille avec prix,
  *               retour à la fiche du livre ; aucun paiement avant les sprints dédiés) et fin
  *               du livre.
+ *               v1.2 : encart Kalami Stratégie en fin d'extrait du livre guide.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-09
+ *  Version    : 1.2
+ *  Date       : 2026-10-17
  *  Dépendances: i18n, components/ui
  * =============================================================
  */
@@ -18,6 +19,8 @@ import type { ReactNode } from "react";
 import { IconLock } from "@/components/ui/icons";
 import { BUTTON_PRIMARY, BUTTON_TERTIARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
+
+import { StrategyPromo } from "./strategy-promo";
 
 const t = getDictionary();
 
@@ -32,10 +35,12 @@ type LockScreenProps = {
   /** Prix affiché dans la devise du lecteur (composant serveur PriceTag) */
   price: ReactNode;
   signedIn: boolean;
+  /** Encart Kalami Stratégie (livre guide de la démarche) */
+  promo?: boolean;
 };
 
 /** Fin de l'extrait : la suite est réservée aux acheteurs. */
-export function LockScreen({ title, slug, price, signedIn }: LockScreenProps) {
+export function LockScreen({ title, slug, price, signedIn, promo = false }: LockScreenProps) {
   const back = `/livres/${slug}`;
   return (
     <section aria-labelledby="titre-verrou" className={SHEET}>
@@ -60,6 +65,7 @@ export function LockScreen({ title, slug, price, signedIn }: LockScreenProps) {
           {t.reader.lock.signIn}
         </Link>
       )}
+      {promo && <StrategyPromo className="mt-2 w-full" />}
     </section>
   );
 }

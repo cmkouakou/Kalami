@@ -7,8 +7,9 @@
                fenêtres), protection (sélection, impression). v1.4 : poèmes, ornement.
                v1.5 : encadrés (« Sur le terrain »), illustrations, tableaux.
                v1.6 : surtitre et chapeau de module, sommaire cliquable, accès rapide.
+               v1.7 : couvertures (pages à tourner, défilement), encart Kalami Stratégie.
   Auteur     : Claude Marcel
-  Version    : 1.6
+  Version    : 1.7
   Date       : 2026-10-17
   Dépend de  : globals.css (jetons de la charte, polices --police-lecture / --police-interface)
 =============================================================
@@ -522,6 +523,108 @@
 /* Zone de texte : placée par flip-view.tsx aux mêmes dimensions que la page de mesure */
 .liseuse-page-texte {
   position: absolute;
+}
+
+/* Couverture et quatrième de couverture : image pleine page, sans pli central */
+.liseuse-couverture {
+  background: var(--liseuse-texte);
+}
+
+.liseuse-couverture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.--landscape .liseuse-page.liseuse-couverture::after {
+  content: none;
+}
+
+/* Défilement : couverture au-dessus du premier chapitre, quatrième sous le dernier
+   (sélecteurs préfixés : ils l'emportent sur les règles des schémas, .liseuse-texte figure) */
+.liseuse-texte .liseuse-couverture-defilement {
+  max-width: 24rem;
+  margin: 0 auto 2.5rem;
+}
+
+.liseuse-texte .liseuse-couverture-defilement img {
+  display: block;
+  width: 100%;
+  max-height: none;
+  height: auto;
+  background: none;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(42, 37, 32, 0.08), 0 8px 24px rgba(42, 37, 32, 0.1);
+}
+
+.liseuse-texte * + .liseuse-couverture-defilement {
+  margin-top: 2.5rem;
+}
+
+/* ==================== ENCART KALAMI STRATÉGIE ==================== */
+
+/* Fin de module du livre guide : carte discrète, police d'interface, couleurs du thème */
+.liseuse-texte .liseuse-promo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 2.5rem auto 0;
+  max-width: 28rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--liseuse-bordure);
+  border-left: 3px solid var(--liseuse-lien);
+  border-radius: 8px;
+  font-family: var(--police-interface), "Segoe UI", system-ui, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: left;
+  hyphens: manual;
+}
+
+.liseuse-texte .liseuse-promo p {
+  text-indent: 0;
+}
+
+.liseuse-texte .liseuse-promo-label {
+  color: var(--liseuse-doux);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.liseuse-texte .liseuse-promo-titre {
+  font-family: var(--liseuse-police), Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.liseuse-texte .liseuse-promo-texte {
+  color: var(--liseuse-doux);
+}
+
+.liseuse-texte .liseuse-promo-lien {
+  align-self: flex-start;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--liseuse-lien);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Page de l'encart (pages à tourner) : centrée verticalement */
+.liseuse-page-texte:has(> .liseuse-promo) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.liseuse-page-texte > .liseuse-promo {
+  margin-top: 0;
 }
 
 /* Pli central de la double page : légère ombre du côté de la reliure */

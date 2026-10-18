@@ -32,7 +32,8 @@ const CARD_COLUMNS =
   "author:authors!inner(slug, display_name), book_prices(currency, amount_minor)";
 
 const DETAIL_COLUMNS =
-  "id, slug, title, subtitle, edition, summary, keywords, cover_path, language, " +
+  "id, slug, title, subtitle, edition, summary, keywords, cover_path, back_cover_path, " +
+  "language, " +
   "page_count, chapter_count, publication_year, published_at, " +
   "author:authors!inner(id, slug, display_name, bio, photo_path), " +
   "category:categories(slug, name), book_prices(currency, amount_minor)";

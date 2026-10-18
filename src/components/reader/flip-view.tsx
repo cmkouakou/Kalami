@@ -16,8 +16,11 @@
  *               v1.4 : aux limites du chapitre, glisser ou tourner le coin ouvre le chapitre
  *               voisin ; un clic dans la marge tourne la page ; surtitre de module ;
  *               ouverture à une part du chapitre (accès rapide).
+ *               v1.5 : couverture en première page du premier chapitre (le livre s'ouvre
+ *               dessus) et quatrième de couverture en dernière page du dernier chapitre.
+ *               v1.6 : page de l'encart Kalami Stratégie après le texte d'un module.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.6
  *  Date       : 2026-10-17
  *  Dépendances: page-flip, dom.ts, highlight-dom.ts, lib/reader/paginate.ts,
  *               lib/reader/position.ts
@@ -45,6 +48,7 @@ import {
   titleElement,
 } from "./dom";
 import { paintHighlights } from "./highlight-dom";
+import { buildPromoElement } from "./strategy-promo";
 
 const t = getDictionary();
 
@@ -95,6 +99,12 @@ type FlipViewProps = {
   onPosition: (position: ViewPosition) => void;
   onNextChapter: () => void;
   onPreviousChapter: () => void;
+  /** Couverture en première page (premier chapitre seulement), ou null */
+  cover?: { url: string; alt: string } | null;
+  /** Quatrième de couverture en dernière page (dernier chapitre seulement), ou null */
+  backCover?: { url: string; alt: string } | null;
+  /** Page de l'encart Kalami Stratégie après la dernière page de texte */
+  promo?: boolean;
 };
 
 // ==================== OUTILS ====================
@@ -174,6 +184,22 @@ function buildPage(
     );
     page.append(number);
   }
+  return page;
+}
+
+/**
+ * Crée une page de couverture (rigide, image pleine page, sans texte ni numéro).
+ * @param image - Adresse et texte de remplacement de l'image
+ */
+function buildCoverPage(image: { url: string; alt: string }): HTMLElement {
+  const page = document.createElement("div");
+  page.className = "liseuse-page liseuse-couverture";
+  page.dataset.density = "hard";
+  const img = document.createElement("img");
+  img.src = image.url;
+  img.alt = image.alt;
+  img.draggable = false;
+  page.append(img);
   return page;
 }
 
@@ -273,14 +299,20 @@ export function FlipView({
   onPosition,
   onNextChapter,
   onPreviousChapter,
+  cover = null,
+  backCover = null,
+  promo = false,
 }: FlipViewProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   // Livre affiché et surlignages courants (redessinés sans repaginer)
   const bookRef = useRef<HTMLElement | null>(null);
   const highlightsRef = useRef(highlights);
   // Position courante (élément de pagination : 0 = titre, n = bloc n-1), mise à jour à
-  // chaque page ; sert à rester au même endroit après une repagination
-  const positionRef = useRef({ element: initial.block + 1, offset: initial.offset });
+  // chaque page ; sert à rester au même endroit après une repagination. -1 = couverture,
+  // où s'ouvre le premier chapitre lu depuis son début
+  const onCover =
+    Boolean(cover) && initial.fraction === undefined && initial.block === 0 && initial.offset === 0;
+  const positionRef = useRef({ element: onCover ? -1 : initial.block + 1, offset: initial.offset });
   // Ouverture à une part du chapitre (accès rapide) : convertie une fois les blocs mesurés
   const fractionRef = useRef(initial.fraction);
   const callbacks = useRef({ onPosition, onNextChapter, onPreviousChapter });
@@ -353,7 +385,7 @@ export function FlipView({
         positionRef.current = { element: target.block + 1, offset: target.offset };
         fractionRef.current = undefined;
       }
-      const items = pages.map((page, index) =>
+      const textPages = pages.map((page, index) =>
         buildPage(
           anchoredPage(elements, page),
           index,
@@ -363,10 +395,34 @@ export function FlipView({
           layout.padX,
         ),
       );
-      // Nombre pair en double page : une dernière page seule serait rigide
-      if (layout.twoPages && items.length % 2 === 1) {
-        items.push(buildPage([], items.length, pages.length, chapter.position, null, layout.padX));
+      // Encart après le texte : sans numéro ni filigrane, hors des indices de pagination
+      if (promo) {
+        textPages.push(
+          buildPage(
+            [buildPromoElement()],
+            pages.length,
+            pages.length,
+            chapter.position,
+            null,
+            layout.padX,
+          ),
+        );
       }
+      // Nombre pair en double page : une dernière page seule serait rigide
+      if (layout.twoPages && textPages.length % 2 === 1) {
+        textPages.push(
+          buildPage([], textPages.length, pages.length, chapter.position, null, layout.padX),
+        );
+      }
+      // Couvertures : seules sur leur double page (showCover pour la première, nombre
+      // impair de pages pour la quatrième) ; « lead » décale les indices des pages de texte
+      const lead = cover ? 1 : 0;
+      const items = [
+        ...(cover ? [buildCoverPage(cover)] : []),
+        ...textPages,
+        ...(backCover ? [buildCoverPage(backCover)] : []),
+      ];
+      const lastItem = items.length - 1;
 
       const container = document.createElement("div");
       container.className = "liseuse-livre";
@@ -375,13 +431,13 @@ export function FlipView({
       host.append(container);
 
       const { element, offset } = positionRef.current;
-      const startPage = pageIndexOf(pages, element, offset);
+      const startPage = element < 0 ? 0 : pageIndexOf(pages, element, offset) + lead;
       const flip = new PageFlip(container, {
         width: layout.pageWidth,
         height: layout.pageHeight,
         size: "fixed",
         usePortrait: true,
-        showCover: false,
+        showCover: Boolean(cover),
         autoSize: false,
         startPage,
         flippingTime: 600,
@@ -394,16 +450,21 @@ export function FlipView({
       bookRef.current = container;
       paintHighlights(container, highlightsRef.current);
 
+      // Dernière double page : elle contient la dernière page du livre affiché
       const spread = layout.twoPages ? 2 : 1;
-      const isLastSpread = (index: number) => index + spread >= pages.length;
+      const isLastSpread = (index: number) => index + spread > lastItem;
 
-      /** Signale la position du début de la page affichée. */
-      const report = (index: number) => {
-        const start = pageStart(pages, Math.min(index, pages.length - 1));
-        positionRef.current = { element: start.block, offset: start.offset };
+      /** Signale la position du début de la page affichée (indice page-flip). */
+      const report = (item: number) => {
+        const index = Math.max(0, Math.min(item - lead, pages.length - 1));
+        const start = pageStart(pages, index);
+        positionRef.current =
+          item < lead ? { element: -1, offset: 0 } : { element: start.block, offset: start.offset };
         const block = Math.max(0, start.block - 1);
         const offset = start.block === 0 ? 0 : start.offset;
-        const fraction = isLastSpread(index) ? 1 : chapterFraction(lengths, block, offset);
+        // Fin du chapitre dès que la double page montre la dernière page de texte
+        const textEnd = index + spread >= pages.length;
+        const fraction = textEnd ? 1 : chapterFraction(lengths, block, offset);
         callbacks.current.onPosition({
           block,
           offset,
@@ -425,7 +486,7 @@ export function FlipView({
           else flip.flipPrev();
         },
         goTo: (block, offset) => {
-          const index = pageIndexOf(pages, block + 1, offset);
+          const index = pageIndexOf(pages, block + 1, offset) + lead;
           if (index !== flip.getCurrentPageIndex()) flip.turnToPage(index);
           report(index);
         },
@@ -456,7 +517,18 @@ export function FlipView({
       controlsRef.current = null;
       dispose?.();
     };
-  }, [chapter, font, fontSize, lineHeight, watermark, layoutKey, controlsRef]);
+  }, [
+    chapter,
+    font,
+    fontSize,
+    lineHeight,
+    watermark,
+    layoutKey,
+    controlsRef,
+    cover,
+    backCover,
+    promo,
+  ]);
 
   return <div ref={hostRef} className="liseuse-flip" />;
 }

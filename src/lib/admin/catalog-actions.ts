@@ -252,26 +252,45 @@ export async function updateBook(
   return { message: t.admin.common.saved };
 }
 
+/** Colonnes d'image d'un livre : couverture ou quatrième de couverture. */
+type CoverColumn = "cover_path" | "back_cover_path";
+
 /**
- * Associe au livre la couverture que le navigateur vient d'envoyer, et supprime l'ancienne.
- * @param id   - Identifiant du livre
- * @param path - Chemin « livres/{id}/{uuid}.{ext} » dans le seau
+ * Associe au livre l'image que le navigateur vient d'envoyer, et supprime l'ancienne.
+ * @param id     - Identifiant du livre
+ * @param path   - Chemin « livres/{id}/{uuid}.{ext} » dans le seau
+ * @param column - Couverture ou quatrième de couverture
  */
-export async function setBookCover(id: string, path: string): Promise<FormState> {
+async function saveBookImage(id: string, path: string, column: CoverColumn): Promise<FormState> {
   await requireAdmin();
   if (!isUuid(id) || !isOwnImagePath(path, "livres", id)) return { error: e.generic };
 
   const supabase = await createClient();
   const { data: previous } = await supabase
     .from("books")
-    .select("cover_path")
+    .select(column)
     .eq("id", id)
-    .maybeSingle();
-  const { error } = await supabase.from("books").update({ cover_path: path }).eq("id", id);
+    .maybeSingle<Partial<Record<CoverColumn, string | null>>>();
+  const { error } = await supabase
+    .from("books")
+    .update({ [column]: path })
+    .eq("id", id);
   if (error) return { error: e.generic };
 
-  if (previous?.cover_path !== path) await removeImage(supabase, previous?.cover_path ?? null);
-  await audit(supabase, "book.cover", "book", id, { path });
+  const old = previous?.[column] ?? null;
+  if (old !== path) await removeImage(supabase, old);
+  const action = column === "cover_path" ? "book.cover" : "book.back_cover";
+  await audit(supabase, action, "book", id, { path });
   updateTag(CATALOG_TAG);
   return { message: t.admin.upload.done };
+}
+
+/** Enregistre la couverture d'un livre (voir saveBookImage). */
+export async function setBookCover(id: string, path: string): Promise<FormState> {
+  return saveBookImage(id, path, "cover_path");
+}
+
+/** Enregistre la quatrième de couverture d'un livre (voir saveBookImage). */
+export async function setBookBackCover(id: string, path: string): Promise<FormState> {
+  return saveBookImage(id, path, "back_cover_path");
 }

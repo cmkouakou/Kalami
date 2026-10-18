@@ -9,8 +9,12 @@
  *               notes (couche d'annotation, panneau) et le partage du livre.
  *               v1.3 : accès rapide (curseur, début et fin du livre), table des matières
  *               du livre cliquable.
+ *               v1.4 : le livre s'ouvre sur sa couverture et se termine sur sa quatrième
+ *               de couverture (pages à tourner et défilement).
+ *               v1.5 : encart Kalami Stratégie (livre guide) en fin de module et en fin
+ *               d'extrait.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.5
  *  Date       : 2026-10-17
  *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
  *               use-*, storage, lib/reader, lib/config, components/ui
@@ -58,6 +62,7 @@ import {
   progressTarget,
   resolveStartPosition,
 } from "@/lib/reader/position";
+import { hasExercises, hasStrategyPromo } from "@/lib/reader/promo";
 import {
   type Bookmark,
   FONT_SIZES,
@@ -273,9 +278,10 @@ export function Reader({ data, price }: ReaderProps) {
     [toc, chapter, ended, openAt],
   );
 
+  // Nouvelle vue (et non un saut) : le premier chapitre se rouvre sur la couverture
   const goBookStart = useCallback(() => {
-    if (toc.length) jumpTo({ chapter: toc[0].chapter_position, block: 0, offset: 0 });
-  }, [toc, jumpTo]);
+    if (toc.length) openAt({ chapter: toc[0].chapter_position, block: 0, offset: 0 });
+  }, [toc, openAt]);
 
   const goBookEnd = useCallback(() => {
     const last = toc[toc.length - 1];
@@ -455,7 +461,13 @@ export function Reader({ data, price }: ReaderProps) {
 
   const progress = ended ? 1 : bookProgress(toc, chapter, display.fraction);
   const lock = (
-    <LockScreen title={book.title} slug={book.slug} price={price} signedIn={signedIn} />
+    <LockScreen
+      title={book.title}
+      slug={book.slug}
+      price={price}
+      signedIn={signedIn}
+      promo={hasStrategyPromo(book.slug)}
+    />
   );
   const end = <EndScreen title={book.title} slug={book.slug} />;
 
@@ -474,6 +486,22 @@ export function Reader({ data, price }: ReaderProps) {
       lock
     );
 
+  // Couvertures : la première avant le premier chapitre, la quatrième après le dernier
+  const cover = useMemo(
+    () =>
+      previous === null && book.coverUrl
+        ? { url: book.coverUrl, alt: interpolate(t.reader.coverAlt, { title: book.title }) }
+        : null,
+    [previous, book.coverUrl, book.title],
+  );
+  const backCover = useMemo(
+    () =>
+      next === null && book.backCoverUrl
+        ? { url: book.backCoverUrl, alt: interpolate(t.reader.backCoverAlt, { title: book.title }) }
+        : null,
+    [next, book.backCoverUrl, book.title],
+  );
+
   let main: ReactNode;
   if (ended) main = end;
   else if (state.status === "locked") main = lock;
@@ -491,6 +519,8 @@ export function Reader({ data, price }: ReaderProps) {
   } else {
     const viewKey = `${chapter}:${settings.mode}:${opening.serial}`;
     const initial = { block: opening.block, offset: opening.offset, fraction: opening.fraction };
+    // Encart Kalami Stratégie après la section « À vous de jouer » d'un module
+    const promo = hasStrategyPromo(book.slug) && hasExercises(state.chapter.blocks);
     main =
       settings.mode === "flip" ? (
         <FlipView
@@ -504,6 +534,9 @@ export function Reader({ data, price }: ReaderProps) {
           onPosition={onPosition}
           onNextChapter={goNextChapter}
           onPreviousChapter={goPreviousChapter}
+          cover={cover}
+          backCover={backCover}
+          promo={promo}
         />
       ) : (
         <ScrollView
@@ -514,6 +547,9 @@ export function Reader({ data, price }: ReaderProps) {
           highlights={chapterHighlights}
           controlsRef={controls}
           onPosition={onPosition}
+          cover={cover}
+          backCover={backCover}
+          promo={promo}
           footer={scrollFooter}
         />
       );

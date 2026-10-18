@@ -53,6 +53,7 @@ export type BookCard = {
 /** Fiche complète d'un livre publié. */
 export type BookDetail = Omit<BookCard, "author"> & {
   edition: string | null;
+  back_cover_path: string | null;
   summary: string | null;
   keywords: string | null;
   page_count: number | null;

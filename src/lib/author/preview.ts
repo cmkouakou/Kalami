@@ -28,6 +28,7 @@ type PreviewBookRow = {
   edition: string | null;
   publication_year: number | null;
   cover_path: string | null;
+  back_cover_path: string | null;
   book_prices: Price[];
   author: { display_name: string; user_id: string | null };
 };
@@ -50,7 +51,7 @@ export async function getPreviewData(
     supabase
       .from("books")
       .select(
-        "id, slug, title, language, edition, publication_year, cover_path, " +
+        "id, slug, title, language, edition, publication_year, cover_path, back_cover_path, " +
           "book_prices(currency, amount_minor), author:authors!inner(display_name, user_id)",
       )
       .eq("id", bookId)
@@ -74,6 +75,7 @@ export async function getPreviewData(
       edition: book.edition,
       publicationYear: book.publication_year,
       coverUrl: publicImageUrl(book.cover_path),
+      backCoverUrl: publicImageUrl(book.back_cover_path),
     },
     toc: toc.map((entry) => ({ ...entry, is_preview: true })),
     access: "full",

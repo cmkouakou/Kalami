@@ -78,12 +78,21 @@ async function BookContent({ params }: { params: Promise<{ id: string }> }) {
       {submission && <SubmissionReview bookId={book.id} submission={submission} />}
       <div className="grid gap-8 md:grid-cols-[1fr_12rem]">
         <BookForm book={book} authors={authors} categories={categories} />
-        <ImageUpload
-          kind="book"
-          id={book.id}
-          label={t.admin.books.cover}
-          currentPath={book.cover_path}
-        />
+        <div className="flex flex-col gap-6">
+          <ImageUpload
+            kind="book"
+            id={book.id}
+            label={t.admin.books.cover}
+            currentPath={book.cover_path}
+          />
+          <ImageUpload
+            kind="book"
+            side="back"
+            id={book.id}
+            label={t.admin.books.backCover}
+            currentPath={book.back_cover_path}
+          />
+        </div>
       </div>
       <BookContentSection bookId={book.id} content={content} />
     </>

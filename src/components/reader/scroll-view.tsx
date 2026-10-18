@@ -7,8 +7,10 @@
  *               premier bloc visible ; le filigrane se déplace légèrement toutes les minutes.
  *               Les surlignages sont dessinés dans les blocs (texte inchangé).
  *               v1.2 : surtitre de module, ouverture à une part du chapitre (accès rapide).
+ *               v1.3 : couverture et quatrième de couverture (premier et dernier chapitres).
+ *               v1.4 : encart Kalami Stratégie sous le texte d'un module.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.4
  *  Date       : 2026-10-17
  *  Dépendances: flip-view.tsx (types communs), highlight-dom.ts
  * =============================================================
@@ -24,6 +26,7 @@ import type { Highlight } from "@/lib/reader/types";
 
 import type { ViewControls, ViewOpening, ViewPosition } from "./flip-view";
 import { paintHighlights } from "./highlight-dom";
+import { ReaderPromo } from "./strategy-promo";
 
 /** Intervalle de déplacement du filigrane (ms). */
 const WATERMARK_SHIFT_MS = 60_000;
@@ -40,7 +43,25 @@ type ScrollViewProps = {
   onPosition: (position: ViewPosition) => void;
   /** Bas du chapitre : bouton du chapitre suivant ou écran de fin d'extrait */
   footer: ReactNode;
+  /** Couverture au-dessus du premier chapitre, ou null */
+  cover?: CoverImage | null;
+  /** Quatrième de couverture sous le dernier chapitre, ou null */
+  backCover?: CoverImage | null;
+  /** Encart Kalami Stratégie sous le texte du chapitre */
+  promo?: boolean;
 };
+
+type CoverImage = { url: string; alt: string };
+
+/** Image de couverture pleine largeur du texte, hors des blocs repérés (data-bloc). */
+function CoverFigure({ image }: { image: CoverImage }) {
+  return (
+    <figure className="liseuse-couverture-defilement">
+      {/* eslint-disable-next-line @next/next/no-img-element -- taille inconnue, seau public */}
+      <img src={image.url} alt={image.alt} />
+    </figure>
+  );
+}
 
 /** Texte défilant d'un chapitre. */
 export function ScrollView({
@@ -51,6 +72,9 @@ export function ScrollView({
   controlsRef,
   onPosition,
   footer,
+  cover = null,
+  backCover = null,
+  promo = false,
 }: ScrollViewProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const articleRef = useRef<HTMLElement>(null);
@@ -147,6 +171,7 @@ export function ScrollView({
           ref={articleRef}
           className="liseuse-texte mx-auto max-w-[42rem] px-5 py-10 sm:px-8"
         >
+          {cover && <CoverFigure image={cover} />}
           <h1 className="liseuse-titre-chapitre">
             {kicker && <span className="liseuse-surtitre">{kicker}</span>}
             {chapter.title}
@@ -159,6 +184,8 @@ export function ScrollView({
               dangerouslySetInnerHTML={{ __html: html }}
             />
           ))}
+          {promo && <ReaderPromo />}
+          {backCover && <CoverFigure image={backCover} />}
           <div className="mt-10">{footer}</div>
         </article>
       </div>

@@ -28,6 +28,7 @@ import type { BookVersionSummary } from "@/lib/admin/content-queries";
 import { isUuid } from "@/lib/admin/validation";
 import {
   convertAuthorManuscript,
+  setOwnBookBackCover,
   setOwnBookCover,
   submitAuthorBook,
 } from "@/lib/author/actions";
@@ -119,13 +120,23 @@ async function BookContent({
         {editable ? (
           <div className="grid gap-8 md:grid-cols-[1fr_10rem]">
             <AuthorBookForm book={book} categories={categories} />
-            <ImageUpload
-              kind="book"
-              id={book.id}
-              label={t.admin.books.cover}
-              currentPath={book.cover_path}
-              save={setOwnBookCover}
-            />
+            <div className="flex flex-col gap-6">
+              <ImageUpload
+                kind="book"
+                id={book.id}
+                label={t.admin.books.cover}
+                currentPath={book.cover_path}
+                save={setOwnBookCover}
+              />
+              <ImageUpload
+                kind="book"
+                side="back"
+                id={book.id}
+                label={t.admin.books.backCover}
+                currentPath={book.back_cover_path}
+                save={setOwnBookBackCover}
+              />
+            </div>
           </div>
         ) : (
           <p className="text-sm text-ink-muted">{b.locked}</p>

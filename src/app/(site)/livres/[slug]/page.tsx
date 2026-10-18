@@ -6,9 +6,10 @@
  *               résumé, sommaire (extrait gratuit) et auteur. Bouton « Lire » ou
  *               « Reprendre » selon le lecteur, bloc PDF pour qui a l'option ; achat aux
  *               sprints de paiement.
+ *               v2.2 : encart Kalami Stratégie sur la fiche du livre guide.
  *  Auteur     : Claude Marcel
- *  Version    : 2.1
- *  Date       : 2026-10-09
+ *  Version    : 2.2
+ *  Date       : 2026-10-17
  *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
  */
@@ -21,6 +22,7 @@ import { Suspense } from "react";
 import { BookCover } from "@/components/catalog/book-cover";
 import { PdfDownload } from "@/components/catalog/pdf-download";
 import { PriceTag } from "@/components/catalog/price-tag";
+import { StrategyPromo } from "@/components/reader/strategy-promo";
 import { IconLock } from "@/components/ui/icons";
 import {
   BADGE,
@@ -35,6 +37,7 @@ import { getCurrentUser } from "@/lib/auth/dal";
 import { getBookBySlug, getBookToc } from "@/lib/catalog/queries";
 import type { Author, BookDetail, TocEntry } from "@/lib/catalog/types";
 import { getPdfStatus } from "@/lib/pdf/exports";
+import { hasStrategyPromo } from "@/lib/reader/promo";
 import { getReadingStatus } from "@/lib/reader/queries";
 
 const t = getDictionary();
@@ -116,7 +119,10 @@ async function BookContent({ params }: { params: Promise<{ slug: string }> }) {
           )}
           <BookToc toc={toc} slug={book.slug} />
         </div>
-        {book.author.bio && <AuthorCard author={book.author} />}
+        <div className="flex flex-col gap-6">
+          {book.author.bio && <AuthorCard author={book.author} />}
+          {hasStrategyPromo(book.slug) && <StrategyPromo />}
+        </div>
       </div>
     </article>
   );

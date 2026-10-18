@@ -7,9 +7,10 @@
  *               réservée à l'administrateur), sans transiter par le serveur Next.js ; l'action
  *               serveur vérifie ensuite le chemin et l'enregistre sur la fiche. L'espace
  *               auteur fournit sa propre action d'enregistrement (prop « save »).
+ *               v1.2 : quatrième de couverture (prop « side »).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-09
+ *  Version    : 1.2
+ *  Date       : 2026-10-17
  *  Dépendances: lib/supabase/client.ts, lib/admin/catalog-actions.ts
  * =============================================================
  */
@@ -22,7 +23,7 @@ import { useState, type ChangeEvent } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { getDictionary } from "@/i18n";
-import { setAuthorPhoto, setBookCover } from "@/lib/admin/catalog-actions";
+import { setAuthorPhoto, setBookBackCover, setBookCover } from "@/lib/admin/catalog-actions";
 import type { FormState } from "@/lib/auth/actions";
 import { COVERS_BUCKET, publicImageUrl } from "@/lib/catalog/images";
 import { createClient } from "@/lib/supabase/client";
@@ -45,17 +46,26 @@ type ImageUploadProps = {
   id: string;
   label: string;
   currentPath: string | null;
+  /** Couverture (par défaut) ou quatrième de couverture d'un livre. */
+  side?: "front" | "back";
   /** Action d'enregistrement ; par défaut, celle de l'administration. */
   save?: (id: string, path: string) => Promise<FormState>;
 };
 
 /** Sélecteur d'image avec aperçu et retour d'état. */
-export function ImageUpload({ kind, id, label, currentPath, save }: ImageUploadProps) {
+export function ImageUpload({
+  kind,
+  id,
+  label,
+  currentPath,
+  side = "front",
+  save,
+}: ImageUploadProps) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ error?: string; message?: string }>({});
   const src = publicImageUrl(currentPath);
-  const inputId = `image-${kind}-${id}`;
+  const inputId = `image-${kind}-${side}-${id}`;
 
   /** Contrôle, envoie puis enregistre l'image choisie. */
   async function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -77,7 +87,8 @@ export function ImageUpload({ kind, id, label, currentPath, save }: ImageUploadP
         .upload(path, file, { contentType: file.type, cacheControl: "31536000" });
       if (error) throw error;
 
-      const saveImage = save ?? (kind === "book" ? setBookCover : setAuthorPhoto);
+      const bookSave = side === "back" ? setBookBackCover : setBookCover;
+      const saveImage = save ?? (kind === "book" ? bookSave : setAuthorPhoto);
       const result = await saveImage(id, path);
       setFeedback(result ?? {});
       router.refresh();

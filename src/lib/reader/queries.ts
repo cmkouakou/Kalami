@@ -218,6 +218,7 @@ export async function getReaderData(
       edition: book.edition,
       publicationYear: book.publication_year,
       coverUrl: publicImageUrl(book.cover_path),
+      backCoverUrl: publicImageUrl(book.back_cover_path),
     },
     toc,
     access: access.full ? "full" : "preview",

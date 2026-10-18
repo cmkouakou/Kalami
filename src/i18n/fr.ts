@@ -107,6 +107,14 @@ const fr = {
     explore: "Explorer",
     legal: "Informations légales",
   },
+  strategyPromo: {
+    label: "Kalami Stratégie",
+    title: "Appliquez la démarche à votre organisation",
+    text:
+      "Kalami Stratégie vous guide étape par étape, de l'analyse au plan stratégique, " +
+      "seul ou en équipe.",
+    cta: "Découvrir Kalami Stratégie",
+  },
   content: {
     openingTitle: "Début de l'ouvrage",
     chapterTitle: "Chapitre {n}",
@@ -154,6 +162,8 @@ const fr = {
     previousChapter: "Chapitre précédent",
     nextChapter: "Chapitre suivant",
     pageOf: "Page {current} sur {total}",
+    coverAlt: "Couverture de « {title} »",
+    backCoverAlt: "Quatrième de couverture de « {title} »",
     progress: "{percent} % du livre",
     seekLabel: "Aller à un endroit du livre",
     seekTarget: "{title} · {percent} %",
@@ -587,6 +597,7 @@ const fr = {
       prices: "Prix",
       pricesHelp: "Laisser vide si le livre n'est pas vendu dans cette devise.",
       cover: "Couverture",
+      backCover: "Quatrième de couverture",
       featuredBadge: "À la une",
       statuses: {
         draft: "Brouillon",
