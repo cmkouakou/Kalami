@@ -96,7 +96,8 @@ Version actuelle : v0.11.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [ ] Sprint 5b — achat réel d'un lot ou d'un forfait, puis remboursement depuis /admin/commandes
 - [x] Sprint 5c — codes promo (livre, livres, Stratégie, tout ; une fois par compte), admin `/admin/codes-promo`, interrupteur Stripe Tax éteint (v0.10.3) ; unitaires 601/601
 - [x] Sprint 6 — Mobile Money manuel (FCFA, Wave et Orange), déclaration, validation admin, admin `/admin/mobile-money`, expiration 24 h (v0.11.0) ; unitaires Mobile Money 12/12, build OK
-- [ ] Sprint 6 — appliquer la migration `20261108120000_mobile_money.sql`, saisir les numéros, test réel
+- [x] Sprint 6 — migration `20261108120000_mobile_money.sql` appliquée le 2026-10-19, intégration mobile-money-rls 5/5
+- [ ] Sprint 6 — saisir les numéros Wave et Orange, essai réel (achat + validation admin)
 - [ ] Paiements 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
