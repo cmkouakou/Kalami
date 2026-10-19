@@ -3,10 +3,11 @@
  *  Fichier    : checkout-request.ts
  *  Projet     : Kalami
  *  Description: Lecture du corps d'une demande d'achat (livre, étude ou lot d'études,
- *               forfait du coach) et adresse de retour si le paiement est abandonné.
+ *               forfait du coach, code promo facultatif depuis la v0.10.3) et adresse de
+ *               retour si le paiement est abandonné.
  *               Fonctions pures : le prix et les droits sont vérifiés par la base.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-19
  *  Dépendances: lib/admin/validation.ts, lib/currency.ts, catalog.ts
  * =============================================================
@@ -16,6 +17,7 @@ import { isUuid } from "@/lib/admin/validation";
 import type { Currency } from "@/lib/catalog/types";
 import { isCurrency } from "@/lib/currency";
 import type { SaleItemKey } from "@/lib/payments/catalog";
+import { normalizePromoCode } from "@/lib/payments/promo";
 
 // ==================== TYPES ====================
 
@@ -29,7 +31,7 @@ export type CheckoutItem =
   | { item: "study_offer"; code: StudyOfferCode }
   | { item: "coach_pack"; packId: string; studyId: string };
 
-export type CheckoutBody = CheckoutItem & { currency: Currency };
+export type CheckoutBody = CheckoutItem & { currency: Currency; promoCode?: string };
 
 /** Niveaux de forfait ayant un produit Stripe dédié. */
 const PACK_LEVELS = ["essentiel", "approfondi", "intensif"] as const;
@@ -49,20 +51,35 @@ export function parseCheckoutBody(raw: unknown): CheckoutBody | null {
   if (!raw || typeof raw !== "object") return null;
   const body = raw as Record<string, unknown>;
   if (!isCurrency(body.currency)) return null;
-  const currency = body.currency;
-  const item = body.item ?? "book";
+  const item = parseItem(body);
+  if (!item) return null;
 
+  // Code promo facultatif : absent ou vide → aucun ; mal formé → demande refusée
+  if (body.promoCode === undefined || body.promoCode === null || body.promoCode === "") {
+    return { ...item, currency: body.currency };
+  }
+  const promoCode = normalizePromoCode(body.promoCode);
+  return promoCode ? { ...item, currency: body.currency, promoCode } : null;
+}
+
+/**
+ * Article d'une demande d'achat (sans la devise ni le code promo).
+ * @param body - Corps JSON
+ * @returns Article valide dans sa forme, ou null
+ */
+function parseItem(body: Record<string, unknown>): CheckoutItem | null {
+  const item = body.item ?? "book";
   if (item === "book" && isUuid(body.bookId)) {
-    return { item, bookId: body.bookId, currency };
+    return { item, bookId: body.bookId };
   }
   if (
     item === "study_offer" &&
     (STUDY_OFFER_CODES as readonly unknown[]).includes(body.code)
   ) {
-    return { item, code: body.code as StudyOfferCode, currency };
+    return { item, code: body.code as StudyOfferCode };
   }
   if (item === "coach_pack" && isUuid(body.packId) && isUuid(body.studyId)) {
-    return { item, packId: body.packId, studyId: body.studyId, currency };
+    return { item, packId: body.packId, studyId: body.studyId };
   }
   return null;
 }

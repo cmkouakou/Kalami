@@ -5,11 +5,12 @@
  *  Description: Bouton « Acheter » (composant client) : choix de la devise parmi les prix de
  *               l'article (livre, étude, lot, forfait du coach), création de la commande puis
  *               redirection vers la page de paiement Stripe. Les erreurs sont affichées sous
- *               le bouton, en clair.
+ *               le bouton, en clair. Code promo facultatif (v0.10.3) : prix réduit affiché,
+ *               montant final recalculé par la base.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-19
- *  Dépendances: api/paiement/checkout, lib/currency.ts
+ *  Dépendances: api/paiement/checkout, lib/currency.ts, promo-code-field.tsx
  * =============================================================
  */
 
@@ -22,6 +23,9 @@ import { getDictionary, interpolate } from "@/i18n";
 import type { Currency, Price } from "@/lib/catalog/types";
 import { formatPrice } from "@/lib/currency";
 import type { CheckoutItem } from "@/lib/payments/checkout-request";
+import { discountedAmount, type PromoPreview } from "@/lib/payments/promo";
+
+import { PromoCodeField } from "./promo-code-field";
 
 const t = getDictionary();
 
@@ -55,7 +59,11 @@ export function BuyButton(props: BuyButtonProps) {
   const [currency, setCurrency] = useState<Currency>(fallback);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [promo, setPromo] = useState<PromoPreview | null>(null);
   const price = prices.find((p) => p.currency === currency) ?? prices[0];
+  // Prix réduit dans la devise choisie (null : code absent ou sans effet dans cette devise)
+  const reduced = promo ? discountedAmount(price, promo) : null;
+  const promoUsable = promo !== null && reduced !== null;
 
   /**
    * Crée la commande et ouvre la page de paiement Stripe.
@@ -68,7 +76,11 @@ export function BuyButton(props: BuyButtonProps) {
       const response = await fetch("/api/paiement/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...item, currency }),
+        body: JSON.stringify({
+          ...item,
+          currency,
+          ...(promoUsable ? { promoCode: promo.code } : {}),
+        }),
       });
       const body = (await response.json().catch(() => null)) as
         | { url?: string; error?: string }
@@ -121,9 +133,29 @@ export function BuyButton(props: BuyButtonProps) {
         {pending
           ? t.catalog.purchase.redirecting
           : interpolate(t.catalog.purchase.buyIn, {
-              price: formatPrice(price.amount_minor, price.currency),
+              price: formatPrice(promoUsable ? reduced : price.amount_minor, price.currency),
             })}
       </button>
+      {promoUsable && (
+        <p className="text-small text-ink-muted">
+          {t.catalog.purchase.priceBefore} <s>{formatPrice(price.amount_minor, price.currency)}</s>
+        </p>
+      )}
+      {promo && !promoUsable && (
+        <p role="status" className="text-small text-ink-muted">
+          {t.catalog.purchase.promoNotInCurrency}
+        </p>
+      )}
+      <PromoCodeField
+        item={item}
+        promo={promo}
+        onChange={(next) => {
+          setPromo(next);
+          setError(null);
+        }}
+        disabled={pending}
+        errorMessage={errorMessage}
+      />
       {error && (
         <p role="alert" className="text-small text-danger">
           {error}

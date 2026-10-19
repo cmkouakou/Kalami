@@ -17,7 +17,7 @@ démarre après la v1.0.0 de la plateforme de lecture.
 | 11a | Loi 25 / RGPD (textes légaux, témoins, export, suppression) ; PWA et accessibilité en 11a-2 | v0.9.1 | ✅ |
 | 5a | Paiement carte du livre : commandes, Stripe Checkout, webhook, droits, reçus | v0.10.0 | ✅ |
 | 5b | Paiements Stratégie (étude, lots 10 et 30, forfaits du coach, remise enseignant) ; remboursement depuis l'admin | v0.10.2 | ✅ (test réel à faire) |
-| 5c | Stripe Tax, codes promo | — | ⬜ |
+| 5c | Codes promo (livres et Stratégie, une fois par compte) ; interrupteur Stripe Tax (éteint) | v0.10.3 | ✅ (migration à appliquer) |
 | 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.11.0 | ⬜ |
 | 10 | Grand livre, versements, administration, audit (remboursement : livré en 5b) | v0.12.0 | ⬜ |
 | 11b | Critères d'acceptation, mise en production | v1.0.0 | ⬜ |

@@ -4,10 +4,11 @@
  * Description: Tests unitaires du paiement par carte (v0.10.0) : signature des webhooks
  *              Stripe, encodage des paramètres, correspondance articles → prix Stripe,
  *              contenu de la session Checkout, tri des événements par le webhook (autre
- *              application du compte, signature invalide, appel unique à la base).
+ *              application du compte, signature invalide, appel unique à la base) ;
+ *              Stripe Tax facultatif (v0.10.3).
  * Auteur     : Claude Marcel
- * Version    : 1.0
- * Date       : 2026-10-18
+ * Version    : 1.1
+ * Date       : 2026-10-19
  */
 
 import { createHmac } from "node:crypto";
@@ -136,6 +137,7 @@ describe("createCheckoutSession", () => {
     const session = await createCheckoutSession({
       orderId: "11111111-1111-4111-8111-111111111111",
       currency: "XOF",
+      automaticTax: false,
       line: { unitMinor: 5000, label: "Livre", productId: "prod_livre" },
       customerEmail: "a@exemple.com",
       successUrl: "https://kalami.test/merci",
@@ -152,6 +154,31 @@ describe("createCheckoutSession", () => {
     expect(body.get("line_items[0][price_data][unit_amount]")).toBe("5000");
     expect(body.get("line_items[0][price_data][product]")).toBe("prod_livre");
     expect(body.has("line_items[0][price_data][product_data][name]")).toBe(false);
+    expect(body.has("automatic_tax[enabled]")).toBe(false);
+    expect(body.has("line_items[0][price_data][tax_behavior]")).toBe(false);
+  });
+
+  it("Stripe Tax allumé : taxe comprise, montant inchangé (v0.10.3)", async () => {
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_x");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(Response.json({ id: "cs_2", url: "https://checkout.stripe.com/y" }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await createCheckoutSession({
+      orderId: "11111111-1111-4111-8111-111111111111",
+      currency: "CAD",
+      automaticTax: true,
+      line: { unitMinor: 1039, label: "Livre (code RENTREE)", productId: null },
+      customerEmail: null,
+      successUrl: "https://kalami.test/merci",
+      cancelUrl: "https://kalami.test/livre",
+    });
+
+    const body = new URLSearchParams(fetchMock.mock.calls[0][1].body as string);
+    expect(body.get("automatic_tax[enabled]")).toBe("true");
+    expect(body.get("line_items[0][price_data][tax_behavior]")).toBe("inclusive");
+    expect(body.get("line_items[0][price_data][unit_amount]")).toBe("1039");
   });
 
   it("lève une erreur lisible si Stripe refuse, sans montrer la clé", async () => {
@@ -167,6 +194,7 @@ describe("createCheckoutSession", () => {
       createCheckoutSession({
         orderId: "o",
         currency: "CAD",
+        automaticTax: false,
         line: { unitMinor: 1299, label: "Livre", productId: null },
         customerEmail: null,
         successUrl: "https://kalami.test/a",

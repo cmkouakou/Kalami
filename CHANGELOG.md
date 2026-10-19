@@ -1,5 +1,46 @@
 # Journal des modifications
 
+## [v0.10.3] - 2026-10-19 — Codes promo et Stripe Tax (Sprint 5c)
+### Ajouté
+- Codes promo vérifiés par la base, ce qui les rend utilisables plus tard pour Mobile Money :
+  tables `promo_codes` et `promo_redemptions`.
+  - Portée : un livre, tous les livres, Kalami Stratégie (études, lots, forfaits) ou tout.
+  - Réduction : pourcentage de 1 à 90 OU montant par devise.
+  - Limites : date d'expiration, nombre maximal d'utilisations, une fois par compte.
+- `create_book_order` et `create_strategy_order` acceptent `p_promo_code`.
+  - La réduction s'applique après la remise enseignant.
+  - Le total ne descend pas sous 500 FCFA, 0,50 € ou 0,50 $ CA.
+  - Le libellé indique le code ; `orders.promo_code_id` et `orders.discount_minor` sont
+    renseignés.
+- L'utilisation est comptée au paiement par un déclencheur sur `orders`. Un remboursement ne
+  rend pas l'utilisation.
+- Bouton d'achat : lien « J'ai un code promo ». L'aperçu (`/api/paiement/promo`, fonction
+  `promo_preview`) affiche le prix réduit et le prix d'origine barré, avec un message si le
+  code ne vaut pas dans la devise choisie.
+- Administration `/admin/codes-promo` :
+  - création d'un code ;
+  - liste avec les utilisations et l'expiration ;
+  - désactivation et réactivation ;
+  - interrupteur **Stripe Tax** (éteint par défaut). Tout est consigné au journal d'audit.
+- Stripe Tax, une fois allumé : `automatic_tax` et `tax_behavior = inclusive`. La taxe est
+  comprise dans le prix, donc le montant payé ne change pas et le contrôle du webhook reste
+  valable.
+- Tests : 13 unitaires (`promo.test.ts`, plus Stripe Tax dans `payments.test.ts`) ;
+  4 d'intégration (`promo-codes-rls.test.ts`, ignorés tant que la migration n'est pas
+  appliquée).
+
+### À faire avant le déploiement
+- Appliquer la migration `20261106120000_promo_codes.sql` **avant** de pousser : le paiement
+  appelle les nouvelles signatures des fonctions de commande.
+- Avant d'allumer Stripe Tax :
+  - inscrire les juridictions dans le tableau de bord Stripe (Tax → Registrations) ;
+  - choisir le code fiscal par défaut des produits (livres numériques, services).
+
+### Notes
+- La limite d'utilisations ne compte que les commandes payées. Des commandes en attente
+  peuvent donc la dépasser légèrement.
+- L'aperçu d'un code n'est pas limité en fréquence : préférez des codes non triviaux.
+
 ## [v0.10.2] - 2026-10-19 — Paiements Kalami Stratégie et remboursements (Sprint 5b)
 ### Ajouté
 - Achat par carte d'une étude et des lots de 10 et 30 études, pour tous les comptes : section

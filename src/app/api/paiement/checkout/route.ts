@@ -6,9 +6,10 @@
  *               d'un forfait du coach : crée la commande au prix de la base (fonctions
  *               create_book_order et create_strategy_order, au nom de l'acheteur connecté),
  *               ouvre la session Stripe Checkout et renvoie son adresse. Aucun droit n'est
- *               accordé ici : seul le webhook signé livre l'achat.
+ *               accordé ici : seul le webhook signé livre l'achat. Code promo facultatif
+ *               (réduction calculée par la base) et Stripe Tax si l'interrupteur est allumé.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-19
  *  Dépendances: lib/payments/stripe.ts, lib/payments/catalog.ts,
  *               lib/payments/checkout-request.ts, lib/supabase/admin.ts
@@ -26,6 +27,7 @@ import {
   parseCheckoutBody,
   studyOfferSaleItem,
 } from "@/lib/payments/checkout-request";
+import { PROMO_ERRORS } from "@/lib/payments/promo";
 import { createCheckoutSession } from "@/lib/payments/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -39,6 +41,7 @@ const ORDER_ERROR_STATUS: Record<string, number> = {
   not_allowed: 403,
   already_owned: 409,
   rate_limited: 429,
+  ...Object.fromEntries(PROMO_ERRORS.map((code) => [code, 400])),
 };
 
 type OrderRow = { order_id: string; total_minor: number; label: string };
@@ -62,9 +65,14 @@ function paymentError(code: string, status: number): Response {
  */
 async function createOrder(body: CheckoutBody) {
   const supabase = await createClient();
+  const promo = body.promoCode ?? null;
   if (body.item === "book") {
     return supabase
-      .rpc("create_book_order", { p_book_id: body.bookId, p_currency: body.currency })
+      .rpc("create_book_order", {
+        p_book_id: body.bookId,
+        p_currency: body.currency,
+        p_promo_code: promo,
+      })
       .single<OrderRow>();
   }
   return supabase
@@ -74,6 +82,7 @@ async function createOrder(body: CheckoutBody) {
       p_code: body.item === "study_offer" ? body.code : null,
       p_pack_id: body.item === "coach_pack" ? body.packId : null,
       p_study_id: body.item === "coach_pack" ? body.studyId : null,
+      p_promo_code: promo,
     })
     .single<OrderRow>();
 }
@@ -127,11 +136,16 @@ export async function POST(request: Request) {
   const admin = createAdminClient();
   const { saleItem, bookSlug } = await describeItem(admin, body);
   const productId = saleItem ? await stripeProductFor(saleItem) : null;
+  const settings = await admin
+    .from("platform_settings")
+    .select("stripe_tax_enabled")
+    .maybeSingle();
 
   try {
     const session = await createCheckoutSession({
       orderId: data.order_id,
       currency: body.currency,
+      automaticTax: settings.data?.stripe_tax_enabled === true,
       line: { unitMinor: data.total_minor, label: data.label, productId },
       customerEmail: user.email,
       successUrl: `${APP_URL}/compte/achats/merci?commande=${data.order_id}`,

@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.10.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.10.3 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -43,7 +43,8 @@ Version actuelle : v0.10.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #37 | 2026-10-18 | v0.10.0 (Sprint 5a) : étude des prix, paiement par carte Stripe (Checkout, webhook signé, commandes, livraison unique, étude offerte), Mes achats | ~700 000 | ~4.20 $ |
 | #38 | 2026-10-19 | v0.10.1 : sommaire de la fiche sans cadenas pour qui possède le livre ; achat réel validé | ~60 000 | ~0.36 $ |
 | #39 | 2026-10-19 | v0.10.2 (Sprint 5b) : achat des études, lots et forfaits du coach (remise enseignant), admin des commandes et remboursement Stripe | ~400 000 | ~2.40 $ |
-| **TOTAL** | | | **~12 660 000** | **~75.96 $** |
+| #40 | 2026-10-19 | v0.10.3 (Sprint 5c) : codes promo vérifiés par la base, aperçu dans le bouton d'achat, admin des codes, interrupteur Stripe Tax | ~350 000 | ~2.10 $ |
+| **TOTAL** | | | **~13 010 000** | **~78.06 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -91,7 +92,8 @@ Version actuelle : v0.10.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Sprint 5b — paiements Stratégie (étude, lots 10 et 30, forfaits du coach, remise enseignant 20 %), admin des commandes et bouton Rembourser (v0.10.2) ; unitaires 588/588, build OK
 - [x] Sprint 5b — migration `20261105120000_strategy_orders.sql` appliquée le 2026-10-19, intégration strategy-orders-rls 5/5
 - [ ] Sprint 5b — achat réel d'un lot ou d'un forfait, puis remboursement depuis /admin/commandes
-- [ ] Paiements 5c, 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 5c — codes promo (livre, livres, Stratégie, tout ; une fois par compte), admin `/admin/codes-promo`, interrupteur Stripe Tax éteint (v0.10.3) ; unitaires 601/601
+- [ ] Paiements 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)

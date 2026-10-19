@@ -64,7 +64,7 @@ describe.skipIf(!ready)("RLS — paiements Kalami Stratégie", () => {
       p_session_id: sessionId,
     });
     if (attached.error) throw attached.error;
-    const eventId = `evt_${RUN}_${order.order_id.slice(0, 8)}`;
+    const eventId = `evt_${RUN}${order.order_id.slice(0, 8)}`;
     eventIds.push(eventId);
     const { data, error } = await service.rpc("stripe_process_event", {
       p_event_id: eventId,

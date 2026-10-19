@@ -6,7 +6,7 @@
  *               Aucun contrôle d'accès ici (un layout ne se ré-exécute pas à chaque
  *               navigation) : chaque page appelle requireAdmin() elle-même.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-19
  * =============================================================
  */
@@ -34,6 +34,7 @@ const LINKS = [
   { href: "/admin/textes-legaux", label: t.admin.nav.legal },
   { href: "/admin/strategie", label: t.admin.nav.strategy },
   { href: "/admin/commandes", label: t.admin.nav.orders },
+  { href: "/admin/codes-promo", label: t.admin.nav.promos },
   { href: "/", label: t.admin.nav.site },
 ];
 

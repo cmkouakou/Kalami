@@ -4,11 +4,12 @@
  *  Projet     : Kalami
  *  Description: Appels à l'API REST de Stripe (sans dépendance) : création d'une session
  *               Checkout, lecture du produit d'un prix et du reçu d'un paiement, vérification
- *               de la signature des webhooks (HMAC SHA-256), remboursement d'un paiement.
+ *               de la signature des webhooks (HMAC SHA-256), remboursement d'un paiement,
+ *               Stripe Tax facultatif (prix taxes comprises, v0.10.3).
  *               Le compte Stripe est partagé avec d'autres applications : chaque session
  *               porte metadata.app = « kalami ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-19
  *  Dépendances: Stripe (https://docs.stripe.com/api), version 2026-02-25.clover
  * =============================================================
@@ -51,6 +52,8 @@ export type CheckoutLine = {
 export type CheckoutRequest = {
   orderId: string;
   currency: Currency;
+  /** Stripe Tax : taxe calculée par Stripe, comprise dans le prix affiché (montant inchangé). */
+  automaticTax: boolean;
   line: CheckoutLine;
   customerEmail: string | null;
   successUrl: string;
@@ -190,12 +193,15 @@ export async function createCheckoutSession(
     expires_at: Math.floor(Date.now() / 1000) + SESSION_TTL_S,
     metadata,
     payment_intent_data: { metadata, statement_descriptor_suffix: "KALAMI" },
+    // Taxe comprise : le total payé reste celui de la commande (contrôle du webhook)
+    automatic_tax: request.automaticTax ? { enabled: true } : null,
     line_items: [
       {
         quantity: 1,
         price_data: {
           currency: request.currency.toLowerCase(),
           unit_amount: line.unitMinor,
+          tax_behavior: request.automaticTax ? "inclusive" : null,
           ...(line.productId
             ? { product: line.productId }
             : { product_data: { name: line.label } }),

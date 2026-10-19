@@ -106,6 +106,10 @@ kalami/
   (`create_strategy_order` : prix de `strategy_offers` ou du forfait, remise enseignant).
   Remboursement depuis `/admin/commandes` seulement : API Stripe (clé d'idempotence), puis
   `admin_refund_order` retire les droits. Un remboursement fait dans Stripe ne les retire pas.
+- Codes promo (v0.10.3) : créés dans `/admin/codes-promo`, vérifiés par la base
+  (`promo_check` dans les fonctions de commande, aperçu `/api/paiement/promo`). Une fois par
+  compte, compté au paiement. Le même écran porte l'interrupteur Stripe Tax (éteint par
+  défaut ; prix taxes comprises une fois allumé).
 - Service worker (`public/sw.js`) actif en production seulement. Liste blanche dans
   `public/sw-routes.js` : seuls les fichiers statiques, les couvertures et les pages publiques
   du catalogue sont gardés sur l'appareil ; liseuse, études, comptes et API jamais. Changer
