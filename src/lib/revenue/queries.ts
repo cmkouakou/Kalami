@@ -6,8 +6,9 @@
  *               soldes et dernières écritures de l'auteur connecté, totaux et écritures de
  *               la plateforme, exceptions de commission par auteur (administrateur).
  *               La RLS limite l'auteur à ses propres écritures.
+ *               v1.1 : soldes avec demandes ouvertes et déjà versé (10b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-19
  *  Dépendances: lib/supabase/server.ts, lib/revenue/ledger.ts
  * =============================================================
@@ -92,6 +93,8 @@ export async function getAuthorBalances(): Promise<AuthorBalance[]> {
     earned: Number(row.earned_minor),
     available: Number(row.available_minor),
     pending: Number(row.pending_minor),
+    requested: Number(row.requested_minor ?? 0),
+    paid: Number(row.paid_minor ?? 0),
   }));
 }
 

@@ -4,12 +4,12 @@
  *  Projet     : Kalami
  *  Description: Revenus de l'auteur (Sprint 10a, v0.12.0) : part appliquée, délai de
  *               disponibilité et seuils de versement, soldes par devise (disponible, en
- *               attente, total) et dernières écritures du grand livre. Les demandes de
- *               versement arrivent au Sprint 10b.
+ *               attente, total) et dernières écritures du grand livre. v1.1 (Sprint 10b) :
+ *               demande de versement par devise, demandes en cours et historique.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-19
- *  Dépendances: lib/author/queries.ts, lib/revenue/queries.ts
+ *  Dépendances: lib/author/queries.ts, lib/revenue/queries.ts, lib/revenue/payout-*.ts
  * =============================================================
  */
 
@@ -17,11 +17,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { ActionForm } from "@/components/admin/action-form";
 import { BADGE, CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireAuthor } from "@/lib/author/queries";
 import { formatPrice } from "@/lib/currency";
 import { type AuthorBalance, bpsToPercent, isAvailable } from "@/lib/revenue/ledger";
+import { cancelPayout, requestPayout } from "@/lib/revenue/payout-actions";
+import { hasPayoutDetails, listAuthorPayouts } from "@/lib/revenue/payout-queries";
+import { payoutBlocker, type PayoutRequest } from "@/lib/revenue/payouts";
 import {
   getAuthorBalances,
   getAuthorShareBps,
@@ -55,10 +59,12 @@ export default function AuthorRevenuePage() {
 /** Réglages, soldes et écritures de l'auteur connecté. */
 async function Revenue() {
   const { author } = await requireAuthor("/auteur/revenus");
-  const [settings, balances, entries] = await Promise.all([
+  const [settings, balances, entries, payouts, hasDetails] = await Promise.all([
     getRevenueSettings(),
     getAuthorBalances(),
     listAuthorEntries(author.id),
+    listAuthorPayouts(author.id),
+    hasPayoutDetails(author.id),
   ]);
   const shareBps = await getAuthorShareBps(author.id, settings.authorShareBps);
 
@@ -76,7 +82,7 @@ async function Revenue() {
           })}
         </p>
         <p className="text-ink-muted">
-          {r.payoutsSoon}{" "}
+          {r.payoutsIntro}{" "}
           <Link href="/auteur/profil" className="font-medium text-encre underline">
             {r.payoutDetails}
           </Link>
@@ -91,7 +97,26 @@ async function Revenue() {
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {balances.map((balance) => (
-              <BalanceCard key={balance.currency} balance={balance} />
+              <BalanceCard
+                key={balance.currency}
+                balance={balance}
+                minimum={settings.payoutMin[balance.currency]}
+                hasDetails={hasDetails}
+              />
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* ==================== DEMANDES DE VERSEMENT ==================== */}
+      <section className="flex flex-col gap-3">
+        <h2 className="text-xl font-semibold">{r.payoutsTitle}</h2>
+        {payouts.length === 0 ? (
+          <p className="text-ink-muted">{r.payoutsNone}</p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {payouts.map((payout) => (
+              <PayoutRow key={payout.id} payout={payout} />
             ))}
           </ul>
         )}
@@ -143,9 +168,12 @@ async function Revenue() {
   );
 }
 
-/** Solde d'une devise : disponible, en attente, total et volume des ventes. */
-function BalanceCard({ balance }: { balance: AuthorBalance }) {
+type BalanceCardProps = { balance: AuthorBalance; minimum: number; hasDetails: boolean };
+
+/** Solde d'une devise : disponible, en attente, versements, puis demande ou blocage. */
+function BalanceCard({ balance, minimum, hasDetails }: BalanceCardProps) {
   const money = (amount: number) => formatPrice(amount, balance.currency);
+  const blocker = payoutBlocker(balance, minimum, hasDetails);
   return (
     <li className={`${CARD} flex flex-col gap-2 p-4`}>
       <p className="text-sm text-ink-muted">{r.available}</p>
@@ -155,10 +183,72 @@ function BalanceCard({ balance }: { balance: AuthorBalance }) {
         <dd className="text-right">{money(balance.pending)}</dd>
         <dt className="text-ink-muted">{r.earned}</dt>
         <dd className="text-right">{money(balance.earned)}</dd>
+        {balance.requested > 0 && (
+          <>
+            <dt className="text-ink-muted">{r.requested}</dt>
+            <dd className="text-right">{money(balance.requested)}</dd>
+          </>
+        )}
+        {balance.paid > 0 && (
+          <>
+            <dt className="text-ink-muted">{r.paid}</dt>
+            <dd className="text-right">{money(balance.paid)}</dd>
+          </>
+        )}
       </dl>
       <p className="text-xs text-ink-muted">
         {interpolate(r.sales, { count: String(balance.sales), gross: money(balance.gross) })}
       </p>
+      {blocker === null ? (
+        <ActionForm
+          action={requestPayout.bind(null, balance.currency)}
+          submitLabel={interpolate(r.request, { amount: money(balance.available) })}
+        >
+          {null}
+        </ActionForm>
+      ) : (
+        <p className="text-sm text-ink-muted">
+          {blocker === "below_minimum"
+            ? interpolate(r.blockers.below_minimum, { minimum: money(minimum) })
+            : r.blockers[blocker]}
+        </p>
+      )}
+    </li>
+  );
+}
+
+/** Une demande de versement : montant, statut, résultat ou bouton d'annulation. */
+function PayoutRow({ payout }: { payout: PayoutRequest }) {
+  return (
+    <li className={`${CARD} flex flex-col gap-2 p-4 text-sm`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className="font-mono text-xs text-ink-muted">{payout.reference}</span>
+        <span className="flex items-center gap-3">
+          <span className="font-semibold">
+            {formatPrice(payout.amount_minor, payout.currency)}
+          </span>
+          <span className={BADGE}>{r.statuses[payout.status]}</span>
+        </span>
+      </div>
+      <p className="text-ink-muted">
+        {r.requestedOn} {DATE_FORMAT.format(new Date(payout.created_at))}
+      </p>
+      {payout.status === "paid" && (
+        <p>
+          {interpolate(r.paidOn, {
+            date: payout.paid_at ? DATE_FORMAT.format(new Date(payout.paid_at)) : "—",
+            reference: payout.payment_reference ?? "—",
+          })}
+        </p>
+      )}
+      {payout.status === "rejected" && (
+        <p>{interpolate(r.rejectedBecause, { reason: payout.rejection_reason ?? "—" })}</p>
+      )}
+      {payout.status === "requested" && (
+        <ActionForm action={cancelPayout.bind(null, payout.id)} submitLabel={r.cancel}>
+          {null}
+        </ActionForm>
+      )}
     </li>
   );
 }

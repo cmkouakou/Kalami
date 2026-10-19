@@ -6,7 +6,7 @@
  *               Aucun contrôle d'accès ici (un layout ne se ré-exécute pas à chaque
  *               navigation) : chaque page appelle requireAdmin() elle-même.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4 (lien Revenus, v0.12.0)
+ *  Version    : 1.5 (liens Versements et Journal, v0.12.1)
  *  Date       : 2026-10-19
  * =============================================================
  */
@@ -37,6 +37,8 @@ const LINKS = [
   { href: "/admin/codes-promo", label: t.admin.nav.promos },
   { href: "/admin/mobile-money", label: t.admin.nav.mobileMoney },
   { href: "/admin/revenus", label: t.admin.nav.revenue },
+  { href: "/admin/versements", label: t.admin.nav.payouts },
+  { href: "/admin/journal", label: t.admin.nav.audit },
   { href: "/", label: t.admin.nav.site },
 ];
 

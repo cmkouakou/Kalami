@@ -119,6 +119,10 @@ kalami/
   du net, disponible après 30 jours ; réglages et part propre par auteur dans
   `/admin/revenus`, revenus de l'auteur dans `/auteur/revenus`. Frais Mobile Money par
   opérateur dans `/admin/mobile-money`.
+- Versements (v0.12.1) : l'auteur demande tout son disponible d'une devise dans
+  `/auteur/revenus` ; l'admin approuve, puis marque payé (référence + reçu facultatif) ou
+  refuse dans `/admin/versements`. Journal d'audit : `/admin/journal`. Reçus dans le seau
+  privé `payout-proofs`.
 - Service worker (`public/sw.js`) actif en production seulement. Liste blanche dans
   `public/sw-routes.js` : seuls les fichiers statiques, les couvertures et les pages publiques
   du catalogue sont gardés sur l'appareil ; liseuse, études, comptes et API jamais. Changer

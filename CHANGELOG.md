@@ -1,5 +1,32 @@
 # Journal des modifications
 
+## [v0.12.1] - 2026-10-19 — Versements, tableau de bord et journal d'audit (Sprint 10b)
+### Ajouté
+- Demandes de versement dans `/auteur/revenus` : un bouton par devise verse tout le
+  disponible (seuils 5 000 FCFA / 10 € / 15 $ CA, coordonnées de versement obligatoires, une
+  seule demande ouverte par devise). Le montant est retenu tant que la demande est ouverte.
+  L'auteur peut annuler une demande pas encore approuvée. Historique des demandes et motifs.
+- Administration `/admin/versements` : demandes à traiter (les plus anciennes d'abord),
+  coordonnées figées au moment de la demande, approbation, refus avec motif, paiement marqué
+  avec la référence de la transaction et un reçu facultatif (PDF ou image, 5 Mo, seau privé
+  `payout-proofs`). Kalami paie les frais du virement. Courriel à l'admin à chaque demande,
+  courriel à l'auteur au paiement ou au refus.
+- Journal d'audit consultable `/admin/journal` : filtre par catégorie, pages de 50 entrées.
+- Tableau de bord admin : sections « À traiter » (soumissions, versements, Mobile Money à
+  valider), « Ventes du mois » par devise (encaissé, commission, part des auteurs) et
+  « Catalogue ». Liens Versements et Journal dans le menu.
+- Migration `20261110120000_payouts.sql` : table `payout_requests`, seau `payout-proofs`,
+  fonctions `author_request_payout`, `author_cancel_payout`, `admin_payout_approve`,
+  `admin_payout_reject`, `admin_payout_mark_paid`, `admin_audit_log`,
+  `admin_audit_categories` ; `author_ledger_balances` renvoie aussi le montant demandé et le
+  déjà versé. Chaque étape est inscrite au journal d'audit.
+- Tests : 12 unitaires (`payouts.test.ts`) ; 6 d'intégration (`payouts-rls.test.ts`, ignorés
+  tant que la migration n'est pas appliquée).
+
+### Déploiement
+- Migration `20261110120000_payouts.sql` appliquée le 2026-10-19 (seau, 3 politiques, 8 fonctions
+  vérifiés) ; intégration payouts-rls 6/6, ledger-rls 4/4.
+
 ## [v0.12.0] - 2026-10-19 — Grand livre et commissions (Sprint 10a)
 ### Ajouté
 - Grand livre des ventes (`ledger_entries`) : une écriture par article à chaque paiement,

@@ -5,9 +5,9 @@
  *  Description: Calculs purs du grand livre (Sprint 10a, v0.12.0) : conversion des frais
  *               Stripe dans la devise de la commande, saisie d'un pourcentage en points de
  *               base, types des soldes de l'auteur et des totaux de la plateforme (calculés
- *               par la base, comme les écritures).
+ *               par la base, comme les écritures). v1.1 : demandes de versement (10b).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-19
  *  Dépendances: lib/catalog/types.ts
  * =============================================================
@@ -46,10 +46,14 @@ export type AuthorBalance = {
   gross: number;
   /** Part de l'auteur, toutes écritures */
   earned: number;
-  /** Part disponible (délai écoulé) */
+  /** Part disponible (délai écoulé), moins les demandes ouvertes et le déjà versé */
   available: number;
   /** Part encore dans le délai de disponibilité */
   pending: number;
+  /** Demandes de versement ouvertes (montant retenu) */
+  requested: number;
+  /** Déjà versé */
+  paid: number;
 };
 
 /** Totaux de la plateforme dans une devise. */
@@ -125,4 +129,48 @@ export function bpsToPercent(bps: number): string {
  */
 export function isAvailable(availableAt: string, now: Date = new Date()): boolean {
   return new Date(availableAt).getTime() <= now.getTime();
+}
+
+/** Ordre d'affichage des devises. */
+const CURRENCY_ORDER: Currency[] = ["XOF", "EUR", "CAD"];
+
+/** Écriture réduite aux montants (lecture du tableau de bord). */
+export type LedgerAmounts = Pick<
+  LedgerEntry,
+  | "entry_type"
+  | "currency"
+  | "gross_minor"
+  | "fee_minor"
+  | "tax_minor"
+  | "commission_minor"
+  | "author_minor"
+>;
+
+/**
+ * Totaux par devise d'un ensemble d'écritures ; un remboursement retire une vente (ses
+ * montants sont déjà négatifs), comme admin_ledger_totals().
+ * @param entries - Écritures (ventes et remboursements)
+ * @returns Totaux dans l'ordre XOF, EUR, CAD (devises sans écriture omises)
+ */
+export function summarizeEntries(entries: LedgerAmounts[]): PlatformTotals[] {
+  const totals = new Map<Currency, PlatformTotals>();
+  for (const entry of entries) {
+    const row = totals.get(entry.currency) ?? {
+      currency: entry.currency,
+      sales: 0,
+      gross: 0,
+      fees: 0,
+      taxes: 0,
+      commission: 0,
+      authors: 0,
+    };
+    row.sales += entry.entry_type === "sale" ? 1 : -1;
+    row.gross += entry.gross_minor;
+    row.fees += entry.fee_minor;
+    row.taxes += entry.tax_minor;
+    row.commission += entry.commission_minor;
+    row.authors += entry.author_minor;
+    totals.set(entry.currency, row);
+  }
+  return CURRENCY_ORDER.flatMap((currency) => totals.get(currency) ?? []);
 }

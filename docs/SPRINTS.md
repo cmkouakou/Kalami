@@ -20,7 +20,7 @@ démarre après la v1.0.0 de la plateforme de lecture.
 | 5c | Codes promo (livres et Stratégie, une fois par compte) ; interrupteur Stripe Tax (éteint) | v0.10.3 | ✅ |
 | 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.11.0 | ✅ (test réel à faire) |
 | 10a | Grand livre, commissions (70 % auteur), revenus dans l'espace auteur, admin des revenus | v0.12.0 | ✅ |
-| 10b | Versements aux auteurs, tableau de bord admin, journal d'audit (remboursement : livré en 5b) | v0.12.1 | ⬜ |
+| 10b | Versements aux auteurs, tableau de bord admin, journal d'audit (remboursement : livré en 5b) | v0.12.1 | ✅ |
 | 11b | Critères d'acceptation, mise en production | v1.0.0 | ⬜ |
 
 Ordre revu le 2026-10-08 : les paiements (5, 6) passent en dernier. Le grand livre (10) en dépend

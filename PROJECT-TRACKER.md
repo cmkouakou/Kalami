@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.12.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.12.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -47,7 +47,8 @@ Version actuelle : v0.12.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #41 | 2026-10-19 | v0.10.4 : historique des migrations réparé (16 vérifiées), remise enseignant 20 % du Forfait Essentiel | ~150 000 | ~0.90 $ |
 | #42 | 2026-10-19 | v0.11.0 (Sprint 6) : Mobile Money manuel (FCFA), déclaration de transaction, validation admin, numéros marchands, expiration 24 h, courriels | ~400 000 | ~2.40 $ |
 | #43 | 2026-10-19 | v0.12.0 (Sprint 10a) : grand livre, commissions 70 %, frais Stripe et Mobile Money, revenus auteur, admin des revenus | ~450 000 | ~2.70 $ |
-| **TOTAL** | | | **~14 010 000** | **~84.06 $** |
+| #44 | 2026-10-19 | v0.12.1 (Sprint 10b) : versements aux auteurs (demande, approbation, paiement avec reçu, refus), tableau de bord admin, journal d'audit | ~400 000 | ~2.40 $ |
+| **TOTAL** | | | **~14 410 000** | **~86.46 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -101,7 +102,9 @@ Version actuelle : v0.12.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [ ] Sprint 6 — saisir les numéros Wave et Orange, essai réel (achat + validation admin)
 - [x] Sprint 10a — grand livre, commissions, `/auteur/revenus`, `/admin/revenus`, frais Mobile Money (v0.12.0) ; unitaires 621/621, build OK
 - [x] Sprint 10a — migration `20261109120000_ledger.sql` appliquée le 2026-10-19 (historique réparé), intégration ledger-rls 4/4, rattrapage : 1 commande, 1 écriture
-- [ ] Paiements 10b et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 10b — versements, `/admin/versements`, `/admin/journal`, tableau de bord admin (v0.12.1) ; unitaires 633/633
+- [x] Sprint 10b — migration `20261110120000_payouts.sql` appliquée le 2026-10-19, intégration payouts-rls 6/6, ledger-rls 4/4
+- [ ] Paiements 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)
