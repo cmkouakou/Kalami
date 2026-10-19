@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.10.4] - 2026-10-19 — Remise enseignant du Forfait Essentiel
+### Corrigé
+- Migration `20261107120000_fix_teacher_discount.sql` : remise enseignant de 20 % sur le
+  Forfait Essentiel. La migration 20261105 cherchait un nom commençant par « essentiel » et
+  n'avait modifié aucune ligne.
+- Historique des migrations de la base réparé : 16 migrations appliquées à la main
+  (20261008 à 20261106) y sont maintenant inscrites, après vérification de leur contenu.
+
 ## [v0.10.3] - 2026-10-19 — Codes promo et Stripe Tax (Sprint 5c)
 ### Ajouté
 - Codes promo vérifiés par la base, ce qui les rend utilisables plus tard pour Mobile Money :

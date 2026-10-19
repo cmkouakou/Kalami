@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.10.3 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.10.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -44,7 +44,8 @@ Version actuelle : v0.10.3 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #38 | 2026-10-19 | v0.10.1 : sommaire de la fiche sans cadenas pour qui possède le livre ; achat réel validé | ~60 000 | ~0.36 $ |
 | #39 | 2026-10-19 | v0.10.2 (Sprint 5b) : achat des études, lots et forfaits du coach (remise enseignant), admin des commandes et remboursement Stripe | ~400 000 | ~2.40 $ |
 | #40 | 2026-10-19 | v0.10.3 (Sprint 5c) : codes promo vérifiés par la base, aperçu dans le bouton d'achat, admin des codes, interrupteur Stripe Tax | ~350 000 | ~2.10 $ |
-| **TOTAL** | | | **~13 010 000** | **~78.06 $** |
+| #41 | 2026-10-19 | v0.10.4 : historique des migrations réparé (16 vérifiées), remise enseignant 20 % du Forfait Essentiel | ~150 000 | ~0.90 $ |
+| **TOTAL** | | | **~13 160 000** | **~78.96 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
