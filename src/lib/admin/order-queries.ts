@@ -5,12 +5,13 @@
  *  Description: Lectures de l'administration des ventes (v0.10.2) : commandes de toute la
  *               boutique avec l'adresse de l'acheteur, filtrées par statut, et offres d'étude
  *               de Kalami Stratégie (prix). Les fonctions SQL et la RLS exigent le rôle
- *               administrateur (aal2).
+ *               administrateur (aal2). v0.11.0 : champs Mobile Money et filtre « à valider »
+ *               (paiements déclarés en attente de vérification).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-19
  *  Dépendances: lib/supabase/server.ts, lib/payments/queries.ts,
- *               migration 20261105120000_strategy_orders.sql
+ *               migrations 20261105120000_strategy_orders.sql, 20261108120000_mobile_money.sql
  * =============================================================
  */
 
@@ -26,11 +27,15 @@ import { createClient } from "@/lib/supabase/server";
 /** Statuts proposés dans le filtre, dans l'ordre d'affichage. */
 export const ORDER_STATUSES: OrderStatus[] = ["paid", "pending", "refunded", "expired", "failed"];
 
+/** Filtre de la liste : un statut, ou les paiements Mobile Money à valider. */
+export type OrderFilter = OrderStatus | "to_review";
+
 /** Commande vue par l'administrateur. */
 export type AdminOrderRow = {
   id: string;
   buyer_email: string | null;
   status: OrderStatus;
+  provider: string;
   currency: Currency;
   total_minor: number;
   labels: string | null;
@@ -39,6 +44,13 @@ export type AdminOrderRow = {
   created_at: string;
   paid_at: string | null;
   refunded_at: string | null;
+  mm_operator: string | null;
+  mm_country: string | null;
+  mm_reference: string | null;
+  mm_transaction_id: string | null;
+  mm_payer_number: string | null;
+  mm_declared_at: string | null;
+  mm_rejection_reason: string | null;
 };
 
 /** Offre d'étude ou de lot, avec ses prix saisis. */
@@ -57,17 +69,18 @@ export type AdminStudyOffer = {
 /**
  * Valide un statut de filtre lu dans l'adresse.
  * @param raw - Valeur brute (?statut=…)
- * @returns Statut connu, ou null pour « toutes »
+ * @returns Filtre connu, ou null pour « toutes »
  */
-export function parseOrderStatus(raw: unknown): OrderStatus | null {
+export function parseOrderStatus(raw: unknown): OrderFilter | null {
+  if (raw === "to_review") return "to_review";
   return ORDER_STATUSES.find((status) => status === raw) ?? null;
 }
 
 /**
  * Commandes les plus récentes (200), filtrées par statut.
- * @param status - Statut voulu, ou null pour toutes
+ * @param status - Filtre voulu, ou null pour toutes
  */
-export async function listOrdersForAdmin(status: OrderStatus | null): Promise<AdminOrderRow[]> {
+export async function listOrdersForAdmin(status: OrderFilter | null): Promise<AdminOrderRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("admin_orders", { p_status: status });
   if (error) throw new Error(`Lecture des commandes impossible : ${error.message}`);

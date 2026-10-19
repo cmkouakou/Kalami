@@ -89,7 +89,9 @@ const fr = {
       redirecting: "Ouverture du paiement sécurisé…",
       signInToBuy: "Se connecter pour acheter",
       owned: "Ce livre fait partie de votre bibliothèque.",
-      secure: "Paiement par carte, sécurisé par Stripe. Mobile Money : bientôt.",
+      secure:
+        "Paiement par carte, sécurisé par Stripe. En FCFA : Mobile Money (Wave, Orange " +
+        "Money), validé à la main sous 24 h.",
       promoToggle: "J'ai un code promo",
       promoLabel: "Code promo",
       promoApply: "Appliquer",
@@ -403,6 +405,10 @@ const fr = {
       read: "Lire",
       openStrategy: "Ouvrir Kalami Stratégie",
       openCoach: "Ouvrir le coach",
+      mmToPay: "Mobile Money : en attente de votre paiement",
+      mmToReview: "Mobile Money : paiement en cours de vérification",
+      mmRejected: "Mobile Money : paiement refusé",
+      mmOpen: "Voir la commande",
       thanks: {
         title: "Merci pour votre achat !",
         paid: "Votre paiement est confirmé : « {label} » est dans votre bibliothèque.",
@@ -584,6 +590,7 @@ const fr = {
       strategy: "Stratégie",
       orders: "Commandes",
       promos: "Codes promo",
+      mobileMoney: "Mobile Money",
       site: "Voir le site",
     },
     dashboard: {
@@ -821,9 +828,24 @@ const fr = {
       intro:
         "Les 200 commandes les plus récentes de Kalami. Un remboursement passe par Stripe " +
         "(compte en mode réel) puis retire les droits : livre, PDF, crédits d'étude non " +
-        "utilisés et forfaits du coach. Une étude déjà créée avec un crédit reste.",
+        "utilisés et forfaits du coach. Une étude déjà créée avec un crédit reste. " +
+        "Un paiement Mobile Money se valide ici, après vérification du relevé de l'opérateur.",
       filter: "Statut",
       filterAll: "Toutes",
+      filterToReview: "Mobile Money à valider",
+      mm: "Mobile Money {operator} ({country}) · réf. {reference}",
+      mmTransaction: "Transaction {transaction} · payeur {payer} · déclarée le {date}",
+      mmNotDeclared: "Transaction pas encore déclarée",
+      mmRejected: "Refusé : {reason}",
+      toReview: "À valider",
+      validate: "Valider le paiement",
+      validateConfirm: "J'ai vu ce paiement sur le relevé de l'opérateur",
+      reject: "Refuser",
+      rejectReason: "Motif du refus (envoyé à l'acheteur)",
+      validated: "Paiement validé : l'accès est ouvert.",
+      rejected: "Paiement refusé.",
+      emailSent: "Courriel envoyé à l'acheteur.",
+      emailNotSent: "Courriel non envoyé : prévenez l'acheteur vous-même.",
       apply: "Filtrer",
       statuses: {
         pending: "En attente",
@@ -872,6 +894,38 @@ const fr = {
         invalid_name: "Indiquez un nom de 1 à 80 caractères.",
         invalid_price: "Un prix est un nombre positif (FCFA : entier).",
         offer_not_found: "Cette offre n'existe plus.",
+        not_declared: "L'acheteur n'a pas encore déclaré sa transaction.",
+        invalid_reason: "Indiquez un motif de 3 à 300 caractères.",
+        mm_refund:
+          "Une commande Mobile Money se rembourse hors de Kalami (renvoi au numéro payeur).",
+      },
+    },
+    mobileMoney: {
+      title: "Mobile Money",
+      intro:
+        "Numéros marchands proposés aux acheteurs qui paient en FCFA. L'acheteur paie hors de " +
+        "Kalami puis déclare sa transaction ; vous la validez dans « Commandes » après " +
+        "vérification du relevé.",
+      operatorsTitle: "Opérateurs",
+      enabled: "Actif",
+      disabled: "Éteint",
+      enable: "Activer",
+      disable: "Éteindre",
+      operatorSaved: "Opérateur mis à jour.",
+      accountsTitle: "Numéros marchands",
+      operator: "Opérateur",
+      country: "Pays",
+      number: "Numéro marchand",
+      numberHint: "Avec l'indicatif, par exemple +225 07 00 00 00 00.",
+      name: "Nom du compte (affiché à l'acheteur)",
+      active: "Proposé aux acheteurs",
+      save: "Enregistrer le numéro",
+      saved: "Numéro enregistré.",
+      none: "Aucun numéro marchand : le Mobile Money n'est pas proposé.",
+      inactive: "Retiré",
+      errors: {
+        invalid_account: "Vérifiez l'opérateur, le pays, le numéro et le nom (2 à 80 car.).",
+        operator_not_found: "Cet opérateur n'existe pas.",
       },
     },
     promos: {
@@ -945,6 +999,84 @@ const fr = {
         invalid_promo: "Code refusé par la base : vérifiez la réduction et le livre.",
         promo_not_found: "Ce code n'existe plus.",
       },
+    },
+  },
+  mobileMoney: {
+    choose: "Payer par Mobile Money",
+    chooseHelp: "Choisissez votre opérateur et votre pays.",
+    loading: "Chargement des numéros…",
+    none: "Le Mobile Money n'est pas disponible pour le moment.",
+    operatorLegend: "Opérateur et pays",
+    continue: "Continuer — {price}",
+    starting: "Création de la commande…",
+    cancel: "Annuler",
+    countries: {
+      BJ: "Bénin",
+      BF: "Burkina Faso",
+      CI: "Côte d'Ivoire",
+      GW: "Guinée-Bissau",
+      ML: "Mali",
+      NE: "Niger",
+      SN: "Sénégal",
+      TG: "Togo",
+    },
+    errors: {
+      operator_unavailable: "Ce numéro n'est plus proposé. Choisissez-en un autre.",
+      order_not_found: "Commande introuvable.",
+      already_declared: "Cette transaction est déjà déclarée.",
+      order_expired: "Le délai de 24 h est dépassé : refaites un achat.",
+      invalid_transaction:
+        "Numéro de transaction invalide (4 à 40 caractères : lettres, chiffres, . ou -).",
+      invalid_payer: "Numéro payeur invalide (8 à 20 chiffres, indicatif possible).",
+      transaction_used: "Ce numéro de transaction a déjà été utilisé.",
+      generic: "La demande n'a pas abouti. Réessayez dans un instant.",
+    },
+    order: {
+      title: "Paiement Mobile Money",
+      amount: "Montant à envoyer",
+      number: "Numéro {operator}",
+      reference: "Référence",
+      deadline: "À payer et déclarer avant le {date}.",
+      stepsTitle: "Comment payer",
+      step1: "Envoyez exactement {amount} par {operator} au {number}.",
+      step2:
+        "Indiquez la référence {reference} en motif du transfert, si l'application le permet.",
+      step3:
+        "Notez le numéro de transaction reçu par SMS, puis déclarez-le ci-dessous avec le " +
+        "numéro qui a payé.",
+      transaction: "Numéro de transaction",
+      transactionHint: "Il figure dans le SMS de confirmation de l'opérateur.",
+      payer: "Numéro qui a payé",
+      payerHint: "Avec l'indicatif, par exemple +225 07 00 00 00 00.",
+      declare: "Déclarer mon paiement",
+      declared: "Paiement déclaré : nous le vérifions, vous recevrez un courriel.",
+      toReview:
+        "Paiement déclaré le {date} (transaction {transaction}). Nous le vérifions : " +
+        "vous recevrez un courriel dès la validation.",
+      paid: "Paiement validé : votre achat est disponible.",
+      open: "Ouvrir mon achat",
+      rejected: "Paiement refusé : {reason}",
+      rejectedHelp: "Une erreur ? Écrivez-nous avec la référence de la commande.",
+      expired:
+        "La commande {reference} a expiré sans paiement déclaré. Vous pouvez refaire un achat.",
+      notFound: "Commande introuvable.",
+      back: "Retour à mes achats",
+    },
+    email: {
+      greeting: "Bonjour,",
+      adminSubject: "Mobile Money à valider — {reference} ({amount})",
+      adminBody: "{buyer} a déclaré un paiement {operator} de {amount} pour « {labels} ».",
+      adminDetails: "Référence {reference} · transaction {transaction} · payeur {payer}.",
+      adminCta: "Valider ou refuser",
+      validatedSubject: "Paiement confirmé — {reference}",
+      validatedBody:
+        "Votre paiement Mobile Money de {amount} est validé : « {labels} » est disponible.",
+      rejectedSubject: "Paiement non validé — {reference}",
+      rejectedBody:
+        "Votre paiement Mobile Money de {amount} pour « {labels} » n'a pas été validé.",
+      reason: "Motif : {reason}",
+      rejectedHelp: "Une erreur ? Répondez à ce courriel avec la référence {reference}.",
+      cta: "Voir mes achats",
     },
   },
   legal: {

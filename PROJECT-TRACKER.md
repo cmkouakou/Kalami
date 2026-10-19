@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.10.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.11.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -45,7 +45,8 @@ Version actuelle : v0.10.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #39 | 2026-10-19 | v0.10.2 (Sprint 5b) : achat des études, lots et forfaits du coach (remise enseignant), admin des commandes et remboursement Stripe | ~400 000 | ~2.40 $ |
 | #40 | 2026-10-19 | v0.10.3 (Sprint 5c) : codes promo vérifiés par la base, aperçu dans le bouton d'achat, admin des codes, interrupteur Stripe Tax | ~350 000 | ~2.10 $ |
 | #41 | 2026-10-19 | v0.10.4 : historique des migrations réparé (16 vérifiées), remise enseignant 20 % du Forfait Essentiel | ~150 000 | ~0.90 $ |
-| **TOTAL** | | | **~13 160 000** | **~78.96 $** |
+| #42 | 2026-10-19 | v0.11.0 (Sprint 6) : Mobile Money manuel (FCFA), déclaration de transaction, validation admin, numéros marchands, expiration 24 h, courriels | ~400 000 | ~2.40 $ |
+| **TOTAL** | | | **~13 560 000** | **~81.36 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -94,7 +95,9 @@ Version actuelle : v0.10.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Sprint 5b — migration `20261105120000_strategy_orders.sql` appliquée le 2026-10-19, intégration strategy-orders-rls 5/5
 - [ ] Sprint 5b — achat réel d'un lot ou d'un forfait, puis remboursement depuis /admin/commandes
 - [x] Sprint 5c — codes promo (livre, livres, Stratégie, tout ; une fois par compte), admin `/admin/codes-promo`, interrupteur Stripe Tax éteint (v0.10.3) ; unitaires 601/601
-- [ ] Paiements 6, 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 6 — Mobile Money manuel (FCFA, Wave et Orange), déclaration, validation admin, admin `/admin/mobile-money`, expiration 24 h (v0.11.0) ; unitaires Mobile Money 12/12, build OK
+- [ ] Sprint 6 — appliquer la migration `20261108120000_mobile_money.sql`, saisir les numéros, test réel
+- [ ] Paiements 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)

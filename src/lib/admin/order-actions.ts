@@ -5,11 +5,13 @@
  *  Description: Actions de l'administration des ventes (v0.10.2) : remboursement intégral
  *               d'une commande payée (API Stripe, puis retrait des droits en base) et prix
  *               des offres d'étude de Kalami Stratégie. Les fonctions SQL vérifient le rôle
- *               administrateur (aal2) et écrivent le journal d'audit.
+ *               administrateur (aal2) et écrivent le journal d'audit. v0.11.0 : validation
+ *               ou refus (avec motif) d'un paiement Mobile Money, courriel à l'acheteur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-19
- *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/payments/stripe.ts
+ *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/payments/stripe.ts,
+ *               lib/payments/mobile-money-email.ts, lib/email/send.ts
  * =============================================================
  */
 
@@ -21,7 +23,9 @@ import { getDictionary, interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { isUuid } from "@/lib/admin/validation";
+import { sendEmail } from "@/lib/email/send";
 import { STUDY_OFFER_CODES } from "@/lib/payments/checkout-request";
+import { buildDecisionEmail } from "@/lib/payments/mobile-money-email";
 import { createRefund } from "@/lib/payments/stripe";
 import { createClient } from "@/lib/supabase/server";
 
@@ -69,11 +73,13 @@ export async function refundOrder(_prev: FormState, formData: FormData): Promise
   const supabase = await createClient();
   const { data: order, error: readError } = await supabase
     .from("orders")
-    .select("status, provider_payment_id")
+    .select("status, provider, provider_payment_id")
     .eq("id", orderId)
     .maybeSingle();
   if (readError || !order) return { error: orderError("order_not_found") };
   if (order.status !== "paid") return { error: orderError("not_refundable") };
+  // Mobile Money : aucun remboursement automatique possible (renvoi manuel au payeur)
+  if (order.provider !== "stripe") return { error: orderError("mm_refund") };
   if (!order.provider_payment_id) return { error: orderError("no_payment") };
 
   let refundId: string;
@@ -99,6 +105,94 @@ export async function refundOrder(_prev: FormState, formData: FormData): Promise
       packs: String(row?.packs_removed ?? 0),
     }),
   };
+}
+
+// ==================== MOBILE MONEY ====================
+
+/** Commande traitée, telle que la renvoient les fonctions de décision. */
+type DecisionRow = {
+  buyer_email: string | null;
+  labels: string | null;
+  total_minor: number;
+  reference: string | null;
+};
+
+/**
+ * Prévient l'acheteur de la décision et compose le message de l'administrateur.
+ * @param row - Commande traitée
+ * @param done - Message de la décision
+ * @param rejectionReason - Motif du refus (absent : paiement validé)
+ */
+async function notifyBuyer(
+  row: DecisionRow | undefined,
+  done: string,
+  rejectionReason?: string,
+): Promise<FormState> {
+  if (!row?.buyer_email) return { message: `${done} ${o.emailNotSent}` };
+  const status = await sendEmail(
+    buildDecisionEmail({
+      to: row.buyer_email,
+      totalMinor: Number(row.total_minor),
+      labels: row.labels ?? "—",
+      reference: row.reference ?? "—",
+      rejectionReason,
+    }),
+  );
+  return { message: `${done} ${status === "sent" ? o.emailSent : o.emailNotSent}` };
+}
+
+/**
+ * Valide un paiement Mobile Money déclaré, vu sur le relevé de l'opérateur.
+ *
+ * Description : la base passe la commande à « payée », accorde les droits (même livraison
+ * que la carte), écrit l'audit ; l'acheteur reçoit ensuite un courriel de confirmation.
+ *
+ * Erreurs possibles :
+ *   - confirm : case non cochée
+ *   - order_not_found, not_declared : commande absente, déjà traitée ou non déclarée
+ */
+export async function validateMobileMoney(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const orderId = String(formData.get("orderId") ?? "");
+  if (!isUuid(orderId)) return { error: orderError("order_not_found") };
+  if (formData.get("confirm") !== "on") return { error: orderError("confirm") };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_mm_validate", { p_order_id: orderId });
+  if (error) return { error: orderError(error.message) };
+  refresh();
+  return notifyBuyer(((data ?? []) as DecisionRow[])[0], o.validated);
+}
+
+/**
+ * Refuse un paiement Mobile Money (introuvable sur le relevé, montant faux…).
+ * Le motif est enregistré, journalisé et envoyé à l'acheteur.
+ *
+ * Erreurs possibles :
+ *   - invalid_reason : motif de moins de 3 ou de plus de 300 caractères
+ *   - order_not_found : commande absente ou déjà traitée
+ */
+export async function rejectMobileMoney(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const orderId = String(formData.get("orderId") ?? "");
+  if (!isUuid(orderId)) return { error: orderError("order_not_found") };
+  const reason = String(formData.get("reason") ?? "").trim();
+  if (reason.length < 3 || reason.length > 300) return { error: orderError("invalid_reason") };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_mm_reject", {
+    p_order_id: orderId,
+    p_reason: reason,
+  });
+  if (error) return { error: orderError(error.message) };
+  refresh();
+  return notifyBuyer(((data ?? []) as DecisionRow[])[0], o.rejected, reason);
 }
 
 // ==================== OFFRES D'ÉTUDE ====================

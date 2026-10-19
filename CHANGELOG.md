@@ -1,5 +1,41 @@
 # Journal des modifications
 
+## [v0.11.0] - 2026-10-19 — Mobile Money manuel (Sprint 6)
+### Ajouté
+- Paiement Mobile Money en FCFA (XOF) seulement, pour le livre et Kalami Stratégie.
+  - Sous le bouton d'achat : « Payer par Mobile Money », choix de l'opérateur et du pays.
+  - Page de la commande `/compte/achats/[commande]` : montant, numéro marchand, référence
+    `KAL-XXXXXXXX` et échéance (24 h). L'acheteur paie hors de l'app, puis déclare son numéro
+    de transaction et le numéro payeur.
+  - Un numéro de transaction ne sert qu'une fois (toutes commandes confondues).
+- Validation par l'administrateur seulement (test critique du Sprint 6) :
+  - `/admin/commandes`, filtre « À valider » : Valider (livre l'achat par `fulfil_order`)
+    ou Refuser avec un motif. Tout est consigné au journal d'audit.
+  - Courriel d'alerte aux administrateurs à chaque déclaration ; courriel à l'acheteur
+    à la validation ou au refus (avec le motif).
+- Administration `/admin/mobile-money` : opérateurs à activer ou éteindre (Wave et Orange
+  actifs ; MTN, Moov et Free éteints), numéros marchands par opérateur et par pays.
+- Tâche quotidienne `/api/cron/commandes` (5 h UTC, `CRON_SECRET`) : les commandes non
+  déclarées après 24 h passent en « expirée ».
+- Interface de fournisseur commune (`mobile-money-provider.ts`) pour brancher CinetPay plus tard.
+- Migration `20261108120000_mobile_money.sql` : tables `mobile_money_operators` et
+  `mobile_money_accounts`, colonnes `mm_*` sur `orders`, fonctions `mm_*` et `admin_mm_*`.
+- Tests : 12 unitaires (`mobile-money.test.ts`) ; 5 d'intégration
+  (`mobile-money-rls.test.ts`, ignorés tant que la migration n'est pas appliquée).
+
+### Modifié
+- Une commande Mobile Money ne se rembourse pas par le bouton Stripe (remboursement manuel).
+- `/compte/achats` : état des commandes Mobile Money et lien « Voir la commande ».
+
+### À faire avant le déploiement
+- Appliquer la migration `20261108120000_mobile_money.sql` **avant** de pousser.
+- Saisir les numéros marchands Wave et Orange dans `/admin/mobile-money`.
+
+### Notes
+- La validation admin exige le MFA (aal2) : elle ne peut pas être testée en intégration.
+- Lancée en parallèle, la suite d'intégration complète sature la base (connexions) : des
+  fichiers échouent au hasard, mais passent lancés seuls.
+
 ## [v0.10.4] - 2026-10-19 — Remise enseignant du Forfait Essentiel
 ### Corrigé
 - Migration `20261107120000_fix_teacher_discount.sql` : remise enseignant de 20 % sur le

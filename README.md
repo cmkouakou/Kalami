@@ -110,6 +110,10 @@ kalami/
   (`promo_check` dans les fonctions de commande, aperçu `/api/paiement/promo`). Une fois par
   compte, compté au paiement. Le même écran porte l'interrupteur Stripe Tax (éteint par
   défaut ; prix taxes comprises une fois allumé).
+- Mobile Money (v0.11.0) : FCFA seulement, manuel. L'acheteur paie hors de l'app puis
+  déclare sa transaction sur `/compte/achats/[commande]` ; l'admin valide ou refuse dans
+  `/admin/commandes` (filtre « À valider »). Numéros marchands : `/admin/mobile-money`.
+  Les commandes non déclarées expirent après 24 h (`/api/cron/commandes`, `CRON_SECRET`).
 - Service worker (`public/sw.js`) actif en production seulement. Liste blanche dans
   `public/sw-routes.js` : seuls les fichiers statiques, les couvertures et les pages publiques
   du catalogue sont gardés sur l'appareil ; liseuse, études, comptes et API jamais. Changer

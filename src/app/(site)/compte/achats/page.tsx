@@ -4,11 +4,12 @@
  *  Projet     : Kalami
  *  Description: « Mes achats » : commandes payées ou en cours de confirmation, montant,
  *               date, lien vers ce que l'achat débloque (livre, Kalami Stratégie, coach),
- *               reçu Stripe ; les commandes remboursées restent visibles.
+ *               reçu Stripe ; les commandes remboursées restent visibles. Une commande
+ *               Mobile Money montre son étape et mène à sa page (paiement, déclaration).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-19
- *  Dépendances: lib/payments/queries.ts, lib/currency.ts
+ *  Dépendances: lib/payments/queries.ts, lib/payments/mobile-money.ts, lib/currency.ts
  * =============================================================
  */
 
@@ -19,6 +20,7 @@ import { Suspense } from "react";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
+import { mobileMoneyStage, type MobileMoneyStage } from "@/lib/payments/mobile-money";
 import {
   getMyOrders,
   type OrderItemLink,
@@ -40,6 +42,13 @@ const LINK_LABELS: Record<OrderItemLink["kind"], string> = {
   coach: tp.openCoach,
 };
 
+/** État des commandes Mobile Money pas encore payées. */
+const MM_STATUS: Partial<Record<MobileMoneyStage, string>> = {
+  to_pay: tp.mmToPay,
+  to_review: tp.mmToReview,
+  rejected: tp.mmRejected,
+};
+
 /**
  * Ligne d'état d'une commande : payée, remboursée ou en attente.
  * @param order - Commande
@@ -51,13 +60,15 @@ function statusText(order: OrderSummary): string {
   if (order.status === "paid" && order.paid_at) {
     return interpolate(tp.paidOn, { date: DATE_FORMAT.format(new Date(order.paid_at)) });
   }
-  return tp.pending;
+  const stage = mobileMoneyStage(order);
+  return (stage && MM_STATUS[stage]) ?? tp.pending;
 }
 
 /** Une commande : article, montant, date ou statut, liens. */
 function OrderRow({ order }: { order: OrderSummary }) {
   const item = order.items[0];
   const link = order.status === "paid" && item ? orderItemLink(item) : null;
+  const isMobileMoney = order.provider === "mobile_money";
   return (
     <li className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -69,6 +80,11 @@ function OrderRow({ order }: { order: OrderSummary }) {
         {link && (
           <Link href={link.href} className="text-encre underline">
             {LINK_LABELS[link.kind]}
+          </Link>
+        )}
+        {isMobileMoney && (
+          <Link href={`/compte/achats/${order.id}`} className="text-encre underline">
+            {tp.mmOpen}
           </Link>
         )}
         {order.receipt_url && (

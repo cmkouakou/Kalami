@@ -6,11 +6,13 @@
  *               l'article (livre, étude, lot, forfait du coach), création de la commande puis
  *               redirection vers la page de paiement Stripe. Les erreurs sont affichées sous
  *               le bouton, en clair. Code promo facultatif (v0.10.3) : prix réduit affiché,
- *               montant final recalculé par la base.
+ *               montant final recalculé par la base. En FCFA, le Mobile Money est proposé
+ *               en second choix (v0.11.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-19
- *  Dépendances: api/paiement/checkout, lib/currency.ts, promo-code-field.tsx
+ *  Dépendances: api/paiement/checkout, lib/currency.ts, promo-code-field.tsx,
+ *               mobile-money-choice.tsx
  * =============================================================
  */
 
@@ -25,6 +27,7 @@ import { formatPrice } from "@/lib/currency";
 import type { CheckoutItem } from "@/lib/payments/checkout-request";
 import { discountedAmount, type PromoPreview } from "@/lib/payments/promo";
 
+import { MobileMoneyChoice } from "./mobile-money-choice";
 import { PromoCodeField } from "./promo-code-field";
 
 const t = getDictionary();
@@ -145,6 +148,16 @@ export function BuyButton(props: BuyButtonProps) {
         <p role="status" className="text-small text-ink-muted">
           {t.catalog.purchase.promoNotInCurrency}
         </p>
+      )}
+      {price.currency === "XOF" && (
+        <MobileMoneyChoice
+          item={item}
+          groupName={groupName}
+          amountMinor={promoUsable ? reduced : price.amount_minor}
+          promoCode={promoUsable ? promo.code : null}
+          disabled={pending}
+          errorMessage={errorMessage}
+        />
       )}
       <PromoCodeField
         item={item}
