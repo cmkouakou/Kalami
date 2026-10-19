@@ -5,9 +5,10 @@
  *  Description: Administration du Mobile Money (Sprint 6, v0.11.0) : opérateurs à activer
  *               ou éteindre, numéros marchands par opérateur et par pays (un formulaire
  *               d'ajout, un formulaire par numéro existant). La validation des paiements se
- *               fait dans « Commandes ».
+ *               fait dans « Commandes ». Frais par opérateur (v0.12.0) : retenus dans le
+               grand livre avant le partage auteur / Kalami.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-19
  *  Dépendances: lib/admin/mobile-money-actions.ts, lib/admin/mobile-money-queries.ts
  * =============================================================
@@ -32,6 +33,8 @@ import {
 } from "@/lib/admin/mobile-money-queries";
 import { requireAdmin } from "@/lib/auth/dal";
 import { MM_COUNTRIES } from "@/lib/payments/mobile-money";
+import { saveMobileMoneyFee } from "@/lib/revenue/actions";
+import { bpsToPercent } from "@/lib/revenue/ledger";
 
 const t = getDictionary();
 const am = t.admin.mobileMoney;
@@ -103,7 +106,7 @@ async function AdminMobileMoney() {
   );
 }
 
-/** Opérateur : état et bouton pour l'activer ou l'éteindre. */
+/** Opérateur : état, bouton pour l'activer ou l'éteindre, frais retenus. */
 function OperatorCard({ operator }: { operator: AdminMobileMoneyOperator }) {
   return (
     <li className={`${CARD} flex flex-wrap items-center justify-between gap-3 p-4`}>
@@ -117,6 +120,21 @@ function OperatorCard({ operator }: { operator: AdminMobileMoneyOperator }) {
       >
         {null}
       </ActionForm>
+      <div className="w-full">
+        <ActionForm action={saveMobileMoneyFee} submitLabel={am.feeSave}>
+          <input type="hidden" name="operator" value={operator.code} />
+          <Field
+            id={`frais-${operator.code}`}
+            name="fee"
+            label={am.fee}
+            hint={am.feeHint}
+            defaultValue={bpsToPercent(operator.feeBps)}
+            inputMode="decimal"
+            maxLength={6}
+            required
+          />
+        </ActionForm>
+      </div>
     </li>
   );
 }

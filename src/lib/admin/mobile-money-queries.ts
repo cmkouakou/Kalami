@@ -6,7 +6,7 @@
  *               opérateurs (actifs ou éteints) et numéros marchands par opérateur et par
  *               pays. La RLS réserve ces lectures à l'administrateur (aal2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1 (frais par opérateur, v0.12.0)
  *  Date       : 2026-10-19
  *  Dépendances: lib/supabase/server.ts, migration 20261108120000_mobile_money.sql
  * =============================================================
@@ -24,6 +24,8 @@ export type AdminMobileMoneyOperator = {
   code: MobileMoneyOperator;
   name: string;
   enabled: boolean;
+  /** Frais en points de base */
+  feeBps: number;
 };
 
 /** Numéro marchand d'un opérateur dans un pays. */
@@ -43,13 +45,14 @@ export async function listMobileMoneyOperators(): Promise<AdminMobileMoneyOperat
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("mobile_money_operators")
-    .select("code, name, enabled")
+    .select("code, name, enabled, fee_bps")
     .order("sort_order");
   if (error) throw new Error(`Lecture des opérateurs impossible : ${error.message}`);
   return (data ?? []).map((row) => ({
     code: row.code as MobileMoneyOperator,
     name: row.name,
     enabled: row.enabled,
+    feeBps: row.fee_bps,
   }));
 }
 

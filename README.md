@@ -114,6 +114,11 @@ kalami/
   déclare sa transaction sur `/compte/achats/[commande]` ; l'admin valide ou refuse dans
   `/admin/commandes` (filtre « À valider »). Numéros marchands : `/admin/mobile-money`.
   Les commandes non déclarées expirent après 24 h (`/api/cron/commandes`, `CRON_SECRET`).
+- Grand livre (v0.12.0) : la base écrit une ligne par article payé ou remboursé
+  (`ledger_entries`, brut = frais + taxes + commission + part auteur). Part de l'auteur 70 %
+  du net, disponible après 30 jours ; réglages et part propre par auteur dans
+  `/admin/revenus`, revenus de l'auteur dans `/auteur/revenus`. Frais Mobile Money par
+  opérateur dans `/admin/mobile-money`.
 - Service worker (`public/sw.js`) actif en production seulement. Liste blanche dans
   `public/sw-routes.js` : seuls les fichiers statiques, les couvertures et les pages publiques
   du catalogue sont gardés sur l'appareil ; liseuse, études, comptes et API jamais. Changer

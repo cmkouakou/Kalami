@@ -5,17 +5,19 @@
  *  Description: Destination « kalami-paiements » des événements Stripe. Vérifie la signature
  *               sur le corps brut, ignore les sessions des autres applications du compte
  *               (metadata.app ≠ kalami), puis confie le traitement à stripe_process_event
- *               (une seule fois par événement, montant et devise contrôlés).
+ *               (une seule fois par événement, montant et devise contrôlés). Transmet aussi
+ *               les frais Stripe et la taxe pour le grand livre (v0.12.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-18
+ *  Version    : 1.1
+ *  Date       : 2026-10-19
  *  Dépendances: lib/payments/stripe.ts, lib/supabase/admin.ts
  * =============================================================
  */
 
 import { isUuid } from "@/lib/admin/validation";
+import { isCurrency } from "@/lib/currency";
 import {
-  receiptUrlOf,
+  paymentDetailsOf,
   STRIPE_APP_TAG,
   type StripeEvent,
   verifyStripeSignature,
@@ -68,7 +70,9 @@ export async function POST(request: Request) {
   if (completed && session.payment_status !== "paid") return ack("not_paid");
 
   const paymentId = completed ? session.payment_intent : null;
-  const receiptUrl = paymentId ? await receiptUrlOf(paymentId) : null;
+  const currency = (session.currency ?? "").toUpperCase();
+  const details =
+    paymentId && isCurrency(currency) ? await paymentDetailsOf(paymentId, currency) : null;
 
   const admin = createAdminClient();
   const { data, error } = await admin.rpc("stripe_process_event", {
@@ -79,7 +83,9 @@ export async function POST(request: Request) {
     p_amount_minor: session.amount_total ?? 0,
     p_currency: session.currency ?? "",
     p_payment_id: paymentId,
-    p_receipt_url: receiptUrl,
+    p_receipt_url: details?.receiptUrl ?? null,
+    p_fee_minor: details?.feeMinor ?? null,
+    p_tax_minor: completed ? (session.total_details?.amount_tax ?? 0) : null,
   });
   if (error) {
     console.error("[stripe] événement non traité :", event.id, error.code, error.message);

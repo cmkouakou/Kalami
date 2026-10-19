@@ -115,6 +115,10 @@ describe.skipIf(!ready)("RLS — codes promo", () => {
 
   afterAll(async () => {
     if (eventIds.length) await service.from("stripe_events").delete().in("id", eventIds);
+    // Écritures du grand livre (gardées sinon après la suppression des commandes)
+    const orders = await service.from("orders").select("id").in("user_id", userIds);
+    const orderIds = (orders.data ?? []).map((row) => row.id);
+    if (orderIds.length) await service.from("ledger_entries").delete().in("order_id", orderIds);
     for (const id of userIds) await service.auth.admin.deleteUser(id);
     if (promoIds.length) await service.from("promo_codes").delete().in("id", promoIds);
   });

@@ -5,8 +5,8 @@
  *  Description: Cadre commun de l'espace auteur : titre et navigation entre ses pages.
  *               Aucun contrôle d'accès ici : chaque page appelle requireAuthor() elle-même.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1 (lien Revenus)
+ *  Date       : 2026-10-19
  * =============================================================
  */
 
@@ -27,6 +27,7 @@ const LINKS = [
   { href: "/auteur", label: t.author.nav.dashboard },
   { href: "/auteur/profil", label: t.author.nav.profile },
   { href: "/auteur/contrat", label: t.author.nav.contract },
+  { href: "/auteur/revenus", label: t.author.nav.revenue },
 ];
 
 export default function AuthorLayout({ children }: { children: ReactNode }) {

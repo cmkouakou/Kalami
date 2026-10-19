@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.11.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.12.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -46,7 +46,8 @@ Version actuelle : v0.11.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #40 | 2026-10-19 | v0.10.3 (Sprint 5c) : codes promo vérifiés par la base, aperçu dans le bouton d'achat, admin des codes, interrupteur Stripe Tax | ~350 000 | ~2.10 $ |
 | #41 | 2026-10-19 | v0.10.4 : historique des migrations réparé (16 vérifiées), remise enseignant 20 % du Forfait Essentiel | ~150 000 | ~0.90 $ |
 | #42 | 2026-10-19 | v0.11.0 (Sprint 6) : Mobile Money manuel (FCFA), déclaration de transaction, validation admin, numéros marchands, expiration 24 h, courriels | ~400 000 | ~2.40 $ |
-| **TOTAL** | | | **~13 560 000** | **~81.36 $** |
+| #43 | 2026-10-19 | v0.12.0 (Sprint 10a) : grand livre, commissions 70 %, frais Stripe et Mobile Money, revenus auteur, admin des revenus | ~450 000 | ~2.70 $ |
+| **TOTAL** | | | **~14 010 000** | **~84.06 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -98,7 +99,9 @@ Version actuelle : v0.11.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Sprint 6 — Mobile Money manuel (FCFA, Wave et Orange), déclaration, validation admin, admin `/admin/mobile-money`, expiration 24 h (v0.11.0) ; unitaires Mobile Money 12/12, build OK
 - [x] Sprint 6 — migration `20261108120000_mobile_money.sql` appliquée le 2026-10-19, intégration mobile-money-rls 5/5
 - [ ] Sprint 6 — saisir les numéros Wave et Orange, essai réel (achat + validation admin)
-- [ ] Paiements 10 et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [x] Sprint 10a — grand livre, commissions, `/auteur/revenus`, `/admin/revenus`, frais Mobile Money (v0.12.0) ; unitaires 621/621, build OK
+- [x] Sprint 10a — migration `20261109120000_ledger.sql` appliquée le 2026-10-19 (historique réparé), intégration ledger-rls 4/4, rattrapage : 1 commande, 1 écriture
+- [ ] Paiements 10b et 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)

@@ -5,11 +5,12 @@
  *  Description: Appels à l'API REST de Stripe (sans dépendance) : création d'une session
  *               Checkout, lecture du produit d'un prix et du reçu d'un paiement, vérification
  *               de la signature des webhooks (HMAC SHA-256), remboursement d'un paiement,
- *               Stripe Tax facultatif (prix taxes comprises, v0.10.3).
+ *               Stripe Tax facultatif (prix taxes comprises, v0.10.3), frais réels d'un
+ *               paiement pour le grand livre (v0.12.0).
  *               Le compte Stripe est partagé avec d'autres applications : chaque session
  *               porte metadata.app = « kalami ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-19
  *  Dépendances: Stripe (https://docs.stripe.com/api), version 2026-02-25.clover
  * =============================================================
@@ -20,6 +21,7 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 import type { Currency } from "@/lib/catalog/types";
+import { feeInOrderCurrency } from "@/lib/revenue/ledger";
 
 // ==================== CONSTANTES ====================
 
@@ -68,6 +70,7 @@ export type CheckoutSessionEvent = {
   payment_status: string;
   payment_intent: string | null;
   client_reference_id: string | null;
+  total_details?: { amount_tax?: number | null } | null;
   metadata: Record<string, string> | null;
 };
 
@@ -234,21 +237,45 @@ export async function createRefund(
   );
 }
 
+/** Reçu et frais d'un paiement (null : indisponible, le paiement reste valable). */
+export type PaymentDetails = { receiptUrl: string | null; feeMinor: number | null };
+
+type BalanceTransaction = { fee?: number; currency?: string; exchange_rate?: number | null };
+
 /**
- * Adresse du reçu Stripe d'un paiement.
+ * Adresse du reçu Stripe et frais d'un paiement, dans la devise de la commande.
  * @param paymentIntentId - Identifiant pi_…
- * @returns Adresse du reçu, ou null si indisponible (le paiement reste valable)
+ * @param currency - Devise de la commande
+ * @returns Reçu et frais, chacun null s'il est indisponible
  */
-export async function receiptUrlOf(paymentIntentId: string): Promise<string | null> {
+export async function paymentDetailsOf(
+  paymentIntentId: string,
+  currency: Currency,
+): Promise<PaymentDetails> {
   try {
-    const intent = await stripeRequest<{ latest_charge: { receipt_url?: string } | null }>(
-      "GET",
-      `payment_intents/${paymentIntentId}`,
-      { expand: ["latest_charge"] },
-    );
-    return intent.latest_charge?.receipt_url ?? null;
+    const intent = await stripeRequest<{
+      latest_charge: {
+        receipt_url?: string;
+        balance_transaction?: BalanceTransaction | string | null;
+      } | null;
+    }>("GET", `payment_intents/${paymentIntentId}`, {
+      expand: ["latest_charge.balance_transaction"],
+    });
+    const charge = intent.latest_charge;
+    const balance = typeof charge?.balance_transaction === "object"
+      ? charge.balance_transaction
+      : null;
+    return {
+      receiptUrl: charge?.receipt_url ?? null,
+      feeMinor: feeInOrderCurrency(
+        balance?.fee,
+        balance?.currency,
+        balance?.exchange_rate,
+        currency,
+      ),
+    };
   } catch {
-    return null;
+    return { receiptUrl: null, feeMinor: null };
   }
 }
 

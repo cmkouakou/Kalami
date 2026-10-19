@@ -119,6 +119,10 @@ describe.skipIf(!ready)("RLS — paiements Kalami Stratégie", () => {
   afterAll(async () => {
     if (eventIds.length) await service.from("stripe_events").delete().in("id", eventIds);
     if (studyId) await service.from("studies").delete().eq("id", studyId);
+    // Écritures du grand livre (gardées sinon après la suppression des commandes)
+    const orders = await service.from("orders").select("id").in("user_id", userIds);
+    const orderIds = (orders.data ?? []).map((row) => row.id);
+    if (orderIds.length) await service.from("ledger_entries").delete().in("order_id", orderIds);
     for (const id of userIds) await service.auth.admin.deleteUser(id);
     if (packId) await service.from("coach_packs").delete().eq("id", packId);
   });

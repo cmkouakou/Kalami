@@ -1,5 +1,41 @@
 # Journal des modifications
 
+## [v0.12.0] - 2026-10-19 — Grand livre et commissions (Sprint 10a)
+### Ajouté
+- Grand livre des ventes (`ledger_entries`) : une écriture par article à chaque paiement,
+  posée par la base elle-même (déclencheur sur `orders`), pour Stripe comme pour Mobile Money.
+  - Brut = frais de paiement + taxes + commission Kalami + part de l'auteur (contrainte SQL).
+  - Part de l'auteur : 70 % du net (après frais et taxes) ; 0 % pour les articles sans auteur
+    (Stratégie). Disponible 30 jours après le paiement.
+  - Remboursement : écriture inverse, disponible tout de suite ; les frais ne sont pas rendus
+    (Kalami les absorbe).
+  - Rattrapage : écritures créées pour les commandes déjà payées ou remboursées (frais à 0).
+- Frais Stripe lus dans la transaction de solde (convertis dans la devise de la commande) et
+  taxes Stripe Tax, transmis par le webhook. Frais Mobile Money : pourcentage par opérateur,
+  réglable sur `/admin/mobile-money` (0 % par défaut).
+- Espace auteur `/auteur/revenus` : part appliquée, délai, seuils de versement, soldes par
+  devise (disponible, en attente, total) et dernières écritures. Encart des revenus sur le
+  tableau de bord auteur (remplace « bientôt »).
+- Administration `/admin/revenus` : totaux par devise (brut, frais, taxes, commission,
+  auteurs), réglages (part, délai, seuils 5 000 FCFA / 10 € / 15 $ CA), part propre par auteur,
+  dernières écritures. Chaque changement est inscrit au journal d'audit.
+- Migration `20261109120000_ledger.sql` : tables `revenue_settings`, `author_commissions`,
+  `ledger_entries` ; colonnes `orders.fee_minor`, `orders.tax_minor`,
+  `mobile_money_operators.fee_bps` ; fonctions `author_ledger_balances`,
+  `admin_ledger_totals`, `admin_set_revenue_settings`, `admin_set_author_commission`,
+  `admin_mm_set_fee` ; `stripe_process_event` reçoit les frais et les taxes.
+- Tests : 8 unitaires (`ledger.test.ts`) ; 4 d'intégration (`ledger-rls.test.ts`, ignorés tant
+  que la migration n'est pas appliquée).
+
+### Modifié
+- Les tests d'intégration qui payent une commande effacent ses écritures en fin de test.
+
+### Déploiement
+- Migration `20261109120000_ledger.sql` appliquée le 2026-10-19 ; intégration `ledger-rls` 4/4.
+
+### Reste (Sprint 10b, v0.12.1)
+- Demandes de versement, traitement par l'administrateur, journal d'audit consultable.
+
 ## [v0.11.0] - 2026-10-19 — Mobile Money manuel (Sprint 6)
 ### Ajouté
 - Paiement Mobile Money en FCFA (XOF) seulement, pour le livre et Kalami Stratégie.
