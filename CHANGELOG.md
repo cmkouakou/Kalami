@@ -1,5 +1,44 @@
 # Journal des modifications
 
+## [v0.10.2] - 2026-10-19 — Paiements Kalami Stratégie et remboursements (Sprint 5b)
+### Ajouté
+- Achat par carte d'une étude et des lots de 10 et 30 études, pour tous les comptes : section
+  « Acheter des études » sur `/strategie` et sous « Aucun crédit » dans `/strategie/nouvelle`,
+  avec le prix par étude des lots. Prix dans la table `strategy_offers`.
+- Achat par carte des forfaits du coach depuis la page du coach d'une étude, pour le
+  propriétaire et pour l'enseignant d'une étude de classe. L'enseignant paie avec une remise
+  (`coach_packs.teacher_discount_pct`, 20 % sur Essentiel). Un forfait acheté par l'enseignant
+  n'est pas borné par le plafond de la classe.
+- `create_strategy_order` : commande au prix de la base (offre, forfait, remise), droits
+  vérifiés (propriétaire ou enseignant), au plus 10 commandes par heure. `fulfil_order` livre
+  les crédits (`source = purchase`) et les forfaits (`coach_allowances.order_id`).
+- Administration `/admin/commandes` : prix de l'étude et des lots, commandes filtrées par
+  statut, lien Stripe et reçu, bouton « Rembourser ». Le remboursement passe par l'API Stripe
+  (clé d'idempotence par commande), puis `admin_refund_order` passe la commande en
+  « remboursée », révoque le livre et le PDF, retire les crédits non utilisés et les forfaits
+  achetés, et écrit le journal d'audit. Une étude déjà créée reste.
+- Forfaits du coach (admin) : champ « Remise enseignant (%) ».
+- « Mes achats » et page « Merci » : commandes remboursées, liens vers Kalami Stratégie ou
+  vers le coach selon l'article.
+- Tests : 15 unitaires (`payments-strategy.test.ts`) ; 5 d'intégration
+  (`strategy-orders-rls.test.ts`, ignorés tant que la migration n'est pas appliquée).
+
+### Modifié
+- `/api/paiement/checkout` accepte `item: book | study_offer | coach_pack` ; un corps
+  `{ bookId }` sans `item` reste compris comme un livre.
+- « Paiement bientôt » n'apparaît plus que pour un forfait sans prix.
+
+### À faire avant le déploiement
+- Appliquer la migration `20261105120000_strategy_orders.sql` **avant** de pousser : les pages
+  `/strategie` et du coach lisent les nouvelles fonctions.
+- Vérifier dans Vercel les variables `STRIPE_PRICE_ETUDE`, `STRIPE_PRICE_LOT_10`,
+  `STRIPE_PRICE_LOT_30` et `STRIPE_PRICE_COACH_*` (facultatives : sans elles, l'article
+  Stripe est créé à la volée avec le libellé de la commande).
+
+### Note
+- Un remboursement lancé depuis le tableau de bord Stripe ne retire toujours pas les droits :
+  rembourser depuis `/admin/commandes`.
+
 ## [v0.10.1] - 2026-10-19 — Sommaire de la fiche après achat
 ### Corrigé
 - Fiche du livre : le sommaire affichait encore les cadenas « Inclus à l'achat » après l'achat.

@@ -55,7 +55,8 @@ async function BuyContent({ bookId, prices, returnPath, className }: BuySectionP
   }
   return (
     <BuyButton
-      bookId={bookId}
+      item={{ item: "book", bookId }}
+      groupName={bookId}
       prices={prices}
       initialCurrency={await getPreferredCurrency()}
       className={className}

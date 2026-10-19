@@ -3,11 +3,11 @@
  *  Fichier    : page.tsx (strategie/nouvelle)
  *  Projet     : Kalami Stratégie
  *  Description: Création d'une étude (/strategie/nouvelle) : nom de l'entreprise et
- *               question stratégique. Consomme un crédit d'étude ; sans crédit, explique
- *               comment en obtenir un.
+ *               question stratégique. Consomme un crédit d'étude ; sans crédit, propose
+ *               d'acheter une étude ou un lot (v0.10.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-11
+ *  Version    : 1.1
+ *  Date       : 2026-10-19
  *  Dépendances: lib/strategy/actions.ts, lib/strategy/queries.ts
  * =============================================================
  */
@@ -17,6 +17,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { ActionForm } from "@/components/admin/action-form";
+import { StudyOffers } from "@/components/strategy/study-offers";
 import { Field, TextArea } from "@/components/ui/form";
 import { BUTTON_TERTIARY, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -44,7 +45,7 @@ export default function NewStudyPage() {
   );
 }
 
-/** Formulaire de création, ou message si aucun crédit n'est disponible. */
+/** Formulaire de création, ou offres d'achat si aucun crédit n'est disponible. */
 async function NewStudyForm() {
   const user = await requireUser("/strategie/nouvelle");
   const credits = await countAvailableCredits(user.id);
@@ -53,6 +54,7 @@ async function NewStudyForm() {
     return (
       <div className="flex flex-col gap-3">
         <p className={`${PANEL_SAND} p-4`}>{s.studies.noCredit}</p>
+        <StudyOffers />
         <Link href="/strategie" className={`${BUTTON_TERTIARY} self-start`}>
           {s.nav.studies}
         </Link>

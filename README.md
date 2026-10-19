@@ -102,6 +102,10 @@ kalami/
   `/api/stripe/webhook` livre l'achat (`stripe_process_event` : montant contrôlé, événement
   traité une fois). Le compte Stripe est partagé : seules les sessions `metadata.app=kalami`
   sont traitées. Variables `STRIPE_*` : voir `.env.example`. Historique : `/compte/achats`.
+- Paiements Stratégie (v0.10.2) : même route avec `item: study_offer | coach_pack`
+  (`create_strategy_order` : prix de `strategy_offers` ou du forfait, remise enseignant).
+  Remboursement depuis `/admin/commandes` seulement : API Stripe (clé d'idempotence), puis
+  `admin_refund_order` retire les droits. Un remboursement fait dans Stripe ne les retire pas.
 - Service worker (`public/sw.js`) actif en production seulement. Liste blanche dans
   `public/sw-routes.js` : seuls les fichiers statiques, les couvertures et les pages publiques
   du catalogue sont gardés sur l'appareil ; liseuse, études, comptes et API jamais. Changer

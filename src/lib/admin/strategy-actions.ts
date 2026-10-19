@@ -10,12 +10,12 @@
  *               plafond d'une étude, versions des consignes du coach (brouillon, publication,
  *               abandon, restauration ; « extract » sans étape, « plan » à l'étape 9 ou
  *               sans étape, S8a), erreurs classiques, statut enseignant (S10a) et forfaits du
- *               coach (création, modification, octroi à une étude, v0.11.1). Les
+ *               coach (création, modification avec remise enseignant, octroi à une étude). Les
  *               fonctions SQL vérifient le rôle administrateur (aal2) et écrivent le journal
  *               d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.8
- *  Date       : 2026-10-16
+ *  Version    : 1.9
+ *  Date       : 2026-10-19
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -261,7 +261,8 @@ function readOptionalPrice(formData: FormData, name: string): number | null {
 
 /**
  * Crée ou modifie un forfait du coach : nom, coût Anthropic couvert (dollars US), prix
- * facultatifs (FCFA entier, euros et dollars canadiens à deux décimales), état et ordre.
+ * facultatifs (FCFA entier, euros et dollars canadiens à deux décimales), remise enseignant
+ * (entier de 0 à 90 %), état et ordre.
  */
 export async function saveCoachPack(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
@@ -273,6 +274,7 @@ export async function saveCoachPack(_prev: FormState, formData: FormData): Promi
   const priceEur = readOptionalPrice(formData, "priceEur");
   const priceCad = readOptionalPrice(formData, "priceCad");
   const position = Number(formData.get("position") ?? 0);
+  const teacherDiscount = Number(formData.get("teacherDiscount") ?? 0);
 
   if (rawId !== "" && !isUuid(rawId)) return { error: t.strategy.errors.generic };
   if (name.length < 1 || name.length > 80) return { error: errors.invalid_name };
@@ -288,6 +290,9 @@ export async function saveCoachPack(_prev: FormState, formData: FormData): Promi
   if (!Number.isInteger(position) || position < 0 || position > POSITION_MAX) {
     return { error: t.strategy.errors.generic };
   }
+  if (!Number.isInteger(teacherDiscount) || teacherDiscount < 0 || teacherDiscount > 90) {
+    return { error: errors.invalid_discount };
+  }
 
   const toCents = (price: number | null) => (price === null ? null : Math.round(price * 100) / 100);
   const supabase = await createClient();
@@ -300,6 +305,7 @@ export async function saveCoachPack(_prev: FormState, formData: FormData): Promi
     p_price_cad: toCents(priceCad),
     p_active: formData.get("active") === "on",
     p_position: position,
+    p_teacher_discount: teacherDiscount,
   });
   if (error) return { error: packError(error.message) };
   refresh();

@@ -11,11 +11,12 @@
  *               (S7b), plan stratégique (S8a), équipe, invitations et journal (S9a),
  *               discussion, mentions et notifications (S9b), mode enseignant : classes,
  *               inscription, distribution, suivi et statut enseignant (S10a), page du coach
- *               d'une étude et forfaits du coach (v0.11.1).
+ *               d'une étude et forfaits du coach (v0.11.1), achat des études, des lots et
+ *               des forfaits (v0.10.2).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 2.4
- *  Date       : 2026-10-16
+ *  Version    : 2.5
+ *  Date       : 2026-10-19
  * =============================================================
  */
 
@@ -64,9 +65,17 @@ const strategyFr = {
     none: "Vous n'avez pas encore d'étude.",
     credits: "Crédits d'étude disponibles : {count}",
     noCredit:
-      "Aucun crédit d'étude disponible. Pendant la phase de lancement, les études sont " +
-      "ouvertes par l'équipe Kalami : écrivez-nous pour en obtenir une.",
+      "Aucun crédit d'étude disponible : achetez une étude ou un lot pour commencer.",
     newStudy: "Nouvelle étude",
+    offers: {
+      title: "Acheter des études",
+      intro:
+        "Un crédit ouvre une étude complète (9 étapes, équipe, journal). Les lots servent aux " +
+        "équipes et aux enseignants qui distribuent des études à leur classe.",
+      credits: "{count} étude(s)",
+      perStudy: "soit {price} l'étude",
+      none: "Aucune offre n'est proposée pour le moment.",
+    },
     progress: "{count} étapes validées sur 9",
     updated: "Modifiée le {date}",
     roles: {
@@ -1360,9 +1369,13 @@ const strategyFr = {
       "recherche Web ou un long gabarit consomment davantage.",
     approxReviews: "≈ {count} relectures",
     paymentSoon: "Paiement bientôt",
-    paymentSoonHelp:
-      "Le paiement en ligne arrive bientôt. En attendant, écrivez à l'administrateur pour " +
-      "ouvrir ou recharger le coach de votre étude.",
+    buyHelp:
+      "Paiement par carte, sécurisé par Stripe. Le forfait s'ajoute au coach de cette étude " +
+      "dès la confirmation du paiement.",
+    teacherPrice: "Prix enseignant : −{pct} %",
+    buyersOnly:
+      "Seul le propriétaire de l'étude ou l'enseignant de la classe peut acheter un " +
+      "forfait : demandez-lui de recharger le coach.",
     noOffers: "Aucun forfait n'est proposé pour le moment.",
   },
 
@@ -2009,13 +2022,14 @@ const strategyFr = {
       intro:
         "Un forfait couvre un coût Anthropic en dollars US (jamais montré aux clients, qui " +
         "voient un pourcentage et un nombre approximatif de relectures). Laissez les prix " +
-        "vides tant que le paiement n'est pas ouvert : le client voit « Paiement bientôt ».",
+        "vides pour ne pas vendre un forfait : le client voit « Paiement bientôt ».",
       newTitle: "Nouveau forfait",
       name: "Nom affiché",
       cost: "Coût couvert ($ US)",
       priceXof: "Prix en FCFA (facultatif)",
       priceEur: "Prix en euros (facultatif)",
       priceCad: "Prix en dollars canadiens (facultatif)",
+      teacherDiscount: "Remise enseignant (%)",
       active: "Proposé aux clients",
       position: "Ordre d'affichage",
       create: "Créer le forfait",
@@ -2026,8 +2040,8 @@ const strategyFr = {
       none: "Aucun forfait pour l'instant.",
       grantTitle: "Accorder un forfait à une étude",
       grantIntro:
-        "Ouvre ou recharge le coach pour toute l'équipe de l'étude, en attendant le paiement " +
-        "en ligne.",
+        "Ouvre ou recharge le coach pour toute l'équipe de l'étude, sans paiement (geste " +
+        "commercial, partenaire).",
       study: "Étude",
       pack: "Forfait",
       note: "Note (facultatif)",
@@ -2037,6 +2051,7 @@ const strategyFr = {
         invalid_name: "Indiquez un nom de 1 à 80 caractères.",
         invalid_amount: "Le coût couvert est un montant entre 0,01 et 1000 $ US.",
         invalid_price: "Un prix, s'il est indiqué, est un nombre positif (FCFA : entier).",
+        invalid_discount: "La remise enseignant est un nombre entier de 0 à 90 %.",
         pack_not_found: "Ce forfait n'existe plus.",
         study_not_found: "Cette étude n'existe plus.",
       },

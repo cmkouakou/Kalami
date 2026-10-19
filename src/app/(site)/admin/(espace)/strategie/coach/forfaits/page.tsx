@@ -4,11 +4,11 @@
  *  Projet     : Kalami Stratégie
  *  Description: Forfaits du coach IA (v0.11.1) : création et modification (nom, coût
  *               Anthropic couvert, prix facultatifs en FCFA, euros et dollars canadiens,
- *               état, ordre) et octroi d'un forfait à une étude, en attendant le paiement
- *               en ligne.
+ *               remise enseignant en pourcentage (v0.10.2),
+ *               état, ordre) et octroi gratuit d'un forfait à une étude.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-16
+ *  Version    : 1.1
+ *  Date       : 2026-10-19
  *  Dépendances: lib/admin/strategy-actions.ts, lib/strategy/coach/queries.ts
  * =============================================================
  */
@@ -110,6 +110,17 @@ function PackFields({ pack }: { pack?: CoachPackAdmin }) {
           min={0.01}
           step="0.01"
           defaultValue={pack?.priceCad ?? undefined}
+        />
+        <Field
+          id={`remise-${suffix}`}
+          name="teacherDiscount"
+          type="number"
+          label={p.teacherDiscount}
+          min={0}
+          max={90}
+          step="1"
+          defaultValue={pack?.teacherDiscountPct ?? 0}
+          required
         />
       </div>
       <label className="flex min-h-11 items-center gap-3 text-sm">

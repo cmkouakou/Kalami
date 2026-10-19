@@ -5,8 +5,8 @@
  *  Description: Textes de l'interface en français (langue par défaut).
  *               « {appName} » est remplacé par APP_NAME au moment de l'affichage.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-09
+ *  Version    : 1.3
+ *  Date       : 2026-10-19
  * =============================================================
  */
 
@@ -93,7 +93,8 @@ const fr = {
       errors: {
         already_owned: "Vous possédez déjà ce livre : rechargez la page.",
         rate_limited: "Trop de tentatives en une heure. Réessayez plus tard.",
-        not_for_sale: "Ce livre n'est pas vendu dans cette devise.",
+        not_for_sale: "Cet article n'est pas vendu dans cette devise.",
+        not_allowed: "Seul le propriétaire de l'étude ou son enseignant peut faire cet achat.",
         stripe_unavailable: "Le service de paiement ne répond pas. Réessayez dans un instant.",
         generic: "Le paiement n'a pas pu démarrer. Réessayez.",
       },
@@ -383,11 +384,19 @@ const fr = {
       browse: "Parcourir le catalogue",
       paidOn: "Payé le {date}",
       pending: "Paiement en cours de confirmation",
+      refundedOn: "Remboursé le {date}",
       receipt: "Reçu",
       read: "Lire",
+      openStrategy: "Ouvrir Kalami Stratégie",
+      openCoach: "Ouvrir le coach",
       thanks: {
         title: "Merci pour votre achat !",
         paid: "Votre paiement est confirmé : « {label} » est dans votre bibliothèque.",
+        paidCredits:
+          "Votre paiement est confirmé : {credits} crédit(s) d'étude ont été ajoutés à " +
+          "votre compte.",
+        paidPack: "Votre paiement est confirmé : « {label} » est ajouté au coach de l'étude.",
+        refunded: "Cette commande a été remboursée.",
         bonus: "Une étude Kalami Stratégie vous est offerte avec ce livre.",
         bonusLink: "Commencer une étude",
         waiting: "Nous attendons la confirmation de Stripe. Cela prend quelques secondes…",
@@ -559,6 +568,7 @@ const fr = {
       contract: "Contrat auteur",
       legal: "Textes légaux",
       strategy: "Stratégie",
+      orders: "Commandes",
       site: "Voir le site",
     },
     dashboard: {
@@ -790,6 +800,64 @@ const fr = {
       code: "Code à 6 chiffres",
       verify: "Vérifier",
       invalidCode: "Code incorrect. Réessayez.",
+    },
+    orders: {
+      title: "Commandes",
+      intro:
+        "Les 200 commandes les plus récentes de Kalami. Un remboursement passe par Stripe " +
+        "(compte en mode réel) puis retire les droits : livre, PDF, crédits d'étude non " +
+        "utilisés et forfaits du coach. Une étude déjà créée avec un crédit reste.",
+      filter: "Statut",
+      filterAll: "Toutes",
+      apply: "Filtrer",
+      statuses: {
+        pending: "En attente",
+        paid: "Payée",
+        refunded: "Remboursée",
+        expired: "Expirée",
+        failed: "Échouée",
+      },
+      columns: {
+        date: "Date",
+        buyer: "Acheteur",
+        items: "Articles",
+        amount: "Montant",
+        status: "Statut",
+        actions: "Actions",
+      },
+      none: "Aucune commande.",
+      stripe: "Voir dans Stripe",
+      receipt: "Reçu",
+      refund: "Rembourser",
+      refundConfirm: "Je confirme le remboursement intégral",
+      refunded:
+        "Commande remboursée : {removed} crédit(s) retiré(s), {kept} déjà utilisé(s), " +
+        "{packs} forfait(s) retiré(s).",
+      offersTitle: "Prix des études",
+      offersIntro:
+        "Prix d'une étude et des lots de 10 et 30 (FCFA entier, euros et dollars canadiens). " +
+        "Un prix vide retire cette devise de la vente.",
+      offerName: "Nom affiché",
+      priceXof: "Prix en FCFA",
+      priceEur: "Prix en euros",
+      priceCad: "Prix en dollars canadiens",
+      offerActive: "En vente",
+      offerCredits: "{count} crédit(s)",
+      save: "Enregistrer",
+      offerSaved: "Prix enregistrés.",
+      errors: {
+        order_not_found: "Cette commande n'existe plus.",
+        not_refundable: "Seule une commande payée peut être remboursée.",
+        no_payment: "Paiement Stripe introuvable pour cette commande.",
+        stripe_failed: "Stripe a refusé le remboursement. Vérifiez la commande dans Stripe.",
+        refund_unrecorded:
+          "Remboursement fait chez Stripe, mais non enregistré dans Kalami. Recommencez : " +
+          "Stripe ne remboursera pas deux fois.",
+        confirm: "Cochez la case de confirmation.",
+        invalid_name: "Indiquez un nom de 1 à 80 caractères.",
+        invalid_price: "Un prix est un nombre positif (FCFA : entier).",
+        offer_not_found: "Cette offre n'existe plus.",
+      },
     },
   },
   legal: {

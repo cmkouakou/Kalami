@@ -3,10 +3,11 @@
  *  Fichier    : page.tsx (compte/achats)
  *  Projet     : Kalami
  *  Description: « Mes achats » : commandes payées ou en cours de confirmation, montant,
- *               date, lien de lecture et reçu Stripe.
+ *               date, lien vers ce que l'achat débloque (livre, Kalami Stratégie, coach),
+ *               reçu Stripe ; les commandes remboursées restent visibles.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-18
+ *  Version    : 1.1
+ *  Date       : 2026-10-19
  *  Dépendances: lib/payments/queries.ts, lib/currency.ts
  * =============================================================
  */
@@ -18,7 +19,12 @@ import { Suspense } from "react";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
-import { getMyOrders, type OrderSummary } from "@/lib/payments/queries";
+import {
+  getMyOrders,
+  type OrderItemLink,
+  orderItemLink,
+  type OrderSummary,
+} from "@/lib/payments/queries";
 
 const t = getDictionary();
 const tp = t.account.purchases;
@@ -27,24 +33,42 @@ const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZo
 
 export const metadata: Metadata = { title: tp.title, robots: { index: false } };
 
+/** Libellé du lien de chaque destination. */
+const LINK_LABELS: Record<OrderItemLink["kind"], string> = {
+  read: tp.read,
+  strategy: tp.openStrategy,
+  coach: tp.openCoach,
+};
+
+/**
+ * Ligne d'état d'une commande : payée, remboursée ou en attente.
+ * @param order - Commande
+ */
+function statusText(order: OrderSummary): string {
+  if (order.status === "refunded" && order.refunded_at) {
+    return interpolate(tp.refundedOn, { date: DATE_FORMAT.format(new Date(order.refunded_at)) });
+  }
+  if (order.status === "paid" && order.paid_at) {
+    return interpolate(tp.paidOn, { date: DATE_FORMAT.format(new Date(order.paid_at)) });
+  }
+  return tp.pending;
+}
+
 /** Une commande : article, montant, date ou statut, liens. */
 function OrderRow({ order }: { order: OrderSummary }) {
   const item = order.items[0];
+  const link = order.status === "paid" && item ? orderItemLink(item) : null;
   return (
     <li className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <span className="font-semibold">{item?.label ?? "—"}</span>
         <span className="text-ocre-text">{formatPrice(order.total_minor, order.currency)}</span>
       </div>
-      <p className="text-small text-ink-muted">
-        {order.status === "paid" && order.paid_at
-          ? interpolate(tp.paidOn, { date: DATE_FORMAT.format(new Date(order.paid_at)) })
-          : tp.pending}
-      </p>
+      <p className="text-small text-ink-muted">{statusText(order)}</p>
       <div className="flex flex-wrap gap-4 text-small">
-        {order.status === "paid" && item?.book && (
-          <Link href={`/livres/${item.book.slug}/lire`} className="text-encre underline">
-            {tp.read}
+        {link && (
+          <Link href={link.href} className="text-encre underline">
+            {LINK_LABELS[link.kind]}
           </Link>
         )}
         {order.receipt_url && (

@@ -5,13 +5,15 @@
  *  Description: Page du coach d'une étude (v0.11.1) : état du forfait (verrouillé, en
  *               cours, épuisé) avec la jauge en pourcentage, consommation par étape et par
  *               fonction, puis forfaits proposés (≈ nombre de relectures, prix dans la devise
- *               du visiteur ou « Paiement bientôt »). Ouverte à tous les membres ; jamais de
+ *               du visiteur). Achat par carte (v0.10.2) pour le propriétaire et l'enseignant
+ *               (remise enseignant) ; ouverte à tous les membres ; jamais de
  *               dollars US de coût affichés.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-16
+ *  Version    : 1.1
+ *  Date       : 2026-10-19
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/coach/queries.ts, lib/currency.ts,
- *               lib/currency-server.ts, components/strategy/coach-panel.tsx
+ *               lib/currency-server.ts, lib/payments/offers.ts, lib/strategy/class-queries.ts,
+ *               components/strategy/coach-panel.tsx, components/catalog/buy-button.tsx
  * =============================================================
  */
 
@@ -20,14 +22,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { BuyButton } from "@/components/catalog/buy-button";
 import { UsageGauge } from "@/components/strategy/coach-panel";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
-import type { Currency } from "@/lib/catalog/types";
 import { formatPrice } from "@/lib/currency";
 import { getPreferredCurrency } from "@/lib/currency-server";
-import { getCoachOverview, type CoachPackOffer } from "@/lib/strategy/coach/queries";
+import { pricesOf } from "@/lib/payments/offers";
+import { getStudyClass } from "@/lib/strategy/class-queries";
+import { getCoachOverview } from "@/lib/strategy/coach/queries";
 import { getStudy } from "@/lib/strategy/queries";
 
 const s = getDictionary().strategy;
@@ -47,18 +51,6 @@ export default function StudyCoachPage({ params }: PageProps<"/strategie/etudes/
 
 // ==================== FONCTIONS UTILITAIRES ====================
 
-/**
- * Prix d'un forfait dans la devise voulue, en unité mineure (null si non fixé).
- * @param offer    - Forfait proposé
- * @param currency - Devise du visiteur
- * @returns Montant en unité mineure (FCFA sans décimales, centimes sinon) ou null
- */
-function offerPrice(offer: CoachPackOffer, currency: Currency): number | null {
-  if (currency === "XOF") return offer.priceXof;
-  const price = currency === "EUR" ? offer.priceEur : offer.priceCad;
-  return price === null ? null : Math.round(price * 100);
-}
-
 /** Libellé d'une fonction du coach (code inconnu affiché tel quel). */
 function functionLabel(fn: string): string {
   const labels: Record<string, string> = cp.functions;
@@ -74,11 +66,15 @@ async function StudyCoach({ params }: { params: Promise<{ id: string }> }) {
   const study = await getStudy(id, user.id);
   if (!study) notFound();
 
-  const [{ usage, breakdown, offers }, currency] = await Promise.all([
+  const [{ usage, breakdown, offers }, currency, studyClass] = await Promise.all([
     getCoachOverview(study.id),
     getPreferredCurrency(),
+    getStudyClass(study.id),
   ]);
   const exhausted = usage.unlocked && usage.usedPct >= 100;
+  // Achat réservé au propriétaire et à l'enseignant de la classe (contrôlé aussi en base)
+  const isTeacher = studyClass?.teacher_id === user.id;
+  const canBuy = usage.enabled && (study.role === "owner" || isTeacher);
 
   return (
     <main className="flex flex-col gap-6">
@@ -158,22 +154,41 @@ async function StudyCoach({ params }: { params: Promise<{ id: string }> }) {
         ) : (
           <ul className="grid gap-4 sm:grid-cols-3">
             {offers.map((offer) => {
-              const price = offerPrice(offer, currency);
+              const discount = isTeacher ? offer.teacherDiscountPct : 0;
+              const prices = pricesOf(offer, discount);
+              const shown = prices.find((p) => p.currency === currency) ?? prices[0];
               return (
                 <li key={offer.id} className={`${CARD} flex flex-col gap-2 p-4`}>
                   <h3 className="font-semibold">{offer.name}</h3>
                   <p className="text-ink-muted">
                     {interpolate(cp.approxReviews, { count: String(offer.approxReviews) })}
                   </p>
-                  <p className="text-lg font-semibold">
-                    {price === null ? cp.paymentSoon : formatPrice(price, currency)}
-                  </p>
+                  {discount > 0 && (
+                    <p className="text-small text-success">
+                      {interpolate(cp.teacherPrice, { pct: String(discount) })}
+                    </p>
+                  )}
+                  {!shown ? (
+                    <p className="text-lg font-semibold">{cp.paymentSoon}</p>
+                  ) : canBuy ? (
+                    <BuyButton
+                      item={{ item: "coach_pack", packId: offer.id, studyId: study.id }}
+                      groupName={`forfait-${offer.id}`}
+                      prices={prices}
+                      initialCurrency={currency}
+                      className="mt-auto"
+                    />
+                  ) : (
+                    <p className="text-lg font-semibold">
+                      {formatPrice(shown.amount_minor, shown.currency)}
+                    </p>
+                  )}
                 </li>
               );
             })}
           </ul>
         )}
-        <p className={`${PANEL_SAND} p-4 text-small`}>{cp.paymentSoonHelp}</p>
+        <p className={`${PANEL_SAND} p-4 text-small`}>{canBuy ? cp.buyHelp : cp.buyersOnly}</p>
       </section>
     </main>
   );

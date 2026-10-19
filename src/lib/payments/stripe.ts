@@ -4,11 +4,12 @@
  *  Projet     : Kalami
  *  Description: Appels à l'API REST de Stripe (sans dépendance) : création d'une session
  *               Checkout, lecture du produit d'un prix et du reçu d'un paiement, vérification
- *               de la signature des webhooks (HMAC SHA-256). Le compte Stripe est partagé avec
- *               d'autres applications : chaque session porte metadata.app = « kalami ».
+ *               de la signature des webhooks (HMAC SHA-256), remboursement d'un paiement.
+ *               Le compte Stripe est partagé avec d'autres applications : chaque session
+ *               porte metadata.app = « kalami ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-18
+ *  Version    : 1.1
+ *  Date       : 2026-10-19
  *  Dépendances: Stripe (https://docs.stripe.com/api), version 2026-02-25.clover
  * =============================================================
  */
@@ -118,11 +119,13 @@ export function encodeStripeParams(
  * @param method - GET ou POST
  * @param path - Chemin après /v1, ex. « checkout/sessions »
  * @param params - Paramètres du corps (POST) ou de la requête (GET)
+ * @param idempotencyKey - Clé d'idempotence (POST) : une demande répétée ne compte qu'une fois
  */
 async function stripeRequest<T>(
   method: "GET" | "POST",
   path: string,
   params: Record<string, unknown> = {},
+  idempotencyKey?: string,
 ): Promise<T> {
   const query = new URLSearchParams(encodeStripeParams(params)).toString();
   const base = `${STRIPE_API}/${path}`;
@@ -133,6 +136,7 @@ async function stripeRequest<T>(
       Authorization: `Bearer ${secretKey()}`,
       "Stripe-Version": STRIPE_API_VERSION,
       ...(method === "POST" ? { "Content-Type": "application/x-www-form-urlencoded" } : {}),
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
     },
     body: method === "POST" ? query : undefined,
     signal: AbortSignal.timeout(TIMEOUT_MS),
@@ -199,6 +203,29 @@ export async function createCheckoutSession(
       },
     ],
   });
+}
+
+/**
+ * Rembourse en entier le paiement d'une commande Kalami.
+ * La clé d'idempotence liée à la commande empêche un double remboursement (double clic).
+ * @param paymentIntentId - Identifiant pi_… du paiement
+ * @param orderId - Commande Kalami remboursée
+ * @returns Identifiant (re_…) et statut du remboursement
+ */
+export async function createRefund(
+  paymentIntentId: string,
+  orderId: string,
+): Promise<{ id: string; status: string }> {
+  return stripeRequest<{ id: string; status: string }>(
+    "POST",
+    "refunds",
+    {
+      payment_intent: paymentIntentId,
+      reason: "requested_by_customer",
+      metadata: { app: STRIPE_APP_TAG, order_id: orderId },
+    },
+    `kalami-refund-${orderId}`,
+  );
 }
 
 /**

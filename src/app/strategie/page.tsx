@@ -7,10 +7,10 @@
  *               de guide), puis, pour un utilisateur connecté, ses études et ses crédits
  *               d'étude disponibles, et les invitations reçues (S9a). Mode enseignant
  *               (S10a) : classes suivies par l'étudiant avec leurs études, et lien « Mes
- *               classes » pour l'enseignant.
+ *               classes » pour l'enseignant. Achat des études et des lots (v0.10.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-16
+ *  Version    : 1.5
+ *  Date       : 2026-10-19
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
  *               lib/strategy/class-queries.ts, lib/auth/dal.ts
  * =============================================================
@@ -20,6 +20,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { LeaveClassButton } from "@/components/strategy/classes/leave-class-button";
+import { StudyOffers } from "@/components/strategy/study-offers";
 import { InvitationResponse } from "@/components/strategy/team/invitation-response";
 import {
   BADGE,
@@ -165,6 +166,7 @@ async function MyStudies() {
         )}
       </section>
       <MyClasses classes={classes} studies={classStudies} />
+      <StudyOffers />
     </>
   );
 }

@@ -15,9 +15,11 @@ démarre après la v1.0.0 de la plateforme de lecture.
 | 8 | PDF filigrané : génération Chromium, lien signé 24 h, 3 téléchargements | v0.8.1 | ✅ |
 | 9 | Espace auteur : contrat, dépôt, aperçu, validation admin, tableau de bord | v0.8.0 | ✅ |
 | 11a | Loi 25 / RGPD (textes légaux, témoins, export, suppression) ; PWA et accessibilité en 11a-2 | v0.9.1 | ✅ |
-| 5 | Paiement carte : commandes, Stripe + Stripe Tax, webhook, droits, promos, reçus | v0.10.0 | ⬜ |
+| 5a | Paiement carte du livre : commandes, Stripe Checkout, webhook, droits, reçus | v0.10.0 | ✅ |
+| 5b | Paiements Stratégie (étude, lots 10 et 30, forfaits du coach, remise enseignant) ; remboursement depuis l'admin | v0.10.2 | ✅ (test réel à faire) |
+| 5c | Stripe Tax, codes promo | — | ⬜ |
 | 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.11.0 | ⬜ |
-| 10 | Grand livre, remboursements, versements, administration, audit | v0.12.0 | ⬜ |
+| 10 | Grand livre, versements, administration, audit (remboursement : livré en 5b) | v0.12.0 | ⬜ |
 | 11b | Critères d'acceptation, mise en production | v1.0.0 | ⬜ |
 
 Ordre revu le 2026-10-08 : les paiements (5, 6) passent en dernier. Le grand livre (10) en dépend

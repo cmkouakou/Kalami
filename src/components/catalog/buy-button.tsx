@@ -2,12 +2,13 @@
  * =============================================================
  *  Fichier    : buy-button.tsx
  *  Projet     : Kalami
- *  Description: Bouton « Acheter » (composant client) : choix de la devise parmi les prix du
- *               livre, création de la commande puis redirection vers la page de paiement
- *               Stripe. Les erreurs sont affichées sous le bouton, en clair.
+ *  Description: Bouton « Acheter » (composant client) : choix de la devise parmi les prix de
+ *               l'article (livre, étude, lot, forfait du coach), création de la commande puis
+ *               redirection vers la page de paiement Stripe. Les erreurs sont affichées sous
+ *               le bouton, en clair.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-18
+ *  Version    : 1.1
+ *  Date       : 2026-10-19
  *  Dépendances: api/paiement/checkout, lib/currency.ts
  * =============================================================
  */
@@ -20,6 +21,7 @@ import { BUTTON_PRIMARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import type { Currency, Price } from "@/lib/catalog/types";
 import { formatPrice } from "@/lib/currency";
+import type { CheckoutItem } from "@/lib/payments/checkout-request";
 
 const t = getDictionary();
 
@@ -27,7 +29,10 @@ const t = getDictionary();
 const LABELS: Record<Currency, string> = { XOF: "FCFA", EUR: "€ EUR", CAD: "$ CAD" };
 
 type BuyButtonProps = {
-  bookId: string;
+  /** Article acheté (sans la devise, choisie ici) */
+  item: CheckoutItem;
+  /** Nom unique du groupe de devises (plusieurs boutons sur une page) */
+  groupName: string;
   /** Prix disponibles (au moins un) */
   prices: Price[];
   /** Devise proposée d'abord (préférence du visiteur) */
@@ -42,7 +47,8 @@ function errorMessage(code: unknown): string {
 }
 
 /** Bouton d'achat avec choix de la devise. */
-export function BuyButton({ bookId, prices, initialCurrency, className }: BuyButtonProps) {
+export function BuyButton(props: BuyButtonProps) {
+  const { item, groupName, prices, initialCurrency, className } = props;
   const fallback = prices.some((p) => p.currency === initialCurrency)
     ? initialCurrency
     : prices[0].currency;
@@ -62,7 +68,7 @@ export function BuyButton({ bookId, prices, initialCurrency, className }: BuyBut
       const response = await fetch("/api/paiement/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookId, currency }),
+        body: JSON.stringify({ ...item, currency }),
       });
       const body = (await response.json().catch(() => null)) as
         | { url?: string; error?: string }
@@ -94,7 +100,7 @@ export function BuyButton({ bookId, prices, initialCurrency, className }: BuyBut
             >
               <input
                 type="radio"
-                name={`devise-${bookId}`}
+                name={`devise-${groupName}`}
                 value={p.currency}
                 checked={currency === p.currency}
                 onChange={() => setCurrency(p.currency)}

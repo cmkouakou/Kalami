@@ -8,10 +8,10 @@
  *               d'ensemble de l'administrateur, guide d'une étape (explication, exemple,
  *               lien vers le chapitre si le lecteur y a droit) et réglages du guide.
  *               Contenu des étapes sources de la synthèse (S6a). Responsable de chaque
- *               étape (S9a).
+ *               étape (S9a). Offres d'étude et de lots à acheter (v0.10.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-15
+ *  Version    : 1.5
+ *  Date       : 2026-10-19
  *  Dépendances: lib/supabase/server.ts, lib/strategy/steps.ts, lib/strategy/profile.ts
  * =============================================================
  */
@@ -19,6 +19,8 @@
 import "server-only";
 
 import { isUuid } from "@/lib/admin/validation";
+import type { StudyOfferCode } from "@/lib/payments/checkout-request";
+import type { OfferPrices } from "@/lib/payments/offers";
 import { readProfileData, type ProfileData, isProfileComplete } from "@/lib/strategy/profile";
 import {
   isStepNo,
@@ -381,4 +383,37 @@ export async function getGuideSettings(): Promise<GuideSettings> {
     guideBookId: check(settings, "réglages du guide")?.guide_book_id ?? null,
     books: check(books, "livres") as { id: string; title: string }[],
   };
+}
+
+// ==================== OFFRES D'ÉTUDE ====================
+
+/** Offre d'étude ou de lot ouverte à la vente. */
+export type StudyOffer = OfferPrices & {
+  code: StudyOfferCode;
+  name: string;
+  credits: number;
+};
+
+/** Offres d'étude et de lots (prix publics), dans l'ordre d'affichage. */
+export async function listStudyOffers(): Promise<StudyOffer[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("strategy_offer_list");
+  if (error) throw new Error(`Lecture impossible (offres d'étude) : ${error.message}`);
+  return (
+    (data ?? []) as {
+      code: StudyOfferCode;
+      name: string;
+      credits: number;
+      price_xof: number | null;
+      price_eur: number | null;
+      price_cad: number | null;
+    }[]
+  ).map((row) => ({
+    code: row.code,
+    name: row.name,
+    credits: row.credits,
+    priceXof: row.price_xof,
+    priceEur: row.price_eur === null ? null : Number(row.price_eur),
+    priceCad: row.price_cad === null ? null : Number(row.price_cad),
+  }));
 }

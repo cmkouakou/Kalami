@@ -14,9 +14,10 @@
  *               pour l'étape d'une étude de classe (S10a). Verrouillage (v0.11.1) : jauge
  *               en pourcentage du forfait, consommation détaillée, forfaits proposés et
  *               liste des forfaits pour l'administrateur ; jamais de dollars côté client.
+ *               Remise enseignant des forfaits (v0.10.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
- *  Date       : 2026-10-16
+ *  Version    : 1.8
+ *  Date       : 2026-10-19
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, coach/schemas.ts,
  *               coach/client.ts, coach/context.ts
  * =============================================================
@@ -83,6 +84,8 @@ export type CoachPackOffer = {
   priceEur: number | null;
   priceCad: number | null;
   approxReviews: number;
+  /** Remise accordée à l'enseignant de la classe (0 à 90 %). */
+  teacherDiscountPct: number;
 };
 
 /** Forfait complet, pour l'administrateur (coût Anthropic couvert compris). */
@@ -97,6 +100,7 @@ export type CoachPackAdmin = {
   position: number;
   /** Relectures à peu près couvertes (null si le forfait est retiré). */
   approxReviews: number | null;
+  teacherDiscountPct: number;
 };
 
 /** Dernier résultat d'une fonction du coach, affiché dans le panneau. */
@@ -288,6 +292,7 @@ export async function getCoachOverview(studyId: string): Promise<CoachOverview> 
       price_eur: number | null;
       price_cad: number | null;
       approx_reviews: number;
+      teacher_discount_pct: number | null;
     }[]).map((row) => ({
       id: row.id,
       name: row.name,
@@ -295,6 +300,7 @@ export async function getCoachOverview(studyId: string): Promise<CoachOverview> 
       priceEur: row.price_eur === null ? null : Number(row.price_eur),
       priceCad: row.price_cad === null ? null : Number(row.price_cad),
       approxReviews: row.approx_reviews,
+      teacherDiscountPct: row.teacher_discount_pct ?? 0,
     })),
   };
 }
@@ -494,7 +500,10 @@ export async function listCoachPacksForAdmin(): Promise<CoachPackAdmin[]> {
   const rows = check(
     await supabase
       .from("coach_packs")
-      .select("id, name, cost_usd, price_xof, price_eur, price_cad, active, position")
+      .select(
+        "id, name, cost_usd, price_xof, price_eur, price_cad, active, position, " +
+          "teacher_discount_pct",
+      )
       .order("position")
       .order("cost_usd")
       .returns<{
@@ -506,6 +515,7 @@ export async function listCoachPacksForAdmin(): Promise<CoachPackAdmin[]> {
         price_cad: number | null;
         active: boolean;
         position: number;
+        teacher_discount_pct: number;
       }[]>(),
     "forfaits du coach",
   ) ?? [];
@@ -518,6 +528,7 @@ export async function listCoachPacksForAdmin(): Promise<CoachPackAdmin[]> {
     priceCad: row.price_cad === null ? null : Number(row.price_cad),
     active: row.active,
     position: row.position,
+    teacherDiscountPct: row.teacher_discount_pct,
     approxReviews: approx.get(row.id) ?? null,
   }));
 }
@@ -571,6 +582,7 @@ export async function listCoachRulesForAdmin(): Promise<CoachRuleAdmin[]> {
         title: string;
         book_explanation: string;
         position: number;
+        teacher_discount_pct: number;
         active: boolean;
       }[]>(),
     supabase
@@ -583,6 +595,7 @@ export async function listCoachRulesForAdmin(): Promise<CoachRuleAdmin[]> {
         title: string;
         book_explanation: string;
         position: number;
+        teacher_discount_pct: number;
         active: boolean;
         changed_at: string;
       }[]>(),
@@ -609,6 +622,7 @@ export async function listCoachRulesForAdmin(): Promise<CoachRuleAdmin[]> {
     title: row.title,
     bookExplanation: row.book_explanation,
     position: row.position,
+    teacherDiscountPct: row.teacher_discount_pct,
     active: row.active,
     history: history.get(row.id) ?? [],
   }));
