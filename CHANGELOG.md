@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.10.1] - 2026-10-19 — Sommaire de la fiche après achat
+### Corrigé
+- Fiche du livre : le sommaire affichait encore les cadenas « Inclus à l'achat » après l'achat.
+  Pour qui possède le livre, tous les chapitres sont maintenant des liens, sans cadenas.
+
+### Note
+- Un remboursement fait dans Stripe ne retire pas encore les droits dans Kalami (Sprint 10).
+
 ## [v0.10.0] - 2026-10-18 — Paiement par carte (Sprint 5a)
 ### Ajouté
 - Achat d'un livre par carte bancaire avec Stripe Checkout (mode réel), en FCFA, € ou $ CAD

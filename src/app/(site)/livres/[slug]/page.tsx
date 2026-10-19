@@ -7,9 +7,10 @@
  *               « Reprendre » selon le lecteur, bloc PDF pour qui a l'option.
  *               v2.2 : encart Kalami Stratégie sur la fiche du livre guide.
  *               v2.3 : achat par carte (Stripe Checkout).
+ *               v2.4 : sommaire sans cadenas, tout cliquable, pour qui possède le livre.
  *  Auteur     : Claude Marcel
- *  Version    : 2.3
- *  Date       : 2026-10-18
+ *  Version    : 2.4
+ *  Date       : 2026-10-19
  *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
  */
@@ -117,7 +118,9 @@ async function BookContent({ params }: { params: Promise<{ slug: string }> }) {
               </p>
             </section>
           )}
-          <BookToc toc={toc} slug={book.slug} />
+          <Suspense fallback={<BookToc toc={toc} slug={book.slug} full={false} />}>
+            <OwnedToc bookId={book.id} toc={toc} slug={book.slug} />
+          </Suspense>
         </div>
         <div className="flex flex-col gap-6">
           {book.author.bio && <AuthorCard author={book.author} />}
@@ -259,8 +262,17 @@ function BookStats({ book }: { book: BookDetail }) {
   );
 }
 
-/** Sommaire public : titres, longueur et chapitres compris dans l'extrait gratuit. */
-function BookToc({ toc, slug }: { toc: TocEntry[]; slug: string }) {
+/** Sommaire selon le lecteur : complet et sans cadenas s'il possède le livre. */
+async function OwnedToc({ bookId, toc, slug }: { bookId: string; toc: TocEntry[]; slug: string }) {
+  const { full } = await getReadingStatus(bookId);
+  return <BookToc toc={toc} slug={slug} full={full} />;
+}
+
+/**
+ * Sommaire : titres, longueur et accès. Sans le livre, seuls les chapitres de l'extrait
+ * gratuit sont des liens ; avec le livre (full), tous le sont et aucun cadenas n'apparaît.
+ */
+function BookToc({ toc, slug, full }: { toc: TocEntry[]; slug: string; full: boolean }) {
   return (
     <section aria-labelledby="titre-sommaire" className="flex flex-col gap-3">
       <h2 id="titre-sommaire" className={SECTION_TITLE}>
@@ -271,7 +283,7 @@ function BookToc({ toc, slug }: { toc: TocEntry[]; slug: string }) {
       ) : (
         <ol className={`${CARD} flex flex-col divide-y divide-line`}>
           {toc.map((entry) => (
-            <TocRow key={entry.chapter_position} entry={entry} slug={slug} />
+            <TocRow key={entry.chapter_position} entry={entry} slug={slug} full={full} />
           ))}
         </ol>
       )}
@@ -279,15 +291,16 @@ function BookToc({ toc, slug }: { toc: TocEntry[]; slug: string }) {
   );
 }
 
-/** Ligne du sommaire : numéro, titre (lien si gratuit), mots et mention d'accès. */
-function TocRow({ entry, slug }: { entry: TocEntry; slug: string }) {
+/** Ligne du sommaire : numéro, titre (lien si lisible), mots et mention d'accès. */
+function TocRow({ entry, slug, full }: { entry: TocEntry; slug: string; full: boolean }) {
+  const readable = full || entry.is_preview;
   return (
     <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3">
       <span className="flex items-baseline gap-3">
         <span className="w-6 text-small text-ink-muted tabular-nums">
           {entry.chapter_position}
         </span>
-        {entry.is_preview ? (
+        {readable ? (
           <Link
             href={`/livres/${slug}/lire?chapitre=${entry.chapter_position}`}
             className="text-encre underline-offset-4 hover:underline"
@@ -300,7 +313,7 @@ function TocRow({ entry, slug }: { entry: TocEntry; slug: string }) {
       </span>
       <span className="flex items-center gap-3 text-small text-ink-muted">
         {interpolate(t.catalog.book.words, { count: NUMBER_FORMAT.format(entry.word_count) })}
-        {entry.is_preview ? (
+        {full ? null : entry.is_preview ? (
           <span className="font-semibold text-success">{t.catalog.book.free}</span>
         ) : (
           <span className="flex items-center gap-1">
