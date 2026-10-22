@@ -4,7 +4,7 @@
  *  Projet     : Kalami
  *  Description: Limitation de débit générique (Sprint 11s) : connexion, inscription, lien
  *               magique, mot de passe oublié, codes promo, export des données et du plan
- *               stratégique. Le sujet
+ *               stratégique, choix du bandeau des témoins (v1.1). Le sujet
  *               (adresse IP, compte, empreinte du courriel) est calculé ici, côté serveur ;
  *               le comptage est fait par la fonction SQL hit_rate_limit (rôle service).
  *  Auteur     : Claude Marcel
@@ -32,6 +32,7 @@ export const RATE_LIMITS = {
   promo_user: { limit: 10, windowSeconds: 10 * 60 },
   export_user: { limit: 5, windowSeconds: 60 * 60 },
   plan_export_user: { limit: 20, windowSeconds: 60 * 60 },
+  consent_ip: { limit: 30, windowSeconds: 60 * 60 },
 } as const;
 
 /** Compartiment de limitation. */

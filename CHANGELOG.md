@@ -1,5 +1,23 @@
 # Journal des modifications
 
+## [v0.13.1] - 2026-10-22 — Durcissement sécurité, 2e partie (Sprint 11s-2)
+### Sécurité
+- Audit des droits de la base : RLS sur toutes les tables, `search_path` fixé sur toutes les
+  fonctions SECURITY DEFINER ; 4 écarts corrigés (migration `20261112120000_security_audit.sql`) :
+  - `record_consent` réservée au rôle service (elle était appelable avec la clé publique, ce
+    qui permettait de remplir le registre des consentements) ; l'action serveur passe le compte
+    et limite les choix à 30 par heure et par adresse IP (`consent_ip`) ;
+  - `strategy_attachment_objects` renvoie 0 à un non-membre de l'étude ;
+  - `strategy_profile_complete` et `strategy_missing_prerequisites` retirées aux comptes
+    (elles révélaient l'avancement de n'importe quelle étude) ;
+  - fonctions de déclencheur retirées à `anon` et `authenticated`.
+- Export PDF : JavaScript désactivé dans la page d'impression (l'interception des requêtes ne
+  couvre pas les WebSockets).
+### Ajouté
+- Rapport d'audit `docs/SECURITE.md` (droits, secrets, journaux, SSRF, sondes en production).
+- Tests d'intégration `security-audit-rls.test.ts` ; `legal-rls.test.ts` adapté à la nouvelle
+  signature de `record_consent`.
+
 ## [v0.13.0] - 2026-10-22 — Durcissement sécurité, 1re partie (Sprint 11s-1)
 ### Sécurité
 - Next.js 16.4.2 (faille critique de l'optimiseur d'images et déni de service des actions

@@ -2,10 +2,10 @@
  * Fichier    : legal-rls.test.ts
  * Projet     : Kalami
  * Description: Tests d'intégration des textes légaux et de la confidentialité sur la base de
- *              développement : textes publics et non modifiables, registre des
- *              consentements (visiteur anonyme, membre, débit), demande de suppression
- *              (idempotente, privée, annulable, impact). Ignorés si les clés manquent ou si
- *              la migration du Sprint 11a n'est pas encore appliquée.
+ *              développement : textes publics et non modifiables, registre des consentements
+ *              (écrit par le serveur seul : visiteur anonyme, membre, débit), demande de
+ *              suppression (idempotente, privée, annulable, impact). Ignorés si les clés
+ *              manquent ou si la migration du Sprint 11a n'est pas encore appliquée.
  * Auteur     : Claude Marcel
  * Date       : 2026-10-16
  */
@@ -92,12 +92,13 @@ describe.skipIf(!ready)("RLS — textes légaux et confidentialité", () => {
     expect(error).not.toBeNull();
   });
 
-  it("choix d'un visiteur anonyme enregistré, mais illisible", async () => {
+  it("choix d'un visiteur anonyme enregistré par le serveur, mais illisible", async () => {
     const id = visitor();
-    const { error } = await anon.rpc("record_consent", {
+    const { error } = await service.rpc("record_consent", {
       p_visitor_id: id,
       p_choice: "refused",
       p_consent_version: 1,
+      p_user_id: null,
     });
     expect(error).toBeNull();
 
@@ -111,10 +112,11 @@ describe.skipIf(!ready)("RLS — textes légaux et confidentialité", () => {
 
   it("choix d'un membre rattaché à son compte, lisible par lui seul", async () => {
     const id = visitor();
-    const { error } = await member.rpc("record_consent", {
+    const { error } = await service.rpc("record_consent", {
       p_visitor_id: id,
       p_choice: "accepted",
       p_consent_version: 1,
+      p_user_id: userIds[0],
     });
     expect(error).toBeNull();
 
@@ -125,26 +127,29 @@ describe.skipIf(!ready)("RLS — textes légaux et confidentialité", () => {
   });
 
   it("choix invalide refusé, débit limité à 20 par heure", async () => {
-    const invalid = await anon.rpc("record_consent", {
+    const invalid = await service.rpc("record_consent", {
       p_visitor_id: visitor(),
       p_choice: "peut-etre",
       p_consent_version: 1,
+      p_user_id: null,
     });
     expect(invalid.error).not.toBeNull();
 
     const id = visitor();
     for (let i = 0; i < 20; i += 1) {
-      const { error } = await anon.rpc("record_consent", {
+      const { error } = await service.rpc("record_consent", {
         p_visitor_id: id,
         p_choice: "accepted",
         p_consent_version: 1,
+        p_user_id: null,
       });
       expect(error).toBeNull();
     }
-    const limited = await anon.rpc("record_consent", {
+    const limited = await service.rpc("record_consent", {
       p_visitor_id: id,
       p_choice: "accepted",
       p_consent_version: 1,
+      p_user_id: null,
     });
     expect(limited.error?.message).toContain("rate_limited");
   });

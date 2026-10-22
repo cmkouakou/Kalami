@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.13.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.13.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -49,7 +49,8 @@ Version actuelle : v0.13.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #43 | 2026-10-19 | v0.12.0 (Sprint 10a) : grand livre, commissions 70 %, frais Stripe et Mobile Money, revenus auteur, admin des revenus | ~450 000 | ~2.70 $ |
 | #44 | 2026-10-19 | v0.12.1 (Sprint 10b) : versements aux auteurs (demande, approbation, paiement avec reçu, refus), tableau de bord admin, journal d'audit | ~400 000 | ~2.40 $ |
 | #45 | 2026-10-22 | v0.12.2 (remboursement fait dans Stripe) et v0.13.0 (Sprint 11s-1) : Next 16.4.2, CSP et en-têtes, CSRF, limitation du débit, signature des fichiers, webhook charge.refunded | ~500 000 | ~3.00 $ |
-| **TOTAL** | | | **~14 910 000** | **~89.46 $** |
+| #46 | 2026-10-22 | v0.13.1 (Sprint 11s-2) : audit RLS et SECURITY DEFINER, secrets et journaux, SSRF du PDF, sondes en production, 4 correctifs de droits, rapport | ~120 000 | ~0.72 $ |
+| **TOTAL** | | | **~15 030 000** | **~90.18 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -105,8 +106,9 @@ Version actuelle : v0.13.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [ ] v0.12.2 — régulariser l'achat test Visa remboursé dans Stripe (bouton « Rembourser »)
 - [x] Sprint 11s-1 — Next 16.4.2, CSP et en-têtes, CSRF, limitation du débit, signature des fichiers, webhook `charge.refunded` (v0.13.0) ; unitaires 660/660, build OK
 - [x] Sprint 11s-1 — migrations `20261111120000_security.sql` et `20261111130000_refund_audit.sql` appliquées le 2026-10-22, intégration security-rls 6/6
-- [ ] Sprint 11s-1 — vérifier la CSP en production (connexion Google, dépôts, présence, liseuse)
-- [ ] Sprint 11s-2 — audit RLS et droits, secrets et journaux, tests d'intrusion, rapport (v0.13.1)
+- [ ] Sprint 11s-1 — vérifier la CSP en production (connexion Google, dépôts, présence, liseuse) — en-têtes en ligne et paiement Stripe compatible vérifiés le 2026-10-22 ; reste l'essai dans le navigateur
+- [x] Sprint 11s-2 — audit des droits, secrets, journaux, SSRF du PDF, sondes en production ; rapport `docs/SECURITE.md` (v0.13.1) ; unitaires 660/660
+- [x] Sprint 11s-2 — migration `20261112120000_security_audit.sql` appliquée le 2026-10-22 (historique réparé), intégration security-audit-rls et legal-rls 12/12
 - [x] Sprint 10a — grand livre, commissions, `/auteur/revenus`, `/admin/revenus`, frais Mobile Money (v0.12.0) ; unitaires 621/621, build OK
 - [x] Sprint 10a — migration `20261109120000_ledger.sql` appliquée le 2026-10-19 (historique réparé), intégration ledger-rls 4/4, rattrapage : 1 commande, 1 écriture
 - [x] Sprint 10b — versements, `/admin/versements`, `/admin/journal`, tableau de bord admin (v0.12.1) ; unitaires 633/633

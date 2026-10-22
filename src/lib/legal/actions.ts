@@ -5,22 +5,26 @@
  *  Description: Actions serveur des textes légaux : choix du bandeau des témoins (registre
  *               des consentements + témoin) et publication d'une nouvelle version par
  *               l'administrateur.
+ *               v1.1 : registre écrit par le rôle service, débit limité par adresse IP.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-16
- *  Dépendances: lib/legal/consent.ts, lib/legal/kinds.ts, lib/supabase/server.ts
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
+ *  Dépendances: lib/legal/consent.ts, lib/legal/kinds.ts, lib/supabase/server.ts,
+ *               lib/supabase/admin.ts, lib/security/rate-limit.ts
  * =============================================================
  */
 
 "use server";
 
 import { refresh, updateTag } from "next/cache";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import { getDictionary } from "@/i18n";
 import { attempt, requiredText } from "@/lib/admin/validation";
 import type { FormState } from "@/lib/auth/actions";
-import { requireAdmin } from "@/lib/auth/dal";
+import { getCurrentUser, requireAdmin } from "@/lib/auth/dal";
+import { allowAttempt, ipSubject } from "@/lib/security/rate-limit";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 import {
@@ -50,11 +54,14 @@ export async function recordConsent(choice: unknown): Promise<{ ok: boolean }> {
   const previous = parseConsent(cookieStore.get(CONSENT_COOKIE)?.value);
   const visitorId = previous?.visitorId ?? crypto.randomUUID();
 
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("record_consent", {
+  // Registre écrit par le rôle service seulement (v0.13.1) : débit compté par adresse IP
+  if (!(await allowAttempt("consent_ip", ipSubject(await headers())))) return { ok: false };
+  const user = await getCurrentUser();
+  const { error } = await createAdminClient().rpc("record_consent", {
     p_visitor_id: visitorId,
     p_choice: choice,
     p_consent_version: CONSENT_VERSION,
+    p_user_id: user?.id ?? null,
   });
   if (error) return { ok: false };
 

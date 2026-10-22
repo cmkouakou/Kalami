@@ -90,6 +90,8 @@ export async function printHtmlToPdf(html: string): Promise<Uint8Array> {
   const browser = await launchBrowser();
   try {
     const page = await browser.newPage();
+    // Aucun script : l'interception ne couvre pas les WebSockets (défense en profondeur)
+    await page.setJavaScriptEnabled(false);
     await page.setRequestInterception(true);
     page.on("request", (request) => {
       if (request.url().startsWith("data:")) void request.continue();
