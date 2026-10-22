@@ -58,7 +58,11 @@ function loadImage(url: string): Promise<HTMLImageElement | null> {
  * Coupe un texte en lignes qui tiennent dans la largeur donnée (coupure aux espaces).
  * @returns Lignes à dessiner
  */
-function wrapLines(context: CanvasRenderingContext2D, text: string, width: number): string[] {
+function wrapLines(
+  context: CanvasRenderingContext2D,
+  text: string,
+  width: number,
+): string[] {
   const lines: string[] = [];
   let line = "";
   for (const word of text.split(/\s+/)) {
@@ -125,7 +129,9 @@ export async function drawShareCard(data: ShareCardData): Promise<Blob> {
     height: quoteBottom - quoteTop,
   });
   context.fillStyle = COLORS.ink;
-  lines.forEach((line, index) => context.fillText(line, MARGIN, quoteTop + index * size * 1.4));
+  lines.forEach((line, index) =>
+    context.fillText(line, MARGIN, quoteTop + index * size * 1.4),
+  );
 
   // Séparateur
   const footerTop = SIZE - MARGIN - COVER_HEIGHT;
@@ -145,17 +151,32 @@ export async function drawShareCard(data: ShareCardData): Promise<Blob> {
   context.fillStyle = COLORS.ink;
   context.font = `bold 40px ${family}`;
   const titleLines = wrapLines(context, data.title, textWidth).slice(0, 2);
-  titleLines.forEach((line, index) => context.fillText(line, textLeft, footerTop + index * 50));
+  titleLines.forEach((line, index) =>
+    context.fillText(line, textLeft, footerTop + index * 50),
+  );
   context.fillStyle = COLORS.muted;
   context.font = `32px ${family}`;
-  context.fillText(data.author, textLeft, footerTop + titleLines.length * 50 + 12, textWidth);
+  context.fillText(
+    data.author,
+    textLeft,
+    footerTop + titleLines.length * 50 + 12,
+    textWidth,
+  );
   context.fillStyle = COLORS.encre;
   context.font = "28px system-ui, sans-serif";
-  context.fillText(data.link, textLeft, footerTop + COVER_HEIGHT - 32, textWidth);
+  context.fillText(
+    data.link,
+    textLeft,
+    footerTop + COVER_HEIGHT - 32,
+    textWidth,
+  );
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error("Export de l'image impossible"))),
+      (blob) =>
+        blob
+          ? resolve(blob)
+          : reject(new Error("Export de l'image impossible")),
       "image/png",
     );
   });

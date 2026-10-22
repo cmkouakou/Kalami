@@ -37,7 +37,10 @@ export function StrategyPromo({ className = "" }: { className?: string }) {
       </p>
       <p className="font-serif text-h3">{t.strategyPromo.title}</p>
       <p className="text-small text-ink-muted">{t.strategyPromo.text}</p>
-      <Link href={STRATEGY_HREF} className={`${BUTTON_SECONDARY} mt-1 self-start`}>
+      <Link
+        href={STRATEGY_HREF}
+        className={`${BUTTON_SECONDARY} mt-1 self-start`}
+      >
         {t.strategyPromo.cta}
       </Link>
     </aside>

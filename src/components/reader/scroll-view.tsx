@@ -18,7 +18,13 @@
 
 "use client";
 
-import { type ReactNode, type RefObject, useEffect, useRef, useState } from "react";
+import {
+  type ReactNode,
+  type RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import type { ChapterPayload } from "@/lib/content/types";
 import { chapterKicker } from "@/lib/reader/opening";
@@ -110,7 +116,8 @@ export function ScrollView({
 
     /** Fait défiler jusqu'à une part du chapitre. */
     const scrollToFraction = (fraction: number) => {
-      scroller.scrollTop = fraction * (scroller.scrollHeight - scroller.clientHeight);
+      scroller.scrollTop =
+        fraction * (scroller.scrollHeight - scroller.clientHeight);
     };
     const scrollScreen = (direction: 1 | -1) =>
       scroller.scrollBy({
@@ -160,13 +167,19 @@ export function ScrollView({
   // Déplacement régulier du filigrane (gêne le recadrage des captures d'écran)
   useEffect(() => {
     if (!watermark) return;
-    const timer = setInterval(() => setShift((value) => (value + 1) % 4), WATERMARK_SHIFT_MS);
+    const timer = setInterval(
+      () => setShift((value) => (value + 1) % 4),
+      WATERMARK_SHIFT_MS,
+    );
     return () => clearInterval(timer);
   }, [watermark]);
 
   return (
     <div className="relative h-full">
-      <div ref={scrollerRef} className="liseuse-defilement h-full overflow-y-auto">
+      <div
+        ref={scrollerRef}
+        className="liseuse-defilement h-full overflow-y-auto"
+      >
         <article
           ref={articleRef}
           className="liseuse-texte mx-auto max-w-[42rem] px-5 py-10 sm:px-8"
@@ -190,7 +203,10 @@ export function ScrollView({
         </article>
       </div>
       {watermark && (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+        >
           {[0, 1, 2].map((row) => (
             <span
               key={row}

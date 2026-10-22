@@ -8,9 +8,10 @@
                v1.5 : encadrés (« Sur le terrain »), illustrations, tableaux.
                v1.6 : surtitre et chapeau de module, sommaire cliquable, accès rapide.
                v1.7 : couvertures (pages à tourner, défilement), encart Kalami Stratégie.
+               v1.8 : couverture entière (plus rognée), page d'ouverture d'un module.
   Auteur     : Claude Marcel
-  Version    : 1.7
-  Date       : 2026-10-17
+  Version    : 1.8
+  Date       : 2026-10-22
   Dépend de  : globals.css (jetons de la charte, polices --police-lecture / --police-interface)
 =============================================================
 */
@@ -525,16 +526,17 @@
   position: absolute;
 }
 
-/* Couverture et quatrième de couverture : image pleine page, sans pli central */
+/* Couverture et quatrième de couverture : image entière (jamais rognée, les proportions
+   de la page varient avec l'écran), sur le fond de la page, sans pli central */
 .liseuse-couverture {
-  background: var(--liseuse-texte);
+  background: var(--liseuse-page);
 }
 
 .liseuse-couverture img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   user-select: none;
 }
 
@@ -625,6 +627,25 @@
 
 .liseuse-page-texte > .liseuse-promo {
   margin-top: 0;
+}
+
+/* Page d'ouverture d'un module (surtitre, titre, chapeau) : seule et centrée, le
+   contenu commence à la page suivante */
+.liseuse-page-ouverture .liseuse-page-texte {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.liseuse-page-ouverture .liseuse-titre-chapitre {
+  margin-bottom: 1.2em;
+}
+
+.liseuse-page-ouverture p.chapitre-chapeau {
+  margin: 0;
+  padding: 1em 0 0;
+  border-top: 1px solid var(--liseuse-bordure);
+  border-bottom: none;
 }
 
 /* Pli central de la double page : légère ombre du côté de la reliure */

@@ -34,7 +34,8 @@ const COPYABLE = "[data-selectionnable]";
 function isEditable(target: EventTarget | null): boolean {
   return (
     target instanceof HTMLElement &&
-    (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))
+    (target.isContentEditable ||
+      ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))
   );
 }
 
@@ -54,7 +55,10 @@ function isCopyableSelection(): boolean {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0) return false;
   const range = selection.getRangeAt(0);
-  return isInside(range.startContainer, COPYABLE) && isInside(range.endContainer, COPYABLE);
+  return (
+    isInside(range.startContainer, COPYABLE) &&
+    isInside(range.endContainer, COPYABLE)
+  );
 }
 
 /**
@@ -75,7 +79,8 @@ export function useProtection(ref: RefObject<HTMLElement | null>): void {
       }
     };
     const onCopy = (event: Event) => {
-      if (!isEditable(event.target) && !isCopyableSelection()) event.preventDefault();
+      if (!isEditable(event.target) && !isCopyableSelection())
+        event.preventDefault();
     };
     const onKeyDown = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
@@ -87,9 +92,12 @@ export function useProtection(ref: RefObject<HTMLElement | null>): void {
     // Sélection trop longue (copie déguisée par « Partager » du système) : annulée
     const onSelectionChange = () => {
       const selection = window.getSelection();
-      if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
-      if (!root.contains(selection.getRangeAt(0).commonAncestorContainer)) return;
-      if (selection.toString().length > MAX_QUOTE_LENGTH) selection.removeAllRanges();
+      if (!selection || selection.isCollapsed || selection.rangeCount === 0)
+        return;
+      if (!root.contains(selection.getRangeAt(0).commonAncestorContainer))
+        return;
+      if (selection.toString().length > MAX_QUOTE_LENGTH)
+        selection.removeAllRanges();
     };
 
     const rootEvents = ["contextmenu", "dragstart"] as const;
@@ -103,7 +111,9 @@ export function useProtection(ref: RefObject<HTMLElement | null>): void {
     return () => {
       rootEvents.forEach((name) => root.removeEventListener(name, block));
       root.removeEventListener("selectstart", onSelectStart);
-      documentEvents.forEach((name) => document.removeEventListener(name, onCopy));
+      documentEvents.forEach((name) =>
+        document.removeEventListener(name, onCopy),
+      );
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("selectionchange", onSelectionChange);
     };

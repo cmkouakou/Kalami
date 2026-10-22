@@ -13,9 +13,11 @@
  *               de couverture (pages à tourner et défilement).
  *               v1.5 : encart Kalami Stratégie (livre guide) en fin de module et en fin
  *               d'extrait.
+ *               v1.6 : défilement imposé sur téléphone (pages à tourner illisibles) ;
+ *               pages numérotées du début à la fin du livre (compteur en arrière-plan).
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-17
+ *  Version    : 1.6
+ *  Date       : 2026-10-22
  *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
  *               use-*, storage, lib/reader, lib/config, components/ui
  * =============================================================
@@ -53,7 +55,11 @@ import { BUTTON_ICON, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { APP_NAME, APP_URL } from "@/lib/config";
 import { PREVIEW_VERSION_PARAM } from "@/lib/content/access";
-import { addBookmark, deleteBookmark, deleteHighlight } from "@/lib/reader/actions";
+import {
+  addBookmark,
+  deleteBookmark,
+  deleteHighlight,
+} from "@/lib/reader/actions";
 import {
   bookProgress,
   isChapterReadable,
@@ -92,9 +98,11 @@ import { SeekBar } from "./seek-bar";
 import {
   loadLocalPosition,
   loadSettings,
+  PHONE_QUERY,
   saveLocalPosition,
   saveSettings,
 } from "./storage";
+import { type MeasureTarget, useBookPages } from "./use-book-pages";
 import { ChapterStore, useChapter } from "./use-chapter";
 import { useProtection } from "./use-protection";
 import { useReadAloud } from "./use-read-aloud";
@@ -138,7 +146,8 @@ type ReaderProps = {
 function isTyping(target: EventTarget | null): boolean {
   return (
     target instanceof HTMLElement &&
-    (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))
+    (target.isContentEditable ||
+      ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))
   );
 }
 
@@ -205,6 +214,13 @@ export function Reader({ data, price, buy }: ReaderProps) {
   const previewQuery = data.preview ? `?version=${PREVIEW_VERSION_PARAM}` : "";
   const [store] = useState(() => new ChapterStore(book.id, previewQuery));
   const [settings, setSettings] = useState<ReaderSettings>(loadSettings);
+  // Téléphone : défilement imposé, quel que soit le réglage enregistré
+  const [phone, setPhone] = useState(
+    () => window.matchMedia(PHONE_QUERY).matches,
+  );
+  const mode = phone ? "scroll" : settings.mode;
+  // Zone de mesure de la vue « pages à tourner » (compteur des pages du livre)
+  const [measure, setMeasure] = useState<MeasureTarget | null>(null);
   const [opening, setOpening] = useState<Opening>(() => ({
     ...resolveStartPosition(
       toc,
@@ -230,19 +246,50 @@ export function Reader({ data, price, buy }: ReaderProps) {
   const next = nextChapter(toc, chapter);
   const previous = previousChapter(toc, chapter);
   const chapterTitle =
-    toc.find((entry) => entry.chapter_position === chapter)?.title ?? String(chapter);
+    toc.find((entry) => entry.chapter_position === chapter)?.title ??
+    String(chapter);
   const scheduleSave = usePositionSaver(book.id, signedIn);
+  const readableChapters = useMemo(
+    () =>
+      toc
+        .map((entry) => entry.chapter_position)
+        .filter((position) => isChapterReadable(toc, position, access)),
+    [toc, access],
+  );
+  const bookPage = useBookPages(
+    store,
+    readableChapters,
+    mode === "flip" ? measure : null,
+    `${settings.font}|${settings.fontSize}|${settings.lineHeight}`,
+  );
+  const numbering = useCallback(
+    (index: number) => bookPage(chapter, index),
+    [bookPage, chapter],
+  );
+  /** Zone signalée par la vue : gardée seulement si elle a changé (pas de rendu inutile). */
+  const onLayout = useCallback((target: MeasureTarget) => {
+    setMeasure((current) =>
+      current?.host === target.host &&
+      current.width === target.width &&
+      current.height === target.height
+        ? current
+        : target,
+    );
+  }, []);
 
   useProtection(rootRef);
 
   // ==================== NAVIGATION ====================
 
   /** Ouvre un chapitre (nouvelle vue) à la position donnée. */
-  const openAt = useCallback((position: ReaderPosition & { fraction?: number }) => {
-    setEnded(false);
-    setDisplay({ fraction: 0 });
-    setOpening((current) => ({ ...position, serial: current.serial + 1 }));
-  }, []);
+  const openAt = useCallback(
+    (position: ReaderPosition & { fraction?: number }) => {
+      setEnded(false);
+      setDisplay({ fraction: 0 });
+      setOpening((current) => ({ ...position, serial: current.serial + 1 }));
+    },
+    [],
+  );
 
   /** Va à une position : dans le chapitre affiché sans le recharger, sinon l'ouvre. */
   const jumpTo = useCallback(
@@ -263,7 +310,8 @@ export function Reader({ data, price, buy }: ReaderProps) {
 
   const goPreviousChapter = useCallback(() => {
     if (ended) openAt({ chapter, block: END_BLOCK, offset: 0 });
-    else if (previous !== null) openAt({ chapter: previous, block: END_BLOCK, offset: 0 });
+    else if (previous !== null)
+      openAt({ chapter: previous, block: END_BLOCK, offset: 0 });
   }, [chapter, ended, previous, openAt]);
 
   /** Accès rapide : saut à un avancement du livre (0 à 1). */
@@ -274,7 +322,12 @@ export function Reader({ data, price, buy }: ReaderProps) {
       if (target.chapter === chapter && !ended && controls.current) {
         controls.current.goToFraction(target.fraction);
       } else {
-        openAt({ chapter: target.chapter, block: 0, offset: 0, fraction: target.fraction });
+        openAt({
+          chapter: target.chapter,
+          block: 0,
+          offset: 0,
+          fraction: target.fraction,
+        });
       }
     },
     [toc, chapter, ended, openAt],
@@ -282,26 +335,37 @@ export function Reader({ data, price, buy }: ReaderProps) {
 
   // Nouvelle vue (et non un saut) : le premier chapitre se rouvre sur la couverture
   const goBookStart = useCallback(() => {
-    if (toc.length) openAt({ chapter: toc[0].chapter_position, block: 0, offset: 0 });
+    if (toc.length)
+      openAt({ chapter: toc[0].chapter_position, block: 0, offset: 0 });
   }, [toc, openAt]);
 
   const goBookEnd = useCallback(() => {
     const last = toc[toc.length - 1];
-    if (last) openAt({ chapter: last.chapter_position, block: END_BLOCK, offset: 0 });
+    if (last)
+      openAt({ chapter: last.chapter_position, block: END_BLOCK, offset: 0 });
   }, [toc, openAt]);
 
   /** Entrée de la table des matières du livre : saut au chapitre et au bloc visés. */
   const onTextClick = useCallback(
     (event: MouseEvent<HTMLElement>) => {
       if (!(event.target instanceof Element)) return;
-      const entry = event.target.closest<HTMLElement>(".liseuse-texte [data-vers-chapitre]");
+      const entry = event.target.closest<HTMLElement>(
+        ".liseuse-texte [data-vers-chapitre]",
+      );
       if (!entry) return;
       const target = Number(entry.dataset.versChapitre);
       const block = Number(entry.dataset.versBloc ?? 0);
-      if (!Number.isInteger(target) || !toc.some((item) => item.chapter_position === target)) {
+      if (
+        !Number.isInteger(target) ||
+        !toc.some((item) => item.chapter_position === target)
+      ) {
         return;
       }
-      jumpTo({ chapter: target, block: Number.isInteger(block) ? block : 0, offset: 0 });
+      jumpTo({
+        chapter: target,
+        block: Number.isInteger(block) ? block : 0,
+        offset: 0,
+      });
     },
     [toc, jumpTo],
   );
@@ -320,7 +384,11 @@ export function Reader({ data, price, buy }: ReaderProps) {
   /** Position signalée par la vue : affichage et enregistrement différé. */
   const onPosition = useCallback(
     (position: ViewPosition) => {
-      live.current = { chapter, block: position.block, offset: position.offset };
+      live.current = {
+        chapter,
+        block: position.block,
+        offset: position.offset,
+      };
       setDisplay({ fraction: position.fraction, page: position.page });
       scheduleSave({
         ...live.current,
@@ -335,10 +403,14 @@ export function Reader({ data, price, buy }: ReaderProps) {
 
   const chapterPayload = state.status === "ready" ? state.chapter : null;
   const texts = useMemo(
-    () => (chapterPayload ? blockTexts(chapterPayload.blocks.map(parseBlock)) : []),
+    () =>
+      chapterPayload ? blockTexts(chapterPayload.blocks.map(parseBlock)) : [],
     [chapterPayload],
   );
-  const followBlock = useCallback((index: number) => controls.current?.goTo(index, 0), []);
+  const followBlock = useCallback(
+    (index: number) => controls.current?.goTo(index, 0),
+    [],
+  );
   const speech = useReadAloud(book.language, followBlock, goNextChapter);
 
   /** Bouton principal : démarrer, mettre en pause ou reprendre. */
@@ -355,7 +427,10 @@ export function Reader({ data, price, buy }: ReaderProps) {
     saveSettings(value);
     // Changement de mode : nouvelle vue, rouverte à la position courante
     if (value.mode !== settings.mode) {
-      setOpening((current) => ({ ...live.current, serial: current.serial + 1 }));
+      setOpening((current) => ({
+        ...live.current,
+        serial: current.serial + 1,
+      }));
     }
   };
 
@@ -367,7 +442,8 @@ export function Reader({ data, price, buy }: ReaderProps) {
   };
 
   const onDeleteBookmark = async (id: string) => {
-    if (await deleteBookmark(id)) setBookmarks((list) => list.filter((item) => item.id !== id));
+    if (await deleteBookmark(id))
+      setBookmarks((list) => list.filter((item) => item.id !== id));
   };
 
   // ==================== ANNOTATIONS ET PARTAGE ====================
@@ -379,7 +455,8 @@ export function Reader({ data, price, buy }: ReaderProps) {
   );
 
   const onDeleteHighlight = async (id: string) => {
-    if (await deleteHighlight(id)) setHighlights((list) => list.filter((item) => item.id !== id));
+    if (await deleteHighlight(id))
+      setHighlights((list) => list.filter((item) => item.id !== id));
     else setNotice(t.reader.annotations.error);
   };
 
@@ -433,10 +510,28 @@ export function Reader({ data, price, buy }: ReaderProps) {
 
   // Préchargement du chapitre suivant pendant la lecture
   useEffect(() => {
-    if (state.status === "ready" && next !== null && isChapterReadable(toc, next, access)) {
+    if (
+      state.status === "ready" &&
+      next !== null &&
+      isChapterReadable(toc, next, access)
+    ) {
       store.prefetch(next);
     }
   }, [state.status, next, toc, access, store]);
+
+  // Passage téléphone ↔ tablette (rotation, fenêtre) : nouvelle vue à la position courante
+  useEffect(() => {
+    const query = window.matchMedia(PHONE_QUERY);
+    const onChange = () => {
+      setPhone(query.matches);
+      setOpening((current) => ({
+        ...live.current,
+        serial: current.serial + 1,
+      }));
+    };
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
 
   // Clavier : flèches et Page préc./suiv. (pages à tourner), Échap (panneau)
   useEffect(() => {
@@ -445,7 +540,7 @@ export function Reader({ data, price, buy }: ReaderProps) {
         setPanel(null);
         return;
       }
-      if (panel || isTyping(event.target) || settings.mode !== "flip") return;
+      if (panel || isTyping(event.target) || mode !== "flip") return;
       if (event.altKey || event.ctrlKey || event.metaKey) return;
       if (event.key === "ArrowRight" || event.key === "PageDown") {
         event.preventDefault();
@@ -457,11 +552,22 @@ export function Reader({ data, price, buy }: ReaderProps) {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [panel, settings.mode, pageNext, pagePrevious]);
+  }, [panel, mode, pageNext, pagePrevious]);
 
   // ==================== RENDU ====================
 
   const progress = ended ? 1 : bookProgress(toc, chapter, display.fraction);
+  // Page du livre une fois comptée (« 48 / 210 », « p. 48 » avant la fin du compte),
+  // sinon page de la partie (« 3 / 17 »)
+  const partPage = display.page;
+  const inBook = partPage ? bookPage(chapter, partPage.current - 1) : null;
+  const pageLabel = !partPage
+    ? null
+    : !inBook
+      ? `${partPage.current} / ${partPage.total}`
+      : inBook.total
+        ? `${inBook.number} / ${inBook.total}`
+        : interpolate(t.reader.pageShort, { current: String(inBook.number) });
   const lock = (
     <LockScreen
       title={book.title}
@@ -493,14 +599,20 @@ export function Reader({ data, price, buy }: ReaderProps) {
   const cover = useMemo(
     () =>
       previous === null && book.coverUrl
-        ? { url: book.coverUrl, alt: interpolate(t.reader.coverAlt, { title: book.title }) }
+        ? {
+            url: book.coverUrl,
+            alt: interpolate(t.reader.coverAlt, { title: book.title }),
+          }
         : null,
     [previous, book.coverUrl, book.title],
   );
   const backCover = useMemo(
     () =>
       next === null && book.backCoverUrl
-        ? { url: book.backCoverUrl, alt: interpolate(t.reader.backCoverAlt, { title: book.title }) }
+        ? {
+            url: book.backCoverUrl,
+            alt: interpolate(t.reader.backCoverAlt, { title: book.title }),
+          }
         : null,
     [next, book.backCoverUrl, book.title],
   );
@@ -512,20 +624,32 @@ export function Reader({ data, price, buy }: ReaderProps) {
     main = <p className="m-auto text-ink-muted">{t.reader.loading}</p>;
   } else if (state.status === "error") {
     main = (
-      <div role="alert" className="m-auto flex flex-col items-center gap-3 px-6 text-center">
-        <p>{state.rateLimited ? t.content.api.tooManyRequests : t.reader.loadError}</p>
+      <div
+        role="alert"
+        className="m-auto flex flex-col items-center gap-3 px-6 text-center"
+      >
+        <p>
+          {state.rateLimited
+            ? t.content.api.tooManyRequests
+            : t.reader.loadError}
+        </p>
         <button type="button" onClick={retry} className={NAV_BUTTON}>
           {t.reader.retry}
         </button>
       </div>
     );
   } else {
-    const viewKey = `${chapter}:${settings.mode}:${opening.serial}`;
-    const initial = { block: opening.block, offset: opening.offset, fraction: opening.fraction };
+    const viewKey = `${chapter}:${mode}:${opening.serial}`;
+    const initial = {
+      block: opening.block,
+      offset: opening.offset,
+      fraction: opening.fraction,
+    };
     // Encart Kalami Stratégie après la section « À vous de jouer » d'un module
-    const promo = hasStrategyPromo(book.slug) && hasExercises(state.chapter.blocks);
+    const promo =
+      hasStrategyPromo(book.slug) && hasExercises(state.chapter.blocks);
     main =
-      settings.mode === "flip" ? (
+      mode === "flip" ? (
         <FlipView
           key={viewKey}
           chapter={state.chapter}
@@ -540,6 +664,8 @@ export function Reader({ data, price, buy }: ReaderProps) {
           cover={cover}
           backCover={backCover}
           promo={promo}
+          numbering={numbering}
+          onLayout={onLayout}
         />
       ) : (
         <ScrollView
@@ -562,10 +688,13 @@ export function Reader({ data, price, buy }: ReaderProps) {
     "--liseuse-taille": `${FONT_SIZES[settings.fontSize]}px`,
     "--liseuse-interligne": String(LINE_HEIGHTS[settings.lineHeight]),
     "--liseuse-police":
-      settings.font === "serif" ? "var(--police-lecture)" : "var(--police-interface)",
+      settings.font === "serif"
+        ? "var(--police-lecture)"
+        : "var(--police-interface)",
   } as CSSProperties;
 
-  const togglePanel = (name: PanelName) => setPanel((value) => (value === name ? null : name));
+  const togglePanel = (name: PanelName) =>
+    setPanel((value) => (value === name ? null : name));
   const panelButton = (name: PanelName, icon: ReactNode) => (
     <button
       type="button"
@@ -603,7 +732,9 @@ export function Reader({ data, price, buy }: ReaderProps) {
           <IconArrowLeft size={ICON_SIZE} />
         </Link>
         <div className="flex min-w-0 flex-1 flex-col px-2">
-          <p className="truncate text-caption text-ink-muted uppercase">{chapterTitle}</p>
+          <p className="truncate text-caption text-ink-muted uppercase">
+            {chapterTitle}
+          </p>
           <h1 className="truncate font-serif text-book-title">{book.title}</h1>
         </div>
         {panelButton("toc", <IconList size={ICON_SIZE} />)}
@@ -705,7 +836,11 @@ export function Reader({ data, price, buy }: ReaderProps) {
               />
             )}
             {panel === "settings" && (
-              <SettingsPanel settings={settings} onChange={changeSettings} />
+              <SettingsPanel
+                settings={settings}
+                onChange={changeSettings}
+                phone={phone}
+              />
             )}
           </Panel>
         )}
@@ -738,9 +873,11 @@ export function Reader({ data, price, buy }: ReaderProps) {
       <footer className="liseuse-barre flex items-center gap-3 border-t border-line px-2 py-2">
         <button
           type="button"
-          onClick={settings.mode === "flip" ? pagePrevious : goPreviousChapter}
-          disabled={previous === null && !ended && settings.mode === "scroll"}
-          aria-label={settings.mode === "flip" ? t.reader.previousPage : t.reader.previousChapter}
+          onClick={mode === "flip" ? pagePrevious : goPreviousChapter}
+          disabled={previous === null && !ended && mode === "scroll"}
+          aria-label={
+            mode === "flip" ? t.reader.previousPage : t.reader.previousChapter
+          }
           className={TOOL_BUTTON}
         >
           <IconChevronLeft size={ICON_SIZE} />
@@ -748,7 +885,7 @@ export function Reader({ data, price, buy }: ReaderProps) {
         <SeekBar
           toc={toc}
           value={progress}
-          page={settings.mode === "flip" && display.page && !ended ? display.page : null}
+          page={mode === "flip" && !ended ? pageLabel : null}
           disabled={!toc.length}
           buttonClass={TOOL_BUTTON}
           iconSize={ICON_SIZE}
@@ -758,9 +895,11 @@ export function Reader({ data, price, buy }: ReaderProps) {
         />
         <button
           type="button"
-          onClick={settings.mode === "flip" ? pageNext : goNextChapter}
+          onClick={mode === "flip" ? pageNext : goNextChapter}
           disabled={ended || state.status === "locked"}
-          aria-label={settings.mode === "flip" ? t.reader.nextPage : t.reader.nextChapter}
+          aria-label={
+            mode === "flip" ? t.reader.nextPage : t.reader.nextChapter
+          }
           className={TOOL_BUTTON}
         >
           <IconChevronRight size={ICON_SIZE} />

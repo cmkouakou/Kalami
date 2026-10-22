@@ -29,7 +29,13 @@ type DialogProps = {
 };
 
 /** Fenêtre modale ouverte dès son montage, refermée par Échap, le bouton ou le fond. */
-export function Dialog({ id, title, closeLabel, onClose, children }: DialogProps) {
+export function Dialog({
+  id,
+  title,
+  closeLabel,
+  onClose,
+  children,
+}: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -59,7 +65,12 @@ export function Dialog({ id, title, closeLabel, onClose, children }: DialogProps
           <h2 id={id} className="font-serif text-h3">
             {title}
           </h2>
-          <button type="button" onClick={onClose} aria-label={closeLabel} className={BUTTON_ICON}>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={closeLabel}
+            className={BUTTON_ICON}
+          >
             <IconX />
           </button>
         </header>

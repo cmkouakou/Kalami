@@ -6,10 +6,11 @@
  *               par l'appelant : dans le navigateur, une page cachée aux dimensions réelles ;
  *               dans les tests, une capacité en caractères. Les paragraphes sont coupés à
  *               une limite de mot ; les intertitres ne sont jamais coupés ni laissés seuls
- *               en bas de page.
+ *               en bas de page. v1.1 : saut de page forcé après un bloc (breakAfter),
+ *               pour la page d'ouverture d'un module.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: types.ts
  * =============================================================
  */
@@ -70,6 +71,7 @@ function largestFittingBreak(
  * Pour chaque bloc : le placer entier sur la page courante s'il tient ; sinon couper un
  * paragraphe au dernier mot qui tient, ou passer à la page suivante. Un bloc trop grand
  * pour une page vide est placé quand même (dépassement accepté plutôt qu'une boucle).
+ * Un bloc marqué breakAfter ferme sa page : le bloc suivant commence une page neuve.
  *
  * @param blocks - Description des blocs du chapitre
  * @param fits   - Mesure : vrai si la page tient dans la zone d'affichage
@@ -96,6 +98,11 @@ export function paginate(blocks: BlockInfo[], fits: FitsFn): Page[] {
       const whole = { block, start, end: info.length };
       if (fits([...current, whole])) {
         current.push(whole);
+        if (info.breakAfter) {
+          // Saut forcé : pas de report d'intertitre, la page se ferme telle quelle
+          pages.push(current);
+          current = [];
+        }
         return;
       }
 

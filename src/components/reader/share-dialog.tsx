@@ -30,7 +30,10 @@ const FILE_NAME = "kalami-extrait.png";
 type Card = { blob: Blob; url: string };
 
 /** Fenêtre « Partager » : prépare l'image à l'ouverture, puis la partage. */
-export function ShareDialog(props: { card: ShareCardData; onClose: () => void }) {
+export function ShareDialog(props: {
+  card: ShareCardData;
+  onClose: () => void;
+}) {
   const { onClose } = props;
   // Contenu figé à l'ouverture : l'image n'est dessinée qu'une fois
   const [card] = useState(props.card);
@@ -56,14 +59,20 @@ export function ShareDialog(props: { card: ShareCardData; onClose: () => void })
     };
   }, [card]);
 
-  const file = image ? new File([image.blob], FILE_NAME, { type: "image/png" }) : null;
+  const file = image
+    ? new File([image.blob], FILE_NAME, { type: "image/png" })
+    : null;
   const native = Boolean(file && navigator.canShare?.({ files: [file] }));
 
   /** Partage natif de l'image avec le lien du livre. */
   async function share() {
     if (!file) return;
     try {
-      await navigator.share({ files: [file], title: card.title, url: card.link });
+      await navigator.share({
+        files: [file],
+        title: card.title,
+        url: card.link,
+      });
       onClose();
     } catch (error) {
       // Annulation par le lecteur : rien à signaler
@@ -89,14 +98,22 @@ export function ShareDialog(props: { card: ShareCardData; onClose: () => void })
   }
 
   return (
-    <Dialog id="dialogue-partage" title={t.reader.share.title} closeLabel={t.reader.share.close}
-      onClose={onClose}>
+    <Dialog
+      id="dialogue-partage"
+      title={t.reader.share.title}
+      closeLabel={t.reader.share.close}
+      onClose={onClose}
+    >
       <p className="text-small text-ink-muted">{t.reader.share.intro}</p>
       <div className="aspect-square w-full overflow-hidden rounded-md border border-line bg-sand">
         {image && (
           // Image locale (blob:) : next/image n'apporte rien ici
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={image.url} alt={t.reader.share.preview} className="size-full" />
+          <img
+            src={image.url}
+            alt={t.reader.share.preview}
+            className="size-full"
+          />
         )}
       </div>
       <button

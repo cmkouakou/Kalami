@@ -1,5 +1,23 @@
 # Journal des modifications
 
+## [v0.13.2] - 2026-10-22 — Liseuse : couverture, pages du livre, téléphone, ouvertures
+### Corrigé
+- Couverture affichée en entier (elle était coupée vers le bas) ; plus de « p. 1 » sur la
+  couverture.
+- Pages sans texte (schémas, images) : un glissement tourne la page même quand page-flip ne
+  le prend pas en charge ; images non déplaçables.
+- Téléphone : lecture en défilement imposée (la vue « pages à tourner » s'y affichait par
+  moments sans fonctionner) ; la vue se recrée à la même position au changement d'orientation.
+
+### Ajouté
+- Numérotation des pages continue dans tout le livre (« 20 / 37 ») : les parties lisibles sont
+  comptées en arrière-plan aux dimensions et réglages de la vue (requêtes espacées de 2,1 s).
+- Page d'ouverture des modules : surtitre, titre et chapeau centrés seuls sur leur page ; le
+  contenu commence à la page suivante (`breakAfter` dans la pagination).
+
+### Modifié
+- Mise en pages partagée entre la vue et le compteur (`layout.ts`, `use-book-pages.ts`).
+
 ## [v0.13.1] - 2026-10-22 — Durcissement sécurité, 2e partie (Sprint 11s-2)
 ### Sécurité
 - Audit des droits de la base : RLS sur toutes les tables, `search_path` fixé sur toutes les

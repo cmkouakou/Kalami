@@ -46,8 +46,7 @@ const fr = {
       },
       {
         title: "Lecture protégée",
-        text:
-          "Les livres restent en ligne, avec un filigrane personnel, pour respecter les auteurs.",
+        text: "Les livres restent en ligne, avec un filigrane personnel, pour respecter les auteurs.",
       },
     ],
   },
@@ -98,20 +97,26 @@ const fr = {
       promoChecking: "Vérification…",
       promoApplied: "Code {code} appliqué.",
       promoRemove: "Retirer le code",
-      promoNotInCurrency: "Ce code ne s'applique pas aux paiements dans cette devise.",
+      promoNotInCurrency:
+        "Ce code ne s'applique pas aux paiements dans cette devise.",
       priceBefore: "Prix avant réduction :",
       errors: {
         already_owned: "Vous possédez déjà ce livre : rechargez la page.",
         rate_limited: "Trop de tentatives en une heure. Réessayez plus tard.",
         not_for_sale: "Cet article n'est pas vendu dans cette devise.",
-        not_allowed: "Seul le propriétaire de l'étude ou son enseignant peut faire cet achat.",
-        stripe_unavailable: "Le service de paiement ne répond pas. Réessayez dans un instant.",
+        not_allowed:
+          "Seul le propriétaire de l'étude ou son enseignant peut faire cet achat.",
+        stripe_unavailable:
+          "Le service de paiement ne répond pas. Réessayez dans un instant.",
         promo_invalid: "Ce code promo n'existe pas ou n'est plus actif.",
         promo_expired: "Ce code promo a expiré.",
-        promo_exhausted: "Ce code promo a atteint son nombre maximal d'utilisations.",
+        promo_exhausted:
+          "Ce code promo a atteint son nombre maximal d'utilisations.",
         promo_used: "Vous avez déjà utilisé ce code promo.",
-        promo_not_applicable: "Ce code promo ne s'applique pas à cet article ou à cette devise.",
-        promo_too_low: "La réduction est trop forte pour cet article : le code ne s'applique pas.",
+        promo_not_applicable:
+          "Ce code promo ne s'applique pas à cet article ou à cette devise.",
+        promo_too_low:
+          "La réduction est trop forte pour cet article : le code ne s'applique pas.",
         generic: "Le paiement n'a pas pu démarrer. Réessayez.",
       },
     },
@@ -152,7 +157,8 @@ const fr = {
     api: {
       locked: "Ce chapitre est réservé aux lecteurs qui ont acheté le livre.",
       notFound: "Chapitre introuvable.",
-      tooManyRequests: "Trop de chapitres demandés en peu de temps. Réessayez dans une minute.",
+      tooManyRequests:
+        "Trop de chapitres demandés en peu de temps. Réessayez dans une minute.",
       badRequest: "Requête invalide.",
       unauthorized: "Connexion requise.",
     },
@@ -175,10 +181,12 @@ const fr = {
       exhausted:
         "Vous avez utilisé vos 3 téléchargements. Écrivez-nous si vous avez perdu le fichier.",
       unavailable: "Ce livre ne peut pas être imprimé en PDF pour le moment.",
-      expired: "Ce lien a expiré : préparez un nouveau PDF depuis la fiche du livre.",
+      expired:
+        "Ce lien a expiré : préparez un nouveau PDF depuis la fiche du livre.",
       revoked: "L'option PDF a été retirée de votre compte.",
       not_found: "Fichier introuvable.",
-      generic: "La préparation du PDF a échoué. Réessayez dans quelques minutes.",
+      generic:
+        "La préparation du PDF a échoué. Réessayez dans quelques minutes.",
     },
     back: "Retour au livre",
   },
@@ -193,6 +201,7 @@ const fr = {
     previousChapter: "Chapitre précédent",
     nextChapter: "Chapitre suivant",
     pageOf: "Page {current} sur {total}",
+    pageShort: "p. {current}",
     coverAlt: "Couverture de « {title} »",
     backCoverAlt: "Quatrième de couverture de « {title} »",
     progress: "{percent} % du livre",
@@ -239,7 +248,8 @@ const fr = {
       cancel: "Annuler",
     },
     annotations: {
-      empty: "Aucune annotation pour ce livre. Sélectionnez un passage pour le surligner.",
+      empty:
+        "Aucune annotation pour ce livre. Sélectionnez un passage pour le surligner.",
       noMatch: "Aucune annotation ne correspond à ces critères.",
       filter: "Filtrer les annotations",
       search: "Rechercher dans les annotations",
@@ -247,7 +257,8 @@ const fr = {
       count: "{count} annotation(s)",
       open: "Aller au passage",
       remove: "Supprimer l'annotation « {quote} »",
-      signInRequired: "Connectez-vous pour surligner et annoter sur tous vos appareils.",
+      signInRequired:
+        "Connectez-vous pour surligner et annoter sur tous vos appareils.",
       signIn: "Se connecter",
       noteTooLong: "La note ne peut dépasser 2000 caractères.",
       tooMany: "Nombre maximal d'annotations atteint pour ce livre.",
@@ -265,7 +276,8 @@ const fr = {
     },
     share: {
       title: "Partager un extrait",
-      intro: "Une image de l'extrait (280 caractères au plus) avec le titre et le lien du livre.",
+      intro:
+        "Une image de l'extrait (280 caractères au plus) avec le titre et le lien du livre.",
       preview: "Aperçu de l'image partagée",
       send: "Partager l'image",
       download: "Télécharger l'image",
@@ -286,7 +298,8 @@ const fr = {
       save: "Enregistrer",
       empty: "Aucun signet pour ce livre.",
       remove: "Supprimer le signet « {label} »",
-      signInRequired: "Connectez-vous pour enregistrer des signets sur tous vos appareils.",
+      signInRequired:
+        "Connectez-vous pour enregistrer des signets sur tous vos appareils.",
       signIn: "Se connecter",
       invalid: "Le nom du signet doit compter de 1 à 120 caractères.",
       tooMany: "Nombre maximal de signets atteint pour ce livre.",
@@ -307,6 +320,7 @@ const fr = {
       mode: "Mode de lecture",
       flip: "Pages à tourner",
       scroll: "Défilement",
+      phoneScroll: "Sur téléphone, le livre se lit en défilement.",
       theme: "Thème",
       light: "Clair",
       sepia: "Sépia",
@@ -325,7 +339,8 @@ const fr = {
       pause: "Mettre en pause",
       resume: "Reprendre la lecture à voix haute",
       stop: "Arrêter la lecture à voix haute",
-      unsupported: "La lecture à voix haute n'est pas disponible dans ce navigateur.",
+      unsupported:
+        "La lecture à voix haute n'est pas disponible dans ce navigateur.",
     },
     lock: {
       title: "Vous avez terminé l'extrait gratuit",
@@ -377,7 +392,8 @@ const fr = {
     signOut: "Se déconnecter",
     errors: {
       invalidCredentials: "Adresse ou mot de passe incorrect.",
-      emailNotConfirmed: "Confirmez d'abord votre adresse à l'aide du courriel reçu.",
+      emailNotConfirmed:
+        "Confirmez d'abord votre adresse à l'aide du courriel reçu.",
       weakPassword: "Le mot de passe doit contenir au moins 8 caractères.",
       invalidEmail: "Adresse courriel invalide.",
       rateLimited: "Trop de tentatives. Réessayez dans quelques minutes.",
@@ -415,15 +431,18 @@ const fr = {
         paidCredits:
           "Votre paiement est confirmé : {credits} crédit(s) d'étude ont été ajoutés à " +
           "votre compte.",
-        paidPack: "Votre paiement est confirmé : « {label} » est ajouté au coach de l'étude.",
+        paidPack:
+          "Votre paiement est confirmé : « {label} » est ajouté au coach de l'étude.",
         refunded: "Cette commande a été remboursée.",
         bonus: "Une étude Kalami Stratégie vous est offerte avec ce livre.",
         bonusLink: "Commencer une étude",
-        waiting: "Nous attendons la confirmation de Stripe. Cela prend quelques secondes…",
+        waiting:
+          "Nous attendons la confirmation de Stripe. Cela prend quelques secondes…",
         slow:
           "La confirmation tarde. Votre paiement n'est pas perdu : l'accès s'ouvrira dès " +
           "sa réception. Consultez « Mes achats » dans quelques minutes.",
-        expired: "Cette session de paiement a expiré : aucun montant n'a été prélevé.",
+        expired:
+          "Cette session de paiement a expiré : aucun montant n'a été prélevé.",
         notFound: "Commande introuvable.",
       },
     },
@@ -449,7 +468,8 @@ const fr = {
       impactBase:
         "Votre profil, vos accès aux livres, vos positions de lecture, signets, surlignages " +
         "et notes.",
-      impactStudies: "{count} étude(s) Kalami Stratégie dont vous êtes propriétaire.",
+      impactStudies:
+        "{count} étude(s) Kalami Stratégie dont vous êtes propriétaire.",
       impactShared:
         "Dont {count} partagée(s) avec d'autres membres : elles disparaîtront aussi pour " +
         "eux. Exportez les plans utiles avant la suppression.",
@@ -463,7 +483,8 @@ const fr = {
       request: "Demander la suppression",
       requested: "Demande enregistrée.",
       pending: "Votre compte sera supprimé le {date}.",
-      pendingHelp: "Vous changez d'avis ? Annulez la demande, votre compte reste intact.",
+      pendingHelp:
+        "Vous changez d'avis ? Annulez la demande, votre compte reste intact.",
       cancel: "Annuler la suppression",
       cancelled: "Suppression annulée.",
     },
@@ -485,15 +506,18 @@ const fr = {
       highlights: "{count} surlignages",
       pendingVersion: "Nouvelle version en attente",
       salesTitle: "Ventes et revenus",
-      salesIntro: "Votre part des ventes de vos livres, disponible après le délai de garde.",
+      salesIntro:
+        "Votre part des ventes de vos livres, disponible après le délai de garde.",
       salesNone: "Aucune vente pour le moment.",
       salesAvailable: "{amount} disponibles",
       salesLink: "Voir mes revenus",
     },
     revenue: {
       title: "Revenus",
-      intro: "Vos ventes, votre part et ce qui est disponible pour un versement.",
-      share: "Votre part : {share} % du montant net (après frais de paiement et taxes).",
+      intro:
+        "Vos ventes, votre part et ce qui est disponible pour un versement.",
+      share:
+        "Votre part : {share} % du montant net (après frais de paiement et taxes).",
       hold: "Une vente devient disponible {days} jours après le paiement.",
       minimum: "Versement possible dès {xof}, {eur} ou {cad} disponibles.",
       payoutsIntro:
@@ -509,7 +533,8 @@ const fr = {
       paid: "Déjà versé",
       sales: "{count} ventes nettes · {gross} vendus",
       request: "Demander le versement de {amount}",
-      requestSent: "Demande envoyée. L'équipe Kalami la traite sous quelques jours.",
+      requestSent:
+        "Demande envoyée. L'équipe Kalami la traite sous quelques jours.",
       blockers: {
         open: "Une demande est déjà en cours pour cette devise.",
         below_minimum: "Versement possible à partir de {minimum} disponibles.",
@@ -537,7 +562,8 @@ const fr = {
         invalid_currency: "Devise inconnue.",
         no_payout_details: "Renseignez d'abord vos coordonnées de versement.",
         payout_open: "Une demande est déjà en cours pour cette devise.",
-        below_minimum: "Votre disponible n'atteint pas encore le seuil de versement.",
+        below_minimum:
+          "Votre disponible n'atteint pas encore le seuil de versement.",
         payout_not_found: "Cette demande ne peut plus être annulée.",
       },
       entriesTitle: "Dernières écritures",
@@ -590,7 +616,12 @@ const fr = {
       accountNumber: "Numéro de compte ou IBAN",
       swift: "Code SWIFT/BIC (facultatif)",
       mobileOperator: "Opérateur",
-      operators: { orange: "Orange Money", mtn: "MTN MoMo", moov: "Moov Money", wave: "Wave" },
+      operators: {
+        orange: "Orange Money",
+        mtn: "MTN MoMo",
+        moov: "Moov Money",
+        wave: "Wave",
+      },
       mobileNumber: "Numéro Mobile Money",
       bankFields: "Pour un virement : banque et numéro de compte obligatoires.",
       mobileFields: "Pour Mobile Money : opérateur et numéro obligatoires.",
@@ -620,18 +651,26 @@ const fr = {
       submitted: "Demande envoyée. Vous serez informé de la décision.",
       history: "Historique des demandes",
       kinds: { first: "Première publication", update: "Nouvelle version" },
-      submissionStatuses: { submitted: "En attente", approved: "Validée", rejected: "Refusée" },
+      submissionStatuses: {
+        submitted: "En attente",
+        approved: "Validée",
+        rejected: "Refusée",
+      },
       topPassages: "Passages les plus surlignés",
-      topPassagesHelp: "Affichés à partir de 3 lecteurs différents, sans les identifier.",
+      topPassagesHelp:
+        "Affichés à partir de 3 lecteurs différents, sans les identifier.",
       noTopPassages: "Pas encore assez de surlignages.",
       passage: "Chapitre {chapter} — {readers} lecteurs",
     },
     errors: {
-      contract_required: "Acceptez la dernière version du contrat avant de soumettre.",
+      contract_required:
+        "Acceptez la dernière version du contrat avant de soumettre.",
       already_submitted: "Une demande de validation est déjà en cours.",
       missing_version: "Déposez et convertissez d'abord un manuscrit.",
-      incomplete: "Fiche incomplète : résumé, catégorie et au moins un prix sont requis.",
-      submission_open: "Impossible de déposer une version pendant la validation.",
+      incomplete:
+        "Fiche incomplète : résumé, catégorie et au moins un prix sont requis.",
+      submission_open:
+        "Impossible de déposer une version pendant la validation.",
       notAuthor: "Créez d'abord votre fiche d'auteur.",
       authors_closed:
         "Le dépôt de livres par des auteurs externes est fermé pour le moment.",
@@ -707,7 +746,8 @@ const fr = {
       photo: "Photo",
       books: "Livres",
       depositTitle: "Dépôt par des auteurs externes",
-      depositOpen: "Ouvert : toute personne inscrite peut créer sa fiche et soumettre un livre.",
+      depositOpen:
+        "Ouvert : toute personne inscrite peut créer sa fiche et soumettre un livre.",
       depositClosed:
         "Fermé : seuls vos propres livres sont publiés. Les inscriptions, créations de " +
         "livres et soumissions des autres comptes sont refusées.",
@@ -772,11 +812,13 @@ const fr = {
       invalidType: "Format refusé : Word (DOCX), PDF ou EPUB uniquement.",
       tooLarge: "Fichier trop lourd (20 Mo maximum).",
       noVersion: "Aucun manuscrit converti pour le moment.",
-      currentVersion: "Version {number} ({format}) — {chapters} chapitres, {words} mots",
+      currentVersion:
+        "Version {number} ({format}) — {chapters} chapitres, {words} mots",
       toc: "Sommaire converti",
       preview: "Extrait gratuit",
       previewChapters: "Nombre de chapitres de l'extrait",
-      previewCut: "Coupure dans le dernier chapitre (nombre de blocs, vide = chapitre entier)",
+      previewCut:
+        "Coupure dans le dernier chapitre (nombre de blocs, vide = chapitre entier)",
       previewHelp:
         "Un bloc = un paragraphe, un intertitre, une liste ou un tableau. 0 chapitre = aucun " +
         "extrait.",
@@ -799,7 +841,8 @@ const fr = {
         help:
           "Chaque option donne 3 téléchargements d'un PDF filigrané au nom du lecteur ; elle " +
           "ouvre aussi la lecture en ligne. Les achats l'accorderont automatiquement.",
-        disabled: "Cochez « Proposer aussi en PDF » dans la fiche du livre pour l'activer.",
+        disabled:
+          "Cochez « Proposer aussi en PDF » dans la fiche du livre pour l'activer.",
         grant: "Accorder l'option PDF",
         granted: "Option PDF accordée.",
         revoke: "Retirer",
@@ -813,7 +856,8 @@ const fr = {
         pdfDisabled: "L'option PDF n'est pas activée pour ce livre.",
       },
       errors: {
-        invalid_file: "Fichier illisible : ce n'est pas un DOCX, un PDF ou un EPUB valide.",
+        invalid_file:
+          "Fichier illisible : ce n'est pas un DOCX, un PDF ou un EPUB valide.",
         scanned:
           "Ce PDF ne contient pas de texte (document numérisé) : envoyez le fichier Word " +
           "d'origine ou un PDF exporté depuis votre traitement de texte.",
@@ -822,13 +866,15 @@ const fr = {
         too_many_chapters: "Trop de chapitres (500 maximum).",
         userNotFound: "Aucun compte n'utilise cette adresse.",
         alreadyGranted: "Ce lecteur a déjà accès au livre.",
-        previewCutTooHigh: "La coupure doit être inférieure au nombre de blocs du chapitre.",
+        previewCutTooHigh:
+          "La coupure doit être inférieure au nombre de blocs du chapitre.",
       },
     },
     errors: {
       required: "Champ obligatoire manquant : {field}.",
       tooLong: "Texte trop long : {field}.",
-      invalidSlug: "Identifiant d'URL invalide (lettres minuscules, chiffres et tirets).",
+      invalidSlug:
+        "Identifiant d'URL invalide (lettres minuscules, chiffres et tirets).",
       slugTaken: "Cet identifiant d'URL est déjà utilisé.",
       invalidNumber: "Nombre invalide : {field}.",
       invalidPrice: "Prix invalide en {currency}.",
@@ -884,7 +930,8 @@ const fr = {
       published: "Nouvelle version publiée.",
       view: "Voir la page publique",
       consents: "Registre des consentements",
-      consentsCount: "{accepted} acceptation(s) et {refused} refus enregistrés.",
+      consentsCount:
+        "{accepted} acceptation(s) et {refused} refus enregistrés.",
       deletions: "Suppressions de compte en attente : {count}.",
     },
     mfa: {
@@ -893,7 +940,8 @@ const fr = {
         "Scannez ce code avec une application d'authentification (Google Authenticator, " +
         "Microsoft Authenticator, 1Password…), puis saisissez le code à 6 chiffres.",
       secretLabel: "Ou saisissez cette clé manuellement :",
-      challengeIntro: "Saisissez le code à 6 chiffres affiché par votre application.",
+      challengeIntro:
+        "Saisissez le code à 6 chiffres affiché par votre application.",
       code: "Code à 6 chiffres",
       verify: "Vérifier",
       invalidCode: "Code incorrect. Réessayez.",
@@ -909,7 +957,8 @@ const fr = {
       filterAll: "Toutes",
       filterToReview: "Mobile Money à valider",
       mm: "Mobile Money {operator} ({country}) · réf. {reference}",
-      mmTransaction: "Transaction {transaction} · payeur {payer} · déclarée le {date}",
+      mmTransaction:
+        "Transaction {transaction} · payeur {payer} · déclarée le {date}",
       mmNotDeclared: "Transaction pas encore déclarée",
       mmRejected: "Refusé : {reason}",
       toReview: "À valider",
@@ -963,7 +1012,8 @@ const fr = {
         order_not_found: "Cette commande n'existe plus.",
         not_refundable: "Seule une commande payée peut être remboursée.",
         no_payment: "Paiement Stripe introuvable pour cette commande.",
-        stripe_failed: "Stripe a refusé le remboursement. Vérifiez la commande dans Stripe.",
+        stripe_failed:
+          "Stripe a refusé le remboursement. Vérifiez la commande dans Stripe.",
         refund_unrecorded:
           "Remboursement fait chez Stripe, mais non enregistré dans Kalami. Recommencez : " +
           "Stripe ne remboursera pas deux fois.",
@@ -1001,10 +1051,12 @@ const fr = {
       none: "Aucun numéro marchand : le Mobile Money n'est pas proposé.",
       inactive: "Retiré",
       fee: "Frais de l'opérateur (%)",
-      feeHint: "Retenus sur chaque paiement validé, avant le partage avec l'auteur.",
+      feeHint:
+        "Retenus sur chaque paiement validé, avant le partage avec l'auteur.",
       feeSave: "Enregistrer les frais",
       errors: {
-        invalid_account: "Vérifiez l'opérateur, le pays, le numéro et le nom (2 à 80 car.).",
+        invalid_account:
+          "Vérifiez l'opérateur, le pays, le numéro et le nom (2 à 80 car.).",
         operator_not_found: "Cet opérateur n'existe pas.",
       },
     },
@@ -1015,9 +1067,11 @@ const fr = {
         "Kalami et part de l'auteur. Un remboursement passe une écriture inverse.",
       settingsTitle: "Réglages",
       authorShare: "Part de l'auteur (%)",
-      authorShareHint: "Sur le net, après frais de paiement et taxes. Le reste revient à Kalami.",
+      authorShareHint:
+        "Sur le net, après frais de paiement et taxes. Le reste revient à Kalami.",
       holdDays: "Délai de disponibilité (jours)",
-      holdDaysHint: "Garde contre les remboursements avant qu'une vente soit versable.",
+      holdDaysHint:
+        "Garde contre les remboursements avant qu'une vente soit versable.",
       minXof: "Seuil de versement (FCFA)",
       minEur: "Seuil de versement (€)",
       minCad: "Seuil de versement ($ CA)",
@@ -1027,7 +1081,8 @@ const fr = {
       settingsSave: "Enregistrer les réglages",
       settingsSaved: "Réglages enregistrés.",
       commissionsTitle: "Part par auteur",
-      commissionsIntro: "Laissez vide pour appliquer la part globale ({share} %).",
+      commissionsIntro:
+        "Laissez vide pour appliquer la part globale ({share} %).",
       custom: "Part propre",
       commissionSave: "Enregistrer",
       commissionSaved: "Part de l'auteur enregistrée.",
@@ -1050,7 +1105,8 @@ const fr = {
       types: { sale: "Vente", refund: "Remboursement" },
       feeSaved: "Frais enregistrés.",
       errors: {
-        invalid_settings: "Vérifiez la part (0 à 100 %), le délai (0 à 365 jours) et les seuils.",
+        invalid_settings:
+          "Vérifiez la part (0 à 100 %), le délai (0 à 365 jours) et les seuils.",
         invalid_share: "La part doit être un pourcentage entre 0 et 100.",
         author_not_found: "Cet auteur n'existe pas.",
         invalid_fee: "Les frais doivent être un pourcentage entre 0 et 20.",
@@ -1063,7 +1119,12 @@ const fr = {
         "Les auteurs demandent tout leur disponible d'une devise. Approuvez la demande, " +
         "payez hors de Kalami (frais à notre charge) avec les coordonnées affichées, puis " +
         "marquez-la payée avec la référence de la transaction et le reçu.",
-      filters: { open: "À traiter", paid: "Payées", rejected: "Refusées", cancelled: "Annulées" },
+      filters: {
+        open: "À traiter",
+        paid: "Payées",
+        rejected: "Refusées",
+        cancelled: "Annulées",
+      },
       none: "Aucune demande dans cette liste.",
       requestedOn: "Demandé le {date}",
       details: "Coordonnées au moment de la demande",
@@ -1077,12 +1138,15 @@ const fr = {
         mobile_number: "Numéro",
       },
       approve: "Approuver",
-      approved: "Demande approuvée. Effectuez le paiement, puis marquez-la payée.",
+      approved:
+        "Demande approuvée. Effectuez le paiement, puis marquez-la payée.",
       reject: "Refuser",
       rejectReason: "Motif du refus (envoyé à l'auteur)",
-      rejected: "Demande refusée : le montant redevient disponible pour l'auteur.",
+      rejected:
+        "Demande refusée : le montant redevient disponible pour l'auteur.",
       paymentReference: "Référence de la transaction",
-      paymentReferenceHint: "Numéro du virement ou de la transaction Mobile Money.",
+      paymentReferenceHint:
+        "Numéro du virement ou de la transaction Mobile Money.",
       proof: "Reçu (PDF ou image, 5 Mo au plus, facultatif)",
       markPaid: "Marquer payée",
       uploading: "Envoi du reçu…",
@@ -1096,7 +1160,8 @@ const fr = {
       email: {
         greeting: "Bonjour,",
         adminSubject: "Demande de versement {reference} : {amount}",
-        adminBody: "{author} demande le versement de {amount} (référence {reference}).",
+        adminBody:
+          "{author} demande le versement de {amount} (référence {reference}).",
         adminCta: "Traiter la demande",
         paidSubject: "Versement {reference} effectué",
         paidBody:
@@ -1111,7 +1176,8 @@ const fr = {
       errors: {
         payout_not_found: "Cette demande a déjà été traitée.",
         invalid_reason: "Le motif doit faire de 3 à 500 caractères.",
-        invalid_payment_reference: "Indiquez la référence de la transaction (120 car. au plus).",
+        invalid_payment_reference:
+          "Indiquez la référence de la transaction (120 car. au plus).",
         invalid_proof: "Le reçu est introuvable : renvoyez-le.",
         proof_type: "Le reçu doit être un PDF ou une image (PNG, JPEG, WebP).",
         proof_size: "Le reçu dépasse 5 Mo.",
@@ -1144,7 +1210,8 @@ const fr = {
         "utilisez l'accès manuel de la fiche du livre.",
       newTitle: "Nouveau code",
       code: "Code",
-      codeHint: "3 à 30 caractères : lettres, chiffres, « - » et « _ » (mis en majuscules).",
+      codeHint:
+        "3 à 30 caractères : lettres, chiffres, « - » et « _ » (mis en majuscules).",
       scope: "S'applique à",
       scopes: {
         book: "Un livre",
@@ -1162,7 +1229,8 @@ const fr = {
       amountHint:
         "Sans pourcentage : un montant par devise (une devise vide n'a pas de réduction).",
       expiresOn: "Expire le",
-      expiresHint: "Valable jusqu'à la fin de ce jour (UTC). Vide : sans expiration.",
+      expiresHint:
+        "Valable jusqu'à la fin de ce jour (UTC). Vide : sans expiration.",
       maxUses: "Utilisations maximales",
       maxUsesHint: "Vide : sans limite.",
       note: "Note interne",
@@ -1192,18 +1260,22 @@ const fr = {
       taxEnabled: "Stripe Tax allumé pour les prochains paiements.",
       taxDisabled: "Stripe Tax éteint.",
       errors: {
-        invalid_code: "Le code doit compter 3 à 30 caractères : lettres, chiffres, - et _.",
+        invalid_code:
+          "Le code doit compter 3 à 30 caractères : lettres, chiffres, - et _.",
         invalid_scope: "Choisissez à quoi s'applique le code.",
         book_required: "Choisissez le livre visé.",
-        discount_choice: "Indiquez un pourcentage OU des montants, pas les deux.",
+        discount_choice:
+          "Indiquez un pourcentage OU des montants, pas les deux.",
         invalid_percent: "Le pourcentage est un entier de 1 à 90.",
         invalid_amount: "Un montant est un nombre positif (FCFA : entier).",
         invalid_date: "Date d'expiration invalide.",
         date_past: "La date d'expiration est déjà passée.",
-        invalid_max_uses: "Le nombre d'utilisations est un entier de 1 à 100 000.",
+        invalid_max_uses:
+          "Le nombre d'utilisations est un entier de 1 à 100 000.",
         invalid_note: "La note compte au plus 200 caractères.",
         promo_taken: "Ce code existe déjà.",
-        invalid_promo: "Code refusé par la base : vérifiez la réduction et le livre.",
+        invalid_promo:
+          "Code refusé par la base : vérifiez la réduction et le livre.",
         promo_not_found: "Ce code n'existe plus.",
       },
     },
@@ -1228,13 +1300,15 @@ const fr = {
       TG: "Togo",
     },
     errors: {
-      operator_unavailable: "Ce numéro n'est plus proposé. Choisissez-en un autre.",
+      operator_unavailable:
+        "Ce numéro n'est plus proposé. Choisissez-en un autre.",
       order_not_found: "Commande introuvable.",
       already_declared: "Cette transaction est déjà déclarée.",
       order_expired: "Le délai de 24 h est dépassé : refaites un achat.",
       invalid_transaction:
         "Numéro de transaction invalide (4 à 40 caractères : lettres, chiffres, . ou -).",
-      invalid_payer: "Numéro payeur invalide (8 à 20 chiffres, indicatif possible).",
+      invalid_payer:
+        "Numéro payeur invalide (8 à 20 chiffres, indicatif possible).",
       transaction_used: "Ce numéro de transaction a déjà été utilisé.",
       generic: "La demande n'a pas abouti. Réessayez dans un instant.",
     },
@@ -1256,14 +1330,16 @@ const fr = {
       payer: "Numéro qui a payé",
       payerHint: "Avec l'indicatif, par exemple +225 07 00 00 00 00.",
       declare: "Déclarer mon paiement",
-      declared: "Paiement déclaré : nous le vérifions, vous recevrez un courriel.",
+      declared:
+        "Paiement déclaré : nous le vérifions, vous recevrez un courriel.",
       toReview:
         "Paiement déclaré le {date} (transaction {transaction}). Nous le vérifions : " +
         "vous recevrez un courriel dès la validation.",
       paid: "Paiement validé : votre achat est disponible.",
       open: "Ouvrir mon achat",
       rejected: "Paiement refusé : {reason}",
-      rejectedHelp: "Une erreur ? Écrivez-nous avec la référence de la commande.",
+      rejectedHelp:
+        "Une erreur ? Écrivez-nous avec la référence de la commande.",
       expired:
         "La commande {reference} a expiré sans paiement déclaré. Vous pouvez refaire un achat.",
       notFound: "Commande introuvable.",
@@ -1272,8 +1348,10 @@ const fr = {
     email: {
       greeting: "Bonjour,",
       adminSubject: "Mobile Money à valider — {reference} ({amount})",
-      adminBody: "{buyer} a déclaré un paiement {operator} de {amount} pour « {labels} ».",
-      adminDetails: "Référence {reference} · transaction {transaction} · payeur {payer}.",
+      adminBody:
+        "{buyer} a déclaré un paiement {operator} de {amount} pour « {labels} ».",
+      adminDetails:
+        "Référence {reference} · transaction {transaction} · payeur {payer}.",
       adminCta: "Valider ou refuser",
       validatedSubject: "Paiement confirmé — {reference}",
       validatedBody:
@@ -1282,7 +1360,8 @@ const fr = {
       rejectedBody:
         "Votre paiement Mobile Money de {amount} pour « {labels} » n'a pas été validé.",
       reason: "Motif : {reason}",
-      rejectedHelp: "Une erreur ? Répondez à ce courriel avec la référence {reference}.",
+      rejectedHelp:
+        "Une erreur ? Répondez à ce courriel avec la référence {reference}.",
       cta: "Voir mes achats",
     },
   },
@@ -1294,7 +1373,8 @@ const fr = {
     },
     version: "Version {version} — en vigueur depuis le {date}",
     missing: "Ce texte sera publié prochainement.",
-    signupNotice: "En créant un compte, vous acceptez les {terms} et la {privacy}.",
+    signupNotice:
+      "En créant un compte, vous acceptez les {terms} et la {privacy}.",
     signupTerms: "conditions d'utilisation",
     signupPrivacy: "politique de confidentialité",
     consent: {

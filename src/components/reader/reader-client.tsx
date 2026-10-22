@@ -21,16 +21,23 @@ import type { ReaderBootstrap } from "@/lib/reader/types";
 
 const t = getDictionary();
 
-const Reader = dynamic(() => import("./reader").then((module) => module.Reader), {
-  ssr: false,
-  loading: () => (
-    <div className="liseuse fixed inset-0 z-50 flex items-center justify-center">
-      <p className="opacity-80">{t.reader.loading}</p>
-    </div>
-  ),
-});
+const Reader = dynamic(
+  () => import("./reader").then((module) => module.Reader),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="liseuse fixed inset-0 z-50 flex items-center justify-center">
+        <p className="opacity-80">{t.reader.loading}</p>
+      </div>
+    ),
+  },
+);
 
-type ReaderClientProps = { data: ReaderBootstrap; price: ReactNode; buy: ReactNode };
+type ReaderClientProps = {
+  data: ReaderBootstrap;
+  price: ReactNode;
+  buy: ReactNode;
+};
 
 /** Liseuse rendue côté client. */
 export function ReaderClient({ data, price, buy }: ReaderClientProps) {

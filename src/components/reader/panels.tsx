@@ -6,9 +6,10 @@
  *               signets nommés, annotations (par chapitre, recherche, filtre de couleur),
  *               recherche dans le texte (parties autorisées seulement) et réglages de
  *               lecture (mode, thème, police, taille, interligne).
+ *               v1.2 : choix du mode remplacé par une note sur téléphone (défilement imposé).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-10
+ *  Version    : 1.2
+ *  Date       : 2026-10-22
  *  Dépendances: i18n, components/ui/icons, lib/reader/annotations.ts,
  *               lib/reader/types.ts, API /api/livres/{id}/recherche
  * =============================================================
@@ -23,7 +24,11 @@ import { IconShare, IconTrash } from "@/components/ui/icons";
 import { getDictionary, interpolate } from "@/i18n";
 import type { TocEntry } from "@/lib/catalog/types";
 import { PREVIEW_VERSION_PARAM } from "@/lib/content/access";
-import { filterHighlights, groupByChapter, shareExcerpt } from "@/lib/reader/annotations";
+import {
+  filterHighlights,
+  groupByChapter,
+  shareExcerpt,
+} from "@/lib/reader/annotations";
 import { parseSearchQuery, SEARCH_MAX_HITS } from "@/lib/reader/search";
 import {
   type Bookmark,
@@ -43,7 +48,8 @@ import {
 
 const t = getDictionary();
 
-export type PanelName = "toc" | "bookmarks" | "annotations" | "search" | "settings";
+export type PanelName =
+  "toc" | "bookmarks" | "annotations" | "search" | "settings";
 
 const BUTTON =
   "min-h-11 rounded-md border border-line px-3 text-label hover:bg-sand " +
@@ -68,8 +74,10 @@ export function Panel({
       className="liseuse-panneau absolute inset-y-0 right-0 z-20 flex w-full max-w-sm flex-col
         border-l border-line shadow-pop"
     >
-      <header className="flex items-center justify-between gap-2 border-b
-        border-[var(--liseuse-bordure)] px-4 py-2">
+      <header
+        className="flex items-center justify-between gap-2 border-b
+        border-[var(--liseuse-bordure)] px-4 py-2"
+      >
         <h2 id={`panneau-${name}`} className="font-semibold">
           {t.reader.panels[name]}
         </h2>
@@ -130,8 +138,12 @@ export function TocPanel({
           );
         })}
       </ol>
-      <button type="button" onClick={onShareBook} className={`${BUTTON} inline-flex items-center
-        justify-center gap-2`}>
+      <button
+        type="button"
+        onClick={onShareBook}
+        className={`${BUTTON} inline-flex items-center
+        justify-center gap-2`}
+      >
         <IconShare />
         {t.reader.share.book}
       </button>
@@ -154,7 +166,16 @@ type BookmarksPanelProps = {
 
 /** Signets nommés (lecteur connecté), triés dans l'ordre du livre. */
 export function BookmarksPanel(props: BookmarksPanelProps) {
-  const { signedIn, slug, bookmarks, toc, defaultLabel, onAdd, onDelete, onSelect } = props;
+  const {
+    signedIn,
+    slug,
+    bookmarks,
+    toc,
+    defaultLabel,
+    onAdd,
+    onDelete,
+    onSelect,
+  } = props;
   const [label, setLabel] = useState(defaultLabel);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -186,7 +207,8 @@ export function BookmarksPanel(props: BookmarksPanelProps) {
     (a, b) => a.chapter - b.chapter || a.block - b.block || a.offset - b.offset,
   );
   const chapterTitle = (chapter: number) =>
-    toc.find((entry) => entry.chapter_position === chapter)?.title ?? String(chapter);
+    toc.find((entry) => entry.chapter_position === chapter)?.title ??
+    String(chapter);
 
   return (
     <div className="flex flex-col gap-4">
@@ -224,12 +246,16 @@ export function BookmarksPanel(props: BookmarksPanelProps) {
                 className="flex min-h-11 flex-1 flex-col items-start text-left"
               >
                 <span className="font-medium">{bookmark.label}</span>
-                <span className="text-xs opacity-70">{chapterTitle(bookmark.chapter)}</span>
+                <span className="text-xs opacity-70">
+                  {chapterTitle(bookmark.chapter)}
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => onDelete(bookmark.id)}
-                aria-label={interpolate(t.reader.bookmarks.remove, { label: bookmark.label })}
+                aria-label={interpolate(t.reader.bookmarks.remove, {
+                  label: bookmark.label,
+                })}
                 className="min-h-11 min-w-11 rounded-md"
               >
                 🗑
@@ -272,12 +298,14 @@ export function AnnotationsPanel(props: AnnotationsPanelProps) {
       </div>
     );
   }
-  if (highlights.length === 0) return <p className="opacity-80">{t.reader.annotations.empty}</p>;
+  if (highlights.length === 0)
+    return <p className="opacity-80">{t.reader.annotations.empty}</p>;
 
   const visible = filterHighlights(highlights, query, color);
   const groups = groupByChapter(visible);
   const chapterTitle = (chapter: number) =>
-    toc.find((entry) => entry.chapter_position === chapter)?.title ?? String(chapter);
+    toc.find((entry) => entry.chapter_position === chapter)?.title ??
+    String(chapter);
   const colorButton = (value: HighlightColor | null) => (
     <button
       key={value ?? "toutes"}
@@ -287,7 +315,10 @@ export function AnnotationsPanel(props: AnnotationsPanelProps) {
       className={`${BUTTON} inline-flex items-center gap-2 ${color === value ? BUTTON_ACTIVE : ""}`}
     >
       {value && (
-        <span data-couleur={value} className="liseuse-pastille size-4 rounded-full border" />
+        <span
+          data-couleur={value}
+          className="liseuse-pastille size-4 rounded-full border"
+        />
       )}
       {value ? t.reader.colors[value] : t.reader.annotations.allColors}
     </button>
@@ -306,12 +337,18 @@ export function AnnotationsPanel(props: AnnotationsPanelProps) {
         placeholder={t.reader.annotations.search}
         className="liseuse-champ min-h-11 rounded-md border px-3"
       />
-      <div role="group" aria-label={t.reader.annotations.filter} className="flex flex-wrap gap-1">
+      <div
+        role="group"
+        aria-label={t.reader.annotations.filter}
+        className="flex flex-wrap gap-1"
+      >
         {colorButton(null)}
         {HIGHLIGHT_COLORS.map(colorButton)}
       </div>
       <p className="text-sm opacity-80" aria-live="polite">
-        {interpolate(t.reader.annotations.count, { count: String(visible.length) })}
+        {interpolate(t.reader.annotations.count, {
+          count: String(visible.length),
+        })}
       </p>
 
       {groups.length === 0 ? (
@@ -319,15 +356,20 @@ export function AnnotationsPanel(props: AnnotationsPanelProps) {
       ) : (
         groups.map((group) => (
           <section key={group.chapter} className="flex flex-col gap-1">
-            <h3 className="text-sm font-semibold">{chapterTitle(group.chapter)}</h3>
+            <h3 className="text-sm font-semibold">
+              {chapterTitle(group.chapter)}
+            </h3>
             <ul className="flex flex-col divide-y divide-[var(--liseuse-bordure)]">
               {group.items.map((item) => (
                 <li key={item.id} className="flex items-start gap-2 py-2">
                   <button
                     type="button"
                     onClick={() =>
-                      onSelect({ chapter: item.chapter, block: item.start.block,
-                        offset: item.start.offset })
+                      onSelect({
+                        chapter: item.chapter,
+                        block: item.start.block,
+                        offset: item.start.offset,
+                      })
                     }
                     aria-label={`${t.reader.annotations.open} : ${item.quote}`}
                     className="flex min-h-11 flex-1 flex-col items-start gap-1 text-left"
@@ -338,7 +380,9 @@ export function AnnotationsPanel(props: AnnotationsPanelProps) {
                     >
                       {item.quote}
                     </span>
-                    {item.note && <span className="text-sm opacity-80">{item.note}</span>}
+                    {item.note && (
+                      <span className="text-sm opacity-80">{item.note}</span>
+                    )}
                   </button>
                   <button
                     type="button"
@@ -401,7 +445,10 @@ export function SearchPanel({
       );
       const body = await response.json();
       if (!response.ok) {
-        setState({ status: "error", message: body.message ?? t.reader.search.error });
+        setState({
+          status: "error",
+          message: body.message ?? t.reader.search.error,
+        });
         return;
       }
       setState({ status: "done", hits: body.hits, limited: body.limited });
@@ -427,17 +474,25 @@ export function SearchPanel({
             required
             className="liseuse-champ min-h-11 flex-1 rounded-md border px-3"
           />
-          <button type="submit" disabled={state.status === "searching"} className={BUTTON}>
+          <button
+            type="submit"
+            disabled={state.status === "searching"}
+            className={BUTTON}
+          >
             {t.reader.search.submit}
           </button>
         </div>
-        {access !== "full" && <p className="text-xs opacity-80">{t.reader.search.previewOnly}</p>}
+        {access !== "full" && (
+          <p className="text-xs opacity-80">{t.reader.search.previewOnly}</p>
+        )}
       </form>
 
       <div aria-live="polite">
         {state.status === "searching" && <p>{t.reader.search.searching}</p>}
         {state.status === "error" && <p role="alert">{state.message}</p>}
-        {state.status === "done" && <SearchResults state={state} onSelect={onSelect} />}
+        {state.status === "done" && (
+          <SearchResults state={state} onSelect={onSelect} />
+        )}
       </div>
     </div>
   );
@@ -455,7 +510,9 @@ function SearchResults({
   return (
     <div className="flex flex-col gap-2">
       <p className="text-sm opacity-80">
-        {interpolate(t.reader.search.results, { count: String(state.hits.length) })}
+        {interpolate(t.reader.search.results, {
+          count: String(state.hits.length),
+        })}
       </p>
       <ul className="flex flex-col divide-y divide-[var(--liseuse-bordure)]">
         {state.hits.map((hit, index) => {
@@ -467,7 +524,9 @@ function SearchResults({
                 onClick={() => onSelect(hit)}
                 className="flex w-full flex-col gap-1 py-2 text-left"
               >
-                <span className="text-xs font-medium opacity-70">{hit.title}</span>
+                <span className="text-xs font-medium opacity-70">
+                  {hit.title}
+                </span>
                 <span className="text-sm">
                   {hit.snippet.slice(0, hit.matchStart)}
                   <mark className="liseuse-surlignage">
@@ -482,7 +541,9 @@ function SearchResults({
       </ul>
       {state.limited && (
         <p className="text-xs opacity-80">
-          {interpolate(t.reader.search.limited, { count: String(SEARCH_MAX_HITS) })}
+          {interpolate(t.reader.search.limited, {
+            count: String(SEARCH_MAX_HITS),
+          })}
         </p>
       )}
     </div>
@@ -527,21 +588,29 @@ function Choice<T extends string | number>({
 export function SettingsPanel({
   settings,
   onChange,
+  phone = false,
 }: {
   settings: ReaderSettings;
   onChange: (settings: ReaderSettings) => void;
+  /** Téléphone : défilement imposé, le choix du mode est masqué */
+  phone?: boolean;
 }) {
   const s = t.reader.settings;
-  const update = (patch: Partial<ReaderSettings>) => onChange({ ...settings, ...patch });
+  const update = (patch: Partial<ReaderSettings>) =>
+    onChange({ ...settings, ...patch });
 
   return (
     <div className="flex flex-col gap-6">
-      <Choice
-        legend={s.mode}
-        options={READER_MODES.map((value) => ({ value, label: s[value] }))}
-        value={settings.mode}
-        onChange={(mode) => update({ mode })}
-      />
+      {phone ? (
+        <p className="text-sm text-ink-muted">{s.phoneScroll}</p>
+      ) : (
+        <Choice
+          legend={s.mode}
+          options={READER_MODES.map((value) => ({ value, label: s[value] }))}
+          value={settings.mode}
+          onChange={(mode) => update({ mode })}
+        />
+      )}
       <Choice
         legend={s.theme}
         options={READER_THEMES.map((value) => ({ value, label: s[value] }))}
@@ -566,7 +635,9 @@ export function SettingsPanel({
           >
             A−
           </button>
-          <span className="min-w-12 text-center">{FONT_SIZES[settings.fontSize]} px</span>
+          <span className="min-w-12 text-center">
+            {FONT_SIZES[settings.fontSize]} px
+          </span>
           <button
             type="button"
             className={BUTTON}
@@ -580,7 +651,10 @@ export function SettingsPanel({
       </fieldset>
       <Choice
         legend={s.lineHeight}
-        options={LINE_HEIGHTS.map((_, index) => ({ value: index, label: s.lineHeights[index] }))}
+        options={LINE_HEIGHTS.map((_, index) => ({
+          value: index,
+          label: s.lineHeights[index],
+        }))}
         value={settings.lineHeight}
         onChange={(lineHeight) => update({ lineHeight })}
       />

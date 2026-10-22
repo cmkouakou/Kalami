@@ -16,7 +16,12 @@
 
 import Link from "next/link";
 
-import { IconPencil, IconQuote, IconShare, IconTrash } from "@/components/ui/icons";
+import {
+  IconPencil,
+  IconQuote,
+  IconShare,
+  IconTrash,
+} from "@/components/ui/icons";
 import { BUTTON_ICON } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { HIGHLIGHT_COLORS, type HighlightColor } from "@/lib/reader/types";
@@ -46,9 +51,15 @@ type SelectionMenuProps = {
 /** Position du menu : au-dessus du passage, sinon en dessous, toujours dans l'écran. */
 function placement(rect: DOMRect): { top: number; left: number } {
   const above = rect.top - MENU_HEIGHT - GAP;
-  const top = above > GAP ? above : Math.min(rect.bottom + GAP, window.innerHeight - MENU_HEIGHT);
+  const top =
+    above > GAP
+      ? above
+      : Math.min(rect.bottom + GAP, window.innerHeight - MENU_HEIGHT);
   const center = rect.left + rect.width / 2 - MENU_WIDTH / 2;
-  const left = Math.max(GAP, Math.min(center, window.innerWidth - MENU_WIDTH - GAP));
+  const left = Math.max(
+    GAP,
+    Math.min(center, window.innerWidth - MENU_WIDTH - GAP),
+  );
   return { top, left };
 }
 
@@ -77,7 +88,10 @@ export function SelectionMenu({
         border-[var(--liseuse-bordure)] p-1 shadow-pop"
     >
       {signInHref ? (
-        <Link href={signInHref} className="px-3 py-2 text-small underline underline-offset-4">
+        <Link
+          href={signInHref}
+          className="px-3 py-2 text-small underline underline-offset-4"
+        >
           {t.reader.selection.signIn}
         </Link>
       ) : (
@@ -106,8 +120,12 @@ export function SelectionMenu({
             type="button"
             disabled={busy}
             onClick={onNote}
-            aria-label={hasNote ? t.reader.selection.editNote : t.reader.selection.note}
-            title={hasNote ? t.reader.selection.editNote : t.reader.selection.note}
+            aria-label={
+              hasNote ? t.reader.selection.editNote : t.reader.selection.note
+            }
+            title={
+              hasNote ? t.reader.selection.editNote : t.reader.selection.note
+            }
             className={BUTTON_ICON}
           >
             <IconPencil />

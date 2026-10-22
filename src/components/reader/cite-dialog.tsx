@@ -31,14 +31,22 @@ import { Dialog } from "./dialog";
 const t = getDictionary();
 
 /** Fenêtre « Citer » : une référence par style avec son bouton « Copier ». */
-export function CiteDialog({ source, onClose }: { source: CitationSource; onClose: () => void }) {
+export function CiteDialog({
+  source,
+  onClose,
+}: {
+  source: CitationSource;
+  onClose: () => void;
+}) {
   const [copied, setCopied] = useState<CitationStyle | null>(null);
   const [failed, setFailed] = useState(false);
 
   /** Copie la référence en texte brut dans le presse-papiers. */
   async function copy(style: CitationStyle) {
     try {
-      await navigator.clipboard.writeText(citationText(formatCitation(style, source)));
+      await navigator.clipboard.writeText(
+        citationText(formatCitation(style, source)),
+      );
       setCopied(style);
       setFailed(false);
     } catch {
@@ -47,21 +55,33 @@ export function CiteDialog({ source, onClose }: { source: CitationSource; onClos
   }
 
   return (
-    <Dialog id="dialogue-citer" title={t.reader.cite.title} closeLabel={t.reader.cite.close}
-      onClose={onClose}>
+    <Dialog
+      id="dialogue-citer"
+      title={t.reader.cite.title}
+      closeLabel={t.reader.cite.close}
+      onClose={onClose}
+    >
       <ul className="flex flex-col gap-4">
         {CITATION_STYLES.map((style) => {
           const citation = formatCitation(style, source);
           return (
             <li key={style} className="flex flex-col gap-2">
-              <h3 className="text-label font-semibold">{t.reader.cite[style]}</h3>
-              <p data-selectionnable="" className="rounded-md bg-sand p-3 text-small">
+              <h3 className="text-label font-semibold">
+                {t.reader.cite[style]}
+              </h3>
+              <p
+                data-selectionnable=""
+                className="rounded-md bg-sand p-3 text-small"
+              >
                 {citation.before}
                 <em>{citation.title}</em>
                 {citation.after}
               </p>
-              <button type="button" onClick={() => copy(style)}
-                className={`${BUTTON_SECONDARY} self-start`}>
+              <button
+                type="button"
+                onClick={() => copy(style)}
+                className={`${BUTTON_SECONDARY} self-start`}
+              >
                 {copied === style ? t.reader.cite.copied : t.reader.cite.copy}
               </button>
             </li>

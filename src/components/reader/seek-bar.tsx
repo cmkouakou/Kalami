@@ -6,9 +6,10 @@
  *               visé s'affiche pendant le geste, le saut a lieu au relâchement), boutons
  *               « Début du livre » et « Fin du livre ». Au clavier, chaque flèche saute
  *               directement.
+ *               v1.1 : la page affichée arrive mise en forme (page du livre ou de la partie).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-17
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: lib/reader/position.ts, ui/icons.tsx
  * =============================================================
  */
@@ -31,8 +32,8 @@ type SeekBarProps = {
   toc: TocEntry[];
   /** Avancement affiché, de 0 à 1 */
   value: number;
-  /** Page du chapitre (mode livre), ou null */
-  page: { current: number; total: number } | null;
+  /** Page affichée (mode livre), déjà mise en forme, ou null */
+  page: string | null;
   disabled: boolean;
   /** Classe des boutons d'icône */
   buttonClass: string;
@@ -62,7 +63,8 @@ export function SeekBar({
   const percent = Math.round(shown * 100);
   const target = dragged === null ? null : progressTarget(toc, dragged);
   const targetTitle = target
-    ? toc.find((entry) => entry.chapter_position === target.chapter)?.title ?? ""
+    ? (toc.find((entry) => entry.chapter_position === target.chapter)?.title ??
+      "")
     : "";
 
   /** Saut à la valeur glissée, puis retour à l'affichage de la position réelle. */
@@ -105,7 +107,9 @@ export function SeekBar({
           value={Math.round(shown * STEPS)}
           disabled={disabled}
           aria-label={t.reader.seekLabel}
-          aria-valuetext={interpolate(t.reader.progress, { percent: String(percent) })}
+          aria-valuetext={interpolate(t.reader.progress, {
+            percent: String(percent),
+          })}
           onPointerDown={() => {
             pointer.current = true;
           }}
@@ -118,10 +122,13 @@ export function SeekBar({
         <p className="flex justify-between gap-2 text-caption text-ink-muted tabular-nums">
           <span className="truncate">
             {target
-              ? interpolate(t.reader.seekTarget, { title: targetTitle, percent: String(percent) })
+              ? interpolate(t.reader.seekTarget, {
+                  title: targetTitle,
+                  percent: String(percent),
+                })
               : interpolate(t.reader.progress, { percent: String(percent) })}
           </span>
-          {page && !target && <span>{`${page.current} / ${page.total}`}</span>}
+          {page && !target && <span>{page}</span>}
         </p>
       </div>
       <button

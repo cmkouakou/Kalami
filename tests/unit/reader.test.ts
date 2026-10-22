@@ -79,6 +79,12 @@ describe("paginate", () => {
     expect(pages).toEqual([[{ block: 0, start: 0, end: 16 }]]);
   });
 
+  it("ferme la page après un bloc marqué breakAfter (page d'ouverture)", () => {
+    const opener = { ...block("Titre", true), breakAfter: true };
+    const pages = paginate([opener, block("aaaa")], fitsWithin(100));
+    expect(pages).toEqual([[{ block: 0, start: 0, end: 5 }], [{ block: 1, start: 0, end: 4 }]]);
+  });
+
   it("renvoie une page vide pour un chapitre vide", () => {
     expect(paginate([], fitsWithin(10))).toEqual([[]]);
   });

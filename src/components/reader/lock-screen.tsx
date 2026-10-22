@@ -53,14 +53,18 @@ export function LockScreen({
   const back = `/livres/${slug}`;
   return (
     <section aria-labelledby="titre-verrou" className={SHEET}>
-      <span className="flex size-12 items-center justify-center rounded-full bg-encre-soft
-        text-encre">
+      <span
+        className="flex size-12 items-center justify-center rounded-full bg-encre-soft
+        text-encre"
+      >
         <IconLock size={24} />
       </span>
       <h2 id="titre-verrou" className="font-serif text-h2">
         {t.reader.lock.title}
       </h2>
-      <p className="text-body text-ink-muted">{interpolate(t.reader.lock.text, { title })}</p>
+      <p className="text-body text-ink-muted">
+        {interpolate(t.reader.lock.text, { title })}
+      </p>
       <div className="text-h2 text-ocre-text">{price}</div>
       <div className="w-full">{buy}</div>
       <Link href={back} className={BUTTON_TERTIARY}>
@@ -86,7 +90,9 @@ export function EndScreen({ title, slug }: { title: string; slug: string }) {
       <h2 id="titre-fin" className="font-serif text-h2">
         {t.reader.end.title}
       </h2>
-      <p className="text-body text-ink-muted">{interpolate(t.reader.end.text, { title })}</p>
+      <p className="text-body text-ink-muted">
+        {interpolate(t.reader.end.text, { title })}
+      </p>
       <Link href={`/livres/${slug}`} className={BUTTON_PRIMARY}>
         {t.reader.end.backToBook}
       </Link>

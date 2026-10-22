@@ -5,9 +5,10 @@
  *  Description: Chargement des chapitres par l'API protégée, avec un cache en mémoire
  *               (jamais sur disque : le contenu n'est conservé que le temps de la lecture).
  *               403 → écran de fin d'extrait ; 429 → message d'attente ; autre → réessai.
+ *               v1.1 : has() (le compteur de pages espace ses requêtes).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: lib/content/types.ts, API /api/livres/{id}/chapitres/{n}
  * =============================================================
  */
@@ -56,6 +57,11 @@ export class ChapterStore {
     return request;
   }
 
+  /** Vrai si le chapitre est déjà demandé (aucune nouvelle requête à prévoir). */
+  has(position: number): boolean {
+    return this.results.has(position);
+  }
+
   /** Précharge un chapitre sans attendre la réponse. */
   prefetch(position: number): void {
     void this.get(position);
@@ -69,8 +75,12 @@ export class ChapterStore {
         credentials: "same-origin",
       });
       if (response.status === 403) return { status: "locked" };
-      if (!response.ok) return { status: "error", rateLimited: response.status === 429 };
-      return { status: "ready", chapter: (await response.json()) as ChapterPayload };
+      if (!response.ok)
+        return { status: "error", rateLimited: response.status === 429 };
+      return {
+        status: "ready",
+        chapter: (await response.json()) as ChapterPayload,
+      };
     } catch {
       return { status: "error", rateLimited: false };
     }
@@ -86,7 +96,11 @@ export class ChapterStore {
  * @param readable - Faux pour un chapitre réservé : aucune requête, écran de fin d'extrait
  * @returns État et fonction de nouvel essai
  */
-export function useChapter(store: ChapterStore, position: number, readable: boolean) {
+export function useChapter(
+  store: ChapterStore,
+  position: number,
+  readable: boolean,
+) {
   const [state, setState] = useState<{ key: string; value: ChapterState }>({
     key: "",
     value: { status: "loading" },

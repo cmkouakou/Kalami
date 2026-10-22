@@ -32,7 +32,9 @@ export function useReadAloud(
   onBlock: (index: number) => void,
   onFinish: () => void,
 ) {
-  const [supported] = useState(() => typeof window !== "undefined" && "speechSynthesis" in window);
+  const [supported] = useState(
+    () => typeof window !== "undefined" && "speechSynthesis" in window,
+  );
   const [status, setStatus] = useState<ReadAloudStatus>("idle");
   // Numéro de session : un énoncé d'une lecture arrêtée ne relance rien
   const session = useRef(0);
@@ -76,7 +78,8 @@ export function useReadAloud(
         utterance.onend = () => speak(index + 1);
         utterance.onerror = (event) => {
           // « interrupted » / « canceled » : arrêt volontaire, rien à signaler
-          if (event.error !== "interrupted" && event.error !== "canceled") stop();
+          if (event.error !== "interrupted" && event.error !== "canceled")
+            stop();
         };
         window.speechSynthesis.speak(utterance);
       };

@@ -8,9 +8,10 @@
  *               Les décalages portent sur textContent, comme la recherche côté serveur.
  *               v1.1 : préchargement des images avant la mesure.
  *               v1.2 : surtitre de chapitre (« MODULE 3 ») au-dessus du titre.
+ *               v1.3 : page d'ouverture d'un module ; images non déplaçables (glissement).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-17
+ *  Version    : 1.3
+ *  Date       : 2026-10-22
  *  Dépendances: lib/reader/paginate.ts, lib/reader/types.ts
  * =============================================================
  */
@@ -35,8 +36,13 @@ export function parseBlock(html: string): HTMLElement {
   const template = document.createElement("template");
   template.innerHTML = html;
   const content = template.content;
+  // Une image déplaçable capte le glissement : la page ne tournerait pas
+  content
+    .querySelectorAll("img")
+    .forEach((image) => image.setAttribute("draggable", "false"));
   const only = content.firstElementChild;
-  if (content.childNodes.length === 1 && only instanceof HTMLElement) return only;
+  if (content.childNodes.length === 1 && only instanceof HTMLElement)
+    return only;
   const wrapper = document.createElement("div");
   wrapper.append(content);
   return wrapper;
@@ -50,7 +56,9 @@ export function parseBlock(html: string): HTMLElement {
  * @param elements - Éléments du chapitre
  * @returns Images préchargées, à garder en vie pendant la pagination
  */
-export async function preloadImages(elements: HTMLElement[]): Promise<HTMLImageElement[]> {
+export async function preloadImages(
+  elements: HTMLElement[],
+): Promise<HTMLImageElement[]> {
   const sources = new Set<string>();
   for (const element of elements) {
     element.querySelectorAll("img").forEach((image) => {
@@ -64,7 +72,9 @@ export async function preloadImages(elements: HTMLElement[]): Promise<HTMLImageE
     return image;
   });
   // Image illisible : mesurée sans elle plutôt que de bloquer le chapitre
-  await Promise.all(images.map((image) => image.decode().catch(() => undefined)));
+  await Promise.all(
+    images.map((image) => image.decode().catch(() => undefined)),
+  );
   return images;
 }
 
@@ -73,7 +83,10 @@ export async function preloadImages(elements: HTMLElement[]): Promise<HTMLImageE
  * @param title  - Titre du chapitre
  * @param kicker - Surtitre affiché au-dessus (« MODULE 3 »), ou null
  */
-export function titleElement(title: string, kicker: string | null = null): HTMLElement {
+export function titleElement(
+  title: string,
+  kicker: string | null = null,
+): HTMLElement {
   const heading = document.createElement("h1");
   heading.className = "liseuse-titre-chapitre";
   if (kicker) {
@@ -92,9 +105,25 @@ export function blockInfo(element: HTMLElement): BlockInfo {
   const heading = /^H[1-6]$/.test(element.tagName);
   return {
     length: text.length,
-    breaks: heading || UNSPLITTABLE.has(element.tagName) ? [] : wordBreaks(text),
+    breaks:
+      heading || UNSPLITTABLE.has(element.tagName) ? [] : wordBreaks(text),
     heading,
   };
+}
+
+/**
+ * Dernier élément de la page d'ouverture d'un module : titre (surtitre compris), bloc du
+ * surtitre (masqué) et chapeau s'il suit.
+ * @param elements - Éléments du chapitre (titre compris, puis un élément par bloc)
+ * @param kicker   - Surtitre du chapitre, ou null (pas de page d'ouverture)
+ * @returns Indice du dernier élément de la page d'ouverture, ou null
+ */
+export function openerEnd(
+  elements: HTMLElement[],
+  kicker: string | null,
+): number | null {
+  if (!kicker || elements.length < 3) return null;
+  return elements[2].classList.contains("chapitre-chapeau") ? 2 : 1;
 }
 
 // ==================== DÉCOUPE ====================
@@ -103,13 +132,17 @@ export function blockInfo(element: HTMLElement): BlockInfo {
  * Point du DOM correspondant à un décalage dans le texte d'un élément.
  * @returns Nœud texte et décalage, ou null si l'élément n'a aucun texte
  */
-function locate(root: Node, offset: number): { node: Text; offset: number } | null {
+function locate(
+  root: Node,
+  offset: number,
+): { node: Text; offset: number } | null {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let seen = 0;
   let last: Text | null = null;
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     const text = node as Text;
-    if (offset <= seen + text.length) return { node: text, offset: offset - seen };
+    if (offset <= seen + text.length)
+      return { node: text, offset: offset - seen };
     seen += text.length;
     last = text;
   }
@@ -117,7 +150,11 @@ function locate(root: Node, offset: number): { node: Text; offset: number } | nu
 }
 
 /** Supprime le contenu entre le début (ou un point) et la fin (ou un point) de l'élément. */
-function deleteText(root: HTMLElement, from: number | null, to: number | null): void {
+function deleteText(
+  root: HTMLElement,
+  from: number | null,
+  to: number | null,
+): void {
   const range = document.createRange();
   range.selectNodeContents(root);
   const start = from === null ? null : locate(root, from);
@@ -134,7 +171,11 @@ function deleteText(root: HTMLElement, from: number | null, to: number | null): 
  * @param end     - Caractère de fin (exclu)
  * @returns Copie découpée ; classes « suite » (début coupé) et « coupe » (fin coupée)
  */
-export function sliceBlock(element: HTMLElement, start: number, end: number): HTMLElement {
+export function sliceBlock(
+  element: HTMLElement,
+  start: number,
+  end: number,
+): HTMLElement {
   const clone = element.cloneNode(true) as HTMLElement;
   const length = clone.textContent?.length ?? 0;
   if (start <= 0 && end >= length) return clone;
@@ -160,7 +201,9 @@ export function sliceBlock(element: HTMLElement, start: number, end: number): HT
  * @param page     - Fragments de la page
  */
 export function renderPage(elements: HTMLElement[], page: Page): HTMLElement[] {
-  return page.map(({ block, start, end }) => sliceBlock(elements[block], start, end));
+  return page.map(({ block, start, end }) =>
+    sliceBlock(elements[block], start, end),
+  );
 }
 
 // ==================== MESURE ====================

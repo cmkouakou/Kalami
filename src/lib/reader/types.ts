@@ -51,6 +51,8 @@ export type BlockInfo = {
   breaks: number[];
   /** Intertitre : jamais coupé, jamais laissé seul en bas de page */
   heading: boolean;
+  /** Saut de page après le bloc (fin de la page d'ouverture d'un module) */
+  breakAfter?: boolean;
 };
 
 // ==================== RÉGLAGES ====================

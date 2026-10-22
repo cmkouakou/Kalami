@@ -20,12 +20,24 @@ import { type RefObject, useEffect, useState } from "react";
 
 import { getDictionary } from "@/i18n";
 import { APP_NAME, APP_URL } from "@/lib/config";
-import { addHighlight, deleteHighlight, updateHighlight } from "@/lib/reader/actions";
+import {
+  addHighlight,
+  deleteHighlight,
+  updateHighlight,
+} from "@/lib/reader/actions";
 import type { CitationSource } from "@/lib/reader/citation";
-import type { Highlight, HighlightColor, ReaderBootstrap } from "@/lib/reader/types";
+import type {
+  Highlight,
+  HighlightColor,
+  ReaderBootstrap,
+} from "@/lib/reader/types";
 
 import { CiteDialog } from "./cite-dialog";
-import { highlightAt, readSelection, type SelectionInfo } from "./highlight-dom";
+import {
+  highlightAt,
+  readSelection,
+  type SelectionInfo,
+} from "./highlight-dom";
 import { NoteDialog } from "./note-dialog";
 import { SelectionMenu } from "./selection-menu";
 import type { ShareCardData } from "./share-card";
@@ -104,12 +116,22 @@ export function AnnotationLayer({
     // Clic sur un surlignage : menu de ce surlignage ; ailleurs : fermeture du menu
     const onClick = (event: MouseEvent) => {
       if (!window.getSelection()?.isCollapsed) return;
-      if (event.target instanceof Element && event.target.closest(".liseuse-menu")) return;
+      if (
+        event.target instanceof Element &&
+        event.target.closest(".liseuse-menu")
+      )
+        return;
       const id = highlightAt(event.target);
-      const highlight = id ? highlights.find((item) => item.id === id) : undefined;
+      const highlight = id
+        ? highlights.find((item) => item.id === id)
+        : undefined;
       if (highlight && event.target instanceof Element) {
         const mark = event.target.closest("mark") ?? event.target;
-        setTarget({ kind: "existing", highlight, rect: mark.getBoundingClientRect() });
+        setTarget({
+          kind: "existing",
+          highlight,
+          rect: mark.getBoundingClientRect(),
+        });
       } else {
         setTarget((current) => (current?.kind === "existing" ? null : current));
       }
@@ -136,9 +158,19 @@ export function AnnotationLayer({
   // ==================== ACTIONS ====================
 
   /** Crée un surlignage à partir de la sélection courante. */
-  async function create(selection: SelectionInfo, color: HighlightColor, note: string | null) {
+  async function create(
+    selection: SelectionInfo,
+    color: HighlightColor,
+    note: string | null,
+  ) {
     const anchor = { chapter, start: selection.start, end: selection.end };
-    const result = await addHighlight(book.id, anchor, color, selection.text, note);
+    const result = await addHighlight(
+      book.id,
+      anchor,
+      color,
+      selection.text,
+      note,
+    );
     if (!result.ok) {
       onNotice(result.error);
       return false;
@@ -149,7 +181,10 @@ export function AnnotationLayer({
   }
 
   /** Modifie la couleur ou la note d'un surlignage existant. */
-  async function update(highlight: Highlight, changes: { color?: HighlightColor; note?: string }) {
+  async function update(
+    highlight: Highlight,
+    changes: { color?: HighlightColor; note?: string },
+  ) {
     const result = await updateHighlight(highlight.id, changes);
     if (!result.ok) {
       onNotice(result.error);
@@ -232,7 +267,9 @@ export function AnnotationLayer({
   }
   if (dialog === "share") {
     const zone = zoneRef.current;
-    const font = zone ? getComputedStyle(zone).getPropertyValue("--liseuse-police").trim() : "";
+    const font = zone
+      ? getComputedStyle(zone).getPropertyValue("--liseuse-police").trim()
+      : "";
     const card: ShareCardData = {
       quote,
       title: book.title,

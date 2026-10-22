@@ -26,7 +26,16 @@ import type { Highlight, TextPoint } from "@/lib/reader/types";
 const MARK_CLASS = "liseuse-annotation";
 
 /** Parents où un texte vide ne peut pas être enveloppé (structure de tableau ou de liste). */
-const STRUCTURAL = new Set(["TABLE", "THEAD", "TBODY", "TFOOT", "TR", "UL", "OL", "DL"]);
+const STRUCTURAL = new Set([
+  "TABLE",
+  "THEAD",
+  "TBODY",
+  "TFOOT",
+  "TR",
+  "UL",
+  "OL",
+  "DL",
+]);
 
 /** Sélection convertie en ancrage, avec le texte et la zone à l'écran. */
 export type SelectionInfo = {
@@ -59,7 +68,11 @@ function wrap(element: HTMLElement, segment: Segment): void {
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
   const parts: { node: Text; from: number; to: number }[] = [];
   let seen = 0;
-  for (let node = walker.nextNode(); node && seen < segment.end; node = walker.nextNode()) {
+  for (
+    let node = walker.nextNode();
+    node && seen < segment.end;
+    node = walker.nextNode()
+  ) {
     const text = node as Text;
     const from = Math.max(segment.start - seen, 0);
     const to = Math.min(segment.end - seen, text.length);
@@ -69,7 +82,8 @@ function wrap(element: HTMLElement, segment: Segment): void {
 
   for (const { node, from, to } of parts) {
     const parent = node.parentElement;
-    if (!parent || (STRUCTURAL.has(parent.tagName) && !/\S/.test(node.data))) continue;
+    if (!parent || (STRUCTURAL.has(parent.tagName) && !/\S/.test(node.data)))
+      continue;
     if (to < node.length) node.splitText(to);
     const target = from > 0 ? node.splitText(from) : node;
     const mark = document.createElement("mark");
@@ -90,14 +104,21 @@ function wrap(element: HTMLElement, segment: Segment): void {
  * @param root       - Zone de texte (page, livre ou article défilant)
  * @param highlights - Surlignages du chapitre, du plus ancien au plus récent
  */
-export function paintHighlights(root: HTMLElement, highlights: Highlight[]): void {
+export function paintHighlights(
+  root: HTMLElement,
+  highlights: Highlight[],
+): void {
   root.querySelectorAll<HTMLElement>("[data-bloc]").forEach((element) => {
     unpaint(element);
     if (highlights.length === 0) return;
     const block = Number(element.dataset.bloc);
     const start = fragmentStart(element);
     const end = start + (element.textContent?.length ?? 0);
-    const segments = fragmentSegments(blockSegments(highlights, block, end), start, end);
+    const segments = fragmentSegments(
+      blockSegments(highlights, block, end),
+      start,
+      end,
+    );
     // De la fin vers le début : les nœuds déjà découpés ne décalent pas les suivants
     for (const segment of segments.reverse()) wrap(element, segment);
   });
@@ -112,7 +133,11 @@ export function highlightAt(target: EventTarget | null): string | null {
 // ==================== SÉLECTION ====================
 
 /** Décalage, dans le texte du bloc, d'un point de la sélection situé dans l'élément. */
-function offsetIn(element: HTMLElement, container: Node, offset: number): number {
+function offsetIn(
+  element: HTMLElement,
+  container: Node,
+  offset: number,
+): number {
   const range = document.createRange();
   range.selectNodeContents(element);
   range.setEnd(container, offset);
@@ -126,12 +151,13 @@ function offsetIn(element: HTMLElement, container: Node, offset: number): number
  */
 export function readSelection(root: HTMLElement): SelectionInfo | null {
   const selection = window.getSelection();
-  if (!selection || selection.isCollapsed || selection.rangeCount === 0) return null;
+  if (!selection || selection.isCollapsed || selection.rangeCount === 0)
+    return null;
   const range = selection.getRangeAt(0);
   if (!root.contains(range.commonAncestorContainer)) return null;
 
-  const blocks = [...root.querySelectorAll<HTMLElement>("[data-bloc]")].filter((element) =>
-    range.intersectsNode(element),
+  const blocks = [...root.querySelectorAll<HTMLElement>("[data-bloc]")].filter(
+    (element) => range.intersectsNode(element),
   );
   if (blocks.length === 0) return null;
   const first = blocks[0];

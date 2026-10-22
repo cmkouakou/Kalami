@@ -6,9 +6,11 @@
  *               position de lecture (visiteurs, et secours hors ligne des lecteurs
  *               connectés). Toute valeur lue est revalidée ; le stockage peut être
  *               indisponible (navigation privée) sans bloquer la lecture.
+ *               v1.1 : PHONE_QUERY (téléphone, portrait ou paysage) partagée avec la liseuse,
+ *               qui y impose le défilement.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: lib/reader/types.ts, lib/reader/position.ts
  * =============================================================
  */
@@ -27,8 +29,12 @@ import {
 const SETTINGS_KEY = "kalami:liseuse:reglages";
 const POSITION_PREFIX = "kalami:liseuse:position:";
 
-/** Largeur sous laquelle le défilement est le mode par défaut (téléphone). */
-const PHONE_MAX_WIDTH = 640;
+/**
+ * Téléphone : écran étroit en portrait, ou peu haut et tactile en paysage. Les pages à
+ * tourner y sont illisibles : la liseuse y impose le défilement.
+ */
+export const PHONE_QUERY =
+  "(max-width: 640px), (max-height: 500px) and (pointer: coarse)";
 
 // ==================== ACCÈS SÛR ====================
 
@@ -50,13 +56,23 @@ function writeJson(key: string, value: unknown): void {
 }
 
 /** Valeur d'une liste autorisée, sinon la valeur par défaut. */
-function oneOf<T extends string>(list: readonly T[], value: unknown, fallback: T): T {
+function oneOf<T extends string>(
+  list: readonly T[],
+  value: unknown,
+  fallback: T,
+): T {
   return list.includes(value as T) ? (value as T) : fallback;
 }
 
 /** Indice entier valide dans une liste, sinon la valeur par défaut. */
-function indexIn(list: readonly unknown[], value: unknown, fallback: number): number {
-  return Number.isInteger(value) && (value as number) >= 0 && (value as number) < list.length
+function indexIn(
+  list: readonly unknown[],
+  value: unknown,
+  fallback: number,
+): number {
+  return Number.isInteger(value) &&
+    (value as number) >= 0 &&
+    (value as number) < list.length
     ? (value as number)
     : fallback;
 }
@@ -65,7 +81,7 @@ function indexIn(list: readonly unknown[], value: unknown, fallback: number): nu
 
 /** Réglages par défaut : pages à tourner sur ordinateur et tablette, défilement sur mobile. */
 export function defaultSettings(): ReaderSettings {
-  const phone = window.matchMedia(`(max-width: ${PHONE_MAX_WIDTH}px)`).matches;
+  const phone = window.matchMedia(PHONE_QUERY).matches;
   const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   return {
     mode: phone ? "scroll" : "flip",
@@ -79,7 +95,9 @@ export function defaultSettings(): ReaderSettings {
 /** Réglages enregistrés sur l'appareil, complétés par les valeurs par défaut. */
 export function loadSettings(): ReaderSettings {
   const defaults = defaultSettings();
-  const saved = (readJson(SETTINGS_KEY) ?? {}) as Partial<Record<keyof ReaderSettings, unknown>>;
+  const saved = (readJson(SETTINGS_KEY) ?? {}) as Partial<
+    Record<keyof ReaderSettings, unknown>
+  >;
   return {
     mode: oneOf(READER_MODES, saved.mode, defaults.mode),
     theme: oneOf(READER_THEMES, saved.theme, defaults.theme),
@@ -97,15 +115,25 @@ export function saveSettings(settings: ReaderSettings): void {
 
 /** Position enregistrée sur l'appareil pour un livre, ou null. */
 export function loadLocalPosition(bookId: string): SavedPosition | null {
-  const saved = readJson(POSITION_PREFIX + bookId) as Record<string, unknown> | null;
+  const saved = readJson(POSITION_PREFIX + bookId) as Record<
+    string,
+    unknown
+  > | null;
   const position = parsePosition(saved);
   if (!saved || !position) return null;
   const progress = typeof saved.progress === "number" ? saved.progress : 0;
   const updatedAt = typeof saved.updatedAt === "string" ? saved.updatedAt : "";
   if (Number.isNaN(Date.parse(updatedAt))) return null;
-  return { ...position, progress: Math.min(1, Math.max(0, progress)), updatedAt };
+  return {
+    ...position,
+    progress: Math.min(1, Math.max(0, progress)),
+    updatedAt,
+  };
 }
 
-export function saveLocalPosition(bookId: string, position: SavedPosition): void {
+export function saveLocalPosition(
+  bookId: string,
+  position: SavedPosition,
+): void {
   writeJson(POSITION_PREFIX + bookId, position);
 }

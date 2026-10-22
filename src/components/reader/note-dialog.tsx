@@ -15,7 +15,11 @@
 
 import { type FormEvent, useState } from "react";
 
-import { BUTTON_PRIMARY, BUTTON_TERTIARY, CONTROL } from "@/components/ui/styles";
+import {
+  BUTTON_PRIMARY,
+  BUTTON_TERTIARY,
+  CONTROL,
+} from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import { MAX_NOTE_LENGTH } from "@/lib/reader/annotations";
 
@@ -32,7 +36,12 @@ type NoteDialogProps = {
 };
 
 /** Fenêtre de note : citation du passage, champ de texte, enregistrer ou annuler. */
-export function NoteDialog({ quote, initialNote, onSave, onClose }: NoteDialogProps) {
+export function NoteDialog({
+  quote,
+  initialNote,
+  onSave,
+  onClose,
+}: NoteDialogProps) {
   const [note, setNote] = useState(initialNote ?? "");
   const [saving, setSaving] = useState(false);
 
@@ -47,7 +56,9 @@ export function NoteDialog({ quote, initialNote, onSave, onClose }: NoteDialogPr
     }
   }
 
-  const title = initialNote ? t.reader.selection.editNote : t.reader.selection.note;
+  const title = initialNote
+    ? t.reader.selection.editNote
+    : t.reader.selection.note;
   return (
     <Dialog
       id="dialogue-note"
@@ -56,8 +67,10 @@ export function NoteDialog({ quote, initialNote, onSave, onClose }: NoteDialogPr
       onClose={onClose}
     >
       <form onSubmit={submit} className="flex flex-col gap-3">
-        <blockquote className="line-clamp-4 border-l-4 border-encre pl-3 font-serif italic
-          text-ink-muted">
+        <blockquote
+          className="line-clamp-4 border-l-4 border-encre pl-3 font-serif italic
+          text-ink-muted"
+        >
           {quote}
         </blockquote>
         <label htmlFor="champ-note" className="text-label">
@@ -73,7 +86,10 @@ export function NoteDialog({ quote, initialNote, onSave, onClose }: NoteDialogPr
           placeholder={t.reader.selection.notePlaceholder}
           className={`${CONTROL} liseuse-champ py-2`}
         />
-        <p className="text-right text-caption text-ink-muted" aria-live="polite">
+        <p
+          className="text-right text-caption text-ink-muted"
+          aria-live="polite"
+        >
           {note.length} / {MAX_NOTE_LENGTH}
         </p>
         <div className="flex justify-end gap-2">

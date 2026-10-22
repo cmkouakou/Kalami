@@ -77,6 +77,8 @@ sont couverts par les 32 suites d'intégration `tests/integration/*-rls.test.ts`
 
 ## 6. Reste à faire
 
-- Essai de la CSP dans le navigateur en production : connexion Google, dépôts, présence en
-  temps réel, liseuse.
+- Essai de la CSP dans le navigateur en production, avec une session : connexion Google,
+  dépôts, présence en temps réel. Déjà vérifiés sans violation le 2026-10-22 (écouteur
+  `securitypolicyviolation`) : accueil, fiche du livre, liseuse (polices, figures, pages
+  tournées), bandeau des témoins (action serveur 200), préchargement des pages.
 - Revoir ce rapport avant la mise en production (Sprint 11b).

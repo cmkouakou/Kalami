@@ -19,11 +19,14 @@
  *               v1.5 : couverture en première page du premier chapitre (le livre s'ouvre
  *               dessus) et quatrième de couverture en dernière page du dernier chapitre.
  *               v1.6 : page de l'encart Kalami Stratégie après le texte d'un module.
+ *               v1.7 : numéros de page dans tout le livre ; page d'ouverture d'un module ;
+ *               un glissement sur une page sans texte (schéma) tourne la page ; mise en
+ *               pages déplacée dans layout.ts (partagée avec le compteur de pages).
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
- *  Date       : 2026-10-17
- *  Dépendances: page-flip, dom.ts, highlight-dom.ts, lib/reader/paginate.ts,
- *               lib/reader/position.ts
+ *  Version    : 1.7
+ *  Date       : 2026-10-22
+ *  Dépendances: page-flip, dom.ts, layout.ts, highlight-dom.ts, lib/reader/paginate.ts,
+ *               lib/reader/position.ts, use-book-pages.ts
  * =============================================================
  */
 
@@ -34,36 +37,28 @@ import { type RefObject, useEffect, useRef, useState } from "react";
 
 import { getDictionary, interpolate } from "@/i18n";
 import type { ChapterPayload } from "@/lib/content/types";
-import { pageIndexOf, pageStart, paginate } from "@/lib/reader/paginate";
-import { chapterKicker } from "@/lib/reader/opening";
+import { pageIndexOf, pageStart } from "@/lib/reader/paginate";
 import { chapterFraction, positionAtFraction } from "@/lib/reader/position";
 import type { Highlight, Page, ReaderSettings } from "@/lib/reader/types";
 
-import {
-  blockInfo,
-  createMeasurer,
-  parseBlock,
-  preloadImages,
-  renderPage,
-  titleElement,
-} from "./dom";
+import { renderPage } from "./dom";
 import { paintHighlights } from "./highlight-dom";
+import { layoutChapter, layoutFor, PADDING } from "./layout";
 import { buildPromoElement } from "./strategy-promo";
+import type { BookPage, MeasureTarget } from "./use-book-pages";
 
 const t = getDictionary();
 
-/** Largeur minimale de la zone pour afficher deux pages côte à côte. */
-const TWO_PAGES_MIN_WIDTH = 960;
-/** Largeur maximale d'une page (confort de lecture : ~65 caractères par ligne). */
-const MAX_PAGE_WIDTH = 640;
-/** Marges intérieures d'une page (px) ; la marge basse laisse la place au numéro. */
-const PADDING = { x: 40, xSmall: 20, top: 36, bottom: 48 };
 /** Délai avant de repaginer après un redimensionnement (ms). */
 const RESIZE_DELAY = 250;
 /** Distance horizontale minimale d'un glissement qui tourne la page (px). */
 const SWIPE_MIN = 50;
 /** Déplacement maximal d'un simple clic (px). */
 const TAP_MAX = 6;
+/** Attente de la décision de page-flip après un glissement (ms). */
+const SWIPE_SETTLE = 120;
+/** Numérotation inconnue (compteur absent) : pages sans numéro. */
+const NO_NUMBERING = () => null;
 /** Éléments dont le clic ne tourne jamais la page. */
 const NO_TURN = ".liseuse-page-texte, a, button, input, textarea";
 
@@ -105,50 +100,79 @@ type FlipViewProps = {
   backCover?: { url: string; alt: string } | null;
   /** Page de l'encart Kalami Stratégie après la dernière page de texte */
   promo?: boolean;
+  /** Numéro dans le livre d'une page du chapitre (indice), ou null s'il n'est pas connu */
+  numbering?: (index: number) => BookPage | null;
+  /** Zone de mesure, signalée après chaque mise en pages (compteur des pages du livre) */
+  onLayout?: (target: MeasureTarget) => void;
 };
 
 // ==================== OUTILS ====================
 
-/** Dimensions des pages selon la zone disponible. */
-function layoutFor(width: number, height: number) {
-  const twoPages = width >= TWO_PAGES_MIN_WIDTH && width > height;
-  const pageWidth = Math.floor(Math.min(twoPages ? width / 2 : width, MAX_PAGE_WIDTH));
-  const padX = pageWidth < 480 ? PADDING.xSmall : PADDING.x;
-  return {
-    twoPages,
-    pageWidth,
-    pageHeight: Math.floor(height),
-    padX,
-    contentWidth: pageWidth - 2 * padX,
-    contentHeight: Math.floor(height) - PADDING.top - PADDING.bottom,
-  };
-}
-
 /** Décalage du filigrane, légèrement différent d'une page à l'autre. */
-function watermarkOffset(chapter: number, page: number): { top: number; left: number } {
+function watermarkOffset(
+  chapter: number,
+  page: number,
+): { top: number; left: number } {
   const seed = (chapter * 37 + page * 53) % 97;
   return { top: 18 + (seed % 55), left: 6 + ((seed * 7) % 30) };
 }
 
+/** Options d'une page : indice, filigrane, marge, numérotation et page d'ouverture. */
+type PageOptions = {
+  /** Indice de la page dans le chapitre (variation du filigrane, numéro) */
+  index: number;
+  /** Numéro du chapitre (variation du filigrane) */
+  chapter: number;
+  watermark: string | null;
+  /** Marge latérale (px) */
+  padX: number;
+  /** Faux pour une page hors texte (encart, page blanche) : pas de numéro */
+  numbered: boolean;
+  /** Page d'ouverture d'un module : contenu centré */
+  opener?: boolean;
+};
+
+/**
+ * Écrit le numéro d'une page dans le livre (vide tant que le compte n'est pas arrivé
+ * jusqu'à elle).
+ * @param element - Élément .liseuse-numero
+ * @param page    - Numéro dans le livre, ou null
+ */
+function writeNumber(element: HTMLElement, page: BookPage | null) {
+  element.textContent = page ? String(page.number) : "";
+  if (page?.total) {
+    const label = { current: String(page.number), total: String(page.total) };
+    element.setAttribute("aria-label", interpolate(t.reader.pageOf, label));
+  } else element.removeAttribute("aria-label");
+}
+
+/**
+ * Met à jour les numéros des pages affichées, sans repaginer.
+ * @param book      - Élément du livre
+ * @param numbering - Numéro dans le livre d'une page du chapitre
+ */
+function paintNumbers(
+  book: HTMLElement,
+  numbering: (index: number) => BookPage | null,
+) {
+  book
+    .querySelectorAll<HTMLElement>(".liseuse-numero[data-page]")
+    .forEach((element) => {
+      writeNumber(element, numbering(Number(element.dataset.page)));
+    });
+}
+
 /**
  * Crée l'élément d'une page (texte, filigrane, numéro).
- * @param content   - Éléments du texte de la page
- * @param index     - Indice de la page
- * @param total     - Nombre de pages du chapitre
- * @param chapter   - Numéro du chapitre (variation du filigrane)
- * @param watermark - Texte du filigrane, ou null
- * @param padX      - Marge latérale (px)
+ * @param content - Éléments du texte de la page
+ * @param options - Indice, filigrane, marge, numérotation et page d'ouverture
  */
-function buildPage(
-  content: HTMLElement[],
-  index: number,
-  total: number,
-  chapter: number,
-  watermark: string | null,
-  padX: number,
-): HTMLElement {
+function buildPage(content: HTMLElement[], options: PageOptions): HTMLElement {
+  const { index, chapter, watermark, padX, numbered, opener = false } = options;
   const page = document.createElement("div");
-  page.className = "liseuse-page";
+  page.className = opener
+    ? "liseuse-page liseuse-page-ouverture"
+    : "liseuse-page";
 
   // page-flip réécrit le style de la page (position, taille) : les marges sont portées
   // par le bloc de texte, placé exactement dans la zone mesurée pendant la pagination
@@ -174,14 +198,11 @@ function buildPage(
     page.append(mark);
   }
 
-  if (index < total) {
+  if (numbered) {
+    // Numéro écrit plus tard (paintNumbers) : il dépend du compte des parties précédentes
     const number = document.createElement("span");
     number.className = "liseuse-numero";
-    number.textContent = `${index + 1} / ${total}`;
-    number.setAttribute(
-      "aria-label",
-      interpolate(t.reader.pageOf, { current: String(index + 1), total: String(total) }),
-    );
+    number.dataset.page = String(index);
     page.append(number);
   }
   return page;
@@ -219,58 +240,64 @@ function anchoredPage(elements: HTMLElement[], page: Page): HTMLElement[] {
 
 // ==================== GESTES ====================
 
-type GestureOptions = {
-  isFirst: (index: number) => boolean;
-  isLast: (index: number) => boolean;
-  controls: ViewControls;
-  callbacks: RefObject<{ onNextChapter: () => void; onPreviousChapter: () => void }>;
-};
-
 /**
  * Complète les gestes de page-flip :
- * - aux limites du chapitre, page-flip ne tourne rien : glisser vers la gauche sur la
- *   dernière double page ouvre le chapitre suivant, vers la droite sur la première, le
- *   précédent (un glissement qui sélectionne du texte est ignoré) ;
+ * - un glissement que page-flip n'a pas tourné (commencé sur le texte ou sur un schéma,
+ *   ou aux limites du chapitre) tourne la page, ou ouvre le chapitre voisin (les
+ *   commandes s'en chargent) ; un glissement qui sélectionne du texte est ignoré ;
  * - un clic dans une marge (hors du texte) tourne la page, selon le côté du livre.
  * @param container - Élément du livre
  * @param flip      - Instance page-flip
- * @param options   - Limites du chapitre, commandes et rappels de changement de chapitre
+ * @param controls  - Commandes de la vue (page suivante ou précédente)
  * @returns Fonction qui retire les écouteurs
  */
 function watchGestures(
   container: HTMLElement,
   flip: PageFlipInstance,
-  { isFirst, isLast, controls, callbacks }: GestureOptions,
+  controls: ViewControls,
 ): () => void {
-  let gesture: { x: number; y: number; index: number; flipped: boolean } | null = null;
+  let gesture: { x: number; y: number; index: number; turns: number } | null =
+    null;
+  // Pages pliées ou tournées par page-flip : un geste qu'il a déjà traité n'est pas refait
+  let turns = 0;
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
-  // Une page tournée par page-flip pendant le geste : rien à ajouter
   flip.on("changeState", (event) => {
-    if (gesture && event.data === "flipping") gesture.flipped = true;
+    if (event.data === "user_fold" || event.data === "flipping") turns += 1;
   });
 
   const onDown = (event: PointerEvent) => {
     if (event.button !== 0) return;
     const index = flip.getCurrentPageIndex();
-    gesture = { x: event.clientX, y: event.clientY, index, flipped: false };
+    gesture = { x: event.clientX, y: event.clientY, index, turns };
   };
 
   const onUp = (event: PointerEvent) => {
     const start = gesture;
     gesture = null;
-    if (!start || start.flipped) return;
+    if (!start || turns !== start.turns) return;
     if (!(window.getSelection()?.isCollapsed ?? true)) return;
     const dx = event.clientX - start.x;
     const dy = event.clientY - start.y;
 
     if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > Math.abs(dy)) {
-      if (flip.getCurrentPageIndex() !== start.index) return;
-      if (dx < 0 && isLast(start.index)) callbacks.current?.onNextChapter();
-      else if (dx > 0 && isFirst(start.index)) callbacks.current?.onPreviousChapter();
+      // page-flip traite le glissement tactile après pointerup : on attend sa décision
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (turns !== start.turns || flip.getCurrentPageIndex() !== start.index)
+          return;
+        if (dx < 0) controls.next();
+        else controls.previous();
+      }, SWIPE_SETTLE);
       return;
     }
     const target = event.target instanceof Element ? event.target : null;
-    if (Math.abs(dx) > TAP_MAX || Math.abs(dy) > TAP_MAX || target?.closest(NO_TURN)) return;
+    if (
+      Math.abs(dx) > TAP_MAX ||
+      Math.abs(dy) > TAP_MAX ||
+      target?.closest(NO_TURN)
+    )
+      return;
     const rect = container.getBoundingClientRect();
     if (event.clientX >= rect.left + rect.width / 2) controls.next();
     else controls.previous();
@@ -280,6 +307,7 @@ function watchGestures(
   container.addEventListener("pointerdown", onDown, true);
   container.addEventListener("pointerup", onUp, true);
   return () => {
+    clearTimeout(timer);
     flip.off("changeState");
     container.removeEventListener("pointerdown", onDown, true);
     container.removeEventListener("pointerup", onUp, true);
@@ -302,6 +330,8 @@ export function FlipView({
   cover = null,
   backCover = null,
   promo = false,
+  numbering = NO_NUMBERING,
+  onLayout,
 }: FlipViewProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   // Livre affiché et surlignages courants (redessinés sans repaginer)
@@ -311,16 +341,39 @@ export function FlipView({
   // chaque page ; sert à rester au même endroit après une repagination. -1 = couverture,
   // où s'ouvre le premier chapitre lu depuis son début
   const onCover =
-    Boolean(cover) && initial.fraction === undefined && initial.block === 0 && initial.offset === 0;
-  const positionRef = useRef({ element: onCover ? -1 : initial.block + 1, offset: initial.offset });
+    Boolean(cover) &&
+    initial.fraction === undefined &&
+    initial.block === 0 &&
+    initial.offset === 0;
+  const positionRef = useRef({
+    element: onCover ? -1 : initial.block + 1,
+    offset: initial.offset,
+  });
   // Ouverture à une part du chapitre (accès rapide) : convertie une fois les blocs mesurés
   const fractionRef = useRef(initial.fraction);
-  const callbacks = useRef({ onPosition, onNextChapter, onPreviousChapter });
+  const callbacks = useRef({
+    onPosition,
+    onNextChapter,
+    onPreviousChapter,
+    onLayout,
+  });
+  const numberingRef = useRef(numbering);
   const [layoutKey, setLayoutKey] = useState(0);
 
   useEffect(() => {
-    callbacks.current = { onPosition, onNextChapter, onPreviousChapter };
-  }, [onPosition, onNextChapter, onPreviousChapter]);
+    callbacks.current = {
+      onPosition,
+      onNextChapter,
+      onPreviousChapter,
+      onLayout,
+    };
+  }, [onPosition, onNextChapter, onPreviousChapter, onLayout]);
+
+  // Compte des pages du livre avancé : numéros réécrits sans repaginer
+  useEffect(() => {
+    numberingRef.current = numbering;
+    if (bookRef.current) paintNumbers(bookRef.current, numbering);
+  }, [numbering]);
 
   // Surlignage ajouté, recoloré ou retiré : redessin des pages existantes
   useEffect(() => {
@@ -360,58 +413,60 @@ export function FlipView({
     let dispose: (() => void) | undefined;
 
     const build = async () => {
-      // Mesurer avec les vraies polices, une fois chargées
-      await document.fonts.ready;
-      const { PageFlip } = await import("page-flip/dist/js/page-flip.module.js");
+      const { PageFlip } =
+        await import("page-flip/dist/js/page-flip.module.js");
       if (cancelled) return;
 
-      const elements = [
-        titleElement(chapter.title, chapterKicker(chapter.blocks)),
-        ...chapter.blocks.map(parseBlock),
-      ];
-      // Les schémas doivent avoir leur vraie hauteur au moment de la mesure
-      const images = await preloadImages(elements);
-      if (cancelled) return;
+      const width = host.clientWidth;
+      const height = host.clientHeight;
+      const layout = layoutFor(width, height);
+      const laid = await layoutChapter(host, chapter, layout, () => cancelled);
+      if (!laid || cancelled) return;
+      const { elements, pages, opener } = laid;
+      // Même zone pour le compteur des pages du livre : mêmes pages, mêmes numéros
+      callbacks.current.onLayout?.({ host, width, height });
 
-      const layout = layoutFor(host.clientWidth, host.clientHeight);
-      const measurer = createMeasurer(host, elements, layout.contentWidth, layout.contentHeight);
-      const pages: Page[] = paginate(elements.map(blockInfo), measurer.fits);
-      measurer.dispose();
-      images.length = 0;
-
-      const lengths = elements.slice(1).map((element) => element.textContent?.length ?? 0);
+      const lengths = elements
+        .slice(1)
+        .map((element) => element.textContent?.length ?? 0);
       if (fractionRef.current !== undefined) {
         const target = positionAtFraction(lengths, fractionRef.current);
-        positionRef.current = { element: target.block + 1, offset: target.offset };
+        positionRef.current = {
+          element: target.block + 1,
+          offset: target.offset,
+        };
         fractionRef.current = undefined;
       }
+      const base = { chapter: chapter.position, padX: layout.padX };
       const textPages = pages.map((page, index) =>
-        buildPage(
-          anchoredPage(elements, page),
+        buildPage(anchoredPage(elements, page), {
+          ...base,
           index,
-          pages.length,
-          chapter.position,
           watermark,
-          layout.padX,
-        ),
+          numbered: true,
+          opener: opener && index === 0,
+        }),
       );
       // Encart après le texte : sans numéro ni filigrane, hors des indices de pagination
       if (promo) {
         textPages.push(
-          buildPage(
-            [buildPromoElement()],
-            pages.length,
-            pages.length,
-            chapter.position,
-            null,
-            layout.padX,
-          ),
+          buildPage([buildPromoElement()], {
+            ...base,
+            index: pages.length,
+            watermark: null,
+            numbered: false,
+          }),
         );
       }
       // Nombre pair en double page : une dernière page seule serait rigide
       if (layout.twoPages && textPages.length % 2 === 1) {
         textPages.push(
-          buildPage([], textPages.length, pages.length, chapter.position, null, layout.padX),
+          buildPage([], {
+            ...base,
+            index: textPages.length,
+            watermark: null,
+            numbered: false,
+          }),
         );
       }
       // Couvertures : seules sur leur double page (showCover pour la première, nombre
@@ -431,7 +486,8 @@ export function FlipView({
       host.append(container);
 
       const { element, offset } = positionRef.current;
-      const startPage = element < 0 ? 0 : pageIndexOf(pages, element, offset) + lead;
+      const startPage =
+        element < 0 ? 0 : pageIndexOf(pages, element, offset) + lead;
       const flip = new PageFlip(container, {
         width: layout.pageWidth,
         height: layout.pageHeight,
@@ -449,6 +505,7 @@ export function FlipView({
       flip.loadFromHTML(items);
       bookRef.current = container;
       paintHighlights(container, highlightsRef.current);
+      paintNumbers(container, numberingRef.current);
 
       // Dernière double page : elle contient la dernière page du livre affiché
       const spread = layout.twoPages ? 2 : 1;
@@ -459,7 +516,9 @@ export function FlipView({
         const index = Math.max(0, Math.min(item - lead, pages.length - 1));
         const start = pageStart(pages, index);
         positionRef.current =
-          item < lead ? { element: -1, offset: 0 } : { element: start.block, offset: start.offset };
+          item < lead
+            ? { element: -1, offset: 0 }
+            : { element: start.block, offset: start.offset };
         const block = Math.max(0, start.block - 1);
         const offset = start.block === 0 ? 0 : start.offset;
         // Fin du chapitre dès que la double page montre la dernière page de texte
@@ -469,7 +528,14 @@ export function FlipView({
           block,
           offset,
           fraction,
-          page: { current: Math.min(index + 1, pages.length), total: pages.length },
+          // Couverture affichée : pas de numéro de page
+          page:
+            item < lead
+              ? undefined
+              : {
+                  current: Math.min(index + 1, pages.length),
+                  total: pages.length,
+                },
         });
       };
       flip.on("flip", (event) => report(event.data));
@@ -482,7 +548,8 @@ export function FlipView({
           else flip.flipNext();
         },
         previous: () => {
-          if (flip.getCurrentPageIndex() === 0) callbacks.current.onPreviousChapter();
+          if (flip.getCurrentPageIndex() === 0)
+            callbacks.current.onPreviousChapter();
           else flip.flipPrev();
         },
         goTo: (block, offset) => {
@@ -496,12 +563,7 @@ export function FlipView({
         },
       };
       controlsRef.current = controls;
-      const removeGestures = watchGestures(container, flip, {
-        isFirst: (index) => index === 0,
-        isLast: isLastSpread,
-        controls,
-        callbacks,
-      });
+      const removeGestures = watchGestures(container, flip, controls);
 
       dispose = () => {
         bookRef.current = null;
