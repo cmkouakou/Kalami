@@ -237,6 +237,31 @@ export async function createRefund(
   );
 }
 
+/**
+ * Remboursement intégral déjà fait hors de Kalami (ex. : tableau de bord Stripe).
+ * @param paymentIntentId - Identifiant pi_… du paiement
+ * @returns Identifiant re_… du dernier remboursement si le paiement est remboursé en entier,
+ *          sinon null (non remboursé, remboursement partiel ou Stripe indisponible)
+ */
+export async function existingFullRefund(paymentIntentId: string): Promise<string | null> {
+  try {
+    const intent = await stripeRequest<{
+      latest_charge: {
+        refunded?: boolean;
+        refunds?: { data?: { id: string; status: string }[] };
+      } | null;
+    }>("GET", `payment_intents/${paymentIntentId}`, {
+      expand: ["latest_charge.refunds"],
+    });
+    const charge = intent.latest_charge;
+    if (!charge?.refunded) return null;
+    const refund = charge.refunds?.data?.find((r) => r.status !== "failed");
+    return refund?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /** Reçu et frais d'un paiement (null : indisponible, le paiement reste valable). */
 export type PaymentDetails = { receiptUrl: string | null; feeMinor: number | null };
 

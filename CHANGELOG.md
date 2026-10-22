@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## [v0.12.2] - 2026-10-22 — Remboursement fait dans Stripe
+### Corrigé
+- `/admin/commandes` : si une commande par carte a déjà été remboursée dans le tableau de bord
+  Stripe, le bouton « Rembourser » enregistre ce remboursement existant (paiement remboursé en
+  entier seulement) et retire les droits, au lieu d'échouer avec « échec Stripe ».
+### Modifié
+- Le lien « Rembourser » devient un vrai bouton bordé, plus visible.
+### Prévu
+- Sprint 11s (v0.13.0) : durcissement sécurité (OWASP Top 10), dont l'écoute de
+  `charge.refunded` pour les remboursements faits dans Stripe.
+
 ## [v0.12.1] - 2026-10-19 — Versements, tableau de bord et journal d'audit (Sprint 10b)
 ### Ajouté
 - Demandes de versement dans `/auteur/revenus` : un bouton par devise verse tout le

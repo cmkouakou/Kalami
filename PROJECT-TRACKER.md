@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.12.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.12.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -99,7 +99,10 @@ Version actuelle : v0.12.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Sprint 5c — codes promo (livre, livres, Stratégie, tout ; une fois par compte), admin `/admin/codes-promo`, interrupteur Stripe Tax éteint (v0.10.3) ; unitaires 601/601
 - [x] Sprint 6 — Mobile Money manuel (FCFA, Wave et Orange), déclaration, validation admin, admin `/admin/mobile-money`, expiration 24 h (v0.11.0) ; unitaires Mobile Money 12/12, build OK
 - [x] Sprint 6 — migration `20261108120000_mobile_money.sql` appliquée le 2026-10-19, intégration mobile-money-rls 5/5
-- [ ] Sprint 6 — saisir les numéros Wave et Orange, essai réel (achat + validation admin)
+- [x] Sprint 6 — numéros Wave et Orange saisis, essai réel fait (2026-10-22)
+- [x] v0.12.2 — remboursement déjà fait dans Stripe régularisable depuis `/admin/commandes`, bouton « Rembourser » visible ; unitaires payments 19/19
+- [ ] v0.12.2 — régulariser l'achat test Visa remboursé dans Stripe (bouton « Rembourser »)
+- [ ] Sprint 11s — durcissement sécurité (OWASP Top 10), voir [docs/SPRINTS.md](docs/SPRINTS.md)
 - [x] Sprint 10a — grand livre, commissions, `/auteur/revenus`, `/admin/revenus`, frais Mobile Money (v0.12.0) ; unitaires 621/621, build OK
 - [x] Sprint 10a — migration `20261109120000_ledger.sql` appliquée le 2026-10-19 (historique réparé), intégration ledger-rls 4/4, rattrapage : 1 commande, 1 écriture
 - [x] Sprint 10b — versements, `/admin/versements`, `/admin/journal`, tableau de bord admin (v0.12.1) ; unitaires 633/633

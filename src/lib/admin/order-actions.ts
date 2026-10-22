@@ -26,7 +26,7 @@ import { isUuid } from "@/lib/admin/validation";
 import { sendEmail } from "@/lib/email/send";
 import { STUDY_OFFER_CODES } from "@/lib/payments/checkout-request";
 import { buildDecisionEmail } from "@/lib/payments/mobile-money-email";
-import { createRefund } from "@/lib/payments/stripe";
+import { createRefund, existingFullRefund } from "@/lib/payments/stripe";
 import { createClient } from "@/lib/supabase/server";
 
 const t = getDictionary();
@@ -86,7 +86,10 @@ export async function refundOrder(_prev: FormState, formData: FormData): Promise
   try {
     refundId = (await createRefund(order.provider_payment_id, orderId)).id;
   } catch {
-    return { error: orderError("stripe_failed") };
+    // Déjà remboursé dans le tableau de bord Stripe : on enregistre ce remboursement-là
+    const existing = await existingFullRefund(order.provider_payment_id);
+    if (!existing) return { error: orderError("stripe_failed") };
+    refundId = existing;
   }
 
   const { data, error } = await supabase.rpc("admin_refund_order", {

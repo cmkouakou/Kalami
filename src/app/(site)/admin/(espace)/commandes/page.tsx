@@ -295,7 +295,10 @@ function OrderRow({ order }: { order: AdminOrderRow }) {
       </div>
       {!isMobileMoney && order.status === "paid" && order.provider_payment_id && (
         <details className="text-small">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-danger">
+          <summary
+            className="inline-flex min-h-11 cursor-pointer items-center rounded-md border
+              border-danger px-4 font-semibold text-danger hover:bg-danger/10"
+          >
             {o.refund}
           </summary>
           <ActionForm action={refundOrder} submitLabel={o.refund}>

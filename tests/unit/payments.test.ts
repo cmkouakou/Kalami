@@ -5,7 +5,7 @@
  *              Stripe, encodage des paramètres, correspondance articles → prix Stripe,
  *              contenu de la session Checkout, tri des événements par le webhook (autre
  *              application du compte, signature invalide, appel unique à la base) ;
- *              Stripe Tax facultatif (v0.10.3).
+ *              Stripe Tax facultatif (v0.10.3) ; remboursement fait dans Stripe (v0.12.2).
  * Auteur     : Claude Marcel
  * Version    : 1.1
  * Date       : 2026-10-19
@@ -20,7 +20,12 @@ vi.mock("server-only", () => ({}));
 const rpc = vi.fn();
 vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: () => ({ rpc }) }));
 
-const { createCheckoutSession, encodeStripeParams, verifyStripeSignature } = await import(
+const {
+  createCheckoutSession,
+  encodeStripeParams,
+  existingFullRefund,
+  verifyStripeSignature,
+} = await import(
   "@/lib/payments/stripe"
 );
 const { priceEnvName, stripeProductFor } = await import("@/lib/payments/catalog");
@@ -288,5 +293,48 @@ describe("POST /api/stripe/webhook", () => {
     rpc.mockResolvedValue({ data: null, error: { code: "XX000", message: "panne" } });
     const response = await webhook(eventRequest({ app: "kalami", order_id: orderId }));
     expect(response.status).toBe(500);
+  });
+});
+
+// ==================== REMBOURSEMENT FAIT DANS STRIPE ====================
+
+describe("existingFullRefund", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  /**
+   * Simule la réponse de Stripe pour un paiement.
+   * @param charge - Dernier débit renvoyé par Stripe
+   */
+  function stubIntent(charge: unknown) {
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_x");
+    const fetchMock = vi.fn().mockResolvedValue(Response.json({ latest_charge: charge }));
+    vi.stubGlobal("fetch", fetchMock);
+    return fetchMock;
+  }
+
+  it("renvoie le remboursement d'un paiement remboursé en entier", async () => {
+    const fetchMock = stubIntent({
+      refunded: true,
+      refunds: { data: [{ id: "re_1", status: "succeeded" }] },
+    });
+    expect(await existingFullRefund("pi_1")).toBe("re_1");
+    expect(String(fetchMock.mock.calls[0][0])).toContain("latest_charge.refunds");
+  });
+
+  it("ignore un remboursement partiel ou absent", async () => {
+    stubIntent({ refunded: false, refunds: { data: [{ id: "re_2", status: "succeeded" }] } });
+    expect(await existingFullRefund("pi_1")).toBeNull();
+    stubIntent(null);
+    expect(await existingFullRefund("pi_1")).toBeNull();
+  });
+
+  it("renvoie null si Stripe est indisponible", async () => {
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_x");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("x", { status: 500 })));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(await existingFullRefund("pi_1")).toBeNull();
   });
 });
