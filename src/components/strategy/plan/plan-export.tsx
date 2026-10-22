@@ -7,8 +7,8 @@
  *               fichier reprend la version enregistrée : les boutons attendent la fin de la
  *               sauvegarde automatique. Ouvert à tous les membres, observateurs compris.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-15
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: api/strategie/etudes/[id]/plan/[format], i18n
  * =============================================================
  */
@@ -65,6 +65,10 @@ export function PlanExport({ studyId, pending }: PlanExportProps) {
       const response = await fetch(`/api/strategie/etudes/${studyId}/plan/${format}`, {
         method: "POST",
       });
+      if (response.status === 429) {
+        setError(e.rateLimited);
+        return;
+      }
       if (!response.ok) throw new Error(String(response.status));
       download(await response.blob(), fileNameOf(response, format));
     } catch {

@@ -1,6 +1,6 @@
 {
   "name": "kalami",
-  "version": "0.12.2",
+  "version": "0.13.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -26,7 +26,7 @@
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
     "mammoth": "^1.13.0",
-    "next": "16.4.0",
+    "next": "16.4.2",
     "page-flip": "^2.0.7",
     "pdf-lib": "^1.17.1",
     "puppeteer-core": "^25.13.0",
@@ -46,7 +46,7 @@
     "@types/sanitize-html": "^2.16.2",
     "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^9",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "16.4.2",
     "supabase": "^2.120.0",
     "tailwindcss": "^4",
     "typescript": "^5",

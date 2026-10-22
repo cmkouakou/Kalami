@@ -6,12 +6,13 @@
  *               Checkout, lecture du produit d'un prix et du reçu d'un paiement, vérification
  *               de la signature des webhooks (HMAC SHA-256), remboursement d'un paiement,
  *               Stripe Tax facultatif (prix taxes comprises, v0.10.3), frais réels d'un
- *               paiement pour le grand livre (v0.12.0).
+ *               paiement pour le grand livre (v0.12.0), lecture d'un remboursement fait dans
+ *               le tableau de bord (événement charge.refunded, v0.13.0).
  *               Le compte Stripe est partagé avec d'autres applications : chaque session
  *               porte metadata.app = « kalami ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-19
+ *  Version    : 1.4
+ *  Date       : 2026-10-22
  *  Dépendances: Stripe (https://docs.stripe.com/api), version 2026-02-25.clover
  * =============================================================
  */
@@ -79,6 +80,31 @@ export type StripeEvent = {
   type: string;
   data: { object: CheckoutSessionEvent };
 };
+
+/** Sous-ensemble utile d'un paiement (charge) reçu avec l'événement charge.refunded. */
+export type ChargeEvent = {
+  id: string;
+  payment_intent: string | null;
+  /** Vrai seulement si le paiement est remboursé en entier. */
+  refunded: boolean;
+  amount_refunded: number;
+};
+
+/** Remboursement décrit par un événement charge.refunded. */
+export type RefundNotice = { paymentId: string; full: boolean };
+
+/**
+ * Lit le remboursement porté par un événement charge.refunded.
+ * @param object - Objet de l'événement (data.object)
+ * @returns null si l'objet n'est pas un paiement remboursé rattaché à un PaymentIntent
+ */
+export function refundNoticeOf(object: unknown): RefundNotice | null {
+  const charge = object as Partial<ChargeEvent> | null;
+  const paymentId = charge?.payment_intent;
+  if (typeof paymentId !== "string" || !/^pi_[A-Za-z0-9]+$/.test(paymentId)) return null;
+  if (!charge?.refunded && !(Number(charge?.amount_refunded) > 0)) return null;
+  return { paymentId, full: charge?.refunded === true };
+}
 
 // ==================== FONCTIONS UTILITAIRES ====================
 

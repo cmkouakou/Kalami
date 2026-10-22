@@ -945,6 +945,8 @@ const fr = {
       refunded:
         "Commande remboursée : {removed} crédit(s) retiré(s), {kept} déjà utilisé(s), " +
         "{packs} forfait(s) retiré(s).",
+      refundedByWebhook:
+        "Commande remboursée : Stripe a déjà signalé le remboursement, les droits sont retirés.",
       offersTitle: "Prix des études",
       offersIntro:
         "Prix d'une étude et des lots de 10 et 30 (FCFA entier, euros et dollars canadiens). " +

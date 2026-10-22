@@ -8,8 +8,8 @@
  *               administrateur (aal2) et écrivent le journal d'audit. v0.11.0 : validation
  *               ou refus (avec motif) d'un paiement Mobile Money, courriel à l'acheteur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-19
+ *  Version    : 1.2
+ *  Date       : 2026-10-22
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/payments/stripe.ts,
  *               lib/payments/mobile-money-email.ts, lib/email/send.ts
  * =============================================================
@@ -96,7 +96,17 @@ export async function refundOrder(_prev: FormState, formData: FormData): Promise
     p_order_id: orderId,
     p_refund_id: refundId,
   });
-  if (error) return { error: orderError("refund_unrecorded") };
+  if (error) {
+    // Le webhook charge.refunded a pu enregistrer le remboursement juste avant nous
+    const { data: after } = await supabase
+      .from("orders")
+      .select("status")
+      .eq("id", orderId)
+      .maybeSingle();
+    if (after?.status !== "refunded") return { error: orderError("refund_unrecorded") };
+    refresh();
+    return { message: o.refundedByWebhook };
+  }
   const rows = (data ?? []) as { credits_removed: number; credits_kept: number;
     packs_removed: number }[];
   const row = rows[0];

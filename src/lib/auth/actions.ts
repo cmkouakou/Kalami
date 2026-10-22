@@ -4,11 +4,12 @@
  *  Projet     : Kalami
  *  Description: Actions serveur d'authentification (formulaires via useActionState) :
  *               connexion, lien magique, Google, inscription, mot de passe oublié,
- *               nouveau mot de passe, déconnexion.
+ *               nouveau mot de passe, déconnexion. Limitation de débit par adresse IP et
+ *               par courriel (Sprint 11s) : Supabase ne voit que l'adresse du serveur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-11
- *  Dépendances: lib/supabase/server.ts, lib/auth/routes.ts, i18n
+ *  Version    : 1.2
+ *  Date       : 2026-10-22
+ *  Dépendances: lib/supabase/server.ts, lib/auth/routes.ts, lib/security/rate-limit.ts, i18n
  * =============================================================
  */
 
@@ -20,6 +21,12 @@ import { redirect } from "next/navigation";
 import { getDictionary } from "@/i18n";
 import { authPath, isStrategyPath, safeNextPath } from "@/lib/auth/routes";
 import { APP_URL } from "@/lib/config";
+import {
+  allowAttempts,
+  emailSubject,
+  ipSubject,
+  type RateLimitBucket,
+} from "@/lib/security/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 /** État renvoyé aux formulaires. */
@@ -74,6 +81,24 @@ function authErrorMessage(code: string | undefined): string {
   }
 }
 
+/**
+ * Inscrit la tentative par adresse IP et/ou par courriel.
+ * @param ipBucket    - Compartiment de l'adresse IP (null : non compté)
+ * @param emailBucket - Compartiment du courriel (null : non compté)
+ * @param email       - Adresse saisie
+ * @returns true si la tentative est permise
+ */
+async function allowAuthAttempt(
+  ipBucket: RateLimitBucket | null,
+  emailBucket: RateLimitBucket | null,
+  email: string,
+): Promise<boolean> {
+  const checks: (readonly [RateLimitBucket, string])[] = [];
+  if (ipBucket) checks.push([ipBucket, ipSubject(await headers())]);
+  if (emailBucket) checks.push([emailBucket, emailSubject(email)]);
+  return allowAttempts(checks);
+}
+
 /** Valide adresse et mot de passe ; retourne un message d'erreur ou null. */
 function validateCredentials(email: string, password: string | null): string | null {
   if (!EMAIL_PATTERN.test(email)) return t.auth.errors.invalidEmail;
@@ -93,6 +118,9 @@ export async function signInWithPassword(_: FormState, formData: FormData): Prom
   if (typeof password !== "string" || !EMAIL_PATTERN.test(email) || !password) {
     return { error: t.auth.errors.invalidCredentials };
   }
+  if (!(await allowAuthAttempt("login_ip", "login_email", email))) {
+    return { error: t.auth.errors.rateLimited };
+  }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -107,6 +135,9 @@ export async function signInWithMagicLink(_: FormState, formData: FormData): Pro
   const next = safeNextPath(field(formData, "suivant"));
   const invalid = validateCredentials(email, null);
   if (invalid) return { error: invalid };
+  if (!(await allowAuthAttempt("login_ip", "magic_link_email", email))) {
+    return { error: t.auth.errors.rateLimited };
+  }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
@@ -145,6 +176,9 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
   const next = safeNextPath(field(formData, "suivant"));
   const invalid = validateCredentials(email, password);
   if (invalid) return { error: invalid };
+  if (!(await allowAuthAttempt("signup_ip", null, email))) {
+    return { error: t.auth.errors.rateLimited };
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -174,6 +208,9 @@ export async function requestPasswordReset(
   const suivant = field(formData, "suivant");
   const invalid = validateCredentials(email, null);
   if (invalid) return { error: invalid };
+  if (!(await allowAuthAttempt("login_ip", "reset_email", email))) {
+    return { error: t.auth.errors.rateLimited };
+  }
 
   // Page du nouveau mot de passe dans le même espace (site ou Kalami Stratégie)
   const resetPage = authPath(

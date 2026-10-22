@@ -21,7 +21,8 @@ démarre après la v1.0.0 de la plateforme de lecture.
 | 6 | Mobile Money manuel : numéros marchands, saisie de transaction, validation admin | v0.11.0 | ✅ |
 | 10a | Grand livre, commissions (70 % auteur), revenus dans l'espace auteur, admin des revenus | v0.12.0 | ✅ |
 | 10b | Versements aux auteurs, tableau de bord admin, journal d'audit (remboursement : livré en 5b) | v0.12.1 | ✅ |
-| 11s | Durcissement sécurité (OWASP Top 10) : en-têtes HTTP et CSP, limitation du débit (connexion, paiement, IA, exports), audit RLS et fonctions SECURITY DEFINER, validation des entrées et des fichiers déposés, CSRF et Server Actions, dépendances (npm audit), secrets et journaux, webhook `charge.refunded`, tests d'intrusion de base | v0.13.0 | ⬜ |
+| 11s-1 | Durcissement sécurité (OWASP Top 10), 1re partie : Next 16.4.2 et npm audit, en-têtes HTTP et CSP, CSRF et Server Actions, limitation du débit (connexion, codes promo, exports), signature des fichiers déposés, secret des tâches planifiées, webhook `charge.refunded` | v0.13.0 | 🟡 |
+| 11s-2 | Durcissement sécurité, 2e partie : audit RLS et droits d'exécution des fonctions SECURITY DEFINER, secrets et journaux, revue SSRF de l'export PDF, tests d'intrusion de base (IDOR, accès sans droits, webhook non signé), rapport | v0.13.1 | ⬜ |
 | 11b | Critères d'acceptation, mise en production | v1.0.0 | ⬜ |
 
 Ordre revu le 2026-10-08 : les paiements (5, 6) passent en dernier. Le grand livre (10) en dépend

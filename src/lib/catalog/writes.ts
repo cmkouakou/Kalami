@@ -3,12 +3,14 @@
  *  Fichier    : writes.ts
  *  Projet     : Kalami
  *  Description: Écritures communes aux espaces administrateur et auteur : prix d'un livre
- *               par devise, suppression d'une image remplacée. Serveur uniquement (les
+ *               par devise, suppression d'une image remplacée, refus d'une image dont le
+ *               contenu ne correspond pas à l'extension (Sprint 11s). Serveur uniquement (les
  *               droits sont vérifiés par l'appelant et par les politiques RLS).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
- *  Dépendances: lib/catalog/images.ts, lib/admin/validation.ts, supabase
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
+ *  Dépendances: lib/catalog/images.ts, lib/admin/validation.ts, lib/security/file-signature.ts,
+ *               supabase
  * =============================================================
  */
 
@@ -18,6 +20,7 @@ import type { Supabase } from "@/lib/admin/audit";
 import type { PriceInput } from "@/lib/admin/validation";
 import { COVERS_BUCKET } from "@/lib/catalog/images";
 import { CURRENCIES } from "@/lib/catalog/types";
+import { storedFileMatchesExtension } from "@/lib/security/file-signature";
 
 /** Erreur PostgreSQL éventuelle d'une écriture. */
 export type DbError = { code?: string; message: string } | null;
@@ -55,4 +58,17 @@ export async function savePrices(
 /** Supprime une image du seau (échec sans conséquence : le fichier reste orphelin). */
 export async function removeImage(supabase: Supabase, path: string | null): Promise<void> {
   if (path) await supabase.storage.from(COVERS_BUCKET).remove([path]);
+}
+
+/**
+ * Vérifie le contenu d'une image tout juste déposée ; la retire du seau si elle est forgée
+ * (seau public : rien d'autre qu'une vraie image ne doit y être servi).
+ * @param supabase - Client de l'appelant (droit de suppression dans le seau)
+ * @param path     - Chemin de l'image déposée
+ * @returns true si l'image est valable
+ */
+export async function acceptUploadedImage(supabase: Supabase, path: string): Promise<boolean> {
+  if (await storedFileMatchesExtension(COVERS_BUCKET, path)) return true;
+  await removeImage(supabase, path);
+  return false;
 }

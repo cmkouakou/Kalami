@@ -1,5 +1,43 @@
 # Journal des modifications
 
+## [v0.13.0] - 2026-10-22 — Durcissement sécurité, 1re partie (Sprint 11s-1)
+### Sécurité
+- Next.js 16.4.2 (faille critique de l'optimiseur d'images et déni de service des actions
+  serveur corrigés) ; `npm audit fix`. Restent 3 alertes modérées sans correctif (sprintf-js
+  via mammoth, outil en ligne de commande seulement).
+- En-têtes HTTP sur toutes les pages : CSP stricte sans nonce (rendu statique conservé ; seules
+  origines tierces : le projet Supabase et Google pour la connexion), HSTS 2 ans, X-Frame-Options
+  DENY, nosniff, Referrer-Policy, Cross-Origin-Opener-Policy, Permissions-Policy.
+- CSRF : le proxy refuse toute requête qui modifie des données venant d'un autre site (Origin ou
+  Sec-Fetch-Site) et toute action serveur sans en-tête Origin (403). Webhook Stripe exclu.
+- Limitation du débit (table `rate_limit_hits`, fonction `hit_rate_limit`) : connexion par IP
+  et par courriel (empreinte, jamais en clair), inscription, lien magique, mot de passe oublié,
+  aperçu des codes promo, export des données du compte, export du plan stratégique. Chaque
+  dépassement est inscrit une fois par fenêtre au journal d'audit (`security.rate_limited`).
+- Fichiers déposés : la signature (premiers octets) des couvertures, photos et pièces jointes
+  doit correspondre à l'extension ; un fichier forgé (ex. page HTML renommée en .png) est
+  supprimé du seau et refusé.
+- Tâches planifiées : secret CRON_SECRET comparé en temps constant.
+### Ajouté
+- Webhook Stripe `charge.refunded` : un remboursement total fait dans le tableau de bord
+  Stripe retire les droits automatiquement (fonction `stripe_process_refund`, idempotente) ;
+  un remboursement partiel est seulement inscrit au journal (`order.partial_refund`).
+- Le bouton « Rembourser » reconnaît une commande déjà remboursée par le webhook.
+- Migration `20261111120000_security.sql` ; purge quotidienne des compteurs de débit (cron
+  commandes).
+- Migration `20261111130000_refund_audit.sql` : le remboursement reçu du webhook écrit son
+  entrée au journal directement (write_audit exige un administrateur et le faisait échouer).
+- Tests : 24 unitaires (`security.test.ts`), 6 d'intégration (`security-rls.test.ts`) ;
+  unitaires 660/660, build OK.
+### Déploiement
+- Migrations `20261111120000_security.sql` et `20261111130000_refund_audit.sql` appliquées le
+  2026-10-22 (historique réparé) ; intégration security-rls 6/6, paiements et grand livre sans
+  régression.
+
+### Prévu
+- Sprint 11s-2 (v0.13.1) : audit des politiques RLS et des droits d'exécution, secrets et
+  journaux, tests d'intrusion de base (IDOR, accès sans droits, webhook non signé), rapport.
+
 ## [v0.12.2] - 2026-10-22 — Remboursement fait dans Stripe
 ### Corrigé
 - `/admin/commandes` : si une commande par carte a déjà été remboursée dans le tableau de bord

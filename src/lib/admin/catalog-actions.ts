@@ -7,8 +7,8 @@
  *               action : requireAdmin → validation → écriture (RLS administrateur) → journal d'audit → invalidation du cache « catalogue ».
  *               Toute fonction exportée ici est une action publique : arguments vérifiés.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-16
+ *  Version    : 1.3
+ *  Date       : 2026-10-22
  *  Dépendances: lib/auth/dal.ts, lib/admin/validation.ts, lib/admin/audit.ts, supabase
  * =============================================================
  */
@@ -30,7 +30,7 @@ import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { isOwnImagePath } from "@/lib/catalog/images";
 import { CATALOG_TAG } from "@/lib/catalog/queries";
-import { removeImage, savePrices } from "@/lib/catalog/writes";
+import { acceptUploadedImage, removeImage, savePrices } from "@/lib/catalog/writes";
 import { createClient } from "@/lib/supabase/server";
 
 const t = getDictionary();
@@ -172,6 +172,7 @@ export async function setAuthorPhoto(id: string, path: string): Promise<FormStat
   if (!isUuid(id) || !isOwnImagePath(path, "auteurs", id)) return { error: e.generic };
 
   const supabase = await createClient();
+  if (!(await acceptUploadedImage(supabase, path))) return { error: t.admin.upload.invalidType };
   const { data: previous } = await supabase
     .from("authors")
     .select("photo_path")
@@ -266,6 +267,7 @@ async function saveBookImage(id: string, path: string, column: CoverColumn): Pro
   if (!isUuid(id) || !isOwnImagePath(path, "livres", id)) return { error: e.generic };
 
   const supabase = await createClient();
+  if (!(await acceptUploadedImage(supabase, path))) return { error: t.admin.upload.invalidType };
   const { data: previous } = await supabase
     .from("books")
     .select(column)

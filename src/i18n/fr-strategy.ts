@@ -1069,6 +1069,7 @@ const strategyFr = {
       preparing: "Préparation du fichier…",
       waitSave: "Attendez la fin de l'enregistrement pour exporter.",
       failed: "L'export a échoué. Réessayez dans un instant.",
+      rateLimited: "Trop d'exports en une heure. Réessayez plus tard.",
       documentTitle: "Plan stratégique",
       question: "Question stratégique",
       exportedOn: "Version exportée le {date}",

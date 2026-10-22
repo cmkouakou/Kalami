@@ -7,9 +7,12 @@
  *               (metadata.app ≠ kalami), puis confie le traitement à stripe_process_event
  *               (une seule fois par événement, montant et devise contrôlés). Transmet aussi
  *               les frais Stripe et la taxe pour le grand livre (v0.12.0).
+ *               charge.refunded (v0.13.0) : un remboursement intégral fait dans le tableau
+ *               de bord Stripe retire les droits comme le bouton « Rembourser » de l'admin
+ *               (stripe_process_refund). Le paiement est retrouvé par son PaymentIntent.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-19
+ *  Version    : 1.2
+ *  Date       : 2026-10-22
  *  Dépendances: lib/payments/stripe.ts, lib/supabase/admin.ts
  * =============================================================
  */
@@ -17,7 +20,9 @@
 import { isUuid } from "@/lib/admin/validation";
 import { isCurrency } from "@/lib/currency";
 import {
+  existingFullRefund,
   paymentDetailsOf,
+  refundNoticeOf,
   STRIPE_APP_TAG,
   type StripeEvent,
   verifyStripeSignature,
@@ -27,7 +32,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 // ==================== CONSTANTES ====================
 
 /** Événements écoutés par la destination Kalami. */
-const HANDLED_TYPES = new Set(["checkout.session.completed", "checkout.session.expired"]);
+const HANDLED_TYPES = new Set([
+  "checkout.session.completed",
+  "checkout.session.expired",
+  "charge.refunded",
+]);
 
 /**
  * Accusé de réception (Stripe ne renvoie pas un événement acquitté en 2xx).
@@ -35,6 +44,33 @@ const HANDLED_TYPES = new Set(["checkout.session.completed", "checkout.session.e
  */
 function ack(result: string): Response {
   return Response.json({ received: true, result });
+}
+
+/**
+ * Traite charge.refunded. Les paiements des autres applications du compte ne correspondent
+ * à aucune commande Kalami et sont acquittés « unknown_order ».
+ * @param event - Événement vérifié
+ */
+async function handleRefund(event: StripeEvent): Promise<Response> {
+  const notice = refundNoticeOf(event.data?.object);
+  if (!notice) return ack("no_refund");
+
+  // Identifiant re_… du remboursement intégral (null : partiel ou Stripe injoignable)
+  const refundId = notice.full ? await existingFullRefund(notice.paymentId) : null;
+  const { data, error } = await createAdminClient().rpc("stripe_process_refund", {
+    p_event_id: event.id,
+    p_payment_id: notice.paymentId,
+    p_refund_id: refundId,
+    p_full: notice.full,
+  });
+  if (error) {
+    console.error("[stripe] remboursement non traité :", event.id, error.code, error.message);
+    return Response.json({ error: "database" }, { status: 500 });
+  }
+  if (data === "partial_refund") {
+    console.error("[stripe] remboursement partiel à traiter à la main :", event.id);
+  }
+  return ack(String(data));
 }
 
 // ==================== ROUTE ====================
@@ -58,6 +94,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "invalid_payload" }, { status: 400 });
   }
   if (!HANDLED_TYPES.has(event.type)) return ack("ignored_type");
+  if (event.type === "charge.refunded") return handleRefund(event);
 
   // Compte partagé : seules les sessions marquées « kalami » nous concernent
   const session = event.data?.object;

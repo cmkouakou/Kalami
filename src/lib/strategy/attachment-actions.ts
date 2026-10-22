@@ -8,11 +8,12 @@
  *               propositions retenues au profil. Rôles, nombre de pièces, débit et plafond
  *               sont vérifiés en SQL ; l'application enregistre directement le profil.
  *               Forfait absent ou épuisé : « pay » renvoie vers la page du coach (v0.11.1).
+ *               Le contenu d'une pièce déposée doit correspondre à son extension (v0.13.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-16
+ *  Version    : 1.2
+ *  Date       : 2026-10-22
  *  Dépendances: coach/extract.ts, lib/strategy/prefill.ts, lib/strategy/profile.ts,
- *               lib/auth/dal.ts, lib/supabase/server.ts
+ *               lib/auth/dal.ts, lib/security/file-signature.ts, lib/supabase/server.ts
  * =============================================================
  */
 
@@ -23,6 +24,7 @@ import { refresh } from "next/cache";
 import { getDictionary } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import { requireUser } from "@/lib/auth/dal";
+import { storedFileMatchesExtension } from "@/lib/security/file-signature";
 import {
   ATTACHMENTS_BUCKET,
   ATTACHMENT_FORMATS,
@@ -83,6 +85,11 @@ export async function registerAttachment(
   }
 
   const supabase = await createClient();
+  // Contenu réel conforme à l'extension (le seau ne contrôle que le type déclaré)
+  if (!(await storedFileMatchesExtension(ATTACHMENTS_BUCKET, path))) {
+    await supabase.storage.from(ATTACHMENTS_BUCKET).remove([path]);
+    return { ok: false, error: a.errors.format };
+  }
   const { error } = await supabase.rpc("strategy_add_attachment", {
     p_study_id: studyId,
     p_storage_path: path,

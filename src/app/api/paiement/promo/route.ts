@@ -5,11 +5,12 @@
  *  Description: Aperçu d'un code promo pour l'article affiché (v0.10.3) : la base vérifie
  *               le code (actif, non expiré, non épuisé, pas encore utilisé par ce compte,
  *               valable pour cet article) et renvoie sa réduction. Le montant final est
- *               recalculé par la base à la création de la commande.
+ *               recalculé par la base à la création de la commande. Dix essais par compte
+ *               en dix minutes au plus, contre la recherche de codes à l'aveugle (Sprint 11s).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-19
- *  Dépendances: lib/payments/promo.ts, lib/supabase/server.ts
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
+ *  Dépendances: lib/payments/promo.ts, lib/security/rate-limit.ts, lib/supabase/server.ts
  * =============================================================
  */
 
@@ -22,6 +23,7 @@ import {
   promoFromRow,
   type PromoPreviewRow,
 } from "@/lib/payments/promo";
+import { allowAttempt, userSubject } from "@/lib/security/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -43,13 +45,15 @@ function targetOf(
 
 /**
  * POST /api/paiement/promo — corps { code, item, bookId? }
- * @returns 200 { promo } ; 400 code mal formé ou refusé ({ error }) ; 401 non connecté
+ * @returns 200 { promo } ; 400 code mal formé ou refusé ({ error }) ; 401 non connecté ;
+ *          429 trop d'essais
  */
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return errorResponse(403);
 
   const user = await getCurrentUser();
   if (!user) return errorResponse(401);
+  if (!(await allowAttempt("promo_user", userSubject(user.id)))) return errorResponse(429);
 
   const raw = (await request.json().catch(() => null)) as Record<string, unknown> | null;
   const target = raw ? targetOf(raw) : null;

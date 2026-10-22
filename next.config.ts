@@ -4,14 +4,20 @@
  *  Projet     : Kalami
  *  Description: Configuration Next.js : Cache Components, préchargement partiel, images du
  *               catalogue servies par Supabase Storage, Tailwind via Turbopack, polices des PDF,
- *               PWA (useOffline, en-têtes du service worker) et en-têtes de sécurité.
+ *               PWA (useOffline, en-têtes du service worker) et en-têtes de sécurité (CSP,
+ *               HSTS, cadres interdits : lib/security/headers.ts, Sprint 11s).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-16
+ *  Version    : 1.5
+ *  Date       : 2026-10-22
+ *  Dépendances: src/lib/security/headers.ts
  * =============================================================
  */
 
 import type { NextConfig } from "next";
+
+import { securityHeaders } from "./src/lib/security/headers";
+
+const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -48,10 +54,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-        ],
+        headers: securityHeaders(process.env.NEXT_PUBLIC_SUPABASE_URL, isDev),
       },
       { source: "/sw.js", headers: serviceWorker },
       { source: "/sw-routes.js", headers: serviceWorker },

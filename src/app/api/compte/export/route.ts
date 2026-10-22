@@ -4,11 +4,12 @@
  *  Projet     : Kalami
  *  Description: Téléchargement des renseignements personnels de l'utilisateur connecté au
  *               format JSON (Loi 25). Lecture avec la session : la RLS limite chaque table
- *               aux lignes de l'utilisateur.
+ *               aux lignes de l'utilisateur. Cinq exports par heure au plus (Sprint 11s).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-16
- *  Dépendances: lib/account/export.ts, lib/auth/dal.ts, lib/supabase/server.ts
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
+ *  Dépendances: lib/account/export.ts, lib/auth/dal.ts, lib/security/rate-limit.ts,
+ *               lib/supabase/server.ts
  * =============================================================
  */
 
@@ -19,15 +20,18 @@ import {
 } from "@/lib/account/export";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { errorResponse, PRIVATE_HEADERS } from "@/lib/content/responses";
+import { allowAttempt, userSubject } from "@/lib/security/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 /**
  * GET /api/compte/export
- * @returns 200 fichier JSON en pièce jointe ; 401 sans session ; 500 si une lecture échoue
+ * @returns 200 fichier JSON en pièce jointe ; 401 sans session ; 429 trop d'exports ;
+ *          500 si une lecture échoue
  */
 export async function GET() {
   const user = await getCurrentUser();
   if (!user) return errorResponse(401);
+  if (!(await allowAttempt("export_user", userSubject(user.id)))) return errorResponse(429);
 
   const supabase = await createClient();
   const results = await Promise.all(

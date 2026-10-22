@@ -4,13 +4,15 @@
  *  Projet     : Kalami
  *  Description: Traitement exécuté avant chaque requête (ex-« middleware » de Next.js) :
  *               1. redirection 301 des domaines secondaires ;
- *               2. code de connexion arrivé sur l'accueil → /auth/callback ;
- *               3. rafraîchissement de la session Supabase ;
- *               4. renvoi vers /connexion des pages privées si personne n'est connecté.
+ *               2. refus (403) des modifications venues d'un autre site (CSRF, Sprint 11s) ;
+ *               3. code de connexion arrivé sur l'accueil → /auth/callback ;
+ *               4. rafraîchissement de la session Supabase ;
+ *               5. renvoi vers /connexion des pages privées si personne n'est connecté.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-16
- *  Dépendances: lib/config.ts, lib/domain-redirect.ts, lib/supabase/proxy-session.ts
+ *  Version    : 1.5
+ *  Date       : 2026-10-22
+ *  Dépendances: lib/config.ts, lib/domain-redirect.ts, lib/security/csrf.ts,
+ *               lib/supabase/proxy-session.ts
  * =============================================================
  */
 
@@ -19,6 +21,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { authPath, isProtectedPath, strayAuthCallback } from "@/lib/auth/routes";
 import { APP_URL, REDIRECT_DOMAINS } from "@/lib/config";
 import { getDomainRedirect } from "@/lib/domain-redirect";
+import { isCrossSiteMutation } from "@/lib/security/csrf";
 import { updateSession } from "@/lib/supabase/proxy-session";
 
 /**
@@ -33,6 +36,10 @@ export async function proxy(request: NextRequest) {
     REDIRECT_DOMAINS,
   );
   if (target) return NextResponse.redirect(target, 301);
+
+  if (isCrossSiteMutation(request.method, request.nextUrl.pathname, request.headers)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
 
   const callback = strayAuthCallback(request.nextUrl);
   if (callback) return NextResponse.redirect(callback);

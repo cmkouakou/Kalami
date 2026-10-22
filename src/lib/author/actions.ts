@@ -8,8 +8,8 @@
  *               (RLS, déclencheurs de garde, fonctions SQL) ; chaque argument est vérifié.
  *               Dépôt fermé aux auteurs externes : message « authors_closed » (v0.9.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-16
+ *  Version    : 1.2
+ *  Date       : 2026-10-22
  *  Dépendances: lib/author/validation.ts, lib/catalog/writes.ts, lib/content/manuscript.ts
  * =============================================================
  */
@@ -31,7 +31,7 @@ import {
 } from "@/lib/author/validation";
 import { isOwnImagePath } from "@/lib/catalog/images";
 import { CATALOG_TAG } from "@/lib/catalog/queries";
-import { removeImage, savePrices } from "@/lib/catalog/writes";
+import { acceptUploadedImage, removeImage, savePrices } from "@/lib/catalog/writes";
 import { convertStoredManuscript } from "@/lib/content/manuscript";
 import { slugify, SLUG_MAX_LENGTH } from "@/lib/slug";
 import { createClient } from "@/lib/supabase/server";
@@ -158,6 +158,7 @@ export async function setOwnPhoto(id: string, path: string): Promise<FormState> 
   if (!authorId || authorId !== id || !isOwnImagePath(path, "auteurs", id)) {
     return { error: e.generic };
   }
+  if (!(await acceptUploadedImage(supabase, path))) return { error: t.admin.upload.invalidType };
 
   const { data: previous } = await supabase
     .from("authors")
@@ -257,6 +258,7 @@ async function saveOwnBookImage(
   const supabase = await createClient();
   const authorId = await currentAuthorId(supabase);
   if (!authorId) return { error: a.errors.notAuthor };
+  if (!(await acceptUploadedImage(supabase, path))) return { error: t.admin.upload.invalidType };
 
   const { data: previous } = await supabase
     .from("books")
