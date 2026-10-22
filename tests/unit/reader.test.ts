@@ -4,10 +4,11 @@
  * Description: Tests des fonctions pures de la liseuse : pagination (mesure simulée par
  *              nombre de caractères), position ↔ page, avancement, position de départ,
  *              validation, recherche (accents, extrait de contexte, limite) et parties
- *              autorisées à la recherche.
+ *              autorisées à la recherche. v1.1 : espaces insécables, illustrations
+ *              réduites.
  * Auteur     : Claude Marcel
- * Version    : 1.0
- * Date       : 2026-10-09
+ * Version    : 1.1
+ * Date       : 2026-10-22
  */
 
 import { describe, expect, it } from "vitest";
@@ -40,6 +41,21 @@ const block = (text: string, heading = false): BlockInfo => ({
   length: text.length,
   breaks: wordBreaks(text),
   heading,
+});
+
+/** Mesure simulée qui tient compte de la réduction des illustrations. */
+const fitsScaled = (capacity: number) => (page: Page) =>
+  page.reduce(
+    (sum, fragment) => sum + (fragment.end - fragment.start) * (fragment.scale ?? 1),
+    0,
+  ) <= capacity + 1e-9;
+
+/** Illustration (jamais coupée, réductible) d'une hauteur simulée. */
+const figure = (size: number): BlockInfo => ({
+  length: size,
+  breaks: [],
+  heading: false,
+  shrinkable: true,
 });
 
 const TOC = [
@@ -87,6 +103,31 @@ describe("paginate", () => {
 
   it("renvoie une page vide pour un chapitre vide", () => {
     expect(paginate([], fitsWithin(10))).toEqual([[]]);
+  });
+
+  it("ne coupe jamais à une espace insécable (« ? » seul en haut de page)", () => {
+    expect(wordBreaks("Pourquoi ? Parce que »")).toEqual([11, 17]);
+  });
+
+  it("réduit une illustration plutôt que de la reporter (pas de blanc avant)", () => {
+    const pages = paginate([block("aaaa"), figure(10)], fitsScaled(12));
+    expect(pages).toEqual([
+      [
+        { block: 0, start: 0, end: 4 },
+        { block: 1, start: 0, end: 10, scale: 0.8 },
+      ],
+    ]);
+  });
+
+  it("reporte une illustration qu'il faudrait trop réduire", () => {
+    const pages = paginate([block("aaaaaaaa"), figure(10)], fitsScaled(12));
+    expect(pages).toEqual([[{ block: 0, start: 0, end: 8 }], [{ block: 1, start: 0, end: 10 }]]);
+  });
+
+  it("réduit une illustration plus haute qu'une page entière", () => {
+    expect(paginate([figure(20)], fitsScaled(12))).toEqual([
+      [{ block: 0, start: 0, end: 20, scale: 0.6 }],
+    ]);
   });
 });
 

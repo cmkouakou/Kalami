@@ -9,8 +9,9 @@
                v1.6 : surtitre et chapeau de module, sommaire cliquable, accès rapide.
                v1.7 : couvertures (pages à tourner, défilement), encart Kalami Stratégie.
                v1.8 : couverture entière (plus rognée), page d'ouverture d'un module.
+               v1.9 : listes coupées entre deux pages (élément repris sans numéro).
   Auteur     : Claude Marcel
-  Version    : 1.8
+  Version    : 1.9
   Date       : 2026-10-22
   Dépend de  : globals.css (jetons de la charte, polices --police-lecture / --police-interface)
 =============================================================
@@ -228,6 +229,17 @@
 
 .liseuse-texte ol {
   list-style: decimal;
+}
+
+/* Liste coupée entre deux pages : reprise collée en haut de page, et l'élément commencé
+   sur la page précédente continue sans puce ni numéro */
+.liseuse-texte ol.suite,
+.liseuse-texte ul.suite {
+  margin-top: 0;
+}
+
+.liseuse-texte li.suite {
+  list-style-type: none;
 }
 
 .liseuse-texte table {

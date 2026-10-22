@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.13.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.13.3 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -51,7 +51,8 @@ Version actuelle : v0.13.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #45 | 2026-10-22 | v0.12.2 (remboursement fait dans Stripe) et v0.13.0 (Sprint 11s-1) : Next 16.4.2, CSP et en-têtes, CSRF, limitation du débit, signature des fichiers, webhook charge.refunded | ~500 000 | ~3.00 $ |
 | #46 | 2026-10-22 | v0.13.1 (Sprint 11s-2) : audit RLS et SECURITY DEFINER, secrets et journaux, SSRF du PDF, sondes en production, 4 correctifs de droits, rapport | ~120 000 | ~0.72 $ |
 | #47 | 2026-10-22 | v0.13.2 : liseuse — couverture entière, pages numérotées dans le livre, glissement sur les schémas, défilement imposé sur téléphone, page d'ouverture des modules | ~200 000 | ~1.20 $ |
-| **TOTAL** | | | **~15 230 000** | **~91.38 $** |
+| #48 | 2026-10-22 | v0.13.3 : liseuse — listes coupées entre pages (« 1. ? »), illustrations réduites au lieu du blanc avant elles | ~60 000 | ~0.36 $ |
+| **TOTAL** | | | **~15 290 000** | **~91.74 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -66,7 +67,7 @@ Version actuelle : v0.13.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Sprint 1 — fournisseur Google configuré (mode test ; publication après les pages légales du 11a)
 - [x] Sprint 2 — catalogue public, devises, administration (v0.3.0)
 - [ ] Sprint 2 — test de l'administration connecté avec MFA (par l'utilisateur)
-- [ ] CI — variables GitHub NEXT_PUBLIC_SUPABASE_URL / _PUBLISHABLE_KEY
+- [x] CI — variables GitHub NEXT_PUBLIC_SUPABASE_URL / _PUBLISHABLE_KEY (onglet Variables) ; CI verte le 2026-10-22
 - [x] Sprint 3 — contenu protégé : conversion, extrait, API 403/429, droits (v0.4.0)
 - [x] Sprint 3 — migration `20261008120000_content.sql` appliquée, tests d'intégration 85/85
 - [ ] Sprint 3 — essai réel : dépôt d'un DOCX et d'un EPUB en administration
@@ -110,7 +111,7 @@ Version actuelle : v0.13.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [ ] Sprint 11s-1 — vérifier la CSP en production (connexion Google, dépôts, présence, liseuse) — en-têtes, paiement Stripe, fiche, liseuse (polices, figures, pages) et bandeau des témoins vérifiés sans violation le 2026-10-22 ; reste, avec une session : connexion Google, dépôts, présence
 - [x] Sprint 11s-2 — audit des droits, secrets, journaux, SSRF du PDF, sondes en production ; rapport `docs/SECURITE.md` (v0.13.1) ; unitaires 660/660
 - [x] v0.13.2 — liseuse : couverture entière, numérotation continue du livre, pages sans texte, défilement imposé sur téléphone, page d'ouverture des modules ; unitaires 661/661
-- [ ] v0.13.2 — listes coupées entre deux pages (« 1. ? ») et blanc avant certaines figures
+- [x] v0.13.3 — listes coupées entre deux pages (« 1. ? ») et blanc avant certaines figures
 - [x] Sprint 11s-2 — migration `20261112120000_security_audit.sql` appliquée le 2026-10-22 (historique réparé), intégration security-audit-rls et legal-rls 12/12
 - [x] Sprint 10a — grand livre, commissions, `/auteur/revenus`, `/admin/revenus`, frais Mobile Money (v0.12.0) ; unitaires 621/621, build OK
 - [x] Sprint 10a — migration `20261109120000_ledger.sql` appliquée le 2026-10-19 (historique réparé), intégration ledger-rls 4/4, rattrapage : 1 commande, 1 écriture

@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## [v0.13.3] - 2026-10-22 — Liseuse : listes et illustrations entre deux pages
+### Corrigé
+- « 1. ? » en haut de page : la pagination ne coupe plus à une espace insécable (avant
+  « ? ! ; : », dans les guillemets « ») ; une liste reprise sur la page suivante garde sa
+  numérotation (`start`), et l'élément commencé sur la page précédente continue sans numéro.
+- Blanc avant certaines figures : une illustration un peu trop haute pour la fin de la page
+  est réduite (jusqu'à 60 % de sa hauteur) au lieu d'être reportée ; seule sur sa page, elle
+  est réduite jusqu'à y tenir (elle débordait).
+
 ## [v0.13.2] - 2026-10-22 — Liseuse : couverture, pages du livre, téléphone, ouvertures
 ### Corrigé
 - Couverture affichée en entier (elle était coupée vers le bas) ; plus de « p. 1 » sur la

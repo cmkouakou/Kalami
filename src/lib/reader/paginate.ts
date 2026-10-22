@@ -8,14 +8,17 @@
  *               une limite de mot ; les intertitres ne sont jamais coupés ni laissés seuls
  *               en bas de page. v1.1 : saut de page forcé après un bloc (breakAfter),
  *               pour la page d'ouverture d'un module.
+ *               v1.2 : jamais de coupure à une espace insécable (« ? » seul en haut de
+ *               page) ; une illustration trop haute pour la fin de page est réduite au
+ *               lieu d'être reportée (blanc avant la figure).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-22
  *  Dépendances: types.ts
  * =============================================================
  */
 
-import type { BlockInfo, Page } from "./types";
+import type { BlockInfo, Fragment, Page } from "./types";
 
 /** Indique si une page tient dans la zone d'affichage. */
 export type FitsFn = (page: Page) => boolean;
@@ -23,13 +26,27 @@ export type FitsFn = (page: Page) => boolean;
 // ==================== OUTILS ====================
 
 /**
- * Décalages où un texte peut être coupé : juste après chaque suite d'espaces.
+ * Espaces sécables : toutes les espaces sauf les insécables (U+00A0, U+2007, U+202F),
+ * posées par la typographie française avant « ? ! ; : » et dans les guillemets « ».
+ */
+const BREAKABLE_SPACES = /[^\S   ]+/g;
+
+/** Réduction minimale d'une illustration à la suite du texte d'une page. */
+const MIN_SCALE = 0.6;
+/** Réduction minimale d'une illustration seule sur sa page (plus haute que la page). */
+const MIN_SCALE_ALONE = 0.2;
+/** Pas de réduction d'une illustration. */
+const SCALE_STEP = 0.05;
+
+/**
+ * Décalages où un texte peut être coupé : juste après chaque suite d'espaces sécables
+ * (jamais devant un « ? » : il ne doit pas commencer la page suivante).
  * @param text - Texte brut du bloc
  * @returns Décalages croissants, strictement entre 0 et la longueur du texte
  */
 export function wordBreaks(text: string): number[] {
   const breaks: number[] = [];
-  for (const match of text.matchAll(/\s+/g)) {
+  for (const match of text.matchAll(BREAKABLE_SPACES)) {
     const end = (match.index ?? 0) + match[0].length;
     if (end > 0 && end < text.length) breaks.push(end);
   }
@@ -63,6 +80,38 @@ function largestFittingBreak(
   return best;
 }
 
+/**
+ * Plus grande réduction d'une illustration qui la fait tenir sur la page (recherche
+ * dichotomique : plus elle est petite, plus elle a de chances de tenir).
+ * @param minimum - Réduction la plus forte acceptée
+ * @returns Part de la hauteur retenue (< 1), ou null si même la plus forte ne suffit pas
+ */
+function largestFittingScale(
+  page: Page,
+  fragment: Fragment,
+  minimum: number,
+  fits: FitsFn,
+): number | null {
+  // Réductions possibles, de la plus faible (0,95) à la plus forte (minimum)
+  const scales: number[] = [];
+  for (let step = 1; 1 - step * SCALE_STEP >= minimum - 1e-9; step++) {
+    scales.push(Math.round((1 - step * SCALE_STEP) * 100) / 100);
+  }
+  let low = 0;
+  let high = scales.length - 1;
+  let best: number | null = null;
+  while (low <= high) {
+    const middle = (low + high) >> 1;
+    if (fits([...page, { ...fragment, scale: scales[middle] }])) {
+      best = scales[middle];
+      high = middle - 1;
+    } else {
+      low = middle + 1;
+    }
+  }
+  return best;
+}
+
 // ==================== PAGINATION ====================
 
 /**
@@ -72,6 +121,8 @@ function largestFittingBreak(
  * paragraphe au dernier mot qui tient, ou passer à la page suivante. Un bloc trop grand
  * pour une page vide est placé quand même (dépassement accepté plutôt qu'une boucle).
  * Un bloc marqué breakAfter ferme sa page : le bloc suivant commence une page neuve.
+ * Une illustration qui ne tient pas est réduite (jusqu'à 60 % à la suite du texte, plus
+ * si elle est seule sur sa page) avant d'être reportée.
  *
  * @param blocks - Description des blocs du chapitre
  * @param fits   - Mesure : vrai si la page tient dans la zone d'affichage
@@ -104,6 +155,17 @@ export function paginate(blocks: BlockInfo[], fits: FitsFn): Page[] {
           current = [];
         }
         return;
+      }
+
+      if (info.shrinkable) {
+        // Illustration un peu trop haute : réduite sur cette page plutôt que reportée
+        // (le report laissait un blanc) ; seule sur sa page, réduite jusqu'à y tenir
+        const minimum = current.length > 0 ? MIN_SCALE : MIN_SCALE_ALONE;
+        const scale = largestFittingScale(current, whole, minimum, fits);
+        if (scale !== null) {
+          current.push({ ...whole, scale });
+          return;
+        }
       }
 
       const options = info.heading ? [] : info.breaks.filter((b) => b > start);

@@ -5,8 +5,9 @@
  *  Description: Types de la liseuse (position, réglages, pages, signets, annotations,
  *               recherche, données de départ), partagés entre le serveur et le client.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-10
+ *               v1.2 : réduction d'une illustration sur sa page (scale, shrinkable).
+ *  Version    : 1.2
+ *  Date       : 2026-10-22
  *  Dépendances: lib/catalog/types.ts
  * =============================================================
  */
@@ -38,6 +39,8 @@ export type Fragment = {
   block: number;
   start: number;
   end: number;
+  /** Illustration réduite pour tenir sur la page (part de sa hauteur, < 1), sinon absent */
+  scale?: number;
 };
 
 /** Page = suite de fragments (un bloc peut continuer sur la page suivante). */
@@ -53,6 +56,8 @@ export type BlockInfo = {
   heading: boolean;
   /** Saut de page après le bloc (fin de la page d'ouverture d'un module) */
   breakAfter?: boolean;
+  /** Illustration : réduite plutôt que de laisser un blanc avant elle */
+  shrinkable?: boolean;
 };
 
 // ==================== RÉGLAGES ====================

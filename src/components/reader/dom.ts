@@ -9,8 +9,10 @@
  *               v1.1 : préchargement des images avant la mesure.
  *               v1.2 : surtitre de chapitre (« MODULE 3 ») au-dessus du titre.
  *               v1.3 : page d'ouverture d'un module ; images non déplaçables (glissement).
+ *               v1.4 : liste coupée entre deux pages (numérotation reprise, élément
+ *               commencé sans numéro) ; illustration réduite pour tenir sur sa page.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-10-22
  *  Dépendances: lib/reader/paginate.ts, lib/reader/types.ts
  * =============================================================
@@ -24,6 +26,9 @@ const UNSPLITTABLE = new Set(["TABLE", "PRE", "FIGURE", "HR"]);
 
 /** Éléments supprimés s'ils deviennent vides après une découpe (puce ou ligne orpheline). */
 const PRUNABLE = "li, tr, dt, dd";
+
+/** Listes dont la numérotation continue d'une page à l'autre. */
+const LISTS = new Set(["OL", "UL"]);
 
 // ==================== BLOCS ====================
 
@@ -108,6 +113,8 @@ export function blockInfo(element: HTMLElement): BlockInfo {
     breaks:
       heading || UNSPLITTABLE.has(element.tagName) ? [] : wordBreaks(text),
     heading,
+    shrinkable:
+      element.tagName === "FIGURE" && element.querySelector("img") !== null,
   };
 }
 
@@ -165,6 +172,64 @@ function deleteText(
 }
 
 /**
+ * Liste reprise en haut de page : la numérotation continue au premier élément gardé, et
+ * un élément commencé sur la page précédente est affiché sans puce ni numéro (sinon
+ * « 1. » devant la fin d'une phrase). Les sous-listes coupées sont traitées de même.
+ * @param original - Liste d'origine (décalages comptés dans son texte)
+ * @param clone    - Copie déjà découpée
+ * @param start    - Premier caractère gardé, dans le texte de la liste d'origine
+ */
+function continueList(
+  original: Element,
+  clone: Element,
+  start: number,
+): void {
+  let seen = 0;
+  let index = 0;
+  for (const node of original.childNodes) {
+    const length = node.textContent?.length ?? 0;
+    if (!(node instanceof HTMLLIElement)) {
+      seen += length;
+      continue;
+    }
+    if (start >= seen + length) {
+      seen += length;
+      index++;
+      continue;
+    }
+    if (clone instanceof HTMLOListElement && original instanceof HTMLOListElement)
+      clone.start = original.start + index;
+    const item = clone.querySelector(":scope > li");
+    const cut = node.textContent?.slice(0, start - seen).trim() !== "";
+    if (item && cut) {
+      item.classList.add("suite");
+      continueNestedList(node, item, start - seen);
+    }
+    return;
+  }
+}
+
+/**
+ * Sous-liste coupée dans un élément de liste (voir continueList).
+ * @param original - Élément de liste d'origine
+ * @param clone    - Élément correspondant dans la copie découpée
+ * @param start    - Premier caractère gardé, dans le texte de l'élément d'origine
+ */
+function continueNestedList(original: Element, clone: Element, start: number) {
+  let seen = 0;
+  for (const node of original.childNodes) {
+    const length = node.textContent?.length ?? 0;
+    const list = node instanceof HTMLOListElement || node instanceof HTMLUListElement;
+    if (list && start > seen && start < seen + length) {
+      const nested = clone.querySelector(":scope > ol, :scope > ul");
+      if (nested) continueList(node, nested, start - seen);
+      return;
+    }
+    seen += length;
+  }
+}
+
+/**
  * Copie d'un bloc limitée au texte entre deux décalages, mise en forme conservée.
  * @param element - Bloc d'origine (non modifié)
  * @param start   - Premier caractère gardé
@@ -192,7 +257,24 @@ export function sliceBlock(
   clone.querySelectorAll(PRUNABLE).forEach((item) => {
     if (!item.textContent?.trim()) item.remove();
   });
+  if (start > 0 && LISTS.has(clone.tagName))
+    continueList(element, clone, start);
   return clone;
+}
+
+/**
+ * Réduit les images d'une illustration à une part de leur hauteur affichée, mesurée
+ * avant la pagination (data-hauteur, voir createMeasurer). Les proportions sont gardées.
+ * @param element - Copie de l'illustration
+ * @param scale   - Part de la hauteur (< 1)
+ */
+function shrinkImages(element: HTMLElement, scale: number): void {
+  element
+    .querySelectorAll<HTMLImageElement>("img[data-hauteur]")
+    .forEach((image) => {
+      const height = Number(image.dataset.hauteur) * scale;
+      image.style.maxHeight = `${Math.floor(height)}px`;
+    });
 }
 
 /**
@@ -201,12 +283,36 @@ export function sliceBlock(
  * @param page     - Fragments de la page
  */
 export function renderPage(elements: HTMLElement[], page: Page): HTMLElement[] {
-  return page.map(({ block, start, end }) =>
-    sliceBlock(elements[block], start, end),
-  );
+  return page.map(({ block, start, end, scale }) => {
+    const element = sliceBlock(elements[block], start, end);
+    if (scale) shrinkImages(element, scale);
+    return element;
+  });
 }
 
 // ==================== MESURE ====================
+
+/**
+ * Note sur chaque image d'illustration sa hauteur affichée dans la page (data-hauteur),
+ * base de sa réduction quand elle ne tient pas entière (shrinkImages).
+ * @param box      - Zone de mesure, aux dimensions du contenu d'une page
+ * @param elements - Éléments du chapitre ; leurs images reçoivent data-hauteur
+ */
+function measureImages(box: HTMLElement, elements: HTMLElement[]): void {
+  for (const element of elements) {
+    if (element.tagName !== "FIGURE") continue;
+    const images = element.querySelectorAll("img");
+    if (images.length === 0) continue;
+    const copy = element.cloneNode(true) as HTMLElement;
+    box.replaceChildren(copy);
+    copy.querySelectorAll("img").forEach((image, index) => {
+      const height = image.getBoundingClientRect().height;
+      // Image illisible (hauteur nulle) : jamais réduite
+      if (height > 0) images[index].dataset.hauteur = String(height);
+    });
+  }
+  box.replaceChildren();
+}
 
 /**
  * Zone de mesure invisible aux dimensions du contenu d'une page.
@@ -228,6 +334,7 @@ export function createMeasurer(
   box.style.height = `${height}px`;
   box.setAttribute("aria-hidden", "true");
   host.append(box);
+  measureImages(box, elements);
 
   const fits: FitsFn = (page) => {
     box.replaceChildren(...renderPage(elements, page));
