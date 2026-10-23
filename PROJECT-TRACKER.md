@@ -98,7 +98,7 @@ Version actuelle : v0.13.13 · Stratégie v0.11.4 | Statut : 🟡 En cours (proj
 - [x] Sprint 9 — contrat finalisé et republié (relecture juridique conseillée)
 - [x] Sprint 8 — PDF filigrané : Chromium, lien signé 24 h, 3 téléchargements, purge (v0.8.1)
 - [ ] Sprint 8 — appliquer `20261012120000_pdf.sql`, définir `CRON_SECRET` dans Vercel
-- [ ] Sprint 8 — essai réel : option PDF sur un livre, droit accordé, téléchargement
+- [x] Sprint 8 — essai réel : option PDF sur un livre, droit accordé, téléchargement (2026-10-23 : filigrane, limite de 3, lien expiré, remise à 3 OK)
 - [x] Sprint 11a-1 — textes légaux, témoins, export et suppression du compte (v0.9.0, code)
 - [x] Sprint 11a-1 — migration 20261031120000 appliquée, historique réparé, tests RLS legal-rls (8/8)
 - [x] Sprint 11a-2 — PWA et accessibilité (v0.9.1), unitaires 511/511, axe 0 violation
@@ -129,6 +129,18 @@ Version actuelle : v0.13.13 · Stratégie v0.11.4 | Statut : 🟡 En cours (proj
 - [x] Sprint 10b — versements, `/admin/versements`, `/admin/journal`, tableau de bord admin (v0.12.1) ; unitaires 633/633
 - [x] Sprint 10b — migration `20261110120000_payouts.sql` appliquée le 2026-10-19, intégration payouts-rls 6/6, ledger-rls 4/4
 - [ ] Paiements 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [ ] Mobile Money via Paystack (décision 2026-10-23) — encaissement par agrégateur, avec partage
+  des paiements à la source : 1 auteur = 1 sous-compte Mobile Money (MTN, Orange, Wave CIV), sa
+  part lui est versée automatiquement, la commission reste à Kalami. Remplace la validation
+  manuelle et les demandes de versement. Option 2 (numéros des auteurs + blocage) écartée.
+  - [ ] Ajouter l'entreprise « Kalami » dans Paystack (par l'utilisateur) : ne pas utiliser
+    graph fuzion, déclarée pour une autre activité ; décrire la vente de livres et les paiements
+    partagés, compléter la conformité
+  - [ ] Écrire au support Paystack : sous-compte sur le numéro d'un particulier, frais
+    d'encaissement et de versement, pays couverts hors Côte d'Ivoire (Sénégal, Bénin…)
+  - [ ] Intégration en mode test : sous-compte créé quand l'auteur saisit son numéro,
+    paiement avec code du sous-compte, webhook de confirmation, écriture au grand livre
+  - [ ] Passage en Live après validation de l'entreprise
 - [ ] Idée (2026-10-22, après la v1.0.0) — espace auteur : atelier de couverture payant, connecté
   à Claude. L'auteur décrit sa couverture, ajoute ses images, et l'outil la génère s'il n'en a
   pas. À étudier : Claude rédige la description et compose la mise en page (titre, auteur,
