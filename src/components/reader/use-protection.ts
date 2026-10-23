@@ -10,8 +10,9 @@
  *               par CSS (@media print). Dissuasif seulement : les captures d'écran restent
  *               possibles, d'où le filigrane personnel.
  *               v1.2 : attachProtection séparée du hook (testable sans React).
+ *               v1.3 : appui long au doigt permis sur le texte (sélection sur Android).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-22
  *  Dépendances: react, lib/reader/annotations.ts
  * =============================================================
@@ -72,6 +73,13 @@ export function attachProtection(root: HTMLElement, doc: Document = document): (
   const block = (event: Event) => {
     if (!isEditable(event.target)) event.preventDefault();
   };
+  // Appui long au doigt sur le texte : c'est lui qui lance la sélection sur Android (bloquer
+  // le menu contextuel l'empêcherait de surligner) ; la copie reste bloquée par onCopy.
+  const onContextMenu = (event: Event) => {
+    const touch = (event as PointerEvent).pointerType === "touch";
+    if (touch && isInside(event.target, SELECTABLE)) return;
+    block(event);
+  };
   const onSelectStart = (event: Event) => {
     if (!isEditable(event.target) && !isInside(event.target, SELECTABLE)) {
       event.preventDefault();
@@ -95,16 +103,17 @@ export function attachProtection(root: HTMLElement, doc: Document = document): (
     if (selection.toString().length > MAX_QUOTE_LENGTH) selection.removeAllRanges();
   };
 
-  const rootEvents = ["contextmenu", "dragstart"] as const;
+  root.addEventListener("contextmenu", onContextMenu);
+  root.addEventListener("dragstart", block);
   const documentEvents = ["copy", "cut"] as const;
-  rootEvents.forEach((name) => root.addEventListener(name, block));
   root.addEventListener("selectstart", onSelectStart);
   documentEvents.forEach((name) => doc.addEventListener(name, onCopy));
   doc.addEventListener("keydown", onKeyDown);
   doc.addEventListener("selectionchange", onSelectionChange);
 
   return () => {
-    rootEvents.forEach((name) => root.removeEventListener(name, block));
+    root.removeEventListener("contextmenu", onContextMenu);
+    root.removeEventListener("dragstart", block);
     root.removeEventListener("selectstart", onSelectStart);
     documentEvents.forEach((name) => doc.removeEventListener(name, onCopy));
     doc.removeEventListener("keydown", onKeyDown);

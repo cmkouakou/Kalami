@@ -11,7 +11,8 @@
  *               v1.2 : isPhone() reconnaît aussi le téléphone à la taille de son écran
  *               (« version pour ordinateur » du navigateur : page large, écran petit).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *               v1.3 : isDesktopViewOnPhone() (avis de la liseuse).
+ *  Version    : 1.3
  *  Date       : 2026-10-22
  *  Dépendances: lib/reader/types.ts, lib/reader/position.ts
  * =============================================================
@@ -52,6 +53,14 @@ export function isPhone(): boolean {
     window.matchMedia("(pointer: coarse)").matches &&
     Math.min(width, height) <= PHONE_SCREEN_MAX
   );
+}
+
+/**
+ * Vrai sur un téléphone affiché en « version pour ordinateur » : la page fait environ
+ * 980 px, réduite à la taille de l'écran (texte minuscule, zoom qui fait sortir le texte).
+ */
+export function isDesktopViewOnPhone(): boolean {
+  return isPhone() && !window.matchMedia(PHONE_QUERY).matches;
 }
 
 // ==================== ACCÈS SÛR ====================

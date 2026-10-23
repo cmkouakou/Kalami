@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## [v0.13.9] - 2026-10-22 — Liseuse sur téléphone : surligner et lire en grand
+### Corrigé
+- Impossible de surligner ou d'annoter sur téléphone (Android) : la protection bloquait
+  l'appui long, qui lance la sélection du texte. L'appui long au doigt est permis sur le
+  texte du livre ; la copie, le clic droit à la souris et l'impression restent bloqués.
+### Ajouté
+- Avis refermable dans la liseuse quand le téléphone affiche la « version pour
+  ordinateur » (page d'environ 980 px réduite : texte minuscule, zoom qui fait sortir le
+  texte de l'écran), avec la marche à suivre pour la désactiver.
+
 ## [v0.13.8] - 2026-10-22 — Recette v1.0 (Sprint 11b, étape 1)
 ### Ajouté
 - docs/RECETTE-v1.md : les 8 critères d'acceptation du cahier (§8) et les exigences légales

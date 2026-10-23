@@ -17,7 +17,8 @@
  *               pages numérotées du début à la fin du livre (compteur en arrière-plan).
  *               v1.7 : téléphone reconnu aussi en « version pour ordinateur » (isPhone).
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
+ *               v1.8 : avis « version pour ordinateur » sur téléphone.
+ *  Version    : 1.8
  *  Date       : 2026-10-22
  *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
  *               use-*, storage, lib/reader, lib/config, components/ui
@@ -51,6 +52,7 @@ import {
   IconSquare,
   IconType,
   IconVolume,
+  IconX,
 } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
@@ -98,6 +100,7 @@ import { ScrollView } from "./scroll-view";
 import { SeekBar } from "./seek-bar";
 import {
   loadLocalPosition,
+  isDesktopViewOnPhone,
   isPhone,
   loadSettings,
   PHONE_QUERY,
@@ -219,6 +222,8 @@ export function Reader({ data, price, buy }: ReaderProps) {
   // Téléphone : défilement imposé, quel que soit le réglage enregistré
   const [phone, setPhone] = useState(isPhone);
   const mode = phone ? "scroll" : settings.mode;
+  // Téléphone en « version pour ordinateur » : texte réduit, avis refermable
+  const [desktopView, setDesktopView] = useState(isDesktopViewOnPhone);
   // Zone de mesure de la vue « pages à tourner » (compteur des pages du livre)
   const [measure, setMeasure] = useState<MeasureTarget | null>(null);
   const [opening, setOpening] = useState<Opening>(() => ({
@@ -786,6 +791,22 @@ export function Reader({ data, price, buy }: ReaderProps) {
         )}
         {panelButton("settings", <IconType size={ICON_SIZE} />)}
       </header>
+      {desktopView && (
+        <div
+          role="note"
+          className="liseuse-barre flex items-center gap-2 border-b border-line px-4 py-1"
+        >
+          <p className="flex-1 text-small">{t.reader.desktopView}</p>
+          <button
+            type="button"
+            onClick={() => setDesktopView(false)}
+            aria-label={t.reader.desktopViewClose}
+            className={TOOL_BUTTON}
+          >
+            <IconX size={ICON_SIZE} />
+          </button>
+        </div>
+      )}
 
       {/* ==================== TEXTE ==================== */}
       <main

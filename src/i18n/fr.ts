@@ -210,6 +210,10 @@ const fr = {
     bookStart: "Début du livre",
     bookEnd: "Fin du livre",
     toolbar: "Outils de lecture",
+    desktopView:
+      "Votre navigateur affiche la « version pour ordinateur » : le texte est réduit. " +
+      "Décochez-la dans le menu du navigateur (⋮ ou aA) pour lire confortablement.",
+    desktopViewClose: "Fermer cet avis",
     resume: "Reprendre la lecture ({percent} %)",
     readBook: "Lire le livre",
     protection:

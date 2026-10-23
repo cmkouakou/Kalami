@@ -101,6 +101,18 @@ describe("protection de la liseuse", () => {
     expect(blocked(root, cancelable("dragstart"))).toBe(true);
   });
 
+  it("laisse l'appui long au doigt sélectionner le texte du livre (Android)", () => {
+    const touch = () => Object.assign(cancelable("contextmenu"), { pointerType: "touch" });
+    const mouse = () => Object.assign(cancelable("contextmenu"), { pointerType: "mouse" });
+    // Hors du texte (barre, marges) : toujours bloqué
+    expect(blocked(root, touch())).toBe(true);
+    const text = new FakeElement("DIV", [".liseuse-texte"]);
+    detach();
+    detach = attachProtection(text as unknown as HTMLElement, doc as unknown as Document);
+    expect(blocked(text, touch())).toBe(false);
+    expect(blocked(text, mouse())).toBe(true);
+  });
+
   it("bloque copier et couper sur le texte du livre", () => {
     selection = fakeSelection("Un passage du livre", new FakeElement("P", [".liseuse-texte"]));
     expect(blocked(doc, cancelable("copy"))).toBe(true);
