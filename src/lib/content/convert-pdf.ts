@@ -9,9 +9,12 @@
  *               « Chapitre 2 »), les paragraphes à l'interligne, au retrait de première
  *               ligne et aux lignes courtes ; les mots coupés en fin de ligne sont recollés.
  *               Un PDF numérisé (images sans texte) est refusé.
+ *               v1.1 : marge droite habituelle (texte non justifié), fin de paragraphe
+ *               seulement si le mot suivant aurait tenu sur la ligne, répliques à tiret
+ *               avec retrait suspendu, lettrines recollées, signature « Par… » retirée.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-16
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: unpdf (pdf.js), htmlparser2, headings.ts, sanitize.ts
  * =============================================================
  */
@@ -41,6 +44,8 @@ type Line = {
   y: number;
   right: number;
   size: number;
+  /** Ligne placée à côté d'une lettrine : son décalage n'est pas un retrait. */
+  beside?: boolean;
 };
 
 // ==================== CONSTANTES ====================
@@ -65,6 +70,14 @@ const NOTE_RATIO = 0.9;
 const FOOTNOTE_CALL = /^[\d*†‡]+$/;
 /** Numéro de page seul (« 12 », « - 12 - », « xii »). */
 const PAGE_NUMBER = /^[\s\-–—]*(?:\d{1,4}|[ivxlc]{1,7})[\s\-–—]*$/i;
+/** Rapport minimal au corps de texte d'une lettrine (grande initiale seule). */
+const DROP_CAP_RATIO = 2;
+/** Signature de l'auteur en tête du texte (« Par Jeanne Diallo », « By … »). */
+const BYLINE = /^(?:par|by)\s+\S/i;
+/** Largeur moyenne d'un caractère, en part de la taille de police. */
+const CHAR_WIDTH = 0.5;
+/** Rang (centile) de la marge droite habituelle parmi les fins de ligne d'une page. */
+const RIGHT_PERCENTILE = 0.9;
 
 // ==================== LIGNES ====================
 
@@ -168,12 +181,20 @@ function lineSpacing(pages: Line[][], body: number): number {
   return gaps[Math.floor(gaps.length / 2)] ?? body * 1.4;
 }
 
-/** Marges gauche et droite du texte de chaque page (pages paires et impaires diffèrent). */
+/**
+ * Marges gauche et droite du texte de chaque page (pages paires et impaires diffèrent).
+ * La marge droite est la fin de ligne habituelle (centile), pas la plus lointaine : une
+ * signature ou une ligne qui déborde ne la décale pas.
+ */
 function pageBounds(pages: Line[][]): { left: number; right: number }[] {
-  return pages.map((lines) => ({
-    left: Math.min(...lines.map((line) => line.x), Infinity),
-    right: Math.max(...lines.map((line) => line.right), 0),
-  }));
+  return pages.map((lines) => {
+    const rights = lines.map((line) => line.right).sort((a, b) => a - b);
+    const right =
+      rights.length < 5
+        ? (rights[rights.length - 1] ?? 0)
+        : rights[Math.floor((rights.length - 1) * RIGHT_PERCENTILE)];
+    return { left: Math.min(...lines.map((line) => line.x), Infinity), right };
+  });
 }
 
 /** Hauteur habituelle de la première ligne d'une page (médiane). */
@@ -246,6 +267,48 @@ function splitFootnotes(pages: Line[][], body: number): { pages: Line[][]; notes
   return { pages: kept, notes };
 }
 
+/**
+ * Recolle les lettrines : une grande initiale seule (« F ») rejoint la première ligne
+ * placée à sa droite (« ermement » devient « Fermement ») ; les autres lignes à côté
+ * d'elle sont marquées pour que leur décalage ne passe pas pour un retrait.
+ * @param lines - Lignes d'une page, de haut en bas
+ * @param body  - Taille du corps de texte
+ */
+function mergeDropCaps(lines: Line[], body: number): Line[] {
+  let result = lines;
+  for (const drop of lines) {
+    if (drop.size < body * DROP_CAP_RATIO || !/^\p{Lu}$/u.test(drop.text)) continue;
+    const beside = result.filter(
+      (line) =>
+        line !== drop &&
+        line.x >= drop.right - 1 &&
+        line.y >= drop.y - 2 &&
+        line.y <= drop.y + drop.size * 0.8,
+    );
+    if (beside.length === 0) continue;
+    const first = beside.reduce((top, line) => (line.y > top.y ? line : top));
+    result = result
+      .filter((line) => line !== drop)
+      .map((line) => {
+        if (line === first) return { ...line, text: drop.text + line.text, x: drop.x };
+        return beside.includes(line) ? { ...line, beside: true } : line;
+      });
+  }
+  return result;
+}
+
+/**
+ * Vrai si le premier mot d'une ligne aurait tenu au bout de la ligne précédente : celle-ci
+ * s'est donc arrêtée volontairement (fin de paragraphe).
+ * @param previous - Ligne précédente
+ * @param line     - Ligne examinée
+ * @param right    - Marge droite habituelle de la page de la ligne précédente
+ */
+function nextWordFits(previous: Line, line: Line, right: number): boolean {
+  const word = line.text.split(" ")[0];
+  return right - previous.right > (word.length + 1) * line.size * CHAR_WIDTH;
+}
+
 // ==================== STRUCTURE ====================
 
 /**
@@ -300,7 +363,8 @@ function headingLevels(lines: Line[], body: number): Map<number, number> {
  */
 function toHtml(source: Line[][]): string {
   const body = bodySize(source.flat());
-  const { pages, notes } = splitFootnotes(withoutTitlePages(source, body), body);
+  const merged = source.map((lines) => mergeDropCaps(lines, body));
+  const { pages, notes } = splitFootnotes(withoutTitlePages(merged, body), body);
   // Appels de note en petits caractères (« 2 », « * ») : retirés du texte
   const all = pages
     .flat()
@@ -315,6 +379,8 @@ function toHtml(source: Line[][]): string {
   let heading: { level: number; text: string; line: Line } | null = null;
   let previous: Line | null = null;
   let lastPage = -1;
+  // Décalage (depuis la marge) du tiret de la réplique en cours ; null hors réplique
+  let itemOffset: number | null = null;
   // Notes des pages déjà lues : placées après le paragraphe en cours, sans le couper
   let pendingNotes: string[] = [];
 
@@ -361,6 +427,12 @@ function toHtml(source: Line[][]): string {
     }
     flushHeading();
 
+    // Signature en tête du texte : l'auteur figure déjà sur la fiche du livre
+    const opening = html.length === 0 && !paragraph;
+    const byline =
+      BYLINE.test(line.text) && line.text.length <= 80 && !PARAGRAPH_END.test(line.text);
+    if (opening && byline) continue;
+
     // Nouvelle partie sans titre : pages blanches sautées ou texte commencé plus bas
     if (lastPage >= 0 && line.page !== lastPage && (!paragraph || PARAGRAPH_END.test(paragraph))) {
       if (line.page - lastPage > 1 || line.y < top - spacing * 4) {
@@ -373,17 +445,23 @@ function toHtml(source: Line[][]): string {
 
     const bound = bounds[line.page];
     const width = bound.right - bound.left;
+    const dash = LINE_START_BREAK.test(line.text);
+    // Suite d'une réplique à tiret : ligne alignée sous le texte, après le tiret
+    const continuesItem = itemOffset !== null && line.x - bound.left > itemOffset + body * 0.5;
+    const indented =
+      line.x > bound.left + body * 0.8 && line.x < bound.left + width * 0.3 && !line.beside;
     const startsParagraph =
       !previous ||
       (previous.page === line.page && previous.y - line.y > spacing * 1.4) ||
-      (line.x > bound.left + body * 0.8 && line.x < bound.left + width * 0.3) ||
-      (previous.right < bounds[previous.page].right - body * 2 &&
-        PARAGRAPH_END.test(previous.text)) ||
-      LINE_START_BREAK.test(line.text);
+      (indented && !continuesItem) ||
+      (PARAGRAPH_END.test(previous.text) &&
+        nextWordFits(previous, line, bounds[previous.page].right)) ||
+      dash;
 
     if (startsParagraph) {
       flushParagraph();
       paragraph = line.text;
+      itemOffset = dash ? line.x - bound.left : null;
     } else if (/\p{L}[-­]$/u.test(paragraph) && /^\p{Ll}/u.test(line.text)) {
       // Mot coupé en fin de ligne : on retire le trait d'union
       paragraph = paragraph.slice(0, -1) + line.text;

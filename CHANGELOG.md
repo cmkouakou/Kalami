@@ -1,5 +1,23 @@
 # Journal des modifications
 
+## [v0.13.6] - 2026-10-22 — Manuscrits PDF : paragraphes, répliques et lettrines
+### Corrigé
+- Texte non justifié (fins de ligne inégales) : les paragraphes n'étaient plus coupés à
+  chaque ligne finissant par « . » ou « » » loin de la marge. La marge droite est désormais la
+  fin de ligne habituelle de la page (une signature ou une ligne qui déborde ne la décale
+  plus), et une ligne ne clôt un paragraphe que si le premier mot de la suivante y aurait tenu.
+- Répliques à tiret avec retrait suspendu (texte aligné après le tiret) : les lignes suivantes
+  de la réplique ne sont plus prises pour de nouveaux paragraphes.
+- Lettrine (grande initiale seule) : recollée au début de son paragraphe (« Fermement » au lieu
+  de « F » puis « ermement ») ; les lignes placées à côté d'elle ne passent plus pour des
+  retraits.
+- Signature « Par… » ou « By… » en tête du texte : retirée (l'auteur figure sur la fiche) ; le
+  titre qui la suit, identique au titre du livre, est alors retiré comme titre répété.
+- Tests d'intégration : deux projets Vitest (l'intégration passe un fichier à la fois, sans
+  saturer la base de développement) et seconde tentative de connexion au canal Realtime.
+### Ajouté
+- PROJECT-TRACKER : idée d'un atelier de couverture payant dans l'espace auteur.
+
 ## [v0.13.5] - 2026-10-22 — Liseuse : jamais de pages à tourner sur téléphone
 ### Corrigé
 - Téléphone en « version pour ordinateur » (ou navigateur annonçant une page large) : la

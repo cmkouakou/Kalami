@@ -7,8 +7,9 @@
  *              réservée aux éditeurs ; deux membres qui enregistrent la même étape sans
  *              perte de données (copie de secours restaurable). Ignorés si les clés
  *              manquent ou si la migration 20261028120000 n'est pas encore appliquée.
+ *              v1.1 : seconde tentative si la première connexion au canal échoue.
  * Auteur     : Claude Marcel
- * Date       : 2026-10-16
+ * Date       : 2026-10-22
  */
 
 import {
@@ -86,11 +87,26 @@ describe.skipIf(!ready)("RLS — présence et verrouillage doux (S9c)", () => {
   }
 
   /**
+   * Rejoint le canal privé de l'étude, avec une seconde tentative : la toute première
+   * connexion Realtime d'une série échoue parfois (CHANNEL_ERROR) puis passe.
+   * @returns Le canal et son dernier statut (SUBSCRIBED si l'accès est accordé)
+   */
+  async function join(
+    user: SupabaseClient,
+    key: string,
+    onSaved?: (payload: unknown) => void,
+  ): Promise<{ channel: RealtimeChannel; status: () => string }> {
+    const first = await joinOnce(user, key, onSaved);
+    if (first.status() === "SUBSCRIBED") return first;
+    return joinOnce(user, key, onSaved);
+  }
+
+  /**
    * Rejoint le canal privé de l'étude sur une connexion dédiée (un client ne peut pas
    * ouvrir deux fois le même canal).
    * @returns Le canal et son dernier statut (SUBSCRIBED si l'accès est accordé)
    */
-  async function join(
+  async function joinOnce(
     user: SupabaseClient,
     key: string,
     onSaved?: (payload: unknown) => void,

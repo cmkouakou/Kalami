@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.13.5 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.13.6 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -55,7 +55,8 @@ Version actuelle : v0.13.5 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #49 | 2026-10-22 | v0.13.4 : liseuse — glissement rapide sur le texte qui tourne la page, sélection ancienne qui ne bloque plus | ~40 000 | ~0.24 $ |
 | #50 | 2026-10-22 | v0.13.4 (suite) : liseuse — pages légères (ouverture de module, encart) tournées par tout glissement ou clic, pli refusé aux limites du chapitre | ~50 000 | ~0.30 $ |
 | #51 | 2026-10-22 | v0.13.5 : liseuse — téléphone reconnu à la taille de son écran (plus de pages à tourner en « version pour ordinateur ») | ~30 000 | ~0.18 $ |
-| **TOTAL** | | | **~15 410 000** | **~92.46 $** |
+| #52 | 2026-10-22 | v0.13.6 : manuscrits PDF — paragraphes d'un texte non justifié, répliques à tiret, lettrines, signature retirée ; tests d'intégration séquentiels (894 → 897 tests) | ~180 000 | ~1.08 $ |
+| **TOTAL** | | | **~15 590 000** | **~93.54 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -121,6 +122,11 @@ Version actuelle : v0.13.5 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Sprint 10b — versements, `/admin/versements`, `/admin/journal`, tableau de bord admin (v0.12.1) ; unitaires 633/633
 - [x] Sprint 10b — migration `20261110120000_payouts.sql` appliquée le 2026-10-19, intégration payouts-rls 6/6, ledger-rls 4/4
 - [ ] Paiements 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
+- [ ] Idée (2026-10-22, après la v1.0.0) — espace auteur : atelier de couverture payant, connecté
+  à Claude. L'auteur décrit sa couverture, ajoute ses images, et l'outil la génère s'il n'en a
+  pas. À étudier : Claude rédige la description et compose la mise en page (titre, auteur,
+  format 6 × 9 po), mais l'illustration demande un service d'images tiers. Prévoir aussi le
+  prix, le crédit consommé par génération et la propriété des images.
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)

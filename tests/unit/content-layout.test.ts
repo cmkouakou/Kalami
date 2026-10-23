@@ -4,10 +4,11 @@
  * Description: Tests de la mise en forme des manuscrits : typographie française et anglaise,
  *              séparateurs de scène, poèmes, repérage des titres sans styles (DOCX) et
  *              conversion PDF (page de titre, en-têtes, titres par taille, mots coupés,
- *              notes de bas de page, PDF numérisé). Les PDF d'essai sont construits avec
+ *              notes de bas de page, PDF numérisé, signature, texte non justifié, répliques
+ *              à tiret, lettrine). Les PDF d'essai sont construits avec
  *              pdf-lib.
  * Auteur     : Claude Marcel
- * Date       : 2026-10-16
+ * Date       : 2026-10-22
  */
 
 import render from "dom-serializer";
@@ -208,6 +209,69 @@ describe("convertPdf", () => {
     const chapters = await convertPdf(data, TITLES);
     expect(chapters).toHaveLength(1);
     expect(chapters[0].title).toBe("Mon livre");
+  });
+
+  it("retire signature et titre répété, et garde un texte non justifié en paragraphes",
+    async () => {
+      const data = await pdf([
+        [
+          ["Par Awa Koné", 8, 480, 790],
+          ["Mon livre", 16, 72, 760],
+          [L1, 12, 72, 720],
+          [L1, 12, 72, 706],
+          // Fin de phrase loin de la marge, mais le mot suivant n'aurait pas tenu
+          ["Le marché fermait ses portes et les marchandes repliaient leurs étals.", 12, 72, 692],
+          ["accompagnées de leurs enfants et la nuit tomba.", 12, 72, 678],
+          [L1, 12, 72, 664],
+          ["et le jour revint.", 12, 72, 650],
+        ],
+      ]);
+      const [chapter] = polishChapters(await convertPdf(data, TITLES), "fr");
+      expect(chapter.title).toBe("Mon livre");
+      expect(chapter.blocks).toHaveLength(2);
+      expect(chapter.blocks.join("\n")).not.toContain("Awa");
+      expect(chapter.blocks[0]).toContain("étals. accompagnées");
+      expect(chapter.blocks[1]).toMatch(/^<p>Le vent.*revint\.<\/p>$/);
+    });
+
+  it("garde une réplique à tiret entière malgré son retrait suspendu", async () => {
+    const data = await pdf([
+      [
+        [L1, 12, 72, 720],
+        ["et il demanda :", 12, 72, 706],
+        ["-", 12, 90, 692],
+        ["Pourquoi le vent souffle-t-il si fort sur la colline ce soir", 12, 110, 692],
+        ["et pourquoi les arbres plient-ils ainsi ?", 12, 108, 678],
+        ["-", 12, 90, 664],
+        ["Parce que.", 12, 110, 664],
+        ["Puis le silence revint.", 12, 90, 650],
+      ],
+    ]);
+    const [chapter] = await convertPdf(data, TITLES);
+    expect(chapter.blocks).toHaveLength(4);
+    expect(chapter.blocks[1]).toMatch(/^<p>- Pourquoi .* ainsi \?<\/p>$/);
+    expect(chapter.blocks[3]).toBe("<p>Puis le silence revint.</p>");
+  });
+
+  it("recolle une lettrine à son paragraphe", async () => {
+    const data = await pdf([
+      [
+        [L1, 12, 72, 720],
+        ["et la nuit tomba.", 12, 72, 706],
+        ["F", 48, 72, 664],
+        ["ermement, le vieux chasseur prit son fusil et sortit", 12, 100, 692],
+        ["dans la cour sans dire un mot à personne, puis il", 12, 100, 678],
+        ["marcha longtemps vers la forêt.", 12, 100, 664],
+        ["Le soir venu, il revint.", 12, 72, 650],
+      ],
+    ]);
+    const [chapter] = await convertPdf(data, TITLES);
+    expect(chapter.blocks).toEqual([
+      `<p>${L1} et la nuit tomba.</p>`,
+      "<p>Fermement, le vieux chasseur prit son fusil et sortit dans la cour sans dire un " +
+        "mot à personne, puis il marcha longtemps vers la forêt.</p>",
+      "<p>Le soir venu, il revint.</p>",
+    ]);
   });
 
   it("refuse un fichier invalide ou un PDF sans texte (numérisé)", async () => {
