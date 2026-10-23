@@ -7,11 +7,14 @@
  *               (?statut=…), avec lien vers Stripe, reçu et bouton « Rembourser » (API
  *               Stripe puis retrait des droits). v0.11.0 : filtre « Mobile Money à valider »,
  *               détails de la transaction déclarée, boutons « Valider » et « Refuser ».
+ *               v0.14.0 : cas d'entraînement (prix, vente, corrigé « tout de suite »,
+ *               accès accordé ou retiré par courriel).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-19
+ *  Version    : 1.2
+ *  Date       : 2026-10-23
  *  Dépendances: lib/admin/order-actions.ts, lib/admin/order-queries.ts, lib/currency.ts,
- *               lib/payments/mobile-money.ts
+ *               lib/payments/mobile-money.ts, lib/admin/case-actions.ts,
+ *               lib/strategy/cases/queries.ts
  * =============================================================
  */
 
@@ -20,7 +23,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { ActionForm } from "@/components/admin/action-form";
-import { Field, TextArea } from "@/components/ui/form";
+import { Field, SelectField, TextArea } from "@/components/ui/form";
 import { BADGE, CARD, PILL, PILL_ACTIVE } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import {
@@ -38,9 +41,14 @@ import {
   type OrderFilter,
   parseOrderStatus,
 } from "@/lib/admin/order-queries";
+import { savePracticeCase, setPracticeCaseAccess } from "@/lib/admin/case-actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
 import { isMobileMoneyOperator, MM_OPERATOR_NAMES } from "@/lib/payments/mobile-money";
+import {
+  type AdminPracticeCase,
+  listPracticeCasesForAdmin,
+} from "@/lib/strategy/cases/queries";
 
 const t = getDictionary();
 const o = t.admin.orders;
@@ -70,8 +78,9 @@ export default function AdminOrdersPage(props: PageProps<"/admin/commandes">) {
 async function AdminOrders({ searchParams }: PageProps<"/admin/commandes">) {
   await requireAdmin();
   const status = parseOrderStatus((await searchParams).statut);
-  const [offers, orders] = await Promise.all([
+  const [offers, cases, orders] = await Promise.all([
     listStudyOffersForAdmin(),
+    listPracticeCasesForAdmin(),
     listOrdersForAdmin(status),
   ]);
 
@@ -86,6 +95,15 @@ async function AdminOrders({ searchParams }: PageProps<"/admin/commandes">) {
             <OfferForm key={offer.code} offer={offer} />
           ))}
         </div>
+      </section>
+
+      {/* ==================== CAS D'ENTRAÎNEMENT ==================== */}
+      <section className="flex flex-col gap-4">
+        <h2 className="text-xl font-semibold">{o.casesTitle}</h2>
+        <p className="max-w-3xl text-small text-ink-muted">{o.casesIntro}</p>
+        {cases.map((item) => (
+          <CaseForms key={item.code} item={item} />
+        ))}
       </section>
 
       {/* ==================== COMMANDES ==================== */}
@@ -155,6 +173,94 @@ function OfferForm({ offer }: { offer: AdminStudyOffer }) {
           {o.offerActive}
         </label>
       </ActionForm>
+    </div>
+  );
+}
+
+/** Réglages d'un cas d'entraînement et accès d'un compte. */
+function CaseForms({ item }: { item: AdminPracticeCase }) {
+  const suffix = `cas-${item.code}`;
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <div className={`${CARD} flex flex-col gap-3 p-4`}>
+        <p className="text-small text-ink-muted">
+          {interpolate(o.caseAccessCount, { count: String(item.accessCount) })}
+        </p>
+        <ActionForm action={savePracticeCase} submitLabel={o.save}>
+          <input type="hidden" name="code" value={item.code} />
+          <Field
+            id={`titre-${suffix}`}
+            name="title"
+            label={o.caseTitle}
+            defaultValue={item.title}
+            maxLength={80}
+            required
+          />
+          <Field
+            id={`xof-${suffix}`}
+            name="priceXof"
+            type="number"
+            label={o.priceXof}
+            min={1}
+            step="1"
+            defaultValue={item.priceXof ?? undefined}
+          />
+          <Field
+            id={`eur-${suffix}`}
+            name="priceEur"
+            type="number"
+            label={o.priceEur}
+            min={0.01}
+            step="0.01"
+            defaultValue={item.priceEur ?? undefined}
+          />
+          <Field
+            id={`cad-${suffix}`}
+            name="priceCad"
+            type="number"
+            label={o.priceCad}
+            min={0.01}
+            step="0.01"
+            defaultValue={item.priceCad ?? undefined}
+          />
+          <label className="flex min-h-11 items-center gap-3 text-sm">
+            <input type="checkbox" name="active" defaultChecked={item.active} className="size-5" />
+            {o.caseActive}
+          </label>
+          <label className="flex min-h-11 items-center gap-3 text-sm">
+            <input
+              type="checkbox"
+              name="unlockImmediately"
+              defaultChecked={item.unlockImmediately}
+              className="size-5"
+            />
+            {o.caseImmediate}
+          </label>
+        </ActionForm>
+      </div>
+      <div className={`${CARD} flex flex-col gap-3 p-4`}>
+        <h3 className="font-semibold">{o.caseAccessTitle}</h3>
+        <ActionForm action={setPracticeCaseAccess} submitLabel={o.save} resetOnSuccess>
+          <input type="hidden" name="code" value={item.code} />
+          <Field
+            id={`courriel-${suffix}`}
+            name="email"
+            type="email"
+            label={o.caseAccessEmail}
+            maxLength={254}
+            required
+          />
+          <SelectField
+            id={`intention-${suffix}`}
+            name="intent"
+            label={o.caseAccessTitle}
+            options={[
+              { value: "grant", label: o.caseGrant },
+              { value: "revoke", label: o.caseRevoke },
+            ]}
+          />
+        </ActionForm>
+      </div>
     </div>
   );
 }

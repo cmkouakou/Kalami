@@ -297,6 +297,7 @@ const strategyFr = {
       "pour repartir de la dernière version.",
     checklist_incomplete: "La liste de contrôle n'est pas complète.",
     version_not_found: "Cette version n'existe plus.",
+    no_access: "Vous n'avez pas accès à ce cas d'entraînement.",
   },
 
   // ==================== GABARITS (COMMUN) ====================

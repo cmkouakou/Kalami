@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.13.13 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.14.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -63,7 +63,8 @@ Version actuelle : v0.13.13 · Stratégie v0.11.4 | Statut : 🟡 En cours (proj
 | #57 | 2026-10-22 | v0.13.11 : menu de sélection adapté au doigt | ~30 000 | ~0.18 $ |
 | #58 | 2026-10-23 | v0.13.12 : « Citer » copie l'extrait avec la référence | ~25 000 | ~0.15 $ |
 | #59 | 2026-10-23 | v0.13.13 : PDF — filigrane entier, message à 0 téléchargement | ~30 000 | ~0.18 $ |
-| **TOTAL** | | | **~15 900 000** | **~95.40 $** |
+| #60 | 2026-10-23 | v0.14.0 : cas d'entraînement — migration, vente, accès, admin, tests | ~250 000 | ~1.50 $ |
+| **TOTAL** | | | **~16 150 000** | **~96.90 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -198,6 +199,6 @@ Version actuelle : v0.13.13 · Stratégie v0.11.4 | Statut : 🟡 En cours (proj
 - [x] v0.11.2 — diagnostic des courriels d'invitation (raison du refus de Resend dans les journaux Vercel, message distinct), unitaires 489/489
 - [x] v0.11.3 — export PDF réparé (binaire Chromium inclus dans la fonction Vercel), liens étape précédente / suivante ; unitaires 511/511, build OK
 - [x] v0.11.4 — refonte des exports Word et PDF du plan (couverture, puces et précisions, encadrés, grille SWOT, Gantt par années, tableau de bord 2 × 2) ; unitaires 518/518
-- [ ] S10b — cas Ajinomoto, Infosystem et corrigé (fichiers de l'auteur à fournir)
+- [ ] S10b — cas Ajinomoto, Infosystem et corrigé — v0.14.0 données/vente/admin écrits (migration appliquée, intégration 6/6), v0.14.1 pages à faire
 - [x] S12 — débit des exports du plan limité à 20 par heure et par compte (v0.13.0)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

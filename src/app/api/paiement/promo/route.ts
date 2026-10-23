@@ -7,9 +7,10 @@
  *               valable pour cet article) et renvoie sa réduction. Le montant final est
  *               recalculé par la base à la création de la commande. Dix essais par compte
  *               en dix minutes au plus, contre la recherche de codes à l'aveugle (Sprint 11s).
+ *               Les cas d'entraînement suivent les codes « strategy » (v0.14.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-22
+ *  Version    : 1.2
+ *  Date       : 2026-10-23
  *  Dépendances: lib/payments/promo.ts, lib/security/rate-limit.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -37,7 +38,7 @@ function targetOf(
   if (body.item === "book" && isUuid(body.bookId)) {
     return { target: "book", bookId: body.bookId };
   }
-  if (body.item === "study_offer" || body.item === "coach_pack") {
+  if (body.item === "study_offer" || body.item === "coach_pack" || body.item === "practice_case") {
     return { target: "strategy", bookId: null };
   }
   return null;

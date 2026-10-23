@@ -427,6 +427,7 @@ const fr = {
       read: "Lire",
       openStrategy: "Ouvrir Kalami Stratégie",
       openCoach: "Ouvrir le coach",
+      openCase: "Ouvrir le cas",
       mmToPay: "Mobile Money : en attente de votre paiement",
       mmToReview: "Mobile Money : paiement en cours de vérification",
       mmRejected: "Mobile Money : paiement refusé",
@@ -439,6 +440,9 @@ const fr = {
           "votre compte.",
         paidPack:
           "Votre paiement est confirmé : « {label} » est ajouté au coach de l'étude.",
+        paidCase:
+          "Votre paiement est confirmé : « {label} » est ouvert. Votre étude préremplie " +
+          "vous attend.",
         refunded: "Cette commande a été remboursée.",
         bonus: "Une étude Kalami Stratégie vous est offerte avec ce livre.",
         bonusLink: "Commencer une étude",
@@ -1019,6 +1023,22 @@ const fr = {
       offerCredits: "{count} crédit(s)",
       save: "Enregistrer",
       offerSaved: "Prix enregistrés.",
+      casesTitle: "Cas d'entraînement",
+      casesIntro:
+        "Prix de chaque cas (FCFA entier, euros et dollars canadiens). Un cas fermé ne se " +
+        "vend pas. « Tout de suite » ouvre le corrigé entier dès l'achat, au lieu d'une " +
+        "étape à la fois quand l'acheteur valide la même étape.",
+      caseTitle: "Titre affiché",
+      caseActive: "En vente",
+      caseImmediate: "Corrigé ouvert tout de suite",
+      caseAccessCount: "{count} accès actif(s)",
+      caseSaved: "Cas enregistré.",
+      caseAccessTitle: "Accès d'un compte",
+      caseAccessEmail: "Courriel du compte",
+      caseGrant: "Accorder l'accès",
+      caseRevoke: "Retirer l'accès",
+      caseGranted: "Accès accordé.",
+      caseRevoked: "Accès retiré (l'étude du compte est conservée).",
       errors: {
         order_not_found: "Cette commande n'existe plus.",
         not_refundable: "Seule une commande payée peut être remboursée.",
@@ -1032,6 +1052,8 @@ const fr = {
         invalid_name: "Indiquez un nom de 1 à 80 caractères.",
         invalid_price: "Un prix est un nombre positif (FCFA : entier).",
         offer_not_found: "Cette offre n'existe plus.",
+        case_not_found: "Ce cas n'existe plus.",
+        user_not_found: "Aucun compte n'utilise ce courriel.",
         not_declared: "L'acheteur n'a pas encore déclaré sa transaction.",
         invalid_reason: "Indiquez un motif de 3 à 300 caractères.",
         mm_refund:

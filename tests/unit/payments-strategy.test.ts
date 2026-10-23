@@ -122,7 +122,7 @@ describe("pricesOf", () => {
 // ==================== MES ACHATS ====================
 
 describe("orderItemLink", () => {
-  const base = { label: "x", study_id: null, credits: null, book: null };
+  const base = { label: "x", study_id: null, credits: null, practice_case: null, book: null };
 
   it("ouvre le livre acheté", () => {
     const book = { slug: "guide", grants_study_credit: true };

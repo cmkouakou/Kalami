@@ -61,7 +61,7 @@ export async function createOrder(body: CheckoutBody) {
     .rpc("create_strategy_order", {
       p_kind: body.item,
       p_currency: body.currency,
-      p_code: body.item === "study_offer" ? body.code : null,
+      p_code: body.item === "study_offer" || body.item === "practice_case" ? body.code : null,
       p_pack_id: body.item === "coach_pack" ? body.packId : null,
       p_study_id: body.item === "coach_pack" ? body.studyId : null,
       p_promo_code: promo,

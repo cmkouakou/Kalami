@@ -3,12 +3,13 @@
  *  Fichier    : checkout-request.ts
  *  Projet     : Kalami
  *  Description: Lecture du corps d'une demande d'achat (livre, étude ou lot d'études,
- *               forfait du coach, code promo facultatif depuis la v0.10.3) et adresse de
- *               retour si le paiement est abandonné.
+ *               forfait du coach, cas d'entraînement depuis la v0.14.0, code promo
+ *               facultatif depuis la v0.10.3) et adresse de retour si le paiement est
+ *               abandonné.
  *               Fonctions pures : le prix et les droits sont vérifiés par la base.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-19
+ *  Version    : 1.2
+ *  Date       : 2026-10-23
  *  Dépendances: lib/admin/validation.ts, lib/currency.ts, catalog.ts
  * =============================================================
  */
@@ -29,9 +30,13 @@ export type StudyOfferCode = (typeof STUDY_OFFER_CODES)[number];
 export type CheckoutItem =
   | { item: "book"; bookId: string }
   | { item: "study_offer"; code: StudyOfferCode }
-  | { item: "coach_pack"; packId: string; studyId: string };
+  | { item: "coach_pack"; packId: string; studyId: string }
+  | { item: "practice_case"; code: string };
 
 export type CheckoutBody = CheckoutItem & { currency: Currency; promoCode?: string };
+
+/** Forme d'un code de cas d'entraînement (table practice_cases). */
+const CASE_CODE = /^[a-z0-9-]{2,40}$/;
 
 /** Niveaux de forfait ayant un produit Stripe dédié. */
 const PACK_LEVELS = ["essentiel", "approfondi", "intensif"] as const;
@@ -81,6 +86,9 @@ function parseItem(body: Record<string, unknown>): CheckoutItem | null {
   if (item === "coach_pack" && isUuid(body.packId) && isUuid(body.studyId)) {
     return { item, packId: body.packId, studyId: body.studyId };
   }
+  if (item === "practice_case" && typeof body.code === "string" && CASE_CODE.test(body.code)) {
+    return { item, code: body.code };
+  }
   return null;
 }
 
@@ -119,5 +127,7 @@ export function cancelPathFor(item: CheckoutItem, bookSlug: string | null): stri
       return "/strategie?paiement=annule";
     case "coach_pack":
       return `/strategie/etudes/${item.studyId}/coach?paiement=annule`;
+    case "practice_case":
+      return `/strategie/cas/${item.code}?paiement=annule`;
   }
 }

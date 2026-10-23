@@ -40,6 +40,7 @@ const LINK_LABELS: Record<OrderItemLink["kind"], string> = {
   read: tp.read,
   strategy: tp.openStrategy,
   coach: tp.openCoach,
+  case: tp.openCase,
 };
 
 /** État des commandes Mobile Money pas encore payées. */

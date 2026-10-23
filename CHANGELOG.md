@@ -1,5 +1,18 @@
 # Journal des modifications
 
+## [v0.14.0] - 2026-10-23 — Cas d'entraînement : vente, accès, corrigé (S10b, données)
+### Ajouté
+- Migration `20261113120000_practice_cases.sql` : cas d'entraînement (prix FCFA / € / $ CA,
+  mise en vente, interrupteur « tout de suite »), accès par compte (achat ou accord de
+  l'administrateur), article de commande « practice_case » (Stripe, Mobile Money, code promo).
+- L'achat ouvre une étude préremplie (nom, question, profil du cas) sans crédit ; le corrigé
+  d'une étape se déverrouille à sa validation, le plan et l'épilogue quand les étapes 1 à 8
+  sont validées. Seul le corrigé déverrouillé quitte le serveur.
+- Un remboursement retire l'accès (l'étude reste) ; un nouvel accès retrouve la même étude.
+- Administration > Commandes : section « Cas d'entraînement » (titre, prix, mise en vente,
+  « tout de suite », accès accordé ou retiré par courriel), journal d'audit.
+- Tests unitaires (vente, déverrouillage, registre) et d'intégration (practice-cases-rls).
+
 ## [v0.13.13] - 2026-10-23 — PDF : filigrane entier, compteur épuisé
 ### Corrigé
 - Le filigrane diagonal du PDF débordait à droite et coupait la référence (KAL-…) : il

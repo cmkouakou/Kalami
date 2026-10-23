@@ -4,11 +4,11 @@
  *  Projet     : Kalami
  *  Description: Lecture des commandes de l'acheteur connecté (RLS : chacun ne voit que les
  *               siennes) pour la page « Mes achats » et la page de retour du paiement ;
- *               lien vers ce que l'achat débloque (livre, Kalami Stratégie, coach) ;
- *               champs Mobile Money (v0.11.0).
+ *               lien vers ce que l'achat débloque (livre, Kalami Stratégie, coach, cas
+ *               d'entraînement depuis la v0.14.0) ; champs Mobile Money (v0.11.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-19
+ *  Version    : 1.3
+ *  Date       : 2026-10-23
  *  Dépendances: lib/supabase/server.ts, migration 20261104120000_orders.sql
  * =============================================================
  */
@@ -49,6 +49,8 @@ export type OrderItemSummary = {
   kind: string;
   study_id: string | null;
   credits: number | null;
+  /** Code du cas d'entraînement (article « practice_case »). */
+  practice_case: string | null;
   book: { slug: string; grants_study_credit: boolean } | null;
 };
 
@@ -56,7 +58,8 @@ const ORDER_COLUMNS =
   "id, status, currency, total_minor, receipt_url, paid_at, refunded_at, created_at, " +
   "provider, mm_operator, mm_merchant_number, mm_reference, mm_expires_at, " +
   "mm_transaction_id, mm_declared_at, mm_rejection_reason, " +
-  "items:order_items(label, kind, study_id, credits, book:books(slug, grants_study_credit))";
+  "items:order_items(label, kind, study_id, credits, practice_case, " +
+  "book:books(slug, grants_study_credit))";
 
 // ==================== REQUÊTES ====================
 
@@ -98,7 +101,7 @@ export async function getMyOrder(orderId: string): Promise<OrderSummary | null> 
 // ==================== LIENS ====================
 
 /** Destination ouverte par un article payé. */
-export type OrderItemLink = { href: string; kind: "read" | "strategy" | "coach" };
+export type OrderItemLink = { href: string; kind: "read" | "strategy" | "coach" | "case" };
 
 /**
  * Lien vers ce que débloque un article payé.
@@ -114,6 +117,9 @@ export function orderItemLink(item: OrderItemSummary): OrderItemLink | null {
   }
   if (item.kind === "coach_pack" && item.study_id) {
     return { href: `/strategie/etudes/${item.study_id}/coach`, kind: "coach" };
+  }
+  if (item.kind === "practice_case" && item.practice_case) {
+    return { href: `/strategie/cas/${item.practice_case}`, kind: "case" };
   }
   return null;
 }

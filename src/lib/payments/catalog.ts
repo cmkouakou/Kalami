@@ -18,12 +18,13 @@ import { productOfPrice } from "@/lib/payments/stripe";
 
 // ==================== CORRESPONDANCES ====================
 
-/** Article vendu : livre (par slug), étude, lot ou forfait du coach (Sprint 5b). */
+/** Article vendu : livre (par slug), étude, lot, forfait du coach ou cas d'entraînement. */
 export type SaleItemKey =
   | { kind: "book"; slug: string }
   | { kind: "study" }
   | { kind: "study_lot"; size: 10 | 30 }
-  | { kind: "coach_pack"; level: "essentiel" | "approfondi" | "intensif" };
+  | { kind: "coach_pack"; level: "essentiel" | "approfondi" | "intensif" }
+  | { kind: "practice_case"; code: string };
 
 /** Livres ayant un produit Stripe dédié ; les autres sont décrits à la volée. */
 const BOOK_PRICE_ENV: Record<string, string> = {
@@ -45,6 +46,8 @@ export function priceEnvName(item: SaleItemKey): string | null {
       return `STRIPE_PRICE_LOT_${item.size}`;
     case "coach_pack":
       return `STRIPE_PRICE_COACH_${item.level.toUpperCase()}`;
+    case "practice_case":
+      return `STRIPE_PRICE_CAS_${item.code.toUpperCase().replace(/-/g, "_")}`;
   }
 }
 

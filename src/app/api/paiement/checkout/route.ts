@@ -52,6 +52,9 @@ async function describeItem(
   if (body.item === "study_offer") {
     return { saleItem: studyOfferSaleItem(body.code), bookSlug: null };
   }
+  if (body.item === "practice_case") {
+    return { saleItem: { kind: "practice_case", code: body.code }, bookSlug: null };
+  }
   const { data } = await admin.from("coach_packs").select("name").eq("id", body.packId).single();
   return { saleItem: data ? coachPackSaleItem(data.name) : null, bookSlug: null };
 }
