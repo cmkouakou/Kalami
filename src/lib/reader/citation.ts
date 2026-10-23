@@ -7,8 +7,9 @@
  *               chapitre, titre, édition, année, plateforme Kalami et adresse du chapitre.
  *               Le titre du livre est rendu séparément pour être affiché en italique.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-10
+ *               v1.1 : extrait cité entre guillemets, suivi de son appel de citation.
+ *  Version    : 1.1
+ *  Date       : 2026-10-23
  *  Dépendances: aucune
  * =============================================================
  */
@@ -21,6 +22,8 @@ export type CitationSource = {
   author: string;
   title: string;
   chapterTitle: string;
+  /** Numéro du chapitre (appel de citation « chap. 7 ») */
+  chapter: number;
   edition: string | null;
   year: number | null;
   /** Nom de la plateforme (ex. « Kalami ») */
@@ -56,6 +59,11 @@ export function invertName(name: string): string {
   if (words.length < 2) return words[0] ?? "";
   const last = words.pop() as string;
   return `${last}, ${words.join(" ")}`;
+}
+
+/** Nom de famille seul (appel de citation dans le texte). */
+function lastName(name: string): string {
+  return tidy(name).split(" ").pop() ?? "";
 }
 
 /**
@@ -118,4 +126,32 @@ export function formatCitation(style: CitationStyle, source: CitationSource): Ci
 /** Texte brut d'une référence (copie dans le presse-papiers). */
 export function citationText(citation: Citation): string {
   return `${citation.before}${citation.title}${citation.after}`;
+}
+
+/**
+ * Appel de citation à placer après l'extrait, dans le texte.
+ * Chicago (notes-bibliographie) n'en a pas : la référence sert de note.
+ * @example inTextCitation("apa", source) → "(Kouakou, 2026, chap. 7)"
+ */
+export function inTextCitation(style: CitationStyle, source: CitationSource): string | null {
+  const author = lastName(source.author);
+  const chapter = `chap. ${source.chapter}`;
+  if (style === "apa") return `(${author}, ${source.year ?? NO_DATE}, ${chapter})`;
+  if (style === "mla") return `(${author}, ${chapter})`;
+  return null;
+}
+
+/**
+ * Texte copié : l'extrait entre guillemets et son appel, puis la référence complète.
+ * @param quote - Extrait déjà raccourci par l'appelant
+ * @example « La stratégie… » (Kouakou, 2026, chap. 7)\n\nKouakou, C. M. (2026). …
+ */
+export function quotedCitationText(
+  style: CitationStyle,
+  source: CitationSource,
+  quote: string,
+): string {
+  const call = inTextCitation(style, source);
+  const reference = citationText(formatCitation(style, source));
+  return `« ${tidy(quote)} »${call ? ` ${call}` : ""}\n\n${reference}`;
 }

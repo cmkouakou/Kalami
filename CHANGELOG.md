@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.13.12] - 2026-10-23 — « Citer » copie l'extrait
+### Modifié
+- « Citer ce passage » ne donnait que la référence : la fenêtre affiche maintenant
+  l'extrait (280 caractères au plus) et « Copier » le met entre guillemets avec son appel
+  de citation — (Kouakou, 2026, chap. 7) en APA, (Kouakou, chap. 7) en MLA — suivi de la
+  référence complète. Chicago : l'extrait, puis la référence qui sert de note.
+
 ## [v0.13.11] - 2026-10-22 — Sélection au doigt plus facile
 ### Corrigé
 - Au doigt, le menu de Kalami s'affichait au-dessus du passage, par-dessus la barre

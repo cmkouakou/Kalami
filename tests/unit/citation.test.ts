@@ -15,13 +15,16 @@ import {
   type CitationSource,
   citationText,
   formatCitation,
+  inTextCitation,
   invertName,
+  quotedCitationText,
 } from "@/lib/reader/citation";
 
 const SOURCE: CitationSource = {
   author: "Claude Marcel Kouakou",
   title: "Stratégie d'entreprise",
   chapterTitle: "Le diagnostic",
+  chapter: 2,
   edition: "2e éd.",
   year: 2024,
   platform: "Kalami",
@@ -76,5 +79,23 @@ describe("formatCitation", () => {
   it("n'ajoute pas de point après une ponctuation finale", () => {
     const source = { ...SOURCE, chapterTitle: "Pourquoi changer ?" };
     expect(citationText(formatCitation("apa", source))).toContain("Pourquoi changer ? Dans");
+  });
+});
+
+describe("extrait cité", () => {
+  it("donne l'appel de citation selon le style", () => {
+    expect(inTextCitation("apa", SOURCE)).toBe("(Kouakou, 2024, chap. 2)");
+    expect(inTextCitation("apa", { ...SOURCE, year: null })).toBe("(Kouakou, s. d., chap. 2)");
+    expect(inTextCitation("mla", SOURCE)).toBe("(Kouakou, chap. 2)");
+    expect(inTextCitation("chicago", SOURCE)).toBeNull();
+  });
+
+  it("copie l'extrait entre guillemets, son appel, puis la référence", () => {
+    const text = quotedCitationText("apa", SOURCE, "  Le diagnostic\n précède  l'action. ");
+    expect(text).toBe(
+      "« Le diagnostic précède l'action. » (Kouakou, 2024, chap. 2)\n\n" +
+        citationText(formatCitation("apa", SOURCE)),
+    );
+    expect(quotedCitationText("chicago", SOURCE, "Agir.")).toMatch(/^« Agir\. »\n\nKouakou/);
   });
 });

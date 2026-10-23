@@ -270,6 +270,8 @@ const fr = {
     },
     cite: {
       title: "Citer ce passage",
+      excerptCut: "Extrait limité à 280 caractères.",
+      inText: "Dans le texte :",
       apa: "APA (7e éd.)",
       mla: "MLA (9e éd.)",
       chicago: "Chicago",

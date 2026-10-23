@@ -264,12 +264,13 @@ export function AnnotationLayer({
       author: book.authorName,
       title: book.title,
       chapterTitle,
+      chapter,
       edition: book.edition,
       year: book.publicationYear,
       platform: APP_NAME,
       url: `${APP_URL}/livres/${book.slug}/lire?chapitre=${chapter}`,
     };
-    return <CiteDialog source={source} onClose={closeDialog} />;
+    return <CiteDialog source={source} quote={quote} onClose={closeDialog} />;
   }
   if (dialog === "share") {
     const zone = zoneRef.current;
