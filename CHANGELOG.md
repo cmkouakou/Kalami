@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.13.13] - 2026-10-23 — PDF : filigrane entier, compteur épuisé
+### Corrigé
+- Le filigrane diagonal du PDF débordait à droite et coupait la référence (KAL-…) : il
+  tient dans la page, sur deux lignes si le nom et le courriel sont longs.
+- À 0 téléchargement restant, la fiche du livre affichait encore « Lien valable
+  jusqu'au … » : elle indique maintenant que les 3 téléchargements ont été utilisés.
+
 ## [v0.13.12] - 2026-10-23 — « Citer » copie l'extrait
 ### Modifié
 - « Citer ce passage » ne donnait que la référence : la fenêtre affiche maintenant

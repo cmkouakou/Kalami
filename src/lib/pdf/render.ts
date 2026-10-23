@@ -8,9 +8,10 @@
  *               @page) et en filigrane diagonal léger. Toutes les valeurs saisies sont
  *               échappées ; le texte des chapitres est renettoyé par la liste blanche.
  *               v1.2 : surtitre de module au-dessus du titre, chapeau et sommaire du livre.
+ *               v1.3 : filigrane contenu dans la page (référence plus coupée à droite).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-17
+ *  Version    : 1.3
+ *  Date       : 2026-10-23
  *  Dépendances: lib/content/sanitize.ts, lib/reader/opening.ts
  * =============================================================
  */
@@ -104,11 +105,12 @@ body { margin: 0; }
 .filigrane {
   position: fixed;
   top: 45%;
-  left: -15%;
-  width: 130%;
+  left: 0;
+  width: 100%;
   text-align: center;
+  overflow-wrap: anywhere;
   transform: rotate(-35deg);
-  font-size: 13pt;
+  font-size: 10pt;
   color: #1f1a14;
   opacity: 0.07;
   pointer-events: none;

@@ -6,8 +6,10 @@
  *               préparation du fichier filigrané à son nom, puis téléchargement par un lien
  *               signé de courte durée. Affiche les téléchargements restants (3 par option).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *               v1.1 : à 0 téléchargement, message « 3 téléchargements utilisés » au lieu
+ *               de la date du lien.
+ *  Version    : 1.1
+ *  Date       : 2026-10-23
  *  Dépendances: api/livres/[id]/pdf, api/pdf/[id], i18n
  * =============================================================
  */
@@ -103,7 +105,8 @@ export function PdfDownload({ bookId, reference, remaining, initialExport }: Pdf
           {file ? p.download : pending ? p.preparing : p.prepare}
         </button>
       )}
-      {file && (
+      {left === 0 && !error && <p className="text-small text-ink-muted">{p.errors.exhausted}</p>}
+      {file && left > 0 && (
         <p className="text-small text-ink-muted" suppressHydrationWarning>
           {interpolate(p.expiresAt, { date: DATE_FORMAT.format(new Date(file.expires_at)) })}
         </p>
