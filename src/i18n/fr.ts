@@ -945,6 +945,11 @@ const fr = {
       code: "Code à 6 chiffres",
       verify: "Vérifier",
       invalidCode: "Code incorrect. Réessayez.",
+      replaceIntro:
+        "Scannez ce nouveau code avec votre application, puis saisissez le code à 6 chiffres " +
+        "qu'elle affiche pour « Kalami ». L'ancienne entrée cessera de fonctionner : " +
+        "supprimez-la ensuite de l'application.",
+      replaceLink: "Remplacer l'application d'authentification",
     },
     orders: {
       title: "Commandes",

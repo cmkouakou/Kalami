@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## [v0.13.7] - 2026-10-22 — Administration : remplacer l'application d'authentification
+### Ajouté
+- Lien « Remplacer l'application d'authentification » sur le tableau de bord de
+  l'administration (/admin/mfa?remplacer=1, session déjà vérifiée) : un nouveau code QR est
+  créé ; l'ancien facteur n'est supprimé qu'une fois le nouveau code vérifié (aucun risque de
+  se retrouver bloqué dehors).
+### Corrigé
+- L'application d'authentification affichait « localhost » (adresse du site au moment de
+  l'inscription) : l'émetteur est désormais toujours « Kalami ».
+
 ## [v0.13.6] - 2026-10-22 — Manuscrits PDF : paragraphes, répliques et lettrines
 ### Corrigé
 - Texte non justifié (fins de ligne inégales) : les paragraphes n'étaient plus coupés à

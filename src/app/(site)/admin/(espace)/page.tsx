@@ -6,8 +6,9 @@
  *               (soumissions, versements, paiements Mobile Money à valider), ventes du mois
  *               en cours par devise et compteurs du catalogue. Exige un administrateur aal2.
  *  Auteur     : Claude Marcel
- *  Version    : 2.2 (À traiter et ventes du mois, v0.12.1)
- *  Date       : 2026-10-19
+ *               v2.3 : lien de remplacement de l'application d'authentification.
+ *  Version    : 2.3
+ *  Date       : 2026-10-22
  *  Dépendances: lib/auth/dal.ts, lib/admin/catalog-queries.ts, lib/admin/dashboard-queries.ts
  * =============================================================
  */
@@ -73,9 +74,14 @@ async function Dashboard() {
 
   return (
     <>
-      <p className="text-ink-muted">
-        {t.admin.welcome} ({profile.display_name ?? user.email})
-      </p>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <p className="text-ink-muted">
+          {t.admin.welcome} ({profile.display_name ?? user.email})
+        </p>
+        <Link href="/admin/mfa?remplacer=1" className="text-sm text-encre underline">
+          {t.admin.mfa.replaceLink}
+        </Link>
+      </div>
       <TileSection title={d.todoTitle} tiles={todoTiles} />
       <MonthSection totals={month} />
       <TileSection title={d.catalogTitle} tiles={catalogTiles} />

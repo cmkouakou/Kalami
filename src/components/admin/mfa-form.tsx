@@ -6,9 +6,12 @@
  *               - aucun facteur vérifié → enrôlement (code QR + clé) puis vérification ;
  *               - facteur existant      → saisie du code à 6 chiffres.
  *               Une fois vérifiée, la session passe au niveau aal2.
+ *               v1.1 : émetteur « Kalami » dans l'application d'authentification (et non
+ *               l'adresse du site) ; remplacement de l'application : le nouveau facteur est
+ *               vérifié avant la suppression de l'ancien.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-06
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: lib/supabase/client.ts
  * =============================================================
  */
@@ -24,34 +27,56 @@ import { createClient } from "@/lib/supabase/client";
 
 const t = getDictionary();
 
-type Enrollment = { factorId: string; qrCode: string | null; secret: string | null };
+/** Nom affiché dans l'application d'authentification (sinon l'adresse du site). */
+const ISSUER = "Kalami";
+
+type Enrollment = {
+  factorId: string;
+  qrCode: string | null;
+  secret: string | null;
+  /** Facteurs vérifiés à supprimer une fois le nouveau vérifié (remplacement). */
+  replaced: string[];
+};
 
 /**
  * Prépare le facteur TOTP : réutilise un facteur vérifié, sinon en crée un nouveau
  * (après suppression des tentatives d'enrôlement non terminées).
+ * @param replace - Vrai pour créer un nouveau facteur même si un facteur vérifié existe
  */
-async function prepareFactor(): Promise<Enrollment> {
+async function prepareFactor(replace: boolean): Promise<Enrollment> {
   const supabase = createClient();
   const { data, error } = await supabase.auth.mfa.listFactors();
   if (error) throw error;
 
-  const verified = data.totp.find((f) => f.status === "verified");
-  if (verified) return { factorId: verified.id, qrCode: null, secret: null };
+  const verified = data.totp.filter((f) => f.status === "verified");
+  if (verified.length > 0 && !replace) {
+    return { factorId: verified[0].id, qrCode: null, secret: null, replaced: [] };
+  }
 
   const unfinished = data.all.filter((f) => f.factor_type === "totp" && f.status !== "verified");
   await Promise.all(unfinished.map((f) => supabase.auth.mfa.unenroll({ factorId: f.id })));
 
-  const enrolled = await supabase.auth.mfa.enroll({ factorType: "totp", friendlyName: "Kalami" });
+  // Le nom doit être unique par compte : l'ancien facteur existe encore pendant le remplacement
+  const friendlyName = replace ? `${ISSUER} ${new Date().toISOString()}` : ISSUER;
+  const enrolled = await supabase.auth.mfa.enroll({
+    factorType: "totp",
+    friendlyName,
+    issuer: ISSUER,
+  });
   if (enrolled.error) throw enrolled.error;
   return {
     factorId: enrolled.data.id,
     qrCode: enrolled.data.totp.qr_code,
     secret: enrolled.data.totp.secret,
+    replaced: verified.map((f) => f.id),
   };
 }
 
-/** Formulaire d'enrôlement ou de vérification TOTP. */
-export function MfaForm() {
+/**
+ * Formulaire d'enrôlement ou de vérification TOTP.
+ * @param replace - Remplacement de l'application d'authentification (session aal2)
+ */
+export function MfaForm({ replace = false }: { replace?: boolean }) {
   const router = useRouter();
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
   const [code, setCode] = useState("");
@@ -59,10 +84,10 @@ export function MfaForm() {
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
-    prepareFactor()
+    prepareFactor(replace)
       .then(setEnrollment)
       .catch(() => setError(t.auth.errors.generic));
-  }, []);
+  }, [replace]);
 
   /** Vérifie le code saisi et ouvre l'administration. */
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -71,13 +96,18 @@ export function MfaForm() {
     setPending(true);
     setError(undefined);
     try {
-      const { error: verifyError } = await createClient().auth.mfa.challengeAndVerify({
+      const supabase = createClient();
+      const { error: verifyError } = await supabase.auth.mfa.challengeAndVerify({
         factorId: enrollment.factorId,
         code,
       });
       if (verifyError) {
         setError(t.admin.mfa.invalidCode);
         return;
+      }
+      // Nouveau facteur vérifié : l'ancienne application peut être retirée
+      for (const factorId of enrollment.replaced) {
+        await supabase.auth.mfa.unenroll({ factorId });
       }
       router.replace("/admin");
       router.refresh();
@@ -96,7 +126,9 @@ export function MfaForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {enrollment.qrCode ? (
         <>
-          <p className="text-sm text-ink-muted">{t.admin.mfa.enrollIntro}</p>
+          <p className="text-sm text-ink-muted">
+            {replace ? t.admin.mfa.replaceIntro : t.admin.mfa.enrollIntro}
+          </p>
           {/* Code QR fourni par Supabase sous forme d'image SVG (data URL) */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
