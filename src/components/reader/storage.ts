@@ -8,8 +8,10 @@
  *               indisponible (navigation privée) sans bloquer la lecture.
  *               v1.1 : PHONE_QUERY (téléphone, portrait ou paysage) partagée avec la liseuse,
  *               qui y impose le défilement.
+ *               v1.2 : isPhone() reconnaît aussi le téléphone à la taille de son écran
+ *               (« version pour ordinateur » du navigateur : page large, écran petit).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-22
  *  Dépendances: lib/reader/types.ts, lib/reader/position.ts
  * =============================================================
@@ -35,6 +37,22 @@ const POSITION_PREFIX = "kalami:liseuse:position:";
  */
 export const PHONE_QUERY =
   "(max-width: 640px), (max-height: 500px) and (pointer: coarse)";
+
+/** Plus petit côté (px CSS) de l'écran tactile d'un téléphone. */
+const PHONE_SCREEN_MAX = 500;
+
+/**
+ * Vrai sur un téléphone. En « version pour ordinateur », le navigateur affiche la page sur
+ * environ 980 px et PHONE_QUERY ne la reconnaît pas : l'écran, lui, reste petit.
+ */
+export function isPhone(): boolean {
+  if (window.matchMedia(PHONE_QUERY).matches) return true;
+  const { width, height } = window.screen;
+  return (
+    window.matchMedia("(pointer: coarse)").matches &&
+    Math.min(width, height) <= PHONE_SCREEN_MAX
+  );
+}
 
 // ==================== ACCÈS SÛR ====================
 
@@ -81,7 +99,7 @@ function indexIn(
 
 /** Réglages par défaut : pages à tourner sur ordinateur et tablette, défilement sur mobile. */
 export function defaultSettings(): ReaderSettings {
-  const phone = window.matchMedia(PHONE_QUERY).matches;
+  const phone = isPhone();
   const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   return {
     mode: phone ? "scroll" : "flip",

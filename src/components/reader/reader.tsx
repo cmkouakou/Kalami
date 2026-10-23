@@ -15,8 +15,9 @@
  *               d'extrait.
  *               v1.6 : défilement imposé sur téléphone (pages à tourner illisibles) ;
  *               pages numérotées du début à la fin du livre (compteur en arrière-plan).
+ *               v1.7 : téléphone reconnu aussi en « version pour ordinateur » (isPhone).
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
+ *  Version    : 1.7
  *  Date       : 2026-10-22
  *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
  *               use-*, storage, lib/reader, lib/config, components/ui
@@ -97,6 +98,7 @@ import { ScrollView } from "./scroll-view";
 import { SeekBar } from "./seek-bar";
 import {
   loadLocalPosition,
+  isPhone,
   loadSettings,
   PHONE_QUERY,
   saveLocalPosition,
@@ -215,9 +217,7 @@ export function Reader({ data, price, buy }: ReaderProps) {
   const [store] = useState(() => new ChapterStore(book.id, previewQuery));
   const [settings, setSettings] = useState<ReaderSettings>(loadSettings);
   // Téléphone : défilement imposé, quel que soit le réglage enregistré
-  const [phone, setPhone] = useState(
-    () => window.matchMedia(PHONE_QUERY).matches,
-  );
+  const [phone, setPhone] = useState(isPhone);
   const mode = phone ? "scroll" : settings.mode;
   // Zone de mesure de la vue « pages à tourner » (compteur des pages du livre)
   const [measure, setMeasure] = useState<MeasureTarget | null>(null);
@@ -523,7 +523,7 @@ export function Reader({ data, price, buy }: ReaderProps) {
   useEffect(() => {
     const query = window.matchMedia(PHONE_QUERY);
     const onChange = () => {
-      setPhone(query.matches);
+      setPhone(isPhone());
       setOpening((current) => ({
         ...live.current,
         serial: current.serial + 1,

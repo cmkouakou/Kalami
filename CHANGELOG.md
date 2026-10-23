@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.13.5] - 2026-10-22 — Liseuse : jamais de pages à tourner sur téléphone
+### Corrigé
+- Téléphone en « version pour ordinateur » (ou navigateur annonçant une page large) : la
+  liseuse affichait les pages à tourner, à moitié grises et au texte tronqué. Le téléphone est
+  désormais reconnu aussi à la taille de son écran (tactile, petit côté ≤ 500 px) : le
+  défilement y est toujours imposé.
+
 ## [v0.13.4] - 2026-10-22 — Liseuse : tourner les pages en glissant sur le texte
 ### Corrigé
 - Pages de texte : un glissement commencé sur le texte sélectionnait le texte au lieu de
