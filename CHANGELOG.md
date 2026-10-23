@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.13.11] - 2026-10-22 — Sélection au doigt plus facile
+### Corrigé
+- Au doigt, le menu de Kalami s'affichait au-dessus du passage, par-dessus la barre
+  d'Android (Copier, Partager), et réapparaissait à chaque mouvement des poignées : il
+  se place maintenant sous le passage, à l'écart des poignées, une fois celles-ci relâchées.
+
 ## [v0.13.10] - 2026-10-22 — Avis « version pour ordinateur » lisible
 ### Corrigé
 - L'avis était réduit comme le reste de la page (environ 2,7 fois sur un Samsung S23) et

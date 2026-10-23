@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.13.10 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.13.11 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -60,7 +60,8 @@ Version actuelle : v0.13.10 · Stratégie v0.11.4 | Statut : 🟡 En cours (proj
 | #54 | 2026-10-22 | v0.13.8 : recette v1.0 (critères §8 et §6 reliés aux tests), tests de protection de la liseuse | ~90 000 | ~0.54 $ |
 | #55 | 2026-10-22 | v0.13.9 : MFA réinitialisé ; liseuse téléphone (appui long, avis « version pour ordinateur ») | ~70 000 | ~0.42 $ |
 | #56 | 2026-10-22 | v0.13.10 : avis « version pour ordinateur » à taille réelle | ~25 000 | ~0.15 $ |
-| **TOTAL** | | | **~15 815 000** | **~94.89 $** |
+| #57 | 2026-10-22 | v0.13.11 : menu de sélection adapté au doigt | ~30 000 | ~0.18 $ |
+| **TOTAL** | | | **~15 845 000** | **~95.07 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

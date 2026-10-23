@@ -6,8 +6,10 @@
  *               5 couleurs, note, citer, partager, retirer. Un visiteur ne voit que
  *               « Citer », « Partager » et le lien de connexion.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-10
+ *               v1.1 : au doigt, menu sous le passage (la barre d'Android est au-dessus)
+ *               et décalé des poignées de sélection.
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: components/ui, lib/reader/types.ts, i18n
  * =============================================================
  */
@@ -32,6 +34,8 @@ const t = getDictionary();
 const MENU_HEIGHT = 56;
 const MENU_WIDTH = 340;
 const GAP = 8;
+/** Écart sous le passage au doigt : laisse la place aux poignées de sélection. */
+const TOUCH_GAP = 36;
 
 type SelectionMenuProps = {
   rect: DOMRect;
@@ -48,13 +52,19 @@ type SelectionMenuProps = {
   onRemove: (() => void) | null;
 };
 
-/** Position du menu : au-dessus du passage, sinon en dessous, toujours dans l'écran. */
+/**
+ * Position du menu, toujours dans l'écran : au-dessus du passage, sinon en dessous. Au doigt,
+ * l'ordre s'inverse : le navigateur place sa propre barre (Copier, Partager) au-dessus.
+ */
 function placement(rect: DOMRect): { top: number; left: number } {
   const above = rect.top - MENU_HEIGHT - GAP;
-  const top =
-    above > GAP
-      ? above
-      : Math.min(rect.bottom + GAP, window.innerHeight - MENU_HEIGHT);
+  const below = rect.bottom + TOUCH_GAP;
+  const touch = window.matchMedia("(pointer: coarse)").matches;
+  const fitsBelow = below + MENU_HEIGHT < window.innerHeight - GAP;
+  let top: number;
+  if (touch && fitsBelow) top = below;
+  else if (above > GAP) top = above;
+  else top = Math.min(rect.bottom + GAP, window.innerHeight - MENU_HEIGHT);
   const center = rect.left + rect.width / 2 - MENU_WIDTH / 2;
   const left = Math.max(
     GAP,

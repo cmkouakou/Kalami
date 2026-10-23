@@ -7,8 +7,9 @@
  *               citer, partager, retirer) et ouvre les fenêtres de note, de citation et
  *               de partage. Les surlignages sont enregistrés par les actions serveur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-10
+ *               v1.1 : au doigt, menu affiché une fois les poignées relâchées.
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: highlight-dom.ts, selection-menu.tsx, note/cite/share-dialog.tsx,
  *               lib/reader/actions.ts, lib/config.ts
  * =============================================================
@@ -47,6 +48,8 @@ const t = getDictionary();
 
 /** Délai de stabilisation de la sélection avant d'afficher le menu (ms). */
 const SELECTION_DELAY = 250;
+/** Au doigt, délai plus long : le menu n'apparaît pas pendant le réglage des poignées. */
+const TOUCH_SELECTION_DELAY = 700;
 /** Couleur par défaut d'un passage annoté sans couleur choisie. */
 const DEFAULT_COLOR: HighlightColor = "jaune";
 
@@ -104,6 +107,9 @@ export function AnnotationLayer({
     const zone = zoneRef.current;
     if (!zone || dialog) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    const delay = window.matchMedia("(pointer: coarse)").matches
+      ? TOUCH_SELECTION_DELAY
+      : SELECTION_DELAY;
 
     const onSelectionChange = () => {
       clearTimeout(timer);
@@ -111,7 +117,7 @@ export function AnnotationLayer({
         const info = readSelection(zone);
         if (info) setTarget({ kind: "new", ...info });
         else setTarget((current) => (current?.kind === "new" ? null : current));
-      }, SELECTION_DELAY);
+      }, delay);
     };
     // Clic sur un surlignage : menu de ce surlignage ; ailleurs : fermeture du menu
     const onClick = (event: MouseEvent) => {
