@@ -18,7 +18,8 @@
  *               v1.7 : téléphone reconnu aussi en « version pour ordinateur » (isPhone).
  *  Auteur     : Claude Marcel
  *               v1.8 : avis « version pour ordinateur » sur téléphone.
- *  Version    : 1.8
+ *               v1.9 : avis agrandi à la taille réelle de l'écran.
+ *  Version    : 1.9
  *  Date       : 2026-10-22
  *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
  *               use-*, storage, lib/reader, lib/config, components/ui
@@ -100,6 +101,7 @@ import { ScrollView } from "./scroll-view";
 import { SeekBar } from "./seek-bar";
 import {
   loadLocalPosition,
+  desktopViewScale,
   isDesktopViewOnPhone,
   isPhone,
   loadSettings,
@@ -794,6 +796,8 @@ export function Reader({ data, price, buy }: ReaderProps) {
       {desktopView && (
         <div
           role="note"
+          // Agrandi d'autant que la page est réduite : lisible sans zoomer
+          style={{ zoom: desktopViewScale() }}
           className="liseuse-barre flex items-center gap-2 border-b border-line px-4 py-1"
         >
           <p className="flex-1 text-small">{t.reader.desktopView}</p>

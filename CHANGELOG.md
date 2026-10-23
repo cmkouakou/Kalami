@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.13.10] - 2026-10-22 — Avis « version pour ordinateur » lisible
+### Corrigé
+- L'avis était réduit comme le reste de la page (environ 2,7 fois sur un Samsung S23) et
+  passait inaperçu : il est agrandi d'autant pour s'afficher à taille normale.
+
 ## [v0.13.9] - 2026-10-22 — Liseuse sur téléphone : surligner et lire en grand
 ### Corrigé
 - Impossible de surligner ou d'annoter sur téléphone (Android) : la protection bloquait

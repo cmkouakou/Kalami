@@ -12,7 +12,8 @@
  *               (« version pour ordinateur » du navigateur : page large, écran petit).
  *  Auteur     : Claude Marcel
  *               v1.3 : isDesktopViewOnPhone() (avis de la liseuse).
- *  Version    : 1.3
+ *               v1.4 : desktopViewScale() (avis affiché à taille réelle).
+ *  Version    : 1.4
  *  Date       : 2026-10-22
  *  Dépendances: lib/reader/types.ts, lib/reader/position.ts
  * =============================================================
@@ -61,6 +62,19 @@ export function isPhone(): boolean {
  */
 export function isDesktopViewOnPhone(): boolean {
   return isPhone() && !window.matchMedia(PHONE_QUERY).matches;
+}
+
+/** Plus forte réduction compensée (au-delà, l'avis déborderait de la page). */
+const MAX_DESKTOP_SCALE = 4;
+
+/**
+ * Réduction appliquée par la « version pour ordinateur » (largeur de la page sur largeur
+ * de l'écran, environ 2,7 sur un téléphone de 360 px) ; 1 en affichage normal.
+ */
+export function desktopViewScale(): number {
+  if (!isDesktopViewOnPhone()) return 1;
+  const ratio = window.innerWidth / window.screen.width;
+  return Math.min(MAX_DESKTOP_SCALE, Math.max(1, ratio));
 }
 
 // ==================== ACCÈS SÛR ====================
