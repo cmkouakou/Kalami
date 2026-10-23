@@ -9,7 +9,7 @@
  *              Dépôt aux auteurs externes (v0.9.2) : ouvert pendant les tests, état d'origine
  *              rétabli à la fin ; vérifie aussi les refus quand il est fermé.
  * Auteur     : Claude Marcel
- * Date       : 2026-10-09
+ * Date       : 2026-10-09 (v0.13.8 : validation réservée à l'administrateur)
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
@@ -152,6 +152,15 @@ describe.skipIf(!ready)("RLS — espace auteur", () => {
     expect(error?.message).toBe("contract_required");
     const direct = await author.from("book_submissions").insert({ book_id: bookId });
     expect(direct.error).not.toBeNull();
+  });
+
+  it("réserve la validation d'une soumission à l'administrateur (aal2)", async () => {
+    const { error } = await author.rpc("admin_review_submission", {
+      p_submission_id: crypto.randomUUID(),
+      p_approve: true,
+      p_reason: null,
+    });
+    expect(error?.code).toBe("42501");
   });
 
   it("verrouille la fiche d'un livre soumis", async () => {

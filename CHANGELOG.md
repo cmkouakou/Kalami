@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## [v0.13.8] - 2026-10-22 — Recette v1.0 (Sprint 11b, étape 1)
+### Ajouté
+- docs/RECETTE-v1.md : les 8 critères d'acceptation du cahier (§8) et les exigences légales
+  et de sécurité (§6), chacun relié au test automatique qui le prouve et à l'essai réel à
+  faire sur le site en ligne.
+- Tests de la protection de la liseuse (critère 5) : clic droit, glisser, copier/couper,
+  raccourcis Ctrl+C/A/P/S/U, référence à citer seule copiable, sélection trop longue
+  annulée, impression masquée.
+- Test : un auteur ne peut pas valider lui-même une soumission (critère 7).
+### Modifié
+- Protection de la liseuse : branchement des écouteurs séparé du hook React (testable).
+
 ## [v0.13.7] - 2026-10-22 — Administration : remplacer l'application d'authentification
 ### Ajouté
 - Lien « Remplacer l'application d'authentification » sur le tableau de bord de

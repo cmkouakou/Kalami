@@ -9,9 +9,10 @@
  *               copiables. Une sélection trop longue est annulée. L'impression est masquée
  *               par CSS (@media print). Dissuasif seulement : les captures d'écran restent
  *               possibles, d'où le filigrane personnel.
+ *               v1.2 : attachProtection séparée du hook (testable sans React).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-10
+ *  Version    : 1.2
+ *  Date       : 2026-10-22
  *  Dépendances: react, lib/reader/annotations.ts
  * =============================================================
  */
@@ -51,14 +52,64 @@ function isInside(node: unknown, selector: string): boolean {
 }
 
 /** Vrai si la sélection courante est entièrement dans une référence à citer. */
-function isCopyableSelection(): boolean {
-  const selection = window.getSelection();
+function isCopyableSelection(doc: Document): boolean {
+  const selection = doc.getSelection();
   if (!selection || selection.rangeCount === 0) return false;
   const range = selection.getRangeAt(0);
   return (
     isInside(range.startContainer, COPYABLE) &&
     isInside(range.endContainer, COPYABLE)
   );
+}
+
+/**
+ * Branche les écouteurs de protection et renvoie la fonction qui les retire.
+ * @param root - Racine de la liseuse
+ * @param doc  - Document (celui de la page par défaut)
+ * @returns Fonction de nettoyage
+ */
+export function attachProtection(root: HTMLElement, doc: Document = document): () => void {
+  const block = (event: Event) => {
+    if (!isEditable(event.target)) event.preventDefault();
+  };
+  const onSelectStart = (event: Event) => {
+    if (!isEditable(event.target) && !isInside(event.target, SELECTABLE)) {
+      event.preventDefault();
+    }
+  };
+  const onCopy = (event: Event) => {
+    if (!isEditable(event.target) && !isCopyableSelection(doc)) event.preventDefault();
+  };
+  const onKeyDown = (event: KeyboardEvent) => {
+    const key = event.key.toLowerCase();
+    if (!(event.ctrlKey || event.metaKey) || !BLOCKED_KEYS.has(key)) return;
+    if (isEditable(event.target)) return;
+    if (key === "c" && isCopyableSelection(doc)) return;
+    event.preventDefault();
+  };
+  // Sélection trop longue (copie déguisée par « Partager » du système) : annulée
+  const onSelectionChange = () => {
+    const selection = doc.getSelection();
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) return;
+    if (!root.contains(selection.getRangeAt(0).commonAncestorContainer)) return;
+    if (selection.toString().length > MAX_QUOTE_LENGTH) selection.removeAllRanges();
+  };
+
+  const rootEvents = ["contextmenu", "dragstart"] as const;
+  const documentEvents = ["copy", "cut"] as const;
+  rootEvents.forEach((name) => root.addEventListener(name, block));
+  root.addEventListener("selectstart", onSelectStart);
+  documentEvents.forEach((name) => doc.addEventListener(name, onCopy));
+  doc.addEventListener("keydown", onKeyDown);
+  doc.addEventListener("selectionchange", onSelectionChange);
+
+  return () => {
+    rootEvents.forEach((name) => root.removeEventListener(name, block));
+    root.removeEventListener("selectstart", onSelectStart);
+    documentEvents.forEach((name) => doc.removeEventListener(name, onCopy));
+    doc.removeEventListener("keydown", onKeyDown);
+    doc.removeEventListener("selectionchange", onSelectionChange);
+  };
 }
 
 /**
@@ -69,53 +120,6 @@ export function useProtection(ref: RefObject<HTMLElement | null>): void {
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
-
-    const block = (event: Event) => {
-      if (!isEditable(event.target)) event.preventDefault();
-    };
-    const onSelectStart = (event: Event) => {
-      if (!isEditable(event.target) && !isInside(event.target, SELECTABLE)) {
-        event.preventDefault();
-      }
-    };
-    const onCopy = (event: Event) => {
-      if (!isEditable(event.target) && !isCopyableSelection())
-        event.preventDefault();
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      const key = event.key.toLowerCase();
-      if (!(event.ctrlKey || event.metaKey) || !BLOCKED_KEYS.has(key)) return;
-      if (isEditable(event.target)) return;
-      if (key === "c" && isCopyableSelection()) return;
-      event.preventDefault();
-    };
-    // Sélection trop longue (copie déguisée par « Partager » du système) : annulée
-    const onSelectionChange = () => {
-      const selection = window.getSelection();
-      if (!selection || selection.isCollapsed || selection.rangeCount === 0)
-        return;
-      if (!root.contains(selection.getRangeAt(0).commonAncestorContainer))
-        return;
-      if (selection.toString().length > MAX_QUOTE_LENGTH)
-        selection.removeAllRanges();
-    };
-
-    const rootEvents = ["contextmenu", "dragstart"] as const;
-    const documentEvents = ["copy", "cut"] as const;
-    rootEvents.forEach((name) => root.addEventListener(name, block));
-    root.addEventListener("selectstart", onSelectStart);
-    documentEvents.forEach((name) => document.addEventListener(name, onCopy));
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("selectionchange", onSelectionChange);
-
-    return () => {
-      rootEvents.forEach((name) => root.removeEventListener(name, block));
-      root.removeEventListener("selectstart", onSelectStart);
-      documentEvents.forEach((name) =>
-        document.removeEventListener(name, onCopy),
-      );
-      document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("selectionchange", onSelectionChange);
-    };
+    return attachProtection(root);
   }, [ref]);
 }
