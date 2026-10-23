@@ -15,8 +15,8 @@
  *               des forfaits (v0.10.2).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 2.5
- *  Date       : 2026-10-19
+ *  Version    : 2.6
+ *  Date       : 2026-10-23
  * =============================================================
  */
 
@@ -2139,6 +2139,58 @@ const strategyFr = {
       history: "Historique ({count})",
       changedAt: "Avant le {date}",
     },
+  },
+
+  // ==================== CAS D'ENTRAÎNEMENT (v0.14.1) ====================
+  cases: {
+    kicker: "Cas d'entraînement",
+    back: "Mes études",
+    tabs: { statement: "Dossier du cas", correction: "Corrigé" },
+    pitch:
+      "Menez l'analyse du cas dans l'assistant, étape par étape : l'étude est ouverte pour " +
+      "vous, préremplie avec le profil de l'entreprise. Le corrigé de l'auteur s'ouvre à " +
+      "mesure que vous validez vos étapes, et l'épilogue avec le plan stratégique.",
+    includedTitle: "Ce que contient le cas",
+    included: [
+      "L'énoncé complet, avec ses annexes chiffrées",
+      "Une étude préremplie, sans utiliser de crédit d'étude",
+      "Le corrigé de l'auteur pour chacune des neuf étapes",
+      "L'épilogue : ce qui s'est réellement passé",
+    ],
+    questionsTitle: "Les questions du cas",
+    buyTitle: "Acheter le cas",
+    signIn: "Connectez-vous ou créez un compte pour acheter le cas.",
+    signInLink: "Se connecter",
+    canceled: "Paiement annulé : rien n'a été débité.",
+    start: "Commencer l'étude du cas",
+    startHint: "L'étude est créée à votre nom, sans utiliser de crédit.",
+    open: "Ouvrir mon étude",
+    introTitle: "Avant de lire",
+    storyTitle: "Le cas",
+    annexesTitle: "Annexes",
+    hintsTitle: "Pistes de réflexion",
+    sourcesTitle: "Sources",
+    answerStep: "Répondre à l'étape {no}",
+    stepRef: "Étape {no} · {title}",
+    moduleRef: "Module {module} du livre",
+    correctionIntro:
+      "Le corrigé d'une étape s'ouvre quand vous la validez dans votre étude. Comparez votre " +
+      "réponse à celle de l'auteur : il n'y a pas une seule bonne réponse, mais un " +
+      "raisonnement à confronter au vôtre.",
+    immediate: "Le corrigé de ce cas est ouvert en entier.",
+    stepsNav: "Étapes du corrigé",
+    lockedLabel: "verrouillé",
+    locked: "Validez l'étape {no} dans votre étude pour ouvrir son corrigé.",
+    lockedPlan:
+      "Le corrigé du plan et l'épilogue s'ouvrent quand les étapes 1 à 8 sont validées.",
+    views: { author: "Corrigé de l'auteur", mine: "Votre réponse" },
+    noStudy: "Commencez l'étude du cas pour comparer votre réponse au corrigé.",
+    noAnswer: "Vous n'avez encore rien saisi à cette étape.",
+    goToStep: "Ouvrir l'étape {no} de mon étude",
+    planDate: "Plan assemblé le {date}",
+    epilogueTitle: "Épilogue",
+    studyBanner: "Cette étude est celle d'un cas d'entraînement.",
+    studyBannerLink: "Voir le dossier et le corrigé",
   },
 };
 

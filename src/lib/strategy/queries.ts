@@ -8,10 +8,11 @@
  *               d'ensemble de l'administrateur, guide d'une étape (explication, exemple,
  *               lien vers le chapitre si le lecteur y a droit) et réglages du guide.
  *               Contenu des étapes sources de la synthèse (S6a). Responsable de chaque
- *               étape (S9a). Offres d'étude et de lots à acheter (v0.10.2).
+ *               étape (S9a). Offres d'étude et de lots à acheter (v0.10.2). Cas
+ *               d'entraînement d'une étude (v0.14.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-19
+ *  Version    : 1.6
+ *  Date       : 2026-10-23
  *  Dépendances: lib/supabase/server.ts, lib/strategy/steps.ts, lib/strategy/profile.ts
  * =============================================================
  */
@@ -56,6 +57,8 @@ export type StudyDetail = {
   company_name: string;
   strategic_question: string;
   updated_at: string;
+  /** Code du cas d'entraînement dont l'étude est issue, ou null. */
+  practice_case: string | null;
   role: StudyRole;
   member_count: number;
   profile: ProfileData;
@@ -169,13 +172,14 @@ export async function getStudy(studyId: string, userId: string): Promise<StudyDe
 
   const study = await supabase
     .from("studies")
-    .select("id, company_name, strategic_question, updated_at")
+    .select("id, company_name, strategic_question, updated_at, practice_case")
     .eq("id", studyId)
     .maybeSingle<{
       id: string;
       company_name: string;
       strategic_question: string;
       updated_at: string;
+      practice_case: string | null;
     }>();
   const base = check(study, "étude");
   if (!base) return null;

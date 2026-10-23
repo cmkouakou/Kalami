@@ -9,9 +9,10 @@
  *               Présence (S9c) : membres connectés et avatars sur les cartes d'étape.
  *               Étude de classe (S10a) : nom de la classe et date de remise indicative.
  *               Lien vers la page du coach : forfait et consommation (v0.11.1).
+ *               Étude d'un cas d'entraînement : lien vers le dossier et le corrigé (v0.14.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-16
+ *  Version    : 1.5
+ *  Date       : 2026-10-23
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
  *               lib/strategy/class-queries.ts, components/strategy
  * =============================================================
@@ -26,7 +27,7 @@ import { PresenceBar, StepPeers } from "@/components/strategy/presence/presence-
 import { PresenceProvider } from "@/components/strategy/presence/presence-context";
 import { StepCard } from "@/components/strategy/step-card";
 import { IconCheck, IconPencil } from "@/components/ui/icons";
-import { BADGE, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
+import { BADGE, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getStudyClass } from "@/lib/strategy/class-queries";
@@ -131,6 +132,18 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
             </Link>
           </nav>
         </header>
+
+        {study.practice_case && (
+          <p className={`${PANEL_SAND} p-4 text-small`}>
+            {s.cases.studyBanner}{" "}
+            <Link
+              href={`/strategie/cas/${study.practice_case}`}
+              className="text-encre underline"
+            >
+              {s.cases.studyBannerLink}
+            </Link>
+          </p>
+        )}
 
         <PresenceBar />
 

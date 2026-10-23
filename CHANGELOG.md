@@ -1,5 +1,21 @@
 # Journal des modifications
 
+## [v0.14.1] - 2026-10-23 — Cas d'entraînement : pages du dossier et du corrigé (S10b)
+### Ajouté
+- Page /strategie/cas/ajinomoto. Sans accès : présentation, questions du cas et achat
+  (Stripe, Mobile Money, code promo), ou lien de connexion. Avec accès, deux onglets :
+  - « Dossier du cas » : ouverture de l'étude préremplie, énoncé, annexes chiffrées,
+    questions reliées aux étapes, pistes de réflexion, sources ;
+  - « Corrigé » : une étape à la fois, verrouillée tant qu'elle n'est pas validée ;
+    bascule « Corrigé de l'auteur » / « Votre réponse » ; plan puis épilogue une fois
+    les étapes 1 à 8 validées.
+- Le corrigé reprend les gabarits de l'assistant en lecture seule (mode « corrigé » du
+  cadre : sans sauvegarde, coach, actions ni versions) ; le plan a sa vue de lecture.
+- Carte de l'étude d'un cas : bandeau vers le dossier et le corrigé.
+
+### Corrigé
+- package.json était resté à 0.13.13 avec la v0.14.0.
+
 ## [v0.14.0] - 2026-10-23 — Cas d'entraînement : vente, accès, corrigé (S10b, données)
 ### Ajouté
 - Migration `20261113120000_practice_cases.sql` : cas d'entraînement (prix FCFA / € / $ CA,

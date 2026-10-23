@@ -30,7 +30,7 @@ Jusqu'au S11, les études sont ouvertes par des **crédits d'étude accordés pa
 | S10a | Mode enseignant : statut accordé par l'admin, classes, lien et invitations, distribution par groupe (un crédit par étude), enseignant observateur, suivi, coach coupable par étape | v0.11.0 | ✅ |
 | — | Forfaits du coach : verrou par étude, jauge en %, consommation, recharges, admin des forfaits (paiement en S11) | v0.11.1 | ✅ |
 | — | Correctifs : export PDF réparé, navigation entre les étapes (v0.11.3) ; refonte des exports Word et PDF du plan (v0.11.4) | v0.11.4 | ✅ |
-| S10b | Cas d'entraînement Ajinomoto et Infosystem, corrigé (fichiers de l'auteur) | v0.11.5 | 🔄 Ajinomoto : contenu + v0.14.0 (migration, vente, admin) écrits, non commités ; v0.14.1 pages |
+| S10b | Cas d'entraînement Ajinomoto et Infosystem, corrigé (fichiers de l'auteur) | v0.11.5 | 🔄 Ajinomoto : v0.14.0 commité (migration, vente, admin) ; v0.14.1 pages écrites ; Infosystem à faire |
 | S11 | Paiement de l'étude (après les sprints 5-6 du projet 1) : prix par région, réduction livre, lots, recharges d'IA | v0.12.0 | ⬜ |
 | S12 | Critères d'acceptation §12, confidentialité, audit, accessibilité, mise en production ; clé API par fédération d'identité (WIF) au lieu d'une clé statique | v1.0.0 | ⬜ |
 

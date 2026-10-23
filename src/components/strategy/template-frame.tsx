@@ -5,10 +5,11 @@
  *  Description: Cadre commun des gabarits : avis de lecture seule, état de la sauvegarde
  *               automatique, contenu du gabarit, panneau du coach IA, liste de contrôle
  *               avant validation, actions de l'étape et historique des versions. L'état de
- *               la sauvegarde est exporté pour l'éditeur du plan (S8a).
+ *               la sauvegarde est exporté pour l'éditeur du plan (S8a). En mode corrigé
+ *               (cas d'entraînement, v0.14.1), seul le contenu est affiché.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-15
+ *  Version    : 1.3
+ *  Date       : 2026-10-23
  *  Dépendances: step-actions.tsx, version-history.tsx, coach-panel.tsx, use-autosave.ts
  * =============================================================
  */
@@ -44,6 +45,8 @@ export type TemplateFrameProps = {
   versions: StepVersion[];
   /** État du coach IA (absent : panneau masqué). */
   coach?: CoachState;
+  /** Corrigé d'un cas : contenu seul, sans sauvegarde, actions ni versions. */
+  correction?: boolean;
 };
 
 type FrameProps<T> = TemplateFrameProps & {
@@ -134,10 +137,12 @@ export function TemplateFrame<T>({
   affectedTitles,
   versions,
   coach,
+  correction,
   autosave,
   checklist,
   children,
 }: FrameProps<T>) {
+  if (correction) return <div className="flex flex-col gap-6">{children}</div>;
   const editor = role === "owner" || role === "contributor";
   const validated = status === "validated";
   // Le premier enregistrement fait passer l'étape « à faire » en « en cours » côté serveur
