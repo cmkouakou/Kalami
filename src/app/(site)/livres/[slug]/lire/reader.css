@@ -10,8 +10,9 @@
                v1.7 : couvertures (pages à tourner, défilement), encart Kalami Stratégie.
                v1.8 : couverture entière (plus rognée), page d'ouverture d'un module.
                v1.9 : listes coupées entre deux pages (élément repris sans numéro).
+               v1.10 : pages légères non sélectionnables (tournées d'un glissement).
   Auteur     : Claude Marcel
-  Version    : 1.9
+  Version    : 1.10
   Date       : 2026-10-22
   Dépend de  : globals.css (jetons de la charte, polices --police-lecture / --police-interface)
 =============================================================
@@ -647,6 +648,13 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+/* Page légère (ouverture, encart, fin de partie) : rien à sélectionner, elle se tourne
+   d'un glissement ou d'un clic (flip-view.tsx) */
+.liseuse-page-legere .liseuse-page-texte {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .liseuse-page-ouverture .liseuse-titre-chapitre {

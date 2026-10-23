@@ -22,8 +22,13 @@
  *               v1.7 : numéros de page dans tout le livre ; page d'ouverture d'un module ;
  *               un glissement sur une page sans texte (schéma) tourne la page ; mise en
  *               pages déplacée dans layout.ts (partagée avec le compteur de pages).
+ *               v1.8 : un glissement rapide sur le texte tourne la page (il sélectionnait
+ *               le texte) ; une ancienne sélection ne bloque plus les glissements.
+ *               v1.9 : pages légères (ouverture de module, encart) sans sélection,
+ *               tournées par tout glissement et par un clic ; un pli refusé
+ *               par page-flip (limite du chapitre) ouvre le chapitre voisin.
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
+ *  Version    : 1.9
  *  Date       : 2026-10-22
  *  Dépendances: page-flip, dom.ts, layout.ts, highlight-dom.ts, lib/reader/paginate.ts,
  *               lib/reader/position.ts, use-book-pages.ts
@@ -53,6 +58,10 @@ const t = getDictionary();
 const RESIZE_DELAY = 250;
 /** Distance horizontale minimale d'un glissement qui tourne la page (px). */
 const SWIPE_MIN = 50;
+/** Un glissement qui tourne la page est au moins deux fois plus large que haut. */
+const SWIPE_RATIO = 2;
+/** Durée maximale d'un glissement rapide à la souris, qui tourne la page (ms). */
+const FLICK_MAX = 400;
 /** Déplacement maximal d'un simple clic (px). */
 const TAP_MAX = 6;
 /** Attente de la décision de page-flip après un glissement (ms). */
@@ -61,6 +70,13 @@ const SWIPE_SETTLE = 120;
 const NO_NUMBERING = () => null;
 /** Éléments dont le clic ne tourne jamais la page. */
 const NO_TURN = ".liseuse-page-texte, a, button, input, textarea";
+/** Commandes d'une page légère : leur clic ne tourne pas la page. */
+const COMMANDS = "a, button, input, textarea";
+/**
+ * Nombre de caractères sous lequel une page est « légère » (ouverture de module, encart,
+ * fin de partie) : rien à y annoter, elle se tourne comme une marge.
+ */
+const LIGHT_PAGE_MAX = 300;
 
 /** Commandes appelées par la barre d'outils, le clavier et la lecture à voix haute. */
 export type ViewControls = {
@@ -185,6 +201,9 @@ function buildPage(content: HTMLElement[], options: PageOptions): HTMLElement {
   text.append(...content);
   // page-flip annule le mousedown (début de glissement) : le texte reste sélectionnable
   text.addEventListener("mousedown", (event) => event.stopPropagation());
+  // Page légère : rien à sélectionner, tout glissement ou clic la tourne (watchGestures)
+  if (opener || (text.textContent ?? "").trim().length < LIGHT_PAGE_MAX)
+    page.classList.add("liseuse-page-legere");
   page.append(text);
 
   if (watermark) {
@@ -244,7 +263,8 @@ function anchoredPage(elements: HTMLElement[], page: Page): HTMLElement[] {
  * Complète les gestes de page-flip :
  * - un glissement que page-flip n'a pas tourné (commencé sur le texte ou sur un schéma,
  *   ou aux limites du chapitre) tourne la page, ou ouvre le chapitre voisin (les
- *   commandes s'en chargent) ; un glissement qui sélectionne du texte est ignoré ;
+ *   commandes s'en chargent) ; un glissement lent à la souris qui sélectionne du texte
+ *   est laissé à la sélection, un glissement rapide ou au doigt tourne la page ;
  * - un clic dans une marge (hors du texte) tourne la page, selon le côté du livre.
  * @param container - Élément du livre
  * @param flip      - Instance page-flip
@@ -256,9 +276,16 @@ function watchGestures(
   flip: PageFlipInstance,
   controls: ViewControls,
 ): () => void {
-  let gesture: { x: number; y: number; index: number; turns: number } | null =
-    null;
-  // Pages pliées ou tournées par page-flip : un geste qu'il a déjà traité n'est pas refait
+  let gesture: {
+    x: number;
+    y: number;
+    index: number;
+    time: number;
+    /** Texte déjà sélectionné au début du geste (une ancienne sélection ne bloque rien) */
+    selected: string;
+  } | null = null;
+  // Pages pliées ou tournées par page-flip : un glissement tactile qu'il tourne après le
+  // relâchement n'est pas refait
   let turns = 0;
   let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -269,22 +296,47 @@ function watchGestures(
   const onDown = (event: PointerEvent) => {
     if (event.button !== 0) return;
     const index = flip.getCurrentPageIndex();
-    gesture = { x: event.clientX, y: event.clientY, index, turns };
+    gesture = {
+      x: event.clientX,
+      y: event.clientY,
+      index,
+      time: event.timeStamp,
+      selected: window.getSelection()?.toString() ?? "",
+    };
   };
 
   const onUp = (event: PointerEvent) => {
     const start = gesture;
     gesture = null;
-    if (!start || turns !== start.turns) return;
-    if (!(window.getSelection()?.isCollapsed ?? true)) return;
+    if (!start) return;
+    // Page pliée sous le pointeur : page-flip finit le geste (tourne ou rabat la page) ;
+    // un pli refusé (limite du chapitre) n'a pas de calcul et reste aux commandes
+    if (flip.getFlipController().getCalculation() !== null) return;
+    const settled = turns;
     const dx = event.clientX - start.x;
     const dy = event.clientY - start.y;
+    const swipe =
+      Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > SWIPE_RATIO * Math.abs(dy);
+    // Glissement rapide (ou au doigt) : il tourne la page même commencé sur le texte ;
+    // un glissement lent à la souris sélectionne du texte (surlignage, note)
+    const flick =
+      swipe &&
+      (event.pointerType !== "mouse" ||
+        event.timeStamp - start.time <= FLICK_MAX);
+    const selection = window.getSelection();
+    const selecting =
+      selection !== null &&
+      !selection.isCollapsed &&
+      selection.toString() !== start.selected;
+    if (selecting && !flick) return;
+    // Sélection faite par le glissement lui-même : effacée (le menu se ferme)
+    if (selecting) selection.removeAllRanges();
 
-    if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > Math.abs(dy)) {
+    if (swipe) {
       // page-flip traite le glissement tactile après pointerup : on attend sa décision
       clearTimeout(timer);
       timer = setTimeout(() => {
-        if (turns !== start.turns || flip.getCurrentPageIndex() !== start.index)
+        if (turns !== settled || flip.getCurrentPageIndex() !== start.index)
           return;
         if (dx < 0) controls.next();
         else controls.previous();
@@ -292,10 +344,11 @@ function watchGestures(
       return;
     }
     const target = event.target instanceof Element ? event.target : null;
+    const light = target?.closest(".liseuse-page-legere") != null;
     if (
       Math.abs(dx) > TAP_MAX ||
       Math.abs(dy) > TAP_MAX ||
-      target?.closest(NO_TURN)
+      target?.closest(light ? COMMANDS : NO_TURN)
     )
       return;
     const rect = container.getBoundingClientRect();

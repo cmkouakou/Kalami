@@ -1,5 +1,18 @@
 # Journal des modifications
 
+## [v0.13.4] - 2026-10-22 — Liseuse : tourner les pages en glissant sur le texte
+### Corrigé
+- Pages de texte : un glissement commencé sur le texte sélectionnait le texte au lieu de
+  tourner la page (il fallait cliquer). Un glissement rapide (moins de 0,4 s, deux fois plus
+  large que haut) ou au doigt tourne désormais la page ; un glissement lent à la souris
+  sélectionne toujours le texte (surlignage, note).
+- Une sélection restée à l'écran ne bloque plus les glissements suivants.
+- Pages légères (ouverture d'un module, encart Kalami Stratégie, fin de partie presque
+  vide) : non sélectionnables, elles se tournent par tout glissement, même lent, et par un
+  clic (le lien de l'encart reste cliquable).
+- Aux limites du chapitre, un glissement dans la marge ouvre bien le chapitre voisin
+  (page-flip pliait la page sans pouvoir la tourner et le geste était perdu).
+
 ## [v0.13.3] - 2026-10-22 — Liseuse : listes et illustrations entre deux pages
 ### Corrigé
 - « 1. ? » en haut de page : la pagination ne coupe plus à une espace insécable (avant

@@ -5,9 +5,10 @@
  *  Description: Déclaration des types de la bibliothèque page-flip 2.0.7 (fournie sans
  *               types), limitée à ce qu'utilise la liseuse. Module ES importé directement
  *               (le point d'entrée par défaut est un paquet UMD pour navigateur).
+ *               v1.1 : contrôleur du pli (getFlipController).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-22
  *  Dépendances: page-flip
  * =============================================================
  */
@@ -45,6 +46,8 @@ declare module "page-flip/dist/js/page-flip.module.js" {
     getCurrentPageIndex(): number;
     getPageCount(): number;
     getOrientation(): "portrait" | "landscape";
+    /** Pli en cours : calcul nul quand aucune page n'est pliée (ou pli refusé) */
+    getFlipController(): { getCalculation(): object | null };
     on(event: "flip", callback: (event: FlipEvent<number>) => void): PageFlip;
     on(event: "init" | "update", callback: (event: FlipEvent<{ page: number }>) => void): PageFlip;
     on(
