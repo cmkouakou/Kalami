@@ -25,6 +25,7 @@ const unlock = await import("@/lib/strategy/cases/unlock");
 
 const ACCESS: CaseAccess = {
   studyId: null,
+  exampleStudyId: null,
   unlockedSteps: [],
   unlockImmediately: false,
   source: "purchase",

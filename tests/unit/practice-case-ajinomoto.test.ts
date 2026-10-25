@@ -30,6 +30,8 @@ import { CASE_STEP_8 } from "@/lib/strategy/cases/ajinomoto/etape-8";
 import { CASE_STEP_9 } from "@/lib/strategy/cases/ajinomoto/etape-9";
 import { CASE_STATEMENT } from "@/lib/strategy/cases/ajinomoto/enonce";
 import { CASE_EPILOGUE } from "@/lib/strategy/cases/ajinomoto/epilogue";
+import { checklistOk } from "@/lib/strategy/templates/common";
+import { checklistFor, type TemplateStep } from "@/lib/strategy/templates";
 import { planSchema } from "@/lib/strategy/templates/plan";
 import { actionSchema } from "@/lib/strategy/templates/action";
 import { choiceSchema } from "@/lib/strategy/templates/choice";
@@ -342,5 +344,24 @@ describe("cas Ajinomoto : énoncé", () => {
     const text = JSON.stringify(CASE_STATEMENT);
     expect(text).not.toMatch(/Promasidor/i);
     expect(JSON.stringify(CASE_EPILOGUE)).toMatch(/Promasidor/);
+  });
+});
+
+// ==================== CAS RÉSOLU (v0.14.3) ====================
+
+describe("cas résolu", () => {
+  // L'étude résolue valide une étape quand sa liste de contrôle est remplie
+  const STEPS = [
+    CASE_STEP_1, CASE_STEP_2, CASE_STEP_3, CASE_STEP_4,
+    CASE_STEP_5, CASE_STEP_6, CASE_STEP_7, CASE_STEP_8,
+  ];
+
+  it("remplit la liste de contrôle des étapes 1 à 8", () => {
+    STEPS.forEach((payload, index) => {
+      const no = (index + 1) as TemplateStep;
+      const missing = checklistFor(no, payload).filter((item) => !item.ok);
+      expect({ no, missing }).toEqual({ no, missing: [] });
+      expect(checklistOk(checklistFor(no, payload))).toBe(true);
+    });
   });
 });

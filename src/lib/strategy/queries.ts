@@ -59,6 +59,8 @@ export type StudyDetail = {
   updated_at: string;
   /** Code du cas d'entraînement dont l'étude est issue, ou null. */
   practice_case: string | null;
+  /** Étude résolue du cas (corrigé de l'auteur prérempli), et non l'exercice. */
+  practice_case_example: boolean;
   role: StudyRole;
   member_count: number;
   profile: ProfileData;
@@ -172,7 +174,9 @@ export async function getStudy(studyId: string, userId: string): Promise<StudyDe
 
   const study = await supabase
     .from("studies")
-    .select("id, company_name, strategic_question, updated_at, practice_case")
+    .select(
+      "id, company_name, strategic_question, updated_at, practice_case, practice_case_example",
+    )
     .eq("id", studyId)
     .maybeSingle<{
       id: string;
@@ -180,6 +184,7 @@ export async function getStudy(studyId: string, userId: string): Promise<StudyDe
       strategic_question: string;
       updated_at: string;
       practice_case: string | null;
+      practice_case_example: boolean;
     }>();
   const base = check(study, "étude");
   if (!base) return null;

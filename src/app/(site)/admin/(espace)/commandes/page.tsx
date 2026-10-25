@@ -8,10 +8,11 @@
  *               Stripe puis retrait des droits). v0.11.0 : filtre « Mobile Money à valider »,
  *               détails de la transaction déclarée, boutons « Valider » et « Refuser ».
  *               v0.14.0 : cas d'entraînement (prix, vente, corrigé « tout de suite »,
- *               accès accordé ou retiré par courriel).
+ *               accès accordé ou retiré par courriel). v0.14.3 : liste des comptes qui
+ *               ont accès à un cas, avec retrait en un clic.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-23
+ *  Version    : 1.3
+ *  Date       : 2026-10-24
  *  Dépendances: lib/admin/order-actions.ts, lib/admin/order-queries.ts, lib/currency.ts,
  *               lib/payments/mobile-money.ts, lib/admin/case-actions.ts,
  *               lib/strategy/cases/queries.ts
@@ -46,7 +47,9 @@ import { requireAdmin } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
 import { isMobileMoneyOperator, MM_OPERATOR_NAMES } from "@/lib/payments/mobile-money";
 import {
+  type AdminCaseAccess,
   type AdminPracticeCase,
+  listCaseAccessesForAdmin,
   listPracticeCasesForAdmin,
 } from "@/lib/strategy/cases/queries";
 
@@ -261,8 +264,65 @@ function CaseForms({ item }: { item: AdminPracticeCase }) {
           />
         </ActionForm>
       </div>
+      <div className="lg:col-span-2">
+        <CaseAccessList code={item.code} />
+      </div>
     </div>
   );
+}
+
+/** Comptes qui ont accès à un cas, avec un bouton « Retirer l'accès » par compte. */
+async function CaseAccessList({ code }: { code: string }) {
+  let accesses: AdminCaseAccess[];
+  try {
+    accesses = await listCaseAccessesForAdmin(code);
+  } catch (error) {
+    console.error("[admin] accès du cas illisibles :", error);
+    return <p className="text-small text-danger">{o.caseAccessesError}</p>;
+  }
+
+  return (
+    <div className={`${CARD} flex flex-col gap-3 p-4`}>
+      <h3 className="font-semibold">{o.caseAccessesTitle}</h3>
+      {accesses.length === 0 ? (
+        <p className="text-small text-ink-muted">{o.caseAccessesEmpty}</p>
+      ) : (
+        <ul className="flex flex-col divide-y divide-line">
+          {accesses.map((access) => (
+            <li
+              key={access.email}
+              className="flex flex-wrap items-center justify-between gap-3 py-3"
+            >
+              <div className="flex flex-col gap-1">
+                <span className="break-all font-semibold">{access.email}</span>
+                <span className="text-caption text-ink-muted">
+                  {access.source === "purchase" ? o.caseSourcePurchase : o.caseSourceGrant}
+                  {" · "}
+                  {DATE_FORMAT.format(new Date(access.grantedAt))}
+                  {" · "}
+                  {studiesLabel(access)}
+                </span>
+              </div>
+              <ActionForm action={setPracticeCaseAccess} submitLabel={o.caseRevoke}>
+                <input type="hidden" name="code" value={code} />
+                <input type="hidden" name="email" value={access.email} />
+                <input type="hidden" name="intent" value="revoke" />
+              </ActionForm>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Études ouvertes par le compte : exercice, cas résolu, ou aucune. */
+function studiesLabel(access: AdminCaseAccess): string {
+  const labels = [
+    access.hasStudy ? o.caseHasStudy : null,
+    access.hasExample ? o.caseHasExample : null,
+  ].filter((label) => label !== null);
+  return labels.length > 0 ? labels.join(", ") : o.caseNoStudy;
 }
 
 /** Filtre par statut : liens vers ?statut=… (sans JavaScript). */

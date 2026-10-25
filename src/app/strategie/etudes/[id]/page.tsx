@@ -135,7 +135,7 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
 
         {study.practice_case && (
           <p className={`${PANEL_SAND} p-4 text-small`}>
-            {s.cases.studyBanner}{" "}
+            {study.practice_case_example ? s.cases.exampleBanner : s.cases.studyBanner}{" "}
             <Link
               href={`/strategie/cas/${study.practice_case}`}
               className="text-encre underline"

@@ -2191,6 +2191,18 @@ const strategyFr = {
     epilogueTitle: "Épilogue",
     studyBanner: "Cette étude est celle d'un cas d'entraînement.",
     studyBannerLink: "Voir le dossier et le corrigé",
+    // Cas résolu (v0.14.3)
+    exerciseTitle: "Faire le cas moi-même",
+    exampleTitle: "Voir le cas résolu",
+    exampleStart: "Accéder au cas résolu",
+    exampleHint:
+      "Une seconde étude, remplie par l'auteur de l'étape 1 à l'étape 8 : il vous reste à " +
+      "générer le plan stratégique. Elle montre toutes les réponses : faites d'abord le cas " +
+      "vous-même si vous voulez vous entraîner. Vous pouvez la modifier comme votre étude.",
+    exampleOpen: "Ouvrir le cas résolu",
+    exampleBanner:
+      "Cette étude est le cas résolu : les étapes 1 à 8 sont remplies par l'auteur, à vous " +
+      "de générer le plan stratégique.",
     promo: {
       title: "Entraînez-vous sur un cas réel",
       intro:

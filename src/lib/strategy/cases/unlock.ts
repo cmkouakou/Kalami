@@ -22,6 +22,8 @@ import { isStepNo, PLAN_STEP, type StepNo } from "@/lib/strategy/steps";
 export type CaseAccess = {
   /** Étude préremplie, ou null tant qu'elle n'est pas ouverte. */
   studyId: string | null;
+  /** Étude résolue (corrigé des étapes 1 à 8), ou null tant qu'elle n'est pas ouverte. */
+  exampleStudyId: string | null;
   unlockedSteps: StepNo[];
   unlockImmediately: boolean;
   source: "purchase" | "admin_grant";

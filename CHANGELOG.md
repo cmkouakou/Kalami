@@ -1,5 +1,27 @@
 # Journal des modifications
 
+## [v0.14.3] - 2026-10-24 — Cas résolu et liste des accès
+### Ajouté
+- Migration `20261114120000_practice_case_example.sql` : étude résolue d'un cas
+  (`studies.practice_case_example`, `practice_case_access.example_study_id`), fonction
+  `practice_case_start_example` et liste `admin_practice_case_accesses` ; correctif
+  `20261114130000_practice_case_example_fix.sql` (étape convertie en smallint).
+- Page du cas, onglet « Dossier du cas » : deux parcours. « Faire le cas moi-même »
+  (l'exercice, inchangé) et « Voir le cas résolu » : une seconde étude, sans crédit, où
+  les étapes 1 à 8 sont remplies avec le corrigé de l'auteur et validées ; l'acheteur y
+  génère lui-même le plan stratégique. Elle se modifie comme toute étude (une étape
+  modifiée repasse à valider ; le corrigé de départ reste dans l'historique des versions).
+  Elle ne déverrouille aucun corrigé de l'exercice.
+- Bandeau propre au cas résolu en haut de l'étude.
+- Administration (/admin/commandes → Cas d'entraînement) : liste des comptes qui ont
+  accès (courriel, achat ou accès accordé, date, études ouvertes), avec « Retirer
+  l'accès » par compte.
+
+### Modifié
+- Journal d'audit : l'accès accordé ou retiré garde le courriel du compte en plus de son
+  identifiant.
+- L'étude d'exercice retrouvée après un retrait d'accès ne peut plus être l'étude résolue.
+
 ## [v0.14.2] - 2026-10-23 — Promotion des cas d'entraînement
 ### Ajouté
 - Accueil de l'assistant (/strategie) : section « Entraînez-vous sur un cas réel », visible

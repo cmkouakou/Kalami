@@ -7,14 +7,21 @@
  *              validation de chaque étape (plan avec les étapes 1 à 8), remboursement qui
  *              retire l'accès mais garde l'étude, fonctions d'administration refusées aux
  *              utilisateurs. Un cas de test est créé puis supprimé (le cas réel n'est pas
- *              touché). Ignorés si les clés manquent ou si la migration n'est pas appliquée.
+ *              touché). v0.14.3 : cas résolu prérempli avec le corrigé réel, séparé de
+ *              l'exercice ; liste des accès réservée à l'administration. Ignorés si les
+ *              clés manquent ou si la migration n'est pas appliquée.
  * Auteur     : Claude Marcel
- * Version    : 1.0
- * Date       : 2026-10-23
+ * Version    : 1.1
+ * Date       : 2026-10-24
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+
+// Le corrigé du cas réel est réservé au serveur (contenu payant)
+vi.mock("server-only", () => ({}));
+
+const { getPracticeCase } = await import("@/lib/strategy/cases/registry");
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -36,7 +43,16 @@ async function migrationApplied(): Promise<boolean> {
   return !error;
 }
 
+/** Vrai si la migration du cas résolu existe (colonne studies.practice_case_example). */
+async function exampleApplied(): Promise<boolean> {
+  if (!enabled) return false;
+  const service = createClient(url!, secretKey!, NO_SESSION);
+  const { error } = await service.from("studies").select("practice_case_example").limit(1);
+  return !error;
+}
+
 const ready = await migrationApplied();
+const exampleReady = ready && (await exampleApplied());
 
 describe.skipIf(!ready)("RLS — cas d'entraînement", () => {
   let service: SupabaseClient;
@@ -185,6 +201,47 @@ describe.skipIf(!ready)("RLS — cas d'entraînement", () => {
     expect(refused.error?.message).toBe("no_access");
   });
 
+  it.skipIf(!exampleReady)(
+    "ouvre le cas résolu (étapes 1 à 8 validées, plan à générer) sans rien déverrouiller",
+    async () => {
+      const corrections = getPracticeCase("ajinomoto")!.corrections;
+      const args = {
+        p_code: CASE_CODE,
+        p_company_name: `Cas ${RUN}`,
+        p_strategic_question: "Que faire en 2016 ?",
+        p_profile: PROFILE,
+        p_steps: Object.fromEntries(
+          [1, 2, 3, 4, 5, 6, 7, 8].map((no) => [String(no), corrections[no as 1]]),
+        ),
+      };
+      const first = await buyer.rpc("practice_case_start_example", args);
+      expect(first.error).toBeNull();
+      const exampleId = first.data as string;
+      expect(exampleId).not.toBe(studyId);
+      expect((await buyer.rpc("practice_case_start_example", args)).data).toBe(exampleId);
+
+      const steps = await buyer
+        .from("study_steps")
+        .select("step_no, status, payload")
+        .eq("study_id", exampleId)
+        .order("step_no");
+      const statuses = (steps.data ?? []).map((row) => [row.step_no, row.status]);
+      expect(statuses).toEqual([
+        ...[1, 2, 3, 4, 5, 6, 7, 8].map((no) => [no, "validated"]),
+        [9, "todo"],
+      ]);
+      expect(steps.data?.[0].payload).toEqual(corrections[1]);
+
+      // L'exercice reste à faire : aucun corrigé ouvert, l'étude d'exercice inchangée
+      expect(await unlocked()).toEqual([]);
+      const access = await buyer.rpc("practice_case_my_access", { p_code: CASE_CODE });
+      expect(access.data?.[0]).toMatchObject({ study_id: studyId, example_study_id: exampleId });
+
+      const refused = await other.rpc("practice_case_start_example", args);
+      expect(refused.error?.message).toBe("no_access");
+    },
+  );
+
   it("déverrouille le corrigé étape par étape, puis le plan", async () => {
     expect(await unlocked()).toEqual([]);
     await validate(3);
@@ -232,5 +289,9 @@ describe.skipIf(!ready)("RLS — cas d'entraînement", () => {
       p_enabled: true,
     });
     expect(grant.error?.code).toBe("42501");
+    if (exampleReady) {
+      const accesses = await buyer.rpc("admin_practice_case_accesses", { p_code: CASE_CODE });
+      expect(accesses.error?.code).toBe("42501");
+    }
   });
 });

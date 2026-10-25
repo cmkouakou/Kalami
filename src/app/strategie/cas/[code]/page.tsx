@@ -9,10 +9,11 @@
  *               et « Corrigé » (une étape à la fois par ?etape=, verrouillée tant qu'elle
  *               n'est pas validée dans l'étude ; ?vue= compare le corrigé de l'auteur et la
  *               réponse de l'élève ; plan et épilogue avec les étapes 1 à 8). Cas inconnu,
- *               ou fermé sans accès : 404.
+ *               ou fermé sans accès : 404. Deux parcours (v0.14.3) : l'exercice, et le cas
+ *               résolu (étapes 1 à 8 remplies par l'auteur, plan à générer).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-23
+ *  Version    : 1.1
+ *  Date       : 2026-10-24
  *  Dépendances: components/strategy/cases/*, lib/strategy/cases/*, components/catalog
  * =============================================================
  */
@@ -33,7 +34,7 @@ import { getCurrentUser } from "@/lib/auth/dal";
 import { authPath } from "@/lib/auth/routes";
 import { getPreferredCurrency } from "@/lib/currency-server";
 import { pricesOf } from "@/lib/payments/offers";
-import { startPracticeCase } from "@/lib/strategy/cases/actions";
+import { startPracticeCase, startPracticeCaseExample } from "@/lib/strategy/cases/actions";
 import {
   getCaseForSale,
   getMyCaseAccess,
@@ -235,25 +236,47 @@ async function CaseSale({
 /** Énoncé complet, avec l'ouverture de l'étude et les questions reliées aux étapes. */
 function Statement({ practiceCase, access }: { practiceCase: PracticeCase; access: CaseAccess }) {
   const statement = practiceCase.statement;
-  const { studyId } = access;
+  const { studyId, exampleStudyId } = access;
 
   return (
     <div className="flex flex-col gap-8">
-      {/* ==================== ÉTUDE PRÉREMPLIE ==================== */}
-      <section className={`${PANEL_SAND} flex flex-col gap-3 p-4 sm:p-6`}>
-        {studyId ? (
-          <Link href={`/strategie/etudes/${studyId}`} className={`${BUTTON_PRIMARY} w-fit`}>
-            {c.open}
-          </Link>
-        ) : (
-          <ActionForm
-            action={startPracticeCase.bind(null, practiceCase.code)}
-            submitLabel={c.start}
-          >
-            <p className="text-small text-ink-muted">{c.startHint}</p>
-          </ActionForm>
-        )}
-      </section>
+      {/* ==================== DEUX PARCOURS ==================== */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <section className={`${PANEL_SAND} flex flex-col gap-3 p-4 sm:p-6`}>
+          <h2 className="font-serif text-h3 font-semibold">{c.exerciseTitle}</h2>
+          {studyId ? (
+            <Link href={`/strategie/etudes/${studyId}`} className={`${BUTTON_PRIMARY} w-fit`}>
+              {c.open}
+            </Link>
+          ) : (
+            <ActionForm
+              action={startPracticeCase.bind(null, practiceCase.code)}
+              submitLabel={c.start}
+            >
+              <p className="text-small text-ink-muted">{c.startHint}</p>
+            </ActionForm>
+          )}
+        </section>
+
+        <section className={`${CARD} flex flex-col gap-3 p-4 sm:p-6`}>
+          <h2 className="font-serif text-h3 font-semibold">{c.exampleTitle}</h2>
+          {exampleStudyId ? (
+            <Link
+              href={`/strategie/etudes/${exampleStudyId}`}
+              className={`${BUTTON_SECONDARY} w-fit`}
+            >
+              {c.exampleOpen}
+            </Link>
+          ) : (
+            <ActionForm
+              action={startPracticeCaseExample.bind(null, practiceCase.code)}
+              submitLabel={c.exampleStart}
+            >
+              <p className="text-small text-ink-muted">{c.exampleHint}</p>
+            </ActionForm>
+          )}
+        </section>
+      </div>
 
       <section className="flex flex-col gap-3">
         <h2 className="font-serif text-h2 font-semibold">{c.introTitle}</h2>

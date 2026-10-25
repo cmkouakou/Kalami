@@ -1039,6 +1039,16 @@ const fr = {
       caseRevoke: "Retirer l'accès",
       caseGranted: "Accès accordé.",
       caseRevoked: "Accès retiré (l'étude du compte est conservée).",
+      // Liste des accès (v0.14.3)
+      caseAccessesTitle: "Comptes qui ont accès",
+      caseAccessesEmpty: "Aucun compte n'a accès à ce cas.",
+      caseAccessesError:
+        "Liste des accès illisible : la migration du cas résolu est-elle appliquée ?",
+      caseSourcePurchase: "Achat",
+      caseSourceGrant: "Accordé",
+      caseHasStudy: "exercice ouvert",
+      caseHasExample: "cas résolu ouvert",
+      caseNoStudy: "aucune étude ouverte",
       errors: {
         order_not_found: "Cette commande n'existe plus.",
         not_refundable: "Seule une commande payée peut être remboursée.",

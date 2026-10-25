@@ -5,12 +5,14 @@
  *  Description: Lectures des cas d'entraînement : cas en vente (prix publics), accès du
  *               compte connecté, corrigé des seules étapes déverrouillées, liste de
  *               l'administration. Les fonctions SQL vérifient l'accès et le rôle. Liste
- *               des cas en vente pour la présentation de l'accueil (v0.14.2).
+ *               des cas en vente pour la présentation de l'accueil (v0.14.2). Étude
+ *               résolue de l'acheteur et comptes qui ont accès à un cas (v0.14.3).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-23
+ *  Version    : 1.2
+ *  Date       : 2026-10-24
  *  Dépendances: lib/supabase/server.ts, cases/registry.ts, cases/unlock.ts,
- *               migration 20261113120000_practice_cases.sql
+ *               migrations 20261113120000_practice_cases.sql,
+ *               20261114120000_practice_case_example.sql
  * =============================================================
  */
 
@@ -31,6 +33,15 @@ export type CaseForSale = {
   priceXof: number | null;
   priceEur: number | null;
   priceCad: number | null;
+};
+
+/** Compte qui a accès à un cas, vu par l'administration. */
+export type AdminCaseAccess = {
+  email: string;
+  source: CaseAccess["source"];
+  grantedAt: string;
+  hasStudy: boolean;
+  hasExample: boolean;
 };
 
 /** Cas vu par l'administration. */
@@ -105,12 +116,13 @@ export async function getMyCaseAccess(code: string): Promise<CaseAccess | null> 
     return null;
   }
   const row = (data ?? [])[0] as
-    | { study_id: string | null; unlocked_steps: unknown; unlock_immediately: boolean;
-        source: CaseAccess["source"] }
+    | { study_id: string | null; example_study_id: string | null; unlocked_steps: unknown;
+        unlock_immediately: boolean; source: CaseAccess["source"] }
     | undefined;
   if (!row) return null;
   return {
     studyId: row.study_id,
+    exampleStudyId: row.example_study_id ?? null,
     unlockedSteps: readUnlockedSteps(row.unlocked_steps),
     unlockImmediately: row.unlock_immediately,
     source: row.source,
@@ -151,5 +163,29 @@ export async function listPracticeCasesForAdmin(): Promise<AdminPracticeCase[]> 
     active: row.active,
     unlockImmediately: row.unlock_immediately,
     accessCount: Number(row.access_count),
+  }));
+}
+
+/**
+ * Comptes qui ont accès à un cas, du plus récent au plus ancien (administrateur aal2).
+ * @param code - Code du cas
+ */
+export async function listCaseAccessesForAdmin(code: string): Promise<AdminCaseAccess[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_practice_case_accesses", { p_code: code });
+  if (error) throw new Error(`Lecture des accès impossible : ${error.message}`);
+  type AccessRow = {
+    email: string;
+    source: CaseAccess["source"];
+    granted_at: string;
+    has_study: boolean;
+    has_example: boolean;
+  };
+  return ((data ?? []) as AccessRow[]).map((row) => ({
+    email: row.email,
+    source: row.source,
+    grantedAt: row.granted_at,
+    hasStudy: row.has_study,
+    hasExample: row.has_example,
   }));
 }
