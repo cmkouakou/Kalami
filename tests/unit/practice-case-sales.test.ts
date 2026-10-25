@@ -20,7 +20,9 @@ const { cancelPathFor, parseCheckoutBody } = await import("@/lib/payments/checko
 const { priceEnvName } = await import("@/lib/payments/catalog");
 const { orderItemLink } = await import("@/lib/payments/queries");
 const { unlockedCaseCorrections } = await import("@/lib/strategy/cases/queries");
-const { getPracticeCase } = await import("@/lib/strategy/cases/registry");
+const { getPracticeCase, listPracticeCaseCodes } = await import(
+  "@/lib/strategy/cases/registry"
+);
 const unlock = await import("@/lib/strategy/cases/unlock");
 
 const ACCESS: CaseAccess = {
@@ -105,5 +107,10 @@ describe("registre des cas", () => {
     expect(practiceCase?.companyName).toContain("Ajinomoto");
     expect(Object.keys(practiceCase?.corrections ?? {})).toHaveLength(9);
     expect(getPracticeCase("constructor")).toBeNull();
+  });
+
+  it("liste ses cas avec un nom court pour l'accueil", () => {
+    expect(listPracticeCaseCodes()).toContain("ajinomoto");
+    expect(getPracticeCase("ajinomoto")?.shortName).toBe("Ajinomoto");
   });
 });

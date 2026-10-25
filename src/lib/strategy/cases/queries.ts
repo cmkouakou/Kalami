@@ -6,7 +6,8 @@
  *               compte connecté, corrigé des seules étapes déverrouillées, liste de
  *               l'administration. Les fonctions SQL vérifient l'accès et le rôle. Liste
  *               des cas en vente pour la présentation de l'accueil (v0.14.2). Étude
- *               résolue de l'acheteur et comptes qui ont accès à un cas (v0.14.3).
+ *               résolue de l'acheteur et comptes qui ont accès à un cas (v0.14.3). Cas du
+ *               compte pour l'accueil (v0.14.4).
  *  Auteur     : Claude Marcel
  *  Version    : 1.2
  *  Date       : 2026-10-24
@@ -21,7 +22,7 @@ import "server-only";
 import type { StepNo } from "@/lib/strategy/steps";
 import { createClient } from "@/lib/supabase/server";
 
-import { getPracticeCase } from "./registry";
+import { getPracticeCase, listPracticeCaseCodes } from "./registry";
 import { type CaseAccess, readUnlockedSteps, unlockedCorrections } from "./unlock";
 
 // ==================== TYPES ====================
@@ -127,6 +128,22 @@ export async function getMyCaseAccess(code: string): Promise<CaseAccess | null> 
     unlockImmediately: row.unlock_immediately,
     source: row.source,
   };
+}
+
+/** Cas auquel le compte connecté a accès, en vente ou non. */
+export type MyCase = { code: string; shortName: string };
+
+/**
+ * Cas auxquels le compte connecté a accès (achat ou accès accordé), même fermés à la vente.
+ * @returns Cas accessibles (liste vide pour un visiteur)
+ */
+export async function listMyCases(): Promise<MyCase[]> {
+  const codes = listPracticeCaseCodes();
+  const accesses = await Promise.all(codes.map((code) => getMyCaseAccess(code)));
+  return codes.flatMap((code, index) => {
+    const practiceCase = getPracticeCase(code);
+    return accesses[index] && practiceCase ? [{ code, shortName: practiceCase.shortName }] : [];
+  });
 }
 
 /**

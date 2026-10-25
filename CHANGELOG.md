@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## [v0.14.4] - 2026-10-24 — Champs PESTEL plus grands, accès au cas depuis l'accueil
+### Ajouté
+- Accueil de l'assistant (/strategie), à côté de « Nouvelle étude » : un bouton « Cas
+  Ajinomoto : dossier et corrigé » pour chaque cas auquel le compte a accès (achat ou accès
+  accordé), même si le cas n'est plus en vente.
+
+### Modifié
+- PESTEL : « Facteur (tendance) » devient une zone de texte, et « Effet sur l'entreprise »
+  s'agrandit lui aussi avec son contenu : les tendances longues s'affichent en entier, y
+  compris dans le corrigé et le cas résolu.
+
 ## [v0.14.3] - 2026-10-24 — Cas résolu et liste des accès
 ### Ajouté
 - Migration `20261114120000_practice_case_example.sql` : étude résolue d'un cas

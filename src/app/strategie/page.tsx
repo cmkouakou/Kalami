@@ -8,10 +8,11 @@
  *               d'étude disponibles, et les invitations reçues (S9a). Mode enseignant
  *               (S10a) : classes suivies par l'étudiant avec leurs études, et lien « Mes
  *               classes » pour l'enseignant. Achat des études et des lots (v0.10.2).
- *               Présentation des cas d'entraînement en vente (v0.14.2).
+ *               Présentation des cas d'entraînement en vente (v0.14.2). Bouton vers
+ *               chaque cas du compte, à côté de « Nouvelle étude » (v0.14.4).
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
- *  Date       : 2026-10-23
+ *  Version    : 1.7
+ *  Date       : 2026-10-24
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
  *               lib/strategy/class-queries.ts, lib/auth/dal.ts
  * =============================================================
@@ -41,6 +42,7 @@ import {
   listMyClassStudies,
 } from "@/lib/strategy/class-queries";
 import type { StudentClass } from "@/lib/strategy/classes";
+import { listMyCases } from "@/lib/strategy/cases/queries";
 import { countAvailableCredits, listMyStudies } from "@/lib/strategy/queries";
 import { PHASES } from "@/lib/strategy/steps";
 import { getMyInvitations, type ReceivedInvitation } from "@/lib/strategy/team-queries";
@@ -108,14 +110,16 @@ async function MyStudies() {
     );
   }
 
-  const [studies, credits, invitations, classes, classStudies, teacher] = await Promise.all([
-    listMyStudies(user.id),
-    countAvailableCredits(user.id),
-    getMyInvitations(),
-    getStudentClasses(),
-    listMyClassStudies(user.id),
-    isTeacher(),
-  ]);
+  const [studies, credits, invitations, classes, classStudies, teacher, cases] =
+    await Promise.all([
+      listMyStudies(user.id),
+      countAvailableCredits(user.id),
+      getMyInvitations(),
+      getStudentClasses(),
+      listMyClassStudies(user.id),
+      isTeacher(),
+      listMyCases(),
+    ]);
 
   return (
     <>
@@ -131,6 +135,15 @@ async function MyStudies() {
                 {s.classes.nav}
               </Link>
             )}
+            {cases.map((item) => (
+              <Link
+                key={item.code}
+                href={`/strategie/cas/${item.code}`}
+                className={BUTTON_SECONDARY}
+              >
+                {interpolate(s.cases.myCase, { name: item.shortName })}
+              </Link>
+            ))}
             {credits > 0 && (
               <Link href="/strategie/nouvelle" className={BUTTON_PRIMARY}>
                 {s.studies.newStudy}

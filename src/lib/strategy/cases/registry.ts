@@ -5,9 +5,10 @@
  *  Description: Registre des cas d'entraînement : pour chaque code de la table
  *               practice_cases, l'énoncé, l'épilogue, l'étude préremplie (nom, question,
  *               profil) et le corrigé des neuf étapes. Contenu payant : serveur seul.
+ *               Nom court et liste des codes (v0.14.4).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-23
+ *  Version    : 1.1
+ *  Date       : 2026-10-24
  *  Dépendances: server-only, cases/ajinomoto/*
  * =============================================================
  */
@@ -39,6 +40,8 @@ import type { CaseEpilogue, CaseStatement } from "./types";
 
 export type PracticeCase = {
   code: string;
+  /** Nom court, pour les boutons (« Ajinomoto »). */
+  shortName: string;
   statement: CaseStatement;
   epilogue: CaseEpilogue;
   /** Étude ouverte pour l'acheteur. */
@@ -54,6 +57,7 @@ export type PracticeCase = {
 const CASES: Record<string, PracticeCase> = {
   ajinomoto: {
     code: "ajinomoto",
+    shortName: "Ajinomoto",
     statement: AJINOMOTO_STATEMENT,
     epilogue: AJINOMOTO_EPILOGUE,
     companyName: CASE_COMPANY_NAME,
@@ -80,4 +84,9 @@ const CASES: Record<string, PracticeCase> = {
  */
 export function getPracticeCase(code: string): PracticeCase | null {
   return Object.hasOwn(CASES, code) ? CASES[code] : null;
+}
+
+/** Codes de tous les cas du registre. */
+export function listPracticeCaseCodes(): string[] {
+  return Object.keys(CASES);
 }

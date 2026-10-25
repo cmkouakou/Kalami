@@ -3,10 +3,11 @@
  *  Fichier    : factor-list.tsx
  *  Projet     : Kalami Stratégie
  *  Description: Saisie des facteurs PESTEL regroupés par dimension : facteur, effet sur
- *               l'entreprise, opportunité ou menace, source facultative.
+ *               l'entreprise, opportunité ou menace, source facultative. v0.14.4 : facteur
+ *               et effet en zones de texte qui s'agrandissent avec leur contenu.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-15
+ *  Version    : 1.2
+ *  Date       : 2026-10-24
  *  Dépendances: lib/strategy/templates/pestel.ts
  * =============================================================
  */
@@ -28,6 +29,9 @@ import {
 
 const t = getDictionary();
 const p = t.strategy.pestel;
+
+/** Zone de texte qui s'agrandit avec son contenu (les tendances longues restent lisibles). */
+const GROWING = `${CONTROL} resize-y py-2 [field-sizing:content]`;
 
 type FactorListProps = {
   factors: PestelFactor[];
@@ -57,9 +61,10 @@ function FactorCard({
       <div className="flex items-end gap-2">
         <label className="flex flex-1 flex-col gap-1 text-small font-semibold" htmlFor={id}>
           {p.fields.factor}
-          <input
+          <textarea
             id={id}
-            className={CONTROL}
+            className={GROWING}
+            rows={1}
             value={factor.factor}
             maxLength={300}
             readOnly={readOnly}
@@ -81,7 +86,7 @@ function FactorCard({
       <label className="flex flex-col gap-1 text-small font-semibold">
         {p.fields.effect}
         <textarea
-          className={`${CONTROL} py-2`}
+          className={GROWING}
           rows={2}
           value={factor.effect}
           maxLength={1000}

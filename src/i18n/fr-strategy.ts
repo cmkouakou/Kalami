@@ -2200,6 +2200,8 @@ const strategyFr = {
       "générer le plan stratégique. Elle montre toutes les réponses : faites d'abord le cas " +
       "vous-même si vous voulez vous entraîner. Vous pouvez la modifier comme votre étude.",
     exampleOpen: "Ouvrir le cas résolu",
+    // Accueil de l'assistant (v0.14.4)
+    myCase: "Cas {name} : dossier et corrigé",
     exampleBanner:
       "Cette étude est le cas résolu : les étapes 1 à 8 sont remplies par l'auteur, à vous " +
       "de générer le plan stratégique.",

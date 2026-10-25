@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.14.3 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.14.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -65,8 +65,8 @@ Version actuelle : v0.14.3 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #59 | 2026-10-23 | v0.13.13 : PDF — filigrane entier, message à 0 téléchargement | ~30 000 | ~0.18 $ |
 | #60 | 2026-10-23 | v0.14.0 : cas d'entraînement — migration, vente, accès, admin, tests | ~250 000 | ~1.50 $ |
 | #61 | 2026-10-23 | v0.14.1 : pages du cas — dossier, corrigé, comparaison, épilogue ; v0.14.2 promotion sur l'accueil | ~190 000 | ~1.14 $ |
-| #62 | 2026-10-24 | v0.14.3 : cas résolu (étapes 1 à 8 préremplies, plan à générer), liste des accès dans l'admin, courriel dans le journal | ~150 000 | ~0.90 $ |
-| **TOTAL** | | | **~16 490 000** | **~98.94 $** |
+| #62 | 2026-10-24 | v0.14.3 : cas résolu (étapes 1 à 8 préremplies, plan à générer), liste des accès dans l'admin, courriel dans le journal ; v0.14.4 champs PESTEL extensibles, bouton du cas sur l'accueil | ~180 000 | ~1.08 $ |
+| **TOTAL** | | | **~16 520 000** | **~99.12 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
