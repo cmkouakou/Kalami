@@ -2,12 +2,13 @@
  * =============================================================
  *  Fichier    : routes.ts
  *  Projet     : Kalami
- *  Description: Chemins privés, validation des redirections après connexion, pages de
- *               connexion propres à Kalami Stratégie et filet de sécurité pour un code de
- *               connexion arrivé sur l'accueil.
+ *  Description: Chemins privés, validation des redirections après connexion (retour à
+ *               la page quittée, sinon à l'accueil), pages de connexion propres à Kalami
+ *               Stratégie et filet de sécurité pour un code de connexion arrivé sur
+ *               l'accueil.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-16
+ *  Version    : 1.6
+ *  Date       : 2026-10-25
  * =============================================================
  */
 
@@ -32,7 +33,7 @@ export function isProtectedPath(pathname: string): boolean {
  * @param next     - Valeur brute reçue (paramètre « suivant »)
  * @param fallback - Chemin par défaut
  */
-export function safeNextPath(next: string | null | undefined, fallback = "/compte"): string {
+export function safeNextPath(next: string | null | undefined, fallback = "/"): string {
   if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) {
     return fallback;
   }
@@ -43,11 +44,14 @@ export function safeNextPath(next: string | null | undefined, fallback = "/compt
 export const STRATEGY_HOME = "/strategie";
 
 /** Pages de connexion, présentes sur le site et dans Kalami Stratégie. */
-export type AuthPage =
-  | "connexion"
-  | "inscription"
-  | "mot-de-passe-oublie"
-  | "reinitialiser-mot-de-passe";
+const AUTH_PAGES = [
+  "connexion",
+  "inscription",
+  "mot-de-passe-oublie",
+  "reinitialiser-mot-de-passe",
+] as const;
+
+export type AuthPage = (typeof AUTH_PAGES)[number];
 
 /** Vrai si le chemin appartient à Kalami Stratégie. */
 export function isStrategyPath(path: string | null | undefined): boolean {
@@ -65,6 +69,17 @@ export function authPath(page: AuthPage, next?: string | null): string {
   const base = isStrategyPath(next) ? STRATEGY_HOME : "";
   const query = next ? `?suivant=${encodeURIComponent(next)}` : "";
   return `${base}/${page}${query}`;
+}
+
+/**
+ * Lien « Se connecter » de l'en-tête du site : la connexion ramène à la page quittée.
+ * @param current - Page affichée (chemin et paramètres)
+ * @returns Page de connexion ; inchangée si l'on est déjà sur une page de connexion
+ */
+export function siteSignInPath(current: string): string {
+  const path = current.split(/[?#]/)[0];
+  if (AUTH_PAGES.some((page) => path === `/${page}`)) return current;
+  return authPath("connexion", path === "/" ? null : current);
 }
 
 /**

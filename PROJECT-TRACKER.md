@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.14.6 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -68,7 +68,8 @@ Version actuelle : v0.14.6 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #62 | 2026-10-24 | v0.14.3 : cas résolu (étapes 1 à 8 préremplies, plan à générer), liste des accès dans l'admin, courriel dans le journal ; v0.14.4 champs PESTEL extensibles, bouton du cas sur l'accueil | ~180 000 | ~1.08 $ |
 | #63 | 2026-10-24 | v0.14.5 : cas résolu supprimé au retrait ou au remboursement de l'accès, bouton du cas affiché à tous quand il est en vente | ~60 000 | ~0.36 $ |
 | #64 | 2026-10-25 | Vérification des prix du cas Ajinomoto ; v0.14.6 logo Kalami dans l'onglet (favicon) et l'aperçu des liens partagés | ~40 000 | ~0.24 $ |
-| **TOTAL** | | | **~16 620 000** | **~99.72 $** |
+| #65 | 2026-10-25 | v0.14.7 : connexion qui ramène à la page quittée, menu déroulant « Mon compte » (compte, achats, espace auteur, administration) | ~70 000 | ~0.42 $ |
+| **TOTAL** | | | **~16 690 000** | **~100.14 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

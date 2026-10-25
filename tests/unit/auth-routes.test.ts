@@ -15,6 +15,7 @@ import {
   isProtectedPath,
   isStrategyPath,
   safeNextPath,
+  siteSignInPath,
   strayAuthCallback,
 } from "@/lib/auth/routes";
 
@@ -44,14 +45,29 @@ describe("safeNextPath", () => {
   });
 
   it("refuse les redirections vers un autre site", () => {
-    expect(safeNextPath("//malveillant.com")).toBe("/compte");
-    expect(safeNextPath("/\\malveillant.com")).toBe("/compte");
-    expect(safeNextPath("https://malveillant.com")).toBe("/compte");
+    expect(safeNextPath("//malveillant.com")).toBe("/");
+    expect(safeNextPath("/\\malveillant.com")).toBe("/");
+    expect(safeNextPath("https://malveillant.com")).toBe("/");
   });
 
   it("utilise la valeur par défaut si vide", () => {
-    expect(safeNextPath(null, "/")).toBe("/");
-    expect(safeNextPath("")).toBe("/compte");
+    expect(safeNextPath(null, "/compte")).toBe("/compte");
+    expect(safeNextPath("")).toBe("/");
+  });
+});
+
+describe("siteSignInPath", () => {
+  it("ramène à la page quittée", () => {
+    expect(siteSignInPath("/livres/abc?x=1")).toBe("/connexion?suivant=%2Flivres%2Fabc%3Fx%3D1");
+  });
+
+  it("revient à l'accueil depuis l'accueil", () => {
+    expect(siteSignInPath("/")).toBe("/connexion");
+  });
+
+  it("garde la page de connexion telle quelle", () => {
+    expect(siteSignInPath("/connexion?suivant=%2Fadmin")).toBe("/connexion?suivant=%2Fadmin");
+    expect(siteSignInPath("/inscription")).toBe("/inscription");
   });
 });
 

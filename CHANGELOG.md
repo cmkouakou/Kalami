@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.14.7] - 2026-10-25 — Connexion sans détour par « Mon compte »
+### Modifié
+- Après la connexion, on revient à la page quittée (le lien « Se connecter » de l'en-tête
+  transmet la page affichée) ou, à défaut, à l'accueil — et non plus à « Mon compte ».
+  Une page privée ouverte sans être connecté reste la page de retour.
+- En-tête du site : « Mon compte » devient un menu déroulant (Mon compte, Mes achats,
+  Espace auteur si l'on est auteur, Administration si l'on est administrateur, Se
+  déconnecter). Il se ferme au choix d'un lien, au clic à l'extérieur et sur Échap.
+
+### Ajouté
+- `src/components/layout/account-menu.tsx` (lien de connexion et menu, composants clients),
+  `siteSignInPath()` dans `lib/auth/routes.ts`, `hasAuthorProfile()` dans
+  `lib/author/queries.ts` ; tests de `siteSignInPath`.
+
 ## [v0.14.6] - 2026-10-25 — Logo Kalami dans l'onglet et l'aperçu des liens
 ### Corrigé
 - Icône d'onglet (favicon) absente : la déclaration `icons` du gabarit (icône iPhone)

@@ -158,6 +158,21 @@ export async function getAuthorsOpen(): Promise<boolean> {
 }
 
 /**
+ * L'utilisateur a-t-il une fiche auteur ? Lecture légère pour le menu de l'en-tête : une
+ * erreur masque simplement le lien (la page /auteur refait la vérification complète).
+ * @param userId - Utilisateur connecté
+ */
+export const hasAuthorProfile = cache(async (userId: string): Promise<boolean> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("authors")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return !error && !!data;
+});
+
+/**
  * Fiche auteur de l'utilisateur, contrat en vigueur et acceptation (une lecture par requête).
  * @param nextPath - Page de retour après connexion
  */
