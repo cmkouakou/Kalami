@@ -15,7 +15,7 @@
  *               des forfaits (v0.10.2).
  *               Rattachés à fr.ts sous « strategy ».
  *  Auteur     : Claude Marcel
- *  Version    : 2.6
+ *  Version    : 2.7
  *  Date       : 2026-10-23
  * =============================================================
  */
@@ -2191,6 +2191,24 @@ const strategyFr = {
     epilogueTitle: "Épilogue",
     studyBanner: "Cette étude est celle d'un cas d'entraînement.",
     studyBannerLink: "Voir le dossier et le corrigé",
+    promo: {
+      title: "Entraînez-vous sur un cas réel",
+      intro:
+        "Menez l'analyse stratégique d'une vraie entreprise dans l'assistant, du diagnostic " +
+        "au plan stratégique. À chaque étape validée, comparez votre travail au corrigé de " +
+        "l'auteur, rempli dans les mêmes outils (PESTEL, cinq forces, SWOT-TOWS, cap, " +
+        "choix, plan d'action), puis découvrez ce qui s'est réellement passé.",
+      howTitle: "Comment ça marche",
+      how: [
+        "Vous achetez le cas : l'énoncé, les annexes et une étude préremplie s'ouvrent.",
+        "Vous répondez aux questions dans les neuf étapes de l'assistant.",
+        "Chaque étape validée ouvre le corrigé de l'auteur, à comparer à votre réponse.",
+        "Les étapes 1 à 8 validées ouvrent le plan stratégique de l'auteur et l'épilogue.",
+      ],
+      discover: "Découvrir le cas",
+      continue: "Continuer le cas",
+      owned: "Acheté",
+    },
   },
 };
 

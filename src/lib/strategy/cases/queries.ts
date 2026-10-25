@@ -4,9 +4,10 @@
  *  Projet     : Kalami Stratégie
  *  Description: Lectures des cas d'entraînement : cas en vente (prix publics), accès du
  *               compte connecté, corrigé des seules étapes déverrouillées, liste de
- *               l'administration. Les fonctions SQL vérifient l'accès et le rôle.
+ *               l'administration. Les fonctions SQL vérifient l'accès et le rôle. Liste
+ *               des cas en vente pour la présentation de l'accueil (v0.14.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-23
  *  Dépendances: lib/supabase/server.ts, cases/registry.ts, cases/unlock.ts,
  *               migration 20261113120000_practice_cases.sql
@@ -68,19 +69,27 @@ function toCase(row: CaseRow): CaseForSale {
 // ==================== ACHETEUR ====================
 
 /**
+ * Cas ouverts à la vente, dans l'ordre choisi par l'administration.
+ * @returns Cas en vente (liste vide si la lecture échoue)
+ */
+export async function listCasesForSale(): Promise<CaseForSale[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("practice_case_list");
+  if (error) {
+    console.error("[cas] lecture impossible :", error.code, error.message);
+    return [];
+  }
+  return ((data ?? []) as CaseRow[]).map(toCase);
+}
+
+/**
  * Un cas ouvert à la vente.
  * @param code - Code du cas
  * @returns Cas, ou null s'il est fermé ou inconnu
  */
 export async function getCaseForSale(code: string): Promise<CaseForSale | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("practice_case_list");
-  if (error) {
-    console.error("[cas] lecture impossible :", error.code, error.message);
-    return null;
-  }
-  const row = ((data ?? []) as CaseRow[]).find((item) => item.code === code);
-  return row ? toCase(row) : null;
+  const cases = await listCasesForSale();
+  return cases.find((item) => item.code === code) ?? null;
 }
 
 /**

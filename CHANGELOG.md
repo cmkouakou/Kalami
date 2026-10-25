@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## [v0.14.2] - 2026-10-23 — Promotion des cas d'entraînement
+### Ajouté
+- Accueil de l'assistant (/strategie) : section « Entraînez-vous sur un cas réel », visible
+  de tous, qui explique le cas (analyse dans l'assistant, corrigé de l'auteur rempli dans
+  les mêmes outils, épilogue) et comment le corrigé s'ouvre, étape par étape. Une carte par
+  cas en vente (titre, résumé, prix dans la devise préférée) mène à sa page ; un cas déjà
+  acheté affiche « Acheté » et « Continuer le cas ». Rien n'apparaît tant qu'aucun cas
+  n'est en vente.
+
 ## [v0.14.1] - 2026-10-23 — Cas d'entraînement : pages du dossier et du corrigé (S10b)
 ### Ajouté
 - Page /strategie/cas/ajinomoto. Sans accès : présentation, questions du cas et achat
