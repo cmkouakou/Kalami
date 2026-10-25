@@ -5,10 +5,11 @@
  *  Description: Gabarit racine : langue, polices de la charte, métadonnées (PWA comprise),
  *               lien « Aller au contenu », bandeau hors ligne et service worker. L'en-tête
  *               et le pied de page sont propres à chaque espace : (site) pour la
- *               plateforme de lecture, strategie pour Kalami Stratégie.
+ *               plateforme de lecture, strategie pour Kalami Stratégie. Icône d'onglet
+ *               (favicon) déclarée explicitement (v0.14.6).
  *  Auteur     : Claude Marcel
- *  Version    : 3.1
- *  Date       : 2026-10-16
+ *  Version    : 3.2
+ *  Date       : 2026-10-25
  *  Dépendances: lib/config.ts, lib/pwa/manifest.ts, components/pwa, i18n
  * =============================================================
  */
@@ -50,7 +51,12 @@ export const metadata: Metadata = {
   description: t.meta.description,
   // Le manifeste (app/manifest.ts) est lié automatiquement ; iOS lit ces balises-ci
   appleWebApp: { capable: true, title: APP_NAME, statusBarStyle: "default" },
-  icons: { apple: "/icons/apple-touch-icon.png" },
+  // Icône d'onglet : livre crème sur carré vert, lisible en thème clair comme sombre
+  // (app/favicon.ico est lié automatiquement)
+  icons: {
+    icon: { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    apple: "/icons/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {

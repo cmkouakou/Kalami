@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## [v0.14.6] - 2026-10-25 — Logo Kalami dans l'onglet et l'aperçu des liens
+### Corrigé
+- Icône d'onglet (favicon) absente : la déclaration `icons` du gabarit (icône iPhone)
+  remplaçait l'icône d'onglet. Le logo (livre crème sur carré vert) est maintenant déclaré
+  explicitement, et `src/app/favicon.ico` est ajouté (`/favicon.ico` répondait 404).
+  `src/app/icon.svg`, jamais lié et peu lisible sur un onglet sombre, est retiré.
+
+### Ajouté
+- `src/app/opengraph-image.tsx` : image d'aperçu (1200 × 630) avec le logo Kalami sur fond
+  papier, affichée quand un lien du site est partagé (WhatsApp, Facebook, LinkedIn…).
+  Toutes les pages en héritent, y compris /strategie et la page du cas Ajinomoto.
+
 ## [v0.14.5] - 2026-10-24 — Cas toujours annoncé, cas résolu retiré avec l'accès
 ### Ajouté
 - Migration `20261115120000_practice_case_example_revoke.sql` : quand l'accès à un cas

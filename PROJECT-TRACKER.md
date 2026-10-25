@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.14.5 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.14.6 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -67,7 +67,8 @@ Version actuelle : v0.14.5 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #61 | 2026-10-23 | v0.14.1 : pages du cas — dossier, corrigé, comparaison, épilogue ; v0.14.2 promotion sur l'accueil | ~190 000 | ~1.14 $ |
 | #62 | 2026-10-24 | v0.14.3 : cas résolu (étapes 1 à 8 préremplies, plan à générer), liste des accès dans l'admin, courriel dans le journal ; v0.14.4 champs PESTEL extensibles, bouton du cas sur l'accueil | ~180 000 | ~1.08 $ |
 | #63 | 2026-10-24 | v0.14.5 : cas résolu supprimé au retrait ou au remboursement de l'accès, bouton du cas affiché à tous quand il est en vente | ~60 000 | ~0.36 $ |
-| **TOTAL** | | | **~16 580 000** | **~99.48 $** |
+| #64 | 2026-10-25 | Vérification des prix du cas Ajinomoto ; v0.14.6 logo Kalami dans l'onglet (favicon) et l'aperçu des liens partagés | ~40 000 | ~0.24 $ |
+| **TOTAL** | | | **~16 620 000** | **~99.72 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -202,6 +203,7 @@ Version actuelle : v0.14.5 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] v0.11.2 — diagnostic des courriels d'invitation (raison du refus de Resend dans les journaux Vercel, message distinct), unitaires 489/489
 - [x] v0.11.3 — export PDF réparé (binaire Chromium inclus dans la fonction Vercel), liens étape précédente / suivante ; unitaires 511/511, build OK
 - [x] v0.11.4 — refonte des exports Word et PDF du plan (couverture, puces et précisions, encadrés, grille SWOT, Gantt par années, tableau de bord 2 × 2) ; unitaires 518/518
-- [ ] S10b — cas Ajinomoto, Infosystem et corrigé — v0.14.0 données/vente/admin (migration appliquée, intégration 6/6) ; v0.14.1 pages écrites (à essayer en ligne) ; v0.14.3 cas résolu + liste des accès (migration 20261114120000 à appliquer) ; reste Infosystem
+- [ ] S10b — cas Ajinomoto, Infosystem et corrigé — v0.14.0 données/vente/admin (migration appliquée, intégration 6/6) ; v0.14.1 pages écrites (à essayer en ligne) ; v0.14.3 cas résolu + liste des accès (migrations appliquées) ; v0.14.5 cas résolu supprimé au retrait de l'accès ; prix saisis le 2026-10-25 (2 500 FCFA · 4 € · 5 $ CA) ; reste Infosystem
+  - [ ] Paiement Stripe du cas Ajinomoto : achat test déjà fait ; reste à valider le remboursement depuis Stripe (accès retiré, cas résolu supprimé, exercice gardé)
 - [x] S12 — débit des exports du plan limité à 20 par heure et par compte (v0.13.0)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse
