@@ -7,7 +7,7 @@
  *               l'administration. Les fonctions SQL vérifient l'accès et le rôle. Liste
  *               des cas en vente pour la présentation de l'accueil (v0.14.2). Étude
  *               résolue de l'acheteur et comptes qui ont accès à un cas (v0.14.3). Cas du
- *               compte pour l'accueil (v0.14.4).
+ *               compte pour l'accueil (v0.14.4), et cas en vente (v0.14.5).
  *  Auteur     : Claude Marcel
  *  Version    : 1.2
  *  Date       : 2026-10-24
@@ -130,19 +130,26 @@ export async function getMyCaseAccess(code: string): Promise<CaseAccess | null> 
   };
 }
 
-/** Cas auquel le compte connecté a accès, en vente ou non. */
-export type MyCase = { code: string; shortName: string };
+/** Cas proposé sur l'accueil : accessible au compte, ou en vente. */
+export type MyCase = { code: string; shortName: string; owned: boolean };
 
 /**
- * Cas auxquels le compte connecté a accès (achat ou accès accordé), même fermés à la vente.
- * @returns Cas accessibles (liste vide pour un visiteur)
+ * Cas à proposer au compte connecté : ceux auxquels il a accès (même fermés à la vente),
+ * puis ceux en vente, dont la page demande le paiement.
+ * @returns Cas de l'accueil
  */
 export async function listMyCases(): Promise<MyCase[]> {
   const codes = listPracticeCaseCodes();
-  const accesses = await Promise.all(codes.map((code) => getMyCaseAccess(code)));
+  const [forSale, ...accesses] = await Promise.all([
+    listCasesForSale(),
+    ...codes.map((code) => getMyCaseAccess(code)),
+  ]);
+  const onSale = new Set(forSale.map((item) => item.code));
   return codes.flatMap((code, index) => {
     const practiceCase = getPracticeCase(code);
-    return accesses[index] && practiceCase ? [{ code, shortName: practiceCase.shortName }] : [];
+    const owned = Boolean(accesses[index]);
+    if (!practiceCase || (!owned && !onSale.has(code))) return [];
+    return [{ code, shortName: practiceCase.shortName, owned }];
   });
 }
 

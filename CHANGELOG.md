@@ -1,5 +1,18 @@
 # Journal des modifications
 
+## [v0.14.5] - 2026-10-24 — Cas toujours annoncé, cas résolu retiré avec l'accès
+### Ajouté
+- Migration `20261115120000_practice_case_example_revoke.sql` : quand l'accès à un cas
+  est retiré (administration) ou remboursé, le cas résolu du compte est supprimé (il
+  contient le corrigé) ; l'étude d'exercice est gardée. Les cas résolus des accès déjà
+  retirés sont nettoyés.
+
+### Modifié
+- Accueil (/strategie) : le bouton du cas s'affiche aussi pour les comptes sans accès dès
+  que le cas est en vente (« Cas Ajinomoto et corrigé (payant) ») ; il mène à la page du
+  cas, qui demande le paiement.
+- Message « Accès retiré » de l'administration mis à jour.
+
 ## [v0.14.4] - 2026-10-24 — Champs PESTEL plus grands, accès au cas depuis l'accueil
 ### Ajouté
 - Accueil de l'assistant (/strategie), à côté de « Nouvelle étude » : un bouton « Cas

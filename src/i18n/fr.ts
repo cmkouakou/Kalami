@@ -1038,7 +1038,7 @@ const fr = {
       caseGrant: "Accorder l'accès",
       caseRevoke: "Retirer l'accès",
       caseGranted: "Accès accordé.",
-      caseRevoked: "Accès retiré (l'étude du compte est conservée).",
+      caseRevoked: "Accès retiré : le cas résolu est supprimé, l'étude d'exercice est conservée.",
       // Liste des accès (v0.14.3)
       caseAccessesTitle: "Comptes qui ont accès",
       caseAccessesEmpty: "Aucun compte n'a accès à ce cas.",

@@ -9,7 +9,8 @@
  *               (S10a) : classes suivies par l'étudiant avec leurs études, et lien « Mes
  *               classes » pour l'enseignant. Achat des études et des lots (v0.10.2).
  *               Présentation des cas d'entraînement en vente (v0.14.2). Bouton vers
- *               chaque cas du compte, à côté de « Nouvelle étude » (v0.14.4).
+ *               chaque cas du compte, à côté de « Nouvelle étude » (v0.14.4) ; aussi vers
+ *               les cas en vente, dont la page demande le paiement (v0.14.5).
  *  Auteur     : Claude Marcel
  *  Version    : 1.7
  *  Date       : 2026-10-24
@@ -141,7 +142,9 @@ async function MyStudies() {
                 href={`/strategie/cas/${item.code}`}
                 className={BUTTON_SECONDARY}
               >
-                {interpolate(s.cases.myCase, { name: item.shortName })}
+                {interpolate(item.owned ? s.cases.myCase : s.cases.buyCase, {
+                  name: item.shortName,
+                })}
               </Link>
             ))}
             {credits > 0 && (

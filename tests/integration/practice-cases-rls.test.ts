@@ -5,13 +5,13 @@
  *              vendu, achat au prix de la base livré en accès, second achat refusé, étude
  *              préremplie ouverte sans crédit (une seule), corrigé déverrouillé à la
  *              validation de chaque étape (plan avec les étapes 1 à 8), remboursement qui
- *              retire l'accès mais garde l'étude, fonctions d'administration refusées aux
- *              utilisateurs. Un cas de test est créé puis supprimé (le cas réel n'est pas
+ *              retire l'accès mais garde l'étude d'exercice (le cas résolu est supprimé,
+ *              v0.14.5), fonctions d'administration refusées aux utilisateurs. Un cas de test est créé puis supprimé (le cas réel n'est pas
  *              touché). v0.14.3 : cas résolu prérempli avec le corrigé réel, séparé de
  *              l'exercice ; liste des accès réservée à l'administration. Ignorés si les
  *              clés manquent ou si la migration n'est pas appliquée.
  * Auteur     : Claude Marcel
- * Version    : 1.1
+ * Version    : 1.2
  * Date       : 2026-10-24
  */
 
@@ -252,7 +252,7 @@ describe.skipIf(!ready)("RLS — cas d'entraînement", () => {
     expect(await unlocked()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
   });
 
-  it("retire l'accès au remboursement mais garde l'étude", async () => {
+  it("retire l'accès au remboursement, supprime le cas résolu et garde l'exercice", async () => {
     const eventId = `evt_${RUN}remb`;
     eventIds.push(eventId);
     const refunded = await service.rpc("stripe_process_refund", {
@@ -268,6 +268,15 @@ describe.skipIf(!ready)("RLS — cas d'entraînement", () => {
     expect(access.data).toEqual([]);
     const study = await service.from("studies").select("id").eq("id", studyId).single();
     expect(study.data?.id).toBe(studyId);
+    if (exampleReady) {
+      // v0.14.5 : le cas résolu contient le corrigé, il disparaît avec l'accès
+      const examples = await service
+        .from("studies")
+        .select("id")
+        .eq("practice_case", CASE_CODE)
+        .eq("practice_case_example", true);
+      expect(examples.data).toEqual([]);
+    }
   });
 
   it("refuse les fonctions d'administration aux utilisateurs", async () => {
