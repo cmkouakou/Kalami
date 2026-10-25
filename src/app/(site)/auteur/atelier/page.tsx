@@ -6,10 +6,10 @@
  *               chapitres, jamais de dollars), forfaits en vente (carte ou Mobile Money) et
  *               accès à l'atelier de chacun de ses livres.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-25
  *  Dépendances: lib/author/workshop/queries.ts, lib/author/queries.ts,
- *               components/catalog/buy-button.tsx
+ *               lib/author/workshop/balance.ts, components/catalog/buy-button.tsx
  * =============================================================
  */
 
@@ -21,6 +21,7 @@ import { BuyButton } from "@/components/catalog/buy-button";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { listAuthorBooks, requireAuthor } from "@/lib/author/queries";
+import { balanceMessage } from "@/lib/author/workshop/balance";
 import { getWorkshopBalance, listWorkshopOffers } from "@/lib/author/workshop/queries";
 import { getPreferredCurrency } from "@/lib/currency-server";
 import { pricesOf } from "@/lib/payments/offers";
@@ -41,17 +42,6 @@ export default function WorkshopPage({ searchParams }: PageProps) {
       </Suspense>
     </main>
   );
-}
-
-/** Message du solde selon l'état des crédits. */
-function balanceMessage(balance: Awaited<ReturnType<typeof getWorkshopBalance>>): string {
-  if (!balance.enabled) return w.balance.disabled;
-  if (!balance.unlocked) return w.balance.locked;
-  if (balance.remainingPct <= 0) return w.balance.exhausted;
-  return interpolate(w.balance.remaining, {
-    pct: String(balance.remainingPct),
-    chapters: String(balance.approxChapters),
-  });
 }
 
 /** Solde, forfaits et livres de l'auteur connecté. */

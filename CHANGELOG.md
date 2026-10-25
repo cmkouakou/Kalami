@@ -1,5 +1,22 @@
 # Journal des modifications
 
+## [v0.15.1] - 2026-10-25 — Atelier de l'auteur (A2) : relecteur et style
+### Ajouté
+- Relecteur (orthographe, grammaire, accords, ponctuation, typographie française) et
+  conseiller de style (répétitions, phrases longues, clarté, rythme, choix des mots), un
+  chapitre à la fois, payés en Crédits Atelier (réservation, appel à Claude, coût réel).
+- `/auteur/livres/[id]/atelier/[chapitre]` : lancer chaque outil, lire le bilan, accepter ou
+  refuser chaque suggestion (ou toutes d'un coup) ; un passage introuvable tel quel est
+  signalé « à corriger à la main ».
+- « Créer une nouvelle version » : applique les suggestions acceptées (relecture puis
+  style), refait la typographie et enregistre une nouvelle version en attente, qui suit la
+  validation habituelle. Impossible pendant une validation en cours.
+- Tests unitaires du relecteur (8). Aucune migration.
+
+### Modifié
+- Atelier d'un livre : liste des chapitres avec l'état des relectures, à la place de
+  l'annonce « bientôt ». Message du solde partagé (`workshop/balance.ts`).
+
 ## [v0.15.0] - 2026-10-25 — Atelier de l'auteur (A1)
 ### Ajouté
 - Migration `20261116120000_author_workshop.sql` : réglages des outils IA, forfaits de

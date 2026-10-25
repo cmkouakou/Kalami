@@ -3,13 +3,16 @@
  *  Fichier    : page.tsx (auteur/livres/[id]/atelier)
  *  Projet     : Kalami
  *  Description: Atelier d'un livre (v0.15.0) : statistiques gratuites du manuscrit (version
- *               en attente, sinon publiée), liste de vérification avant soumission et
- *               annonce des outils IA à venir. 404 si le livre appartient à un autre auteur.
+ *               en attente, sinon publiée), liste de vérification avant soumission, outils
+ *               IA par chapitre (relecture, style) et création d'une nouvelle version avec
+ *               les suggestions acceptées (v0.15.1). 404 si le livre appartient à un autre
+ *               auteur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-25
  *  Dépendances: lib/author/workshop/queries.ts, lib/author/manuscript-stats.ts,
- *               lib/author/checklist.ts
+ *               lib/author/checklist.ts, lib/author/workshop/actions.ts,
+ *               components/admin/action-form.tsx
  * =============================================================
  */
 
@@ -18,13 +21,21 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { CARD, PANEL_SAND } from "@/components/ui/styles";
+import { ActionForm } from "@/components/admin/action-form";
+import { CARD, PANEL_SAND, PILL } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import { bookChecklist } from "@/lib/author/checklist";
 import { analyzeManuscript, type ManuscriptStats } from "@/lib/author/manuscript-stats";
 import { requireAuthor } from "@/lib/author/queries";
-import { getManuscript } from "@/lib/author/workshop/queries";
+import { createCorrectedVersion } from "@/lib/author/workshop/actions";
+import {
+  getManuscript,
+  listLatestChapterRequests,
+  type ChapterRequest,
+  type WorkshopChapter,
+} from "@/lib/author/workshop/queries";
+import { CHAPTER_TOOLS } from "@/lib/author/workshop/suggestions";
 
 const w = getDictionary().workshop;
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
@@ -154,6 +165,87 @@ function StatsSection({ stats }: { stats: ManuscriptStats }) {
   );
 }
 
+// ==================== OUTILS IA ====================
+
+/** Nombre de suggestions acceptées d'une demande. */
+function acceptedCount(request: ChapterRequest | undefined): number {
+  if (!request) return 0;
+  return Object.values(request.decisions).filter((value) => value === "accepted").length;
+}
+
+/** Chapitres avec liens vers leur relecture, puis création d'une nouvelle version. */
+function ToolsSection({
+  bookId,
+  chapters,
+  requests,
+}: {
+  bookId: string;
+  chapters: WorkshopChapter[];
+  requests: Map<string, ChapterRequest>;
+}) {
+  const t = w.tools;
+  const accepted = chapters.reduce(
+    (sum, chapter) => sum + CHAPTER_TOOLS.reduce(
+      (count, tool) => count + acceptedCount(requests.get(`${chapter.id}:${tool}`)),
+      0,
+    ),
+    0,
+  );
+  return (
+    <>
+      <section className={`${CARD} flex flex-col gap-4 p-6`}>
+        <div className="flex flex-col gap-1">
+          <h2 className="text-lg font-semibold">{t.title}</h2>
+          <p className="text-sm text-ink-muted">{t.intro}</p>
+        </div>
+        <ul className="flex flex-col divide-y divide-line text-sm">
+          {chapters.map((chapter) => (
+            <li key={chapter.id} className="flex flex-wrap items-center gap-3 py-2">
+              <Link
+                href={`/auteur/livres/${bookId}/atelier/${chapter.id}`}
+                className="min-h-8 flex-1 content-center text-encre hover:underline"
+              >
+                {chapter.position}. {chapter.title}
+              </Link>
+              {CHAPTER_TOOLS.map((tool) => {
+                const request = requests.get(`${chapter.id}:${tool}`);
+                return request ? (
+                  <span key={tool} className="text-small text-ink-muted">
+                    {t.names[tool]} ✓ {acceptedCount(request)}/
+                    {request.review.suggestions.length}
+                  </span>
+                ) : null;
+              })}
+              <Link href={`/auteur/livres/${bookId}/atelier/${chapter.id}`} className={PILL}>
+                {t.open}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p className="text-small text-ink-muted">{t.soon}</p>
+      </section>
+
+      <section className={`${PANEL_SAND} flex flex-col gap-3 p-6`}>
+        <h2 className="text-lg font-semibold">{w.version.title}</h2>
+        <p className="text-sm">{w.version.intro}</p>
+        <p className="text-sm font-semibold">
+          {accepted > 0
+            ? interpolate(w.version.ready, { count: String(accepted) })
+            : w.version.empty}
+        </p>
+        {accepted > 0 && (
+          <ActionForm
+            action={createCorrectedVersion.bind(null, bookId)}
+            submitLabel={w.version.submit}
+          >
+            {null}
+          </ActionForm>
+        )}
+      </section>
+    </>
+  );
+}
+
 // ==================== CONTENU ====================
 
 /** Charge le manuscrit du livre de l'auteur ; 404 sinon. */
@@ -164,7 +256,8 @@ async function BookWorkshop({ params }: PageProps) {
   const manuscript = await getManuscript(id, author.id);
   if (!manuscript) notFound();
 
-  const { book, source, chapters } = manuscript;
+  const { book, source, chapters, versionId } = manuscript;
+  const requests = versionId ? await listLatestChapterRequests(versionId) : new Map();
   const checklist = bookChecklist(book);
   const ready = checklist.every((item) => item.done);
 
@@ -209,13 +302,9 @@ async function BookWorkshop({ params }: PageProps) {
       )}
 
       {/* ==================== OUTILS IA ==================== */}
-      <section className={`${PANEL_SAND} flex flex-col gap-2 p-6`}>
-        <h2 className="text-lg font-semibold">{w.tools.title}</h2>
-        <p className="text-sm">{w.tools.soon}</p>
-        <Link href="/auteur/atelier" className="w-fit text-sm text-encre hover:underline">
-          {w.title}
-        </Link>
-      </section>
+      {chapters.length > 0 && (
+        <ToolsSection bookId={book.id} chapters={chapters} requests={requests} />
+      )}
     </>
   );
 }

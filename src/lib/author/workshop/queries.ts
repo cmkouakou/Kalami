@@ -4,10 +4,11 @@
  *  Projet     : Kalami
  *  Description: Lectures de l'atelier de l'auteur (v0.15.0) : solde de Crédits Atelier
  *               (en pourcentage et en chapitres, jamais en dollars), forfaits en vente,
- *               manuscrit d'un livre de l'auteur (version en attente, sinon publiée).
+ *               manuscrit d'un livre de l'auteur (version en attente, sinon publiée),
+ *               dernières relectures par chapitre (v0.15.1).
  *               Lectures de l'administrateur : réglages, forfaits et consommation.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-25
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, lib/author/queries.ts
  * =============================================================
@@ -17,6 +18,13 @@ import "server-only";
 
 import { getAuthorBook, type AuthorBook } from "@/lib/author/queries";
 import type { ManuscriptChapter } from "@/lib/author/manuscript-stats";
+import {
+  CHAPTER_TOOLS,
+  readChapterReview,
+  type ChapterReview,
+  type ChapterTool,
+  type SuggestionDecision,
+} from "@/lib/author/workshop/suggestions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -241,4 +249,71 @@ export async function listWorkshopUsage(): Promise<WorkshopUsageRow[]> {
   const rows = check(await supabase.rpc("admin_workshop_usage"), "consommation de l'atelier") as
     WorkshopUsageRow[];
   return rows.map((row) => ({ ...row, spent: Number(row.spent), budget: Number(row.budget) }));
+}
+
+// ==================== RELECTURES ====================
+
+/** Demande terminée du relecteur ou du conseiller de style. */
+export type ChapterRequest = {
+  id: string;
+  chapterId: string;
+  tool: ChapterTool;
+  review: ChapterReview;
+  decisions: Record<string, SuggestionDecision>;
+  createdAt: string;
+};
+
+/** Décisions enregistrées, en écartant les valeurs inconnues. */
+function readDecisions(value: unknown): Record<string, SuggestionDecision> {
+  if (!value || typeof value !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).filter(
+      ([, decision]) => decision === "accepted" || decision === "rejected",
+    ),
+  ) as Record<string, SuggestionDecision>;
+}
+
+/**
+ * Dernière demande terminée de chaque outil, par chapitre, pour une version (RLS : les
+ * demandes de l'auteur seulement).
+ * @param versionId - Version lue dans l'atelier
+ * @returns Clé « chapitre:outil » vers la demande la plus récente
+ */
+export async function listLatestChapterRequests(
+  versionId: string,
+): Promise<Map<string, ChapterRequest>> {
+  const supabase = await createClient();
+  const rows = check(
+    await supabase
+      .from("workshop_requests")
+      .select("id, chapter_id, tool, output, decisions, created_at")
+      .eq("version_id", versionId)
+      .eq("status", "done")
+      .in("tool", CHAPTER_TOOLS)
+      .not("chapter_id", "is", null)
+      .order("created_at", { ascending: false })
+      .returns<{
+        id: string;
+        chapter_id: string;
+        tool: ChapterTool;
+        output: unknown;
+        decisions: unknown;
+        created_at: string;
+      }[]>(),
+    "relectures",
+  ) ?? [];
+  const latest = new Map<string, ChapterRequest>();
+  for (const row of rows) {
+    const key = `${row.chapter_id}:${row.tool}`;
+    if (latest.has(key)) continue;
+    latest.set(key, {
+      id: row.id,
+      chapterId: row.chapter_id,
+      tool: row.tool,
+      review: readChapterReview(row.output),
+      decisions: readDecisions(row.decisions),
+      createdAt: row.created_at,
+    });
+  }
+  return latest;
 }

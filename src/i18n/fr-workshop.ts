@@ -5,8 +5,9 @@
  *  Description: Textes de l'atelier de l'auteur (v0.15.0) : Crédits Atelier, statistiques
  *               du manuscrit, liste de vérification avant soumission et administration
  *               (réglages, forfaits, octroi, consommation).
+ *               Relecteur, conseiller de style et nouvelle version (v0.15.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-25
  * =============================================================
  */
@@ -95,9 +96,80 @@ const workshopFr = {
   },
   tools: {
     title: "Outils IA",
-    soon:
-      "Bientôt : relecteur (orthographe et grammaire), conseils de style chapitre par " +
-      "chapitre, et rédaction de la fiche du livre (résumé, accroche, mots-clés).",
+    intro:
+      "Faites relire chaque chapitre par l'IA (orthographe et grammaire, puis style). " +
+      "Acceptez ou refusez chaque suggestion : rien n'est modifié sans votre accord.",
+    soon: "Bientôt : rédaction de la fiche du livre (résumé, accroche, mots-clés).",
+    credits: "Crédits Atelier",
+    chapters: "Chapitres",
+    open: "Ouvrir",
+    names: { proofread: "Relecture", style: "Style" },
+    descriptions: {
+      proofread: "Orthographe, grammaire, accords, ponctuation et typographie française.",
+      style: "Répétitions, phrases longues, clarté, rythme et choix des mots.",
+    },
+    run: "Lancer : {tool}",
+    rerun: "Relancer : {tool}",
+    running: "Analyse en cours… (jusqu'à deux minutes)",
+    cost: "Chaque analyse utilise vos Crédits Atelier.",
+    counts: "{total} suggestions · {accepted} acceptées · {rejected} refusées",
+    pending: "{count} en attente",
+    none: "Aucune analyse pour ce chapitre.",
+    noSuggestion: "Aucune suggestion : ce chapitre semble impeccable.",
+    summary: "Bilan",
+    block: "Bloc {n}",
+    accept: "Accepter",
+    reject: "Refuser",
+    accepted: "Acceptée",
+    rejected: "Refusée",
+    acceptAll: "Tout accepter",
+    rejectAll: "Tout refuser",
+    manual: "À corriger à la main : passage introuvable tel quel dans le texte.",
+    kinds: {
+      spelling: "Orthographe",
+      grammar: "Grammaire",
+      agreement: "Accord",
+      punctuation: "Ponctuation",
+      typography: "Typographie",
+      repetition: "Répétition",
+      long_sentence: "Phrase longue",
+      clarity: "Clarté",
+      rhythm: "Rythme",
+      word_choice: "Choix du mot",
+      other: "Autre",
+    },
+    back: "Retour à l'atelier du livre",
+    chapterTitle: "Chapitre {position} — {title}",
+    errors: {
+      not_configured: "Les outils IA ne sont pas configurés sur ce site.",
+      not_found: "Chapitre introuvable dans la version en cours.",
+      empty_chapter: "Ce chapitre est vide.",
+      chapter_too_long:
+        "Ce chapitre est trop long pour une seule analyse. Découpez-le dans votre manuscrit.",
+      workshop_disabled: "Les outils IA de l'atelier sont momentanément indisponibles.",
+      workshop_locked: "Achetez un forfait de Crédits Atelier pour lancer une analyse.",
+      rate_limited: "Trop de demandes rapprochées. Réessayez dans quelques minutes.",
+      budget_exhausted: "Vos Crédits Atelier sont épuisés. Achetez un forfait pour continuer.",
+      refused: "L'IA a refusé d'analyser ce passage.",
+      timeout: "L'analyse a pris trop de temps. Réessayez.",
+      busy: "Le service est surchargé. Réessayez dans un instant.",
+      failed: "L'analyse a échoué. Réessayez.",
+    },
+  },
+  version: {
+    title: "Créer une nouvelle version",
+    intro:
+      "Applique toutes les suggestions acceptées et crée une nouvelle version du livre. " +
+      "Elle remplace une version en attente et doit ensuite être soumise à la validation.",
+    ready: "{count} suggestions acceptées prêtes à appliquer.",
+    empty: "Acceptez d'abord des suggestions dans un chapitre.",
+    submit: "Créer la nouvelle version",
+    created: "Nouvelle version créée : {applied} corrections appliquées.",
+    createdManual:
+      "Nouvelle version créée : {applied} corrections appliquées, {manual} à reprendre " +
+      "à la main.",
+    nothing: "Aucune suggestion acceptée n'a pu être appliquée.",
+    failed: "La nouvelle version n'a pas pu être créée. Réessayez.",
   },
 
   // ==================== ADMINISTRATION ====================

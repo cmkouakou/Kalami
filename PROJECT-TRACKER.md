@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.15.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.15.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -70,7 +70,8 @@ Version actuelle : v0.15.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #64 | 2026-10-25 | Vérification des prix du cas Ajinomoto ; v0.14.6 logo Kalami dans l'onglet (favicon) et l'aperçu des liens partagés | ~40 000 | ~0.24 $ |
 | #65 | 2026-10-25 | v0.14.7 : connexion qui ramène à la page quittée, menu déroulant « Mon compte » (compte, achats, espace auteur, administration) | ~70 000 | ~0.42 $ |
 | #66 | 2026-10-25 | v0.15.0 (A1) : atelier de l’auteur — Crédits Atelier (migration, achat, admin), vérification avant soumission, statistiques du manuscrit | ~450 000 | ~2.70 $ |
-| **TOTAL** | | | **~17 140 000** | **~102.84 $** |
+| #67 | 2026-10-25 | v0.15.1 (A2) : relecteur et conseiller de style par chapitre, accepter/refuser, nouvelle version avec les corrections | ~350 000 | ~2.10 $ |
+| **TOTAL** | | | **~17 490 000** | **~104.94 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -154,7 +155,7 @@ Version actuelle : v0.15.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Atelier A1 — Crédits Atelier, vérification avant soumission, statistiques du manuscrit (v0.15.0)
 - [x] Atelier A1 — migration `20261116120000_author_workshop.sql` appliquée le 2026-10-25, intégration author-workshop-rls 5/5
 - [ ] Atelier A1 — créer au moins un forfait de Crédits Atelier dans /admin/atelier
-- [ ] Atelier A2 (v0.15.1) — relecteur (orthographe, grammaire) et style par chapitre, accepter/refuser,
+- [x] Atelier A2 (v0.15.1) — relecteur (orthographe, grammaire) et style par chapitre, accepter/refuser,
   « Créer une nouvelle version » soumise à la validation habituelle
 - [ ] Atelier A3 (v0.15.2) — fiche du livre par Claude (résumé, accroche, mots-clés, bio, titres)
 
