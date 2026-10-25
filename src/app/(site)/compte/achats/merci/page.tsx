@@ -5,10 +5,10 @@
  *  Description: Page de retour après le paiement Stripe (?commande=…). L'accès n'est jamais
  *               accordé ici : la page attend que le webhook signé ait confirmé la commande,
  *               puis ouvre ce que l'achat débloque : livre (et étude offerte pour le livre
- *               guide), crédits d'étude Stratégie, forfait du coach ou cas d'entraînement.
+ *               guide), crédits d'étude Stratégie, forfait du coach, cas d'entraînement ou crédits Atelier (v0.15.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-23
+ *  Version    : 1.3
+ *  Date       : 2026-10-25
  *  Dépendances: lib/payments/queries.ts, components/account/order-status-poller.tsx
  * =============================================================
  */
@@ -35,6 +35,7 @@ const LINK_LABELS = {
   strategy: t.account.purchases.openStrategy,
   coach: t.account.purchases.openCoach,
   case: t.account.purchases.openCase,
+  workshop: t.account.purchases.openWorkshop,
 } as const;
 
 /**
@@ -47,6 +48,7 @@ function paidMessage(item: OrderItemSummary): string {
   }
   if (item.kind === "coach_pack") return interpolate(tt.paidPack, { label: item.label });
   if (item.kind === "practice_case") return interpolate(tt.paidCase, { label: item.label });
+  if (item.kind === "workshop_pack") return interpolate(tt.paidWorkshop, { label: item.label });
   return interpolate(tt.paid, { label: item.label });
 }
 

@@ -5,10 +5,11 @@
  *  Description: Lecture des commandes de l'acheteur connecté (RLS : chacun ne voit que les
  *               siennes) pour la page « Mes achats » et la page de retour du paiement ;
  *               lien vers ce que l'achat débloque (livre, Kalami Stratégie, coach, cas
- *               d'entraînement depuis la v0.14.0) ; champs Mobile Money (v0.11.0).
+ *               d'entraînement depuis la v0.14.0, atelier de l'auteur depuis la v0.15.0) ;
+ *               champs Mobile Money (v0.11.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-23
+ *  Version    : 1.4
+ *  Date       : 2026-10-25
  *  Dépendances: lib/supabase/server.ts, migration 20261104120000_orders.sql
  * =============================================================
  */
@@ -101,7 +102,10 @@ export async function getMyOrder(orderId: string): Promise<OrderSummary | null> 
 // ==================== LIENS ====================
 
 /** Destination ouverte par un article payé. */
-export type OrderItemLink = { href: string; kind: "read" | "strategy" | "coach" | "case" };
+export type OrderItemLink = {
+  href: string;
+  kind: "read" | "strategy" | "coach" | "case" | "workshop";
+};
 
 /**
  * Lien vers ce que débloque un article payé.
@@ -121,5 +125,6 @@ export function orderItemLink(item: OrderItemSummary): OrderItemLink | null {
   if (item.kind === "practice_case" && item.practice_case) {
     return { href: `/strategie/cas/${item.practice_case}`, kind: "case" };
   }
+  if (item.kind === "workshop_pack") return { href: "/auteur/atelier", kind: "workshop" };
   return null;
 }

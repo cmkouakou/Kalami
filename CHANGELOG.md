@@ -1,5 +1,29 @@
 # Journal des modifications
 
+## [v0.15.0] - 2026-10-25 — Atelier de l'auteur (A1)
+### Ajouté
+- Migration `20261116120000_author_workshop.sql` : réglages des outils IA, forfaits de
+  Crédits Atelier, crédits par auteur et journal des demandes (réservation puis fin au coût
+  réel, limite de débit, budget épuisé). Lecture des crédits et réglages réservée aux
+  administrateurs ; l'auteur ne voit que son solde en % et un nombre approximatif de chapitres.
+- Achat des Crédits Atelier par carte (Stripe) ou Mobile Money, comme les forfaits du coach :
+  nouvel article `workshop_pack`, livraison et remboursement pris en charge par la base.
+- `/auteur/atelier` : solde, forfaits à acheter, liste des livres vers leur atelier.
+- `/auteur/livres/[id]/atelier` (gratuit) : liste de vérification avant soumission
+  (couvertures, résumé, mots-clés, catégorie, prix, manuscrit) et statistiques du manuscrit
+  (mots, temps de lecture, longueur des chapitres, phrases très longues, mots fréquents,
+  répétitions rapprochées, espaces manquantes avant « ; : ! ? » et les guillemets).
+- `/admin/atelier` : réglages (modèle, prix, débit), forfaits, octroi gratuit d'un forfait à un
+  auteur, consommation par auteur.
+- Tests : unitaires de l'atelier (13), intégration RLS de l'atelier (5, ignorés tant que la
+  migration n'est pas appliquée).
+
+### Modifié
+- Paiements (demande d'achat, création de commande, code promo, Mes achats, page de
+  remerciement) : prise en charge des Crédits Atelier.
+- Navigation : lien « Atelier » dans l'espace auteur, « Atelier des auteurs » dans
+  l'administration ; lien vers l'atelier depuis la page d'un livre.
+
 ## [v0.14.7] - 2026-10-25 — Connexion sans détour par « Mon compte »
 ### Modifié
 - Après la connexion, on revient à la page quittée (le lien « Se connecter » de l'en-tête

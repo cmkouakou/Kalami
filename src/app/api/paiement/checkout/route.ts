@@ -3,14 +3,14 @@
  *  Fichier    : route.ts (api/paiement/checkout)
  *  Projet     : Kalami
  *  Description: Achat par carte d'un livre, d'une étude ou d'un lot d'études Stratégie, ou
- *               d'un forfait du coach : crée la commande au prix de la base (fonctions
+ *               d'un forfait du coach ou d'un forfait Atelier (v0.15.0) : crée la commande au prix de la base (fonctions
  *               create_book_order et create_strategy_order, au nom de l'acheteur connecté),
  *               ouvre la session Stripe Checkout et renvoie son adresse. Aucun droit n'est
  *               accordé ici : seul le webhook signé livre l'achat. Code promo facultatif
  *               (réduction calculée par la base) et Stripe Tax si l'interrupteur est allumé.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-19
+ *  Version    : 1.4
+ *  Date       : 2026-10-25
  *  Dépendances: lib/payments/stripe.ts, lib/payments/catalog.ts, lib/payments/create-order.ts,
  *               lib/payments/checkout-request.ts, lib/supabase/admin.ts
  * =============================================================
@@ -55,6 +55,8 @@ async function describeItem(
   if (body.item === "practice_case") {
     return { saleItem: { kind: "practice_case", code: body.code }, bookSlug: null };
   }
+  // Forfaits Atelier : pas de produit Stripe dédié, décrits à la volée
+  if (body.item === "workshop_pack") return { saleItem: null, bookSlug: null };
   const { data } = await admin.from("coach_packs").select("name").eq("id", body.packId).single();
   return { saleItem: data ? coachPackSaleItem(data.name) : null, bookSlug: null };
 }

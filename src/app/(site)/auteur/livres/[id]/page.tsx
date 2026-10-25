@@ -4,10 +4,11 @@
  *  Projet     : Kalami
  *  Description: Gestion d'un livre par son auteur : fiche et couverture (si modifiable),
  *               manuscrit et versions, prévisualisation, demande de validation, historique
- *               des décisions et passages les plus surlignés (livre publié).
+ *               des décisions et passages les plus surlignés (livre publié). Lien vers
+ *               l'atelier du livre (v0.15.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
+ *  Version    : 1.1
+ *  Date       : 2026-10-25
  *  Dépendances: lib/author/queries.ts, lib/author/actions.ts, components/author
  * =============================================================
  */
@@ -101,6 +102,12 @@ async function BookContent({
           )}
         </div>
         <BookStatusBadge status={book.status} />
+        <Link
+          href={`/auteur/livres/${book.id}/atelier`}
+          className="w-fit text-sm text-encre hover:underline"
+        >
+          {t.workshop.bookLink}
+        </Link>
       </header>
 
       {query.cree === "1" && (

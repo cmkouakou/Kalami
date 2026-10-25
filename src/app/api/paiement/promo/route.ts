@@ -7,10 +7,11 @@
  *               valable pour cet article) et renvoie sa réduction. Le montant final est
  *               recalculé par la base à la création de la commande. Dix essais par compte
  *               en dix minutes au plus, contre la recherche de codes à l'aveugle (Sprint 11s).
- *               Les cas d'entraînement suivent les codes « strategy » (v0.14.0).
+ *               Les cas d'entraînement suivent les codes « strategy » (v0.14.0) ; les
+ *               forfaits Atelier n'acceptent que les codes valables partout (v0.15.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-23
+ *  Version    : 1.3
+ *  Date       : 2026-10-25
  *  Dépendances: lib/payments/promo.ts, lib/security/rate-limit.ts, lib/supabase/server.ts
  * =============================================================
  */
@@ -34,13 +35,14 @@ import { createClient } from "@/lib/supabase/server";
  */
 function targetOf(
   body: Record<string, unknown>,
-): { target: "book" | "strategy"; bookId: string | null } | null {
+): { target: "book" | "strategy" | "workshop"; bookId: string | null } | null {
   if (body.item === "book" && isUuid(body.bookId)) {
     return { target: "book", bookId: body.bookId };
   }
   if (body.item === "study_offer" || body.item === "coach_pack" || body.item === "practice_case") {
     return { target: "strategy", bookId: null };
   }
+  if (body.item === "workshop_pack") return { target: "workshop", bookId: null };
   return null;
 }
 

@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.15.0 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -69,7 +69,8 @@ Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #63 | 2026-10-24 | v0.14.5 : cas résolu supprimé au retrait ou au remboursement de l'accès, bouton du cas affiché à tous quand il est en vente | ~60 000 | ~0.36 $ |
 | #64 | 2026-10-25 | Vérification des prix du cas Ajinomoto ; v0.14.6 logo Kalami dans l'onglet (favicon) et l'aperçu des liens partagés | ~40 000 | ~0.24 $ |
 | #65 | 2026-10-25 | v0.14.7 : connexion qui ramène à la page quittée, menu déroulant « Mon compte » (compte, achats, espace auteur, administration) | ~70 000 | ~0.42 $ |
-| **TOTAL** | | | **~16 690 000** | **~100.14 $** |
+| #66 | 2026-10-25 | v0.15.0 (A1) : atelier de l’auteur — Crédits Atelier (migration, achat, admin), vérification avant soumission, statistiques du manuscrit | ~450 000 | ~2.70 $ |
+| **TOTAL** | | | **~17 140 000** | **~102.84 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -83,7 +84,7 @@ Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Sprint 1 — URL du site et URLs de redirection (localhost)
 - [x] Sprint 1 — fournisseur Google configuré (mode test ; publication après les pages légales du 11a)
 - [x] Sprint 2 — catalogue public, devises, administration (v0.3.0)
-- [ ] Sprint 2 — test de l'administration connecté avec MFA (par l'utilisateur)
+- [x] Sprint 2 — test de l'administration connecté avec MFA (MFA changée en production, 2026-10-25)
 - [x] CI — variables GitHub NEXT_PUBLIC_SUPABASE_URL / _PUBLISHABLE_KEY (onglet Variables) ; CI verte le 2026-10-22
 - [x] Sprint 3 — contenu protégé : conversion, extrait, API 403/429, droits (v0.4.0)
 - [x] Sprint 3 — migration `20261008120000_content.sql` appliquée, tests d'intégration 85/85
@@ -92,18 +93,18 @@ Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [ ] v0.9.3 — appliquer `20261102120000_pdf_manuscripts.sql`, puis déposer un PDF et un DOCX réels
 - [x] Sprint 4 — liseuse : page tournée, défilement, réglages, signets, recherche (v0.5.0)
 - [x] Sprint 4 — migration `20261009120000_reader.sql` appliquée, tests d'intégration 23/23
-- [ ] Sprint 4 — essai réel de la liseuse (ordinateur, tablette, téléphone)
+- [x] Sprint 4 — essai réel de la liseuse (ordinateur, tablette, téléphone)
 - [x] Sprint 4b — design : charte, composants, pages, liseuse, contrastes AA (v0.5.1)
-- [ ] Sprint 4b — revue visuelle par l'utilisateur (ordinateur, téléphone, 3 thèmes)
+- [x] Sprint 4b — revue visuelle par l'utilisateur (ordinateur, téléphone, 3 thèmes)
 - [x] Sprint 7 — annotations : surlignages, notes, citation, partage (v0.6.0)
 - [x] Sprint 7 — migration `20261010120000_annotations.sql` appliquée, tests 203/203 (dont RLS 4/4)
-- [ ] Sprint 7 — essai réel : sélection sur téléphone Android (appui long), partage d'image
+- [x] Sprint 7 — essai réel : sélection sur téléphone Android (appui long), partage d'image
 - [x] Sprint 9 — espace auteur : contrat, dépôt, aperçu, validation, tableau de bord (v0.8.0)
 - [x] Sprint 9 — migration `20261011120000_author_space.sql` appliquée, tests RLS 7/7
 - [x] Sprint 9 — premier contrat publié (brouillon docs/contrat-auteur-brouillon.txt)
 - [x] Sprint 9 — contrat finalisé et republié (relecture juridique conseillée)
 - [x] Sprint 8 — PDF filigrané : Chromium, lien signé 24 h, 3 téléchargements, purge (v0.8.1)
-- [ ] Sprint 8 — appliquer `20261012120000_pdf.sql`, définir `CRON_SECRET` dans Vercel
+- [x] Sprint 8 — appliquer `20261012120000_pdf.sql`, définir `CRON_SECRET` dans Vercel (confirmé 2026-10-25)
 - [x] Sprint 8 — essai réel : option PDF sur un livre, droit accordé, téléchargement (2026-10-23 : filigrane, limite de 3, lien expiré, remise à 3 OK)
 - [x] Sprint 11a-1 — textes légaux, témoins, export et suppression du compte (v0.9.0, code)
 - [x] Sprint 11a-1 — migration 20261031120000 appliquée, historique réparé, tests RLS legal-rls (8/8)
@@ -135,7 +136,8 @@ Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Sprint 10b — versements, `/admin/versements`, `/admin/journal`, tableau de bord admin (v0.12.1) ; unitaires 633/633
 - [x] Sprint 10b — migration `20261110120000_payouts.sql` appliquée le 2026-10-19, intégration payouts-rls 6/6, ledger-rls 4/4
 - [ ] Paiements 11b — voir [docs/SPRINTS.md](docs/SPRINTS.md)
-- [ ] Mobile Money via Paystack (décision 2026-10-23) — encaissement par agrégateur, avec partage
+- [ ] Mobile Money via Paystack (décision 2026-10-23 ; reportée le 2026-10-25 : délais des agrégateurs,
+  on garde le Mobile Money manuel) — encaissement par agrégateur, avec partage
   des paiements à la source : 1 auteur = 1 sous-compte Mobile Money (MTN, Orange, Wave CIV), sa
   part lui est versée automatiquement, la commission reste à Kalami. Remplace la validation
   manuelle et les demandes de versement. Option 2 (numéros des auteurs + blocage) écartée.
@@ -147,11 +149,14 @@ Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
   - [ ] Intégration en mode test : sous-compte créé quand l'auteur saisit son numéro,
     paiement avec code du sous-compte, webhook de confirmation, écriture au grand livre
   - [ ] Passage en Live après validation de l'entreprise
-- [ ] Idée (2026-10-22, après la v1.0.0) — espace auteur : atelier de couverture payant, connecté
-  à Claude. L'auteur décrit sa couverture, ajoute ses images, et l'outil la génère s'il n'en a
-  pas. À étudier : Claude rédige la description et compose la mise en page (titre, auteur,
-  format 6 × 9 po), mais l'illustration demande un service d'images tiers. Prévoir aussi le
-  prix, le crédit consommé par génération et la propriété des images.
+- [x] Idée (2026-10-22) — atelier de couverture : abandonnée le 2026-10-25 (l’auteur fournit
+  sa 1re et sa 4e de couverture)
+- [x] Atelier A1 — Crédits Atelier, vérification avant soumission, statistiques du manuscrit (v0.15.0)
+- [x] Atelier A1 — migration `20261116120000_author_workshop.sql` appliquée le 2026-10-25, intégration author-workshop-rls 5/5
+- [ ] Atelier A1 — créer au moins un forfait de Crédits Atelier dans /admin/atelier
+- [ ] Atelier A2 (v0.15.1) — relecteur (orthographe, grammaire) et style par chapitre, accepter/refuser,
+  « Créer une nouvelle version » soumise à la validation habituelle
+- [ ] Atelier A3 (v0.15.2) — fiche du livre par Claude (résumé, accroche, mots-clés, bio, titres)
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)
@@ -181,7 +186,7 @@ Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] S6a — synthèse : SWOT avec reprise des étapes 1 à 3, TOWS, 2 ou 3 enjeux (Stratégie v0.7.0), unitaires 343/343
 - [x] S6a — migration `20261021120000_strategy_synthesis.sql` appliquée le 2026-10-14 (éditeur SQL, historique réparé), intégration synthèse 8/8, guides 15/15
 - [x] S6b — préremplissage par le coach (SWOT, pistes TOWS, enjeux), contexte des étapes 1 à 4 (Stratégie v0.7.1), unitaires 359/359
-- [ ] S6b — appliquer `20261022120000_strategy_coach_synthesis.sql`, puis lancer l'intégration synthèse du coach (4 tests)
+- [x] S6b — appliquer `20261022120000_strategy_coach_synthesis.sql` (appliquée ; intégration synthèse 4/4 au v0.11.1)
 - [ ] S6b — consigne synthesize v1 à relire et publier
 - [x] S7a — Cap (vision et test du nom, mission, valeurs, objectifs SMART) et Choix (Porter, Ansoff, évaluation, énoncé, renoncements) (Stratégie v0.8.0)
 - [x] S7a — migration `20261023120000_strategy_direction_choice.sql` appliquée le 2026-10-15 (éditeur SQL ; `repair --status applied 20261023120000` avant un push CLI), intégration cap et choix 15/15
@@ -204,7 +209,7 @@ Version actuelle : v0.14.7 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] v0.11.2 — diagnostic des courriels d'invitation (raison du refus de Resend dans les journaux Vercel, message distinct), unitaires 489/489
 - [x] v0.11.3 — export PDF réparé (binaire Chromium inclus dans la fonction Vercel), liens étape précédente / suivante ; unitaires 511/511, build OK
 - [x] v0.11.4 — refonte des exports Word et PDF du plan (couverture, puces et précisions, encadrés, grille SWOT, Gantt par années, tableau de bord 2 × 2) ; unitaires 518/518
-- [ ] S10b — cas Ajinomoto, Infosystem et corrigé — v0.14.0 données/vente/admin (migration appliquée, intégration 6/6) ; v0.14.1 pages écrites (à essayer en ligne) ; v0.14.3 cas résolu + liste des accès (migrations appliquées) ; v0.14.5 cas résolu supprimé au retrait de l'accès ; prix saisis le 2026-10-25 (2 500 FCFA · 4 € · 5 $ CA) ; reste Infosystem
-  - [ ] Paiement Stripe du cas Ajinomoto : achat test déjà fait ; reste à valider le remboursement depuis Stripe (accès retiré, cas résolu supprimé, exercice gardé)
+- [ ] S10b — cas Ajinomoto, Infosystem et corrigé — v0.14.0 données/vente/admin (migration appliquée, intégration 6/6) ; v0.14.1 pages écrites (à essayer en ligne) ; v0.14.3 cas résolu + liste des accès (migrations appliquées) ; v0.14.5 cas résolu supprimé au retrait de l'accès ; prix saisis le 2026-10-25 (2 500 FCFA · 4 € · 5 $ CA) ; Infosystem REPORTÉ (2026-10-25 : le livre sert lui-même de corrigé, à reprendre plus tard)
+  - [ ] Paiement Stripe du cas Ajinomoto : achat test déjà fait ; remboursement lancé depuis Stripe le 2026-10-25 ; reste à vérifier l'effet (accès retiré, cas résolu supprimé, exercice gardé)
 - [x] S12 — débit des exports du plan limité à 20 par heure et par compte (v0.13.0)
 - [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse

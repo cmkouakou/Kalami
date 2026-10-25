@@ -3,13 +3,13 @@
  *  Fichier    : checkout-request.ts
  *  Projet     : Kalami
  *  Description: Lecture du corps d'une demande d'achat (livre, étude ou lot d'études,
- *               forfait du coach, cas d'entraînement depuis la v0.14.0, code promo
- *               facultatif depuis la v0.10.3) et adresse de retour si le paiement est
- *               abandonné.
+ *               forfait du coach, cas d'entraînement depuis la v0.14.0, forfait Atelier
+ *               de l'auteur depuis la v0.15.0, code promo facultatif depuis la v0.10.3) et
+ *               adresse de retour si le paiement est abandonné.
  *               Fonctions pures : le prix et les droits sont vérifiés par la base.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-23
+ *  Version    : 1.3
+ *  Date       : 2026-10-25
  *  Dépendances: lib/admin/validation.ts, lib/currency.ts, catalog.ts
  * =============================================================
  */
@@ -31,7 +31,8 @@ export type CheckoutItem =
   | { item: "book"; bookId: string }
   | { item: "study_offer"; code: StudyOfferCode }
   | { item: "coach_pack"; packId: string; studyId: string }
-  | { item: "practice_case"; code: string };
+  | { item: "practice_case"; code: string }
+  | { item: "workshop_pack"; packId: string };
 
 export type CheckoutBody = CheckoutItem & { currency: Currency; promoCode?: string };
 
@@ -89,6 +90,9 @@ function parseItem(body: Record<string, unknown>): CheckoutItem | null {
   if (item === "practice_case" && typeof body.code === "string" && CASE_CODE.test(body.code)) {
     return { item, code: body.code };
   }
+  if (item === "workshop_pack" && isUuid(body.packId)) {
+    return { item, packId: body.packId };
+  }
   return null;
 }
 
@@ -129,5 +133,7 @@ export function cancelPathFor(item: CheckoutItem, bookSlug: string | null): stri
       return `/strategie/etudes/${item.studyId}/coach?paiement=annule`;
     case "practice_case":
       return `/strategie/cas/${item.code}?paiement=annule`;
+    case "workshop_pack":
+      return "/auteur/atelier?paiement=annule";
   }
 }

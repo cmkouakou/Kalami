@@ -6,8 +6,8 @@
  *               Aucun contrôle d'accès ici (un layout ne se ré-exécute pas à chaque
  *               navigation) : chaque page appelle requireAdmin() elle-même.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5 (liens Versements et Journal, v0.12.1)
- *  Date       : 2026-10-19
+ *  Version    : 1.6 (lien Atelier des auteurs, v0.15.0)
+ *  Date       : 2026-10-25
  * =============================================================
  */
 
@@ -38,6 +38,7 @@ const LINKS = [
   { href: "/admin/mobile-money", label: t.admin.nav.mobileMoney },
   { href: "/admin/revenus", label: t.admin.nav.revenue },
   { href: "/admin/versements", label: t.admin.nav.payouts },
+  { href: "/admin/atelier", label: t.admin.nav.workshop },
   { href: "/admin/journal", label: t.admin.nav.audit },
   { href: "/", label: t.admin.nav.site },
 ];

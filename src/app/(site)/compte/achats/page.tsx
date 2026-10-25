@@ -7,8 +7,8 @@
  *               reçu Stripe ; les commandes remboursées restent visibles. Une commande
  *               Mobile Money montre son étape et mène à sa page (paiement, déclaration).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-19
+ *  Version    : 1.3
+ *  Date       : 2026-10-25
  *  Dépendances: lib/payments/queries.ts, lib/payments/mobile-money.ts, lib/currency.ts
  * =============================================================
  */
@@ -41,6 +41,7 @@ const LINK_LABELS: Record<OrderItemLink["kind"], string> = {
   strategy: tp.openStrategy,
   coach: tp.openCoach,
   case: tp.openCase,
+  workshop: tp.openWorkshop,
 };
 
 /** État des commandes Mobile Money pas encore payées. */

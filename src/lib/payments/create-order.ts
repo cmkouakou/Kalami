@@ -4,10 +4,11 @@
  *  Projet     : Kalami
  *  Description: Création d'une commande au nom de l'acheteur connecté, commune à la carte
  *               (Stripe) et au Mobile Money : la base vérifie prix, droits, code promo,
- *               remise enseignant et cadence (create_book_order, create_strategy_order).
+ *               remise enseignant et cadence (create_book_order, create_strategy_order,
+ *               create_workshop_order depuis la v0.15.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-19
+ *  Version    : 1.1
+ *  Date       : 2026-10-25
  *  Dépendances: lib/payments/checkout-request.ts, lib/payments/promo.ts,
  *               lib/supabase/server.ts
  * =============================================================
@@ -52,6 +53,15 @@ export async function createOrder(body: CheckoutBody) {
     return supabase
       .rpc("create_book_order", {
         p_book_id: body.bookId,
+        p_currency: body.currency,
+        p_promo_code: promo,
+      })
+      .single<OrderRow>();
+  }
+  if (body.item === "workshop_pack") {
+    return supabase
+      .rpc("create_workshop_order", {
+        p_pack_id: body.packId,
         p_currency: body.currency,
         p_promo_code: promo,
       })

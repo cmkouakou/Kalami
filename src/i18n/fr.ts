@@ -5,12 +5,13 @@
  *  Description: Textes de l'interface en français (langue par défaut).
  *               « {appName} » est remplacé par APP_NAME au moment de l'affichage.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-19
+ *  Version    : 1.4
+ *  Date       : 2026-10-25
  * =============================================================
  */
 
 import strategyFr from "./fr-strategy";
+import workshopFr from "./fr-workshop";
 
 const fr = {
   meta: {
@@ -428,6 +429,7 @@ const fr = {
       openStrategy: "Ouvrir Kalami Stratégie",
       openCoach: "Ouvrir le coach",
       openCase: "Ouvrir le cas",
+      openWorkshop: "Ouvrir l'atelier",
       mmToPay: "Mobile Money : en attente de votre paiement",
       mmToReview: "Mobile Money : paiement en cours de vérification",
       mmRejected: "Mobile Money : paiement refusé",
@@ -443,6 +445,8 @@ const fr = {
         paidCase:
           "Votre paiement est confirmé : « {label} » est ouvert. Votre étude préremplie " +
           "vous attend.",
+        paidWorkshop:
+          "Votre paiement est confirmé : « {label} » est ajouté à votre atelier d'auteur.",
         refunded: "Cette commande a été remboursée.",
         bonus: "Une étude Kalami Stratégie vous est offerte avec ce livre.",
         bonusLink: "Commencer une étude",
@@ -507,6 +511,7 @@ const fr = {
       profile: "Profil et versements",
       contract: "Contrat",
       revenue: "Revenus",
+      workshop: "Atelier",
     },
     dashboard: {
       books: "Mes livres",
@@ -703,6 +708,7 @@ const fr = {
       mobileMoney: "Mobile Money",
       revenue: "Revenus",
       payouts: "Versements",
+      workshop: "Atelier des auteurs",
       audit: "Journal",
       site: "Voir le site",
     },
@@ -1465,6 +1471,7 @@ const fr = {
     text: "Cette adresse ne correspond à aucune page, ou la page n'est plus disponible.",
   },
   strategy: strategyFr,
+  workshop: workshopFr,
 };
 
 export default fr;
