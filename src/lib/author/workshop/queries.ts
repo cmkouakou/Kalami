@@ -5,10 +5,11 @@
  *  Description: Lectures de l'atelier de l'auteur (v0.15.0) : solde de Crédits Atelier
  *               (en pourcentage et en chapitres, jamais en dollars), forfaits en vente,
  *               manuscrit d'un livre de l'auteur (version en attente, sinon publiée),
- *               dernières relectures par chapitre (v0.15.1).
+ *               dernières relectures par chapitre (v0.15.1), dernière fiche proposée
+ *               (v0.15.2).
  *               Lectures de l'administrateur : réglages, forfaits et consommation.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-25
  *  Dépendances: lib/supabase/server.ts, lib/supabase/admin.ts, lib/author/queries.ts
  * =============================================================
@@ -18,6 +19,7 @@ import "server-only";
 
 import { getAuthorBook, type AuthorBook } from "@/lib/author/queries";
 import type { ManuscriptChapter } from "@/lib/author/manuscript-stats";
+import { readListing, type Listing } from "@/lib/author/workshop/listing";
 import {
   CHAPTER_TOOLS,
   readChapterReview,
@@ -316,4 +318,45 @@ export async function listLatestChapterRequests(
     });
   }
   return latest;
+}
+
+// ==================== FICHE DU LIVRE ====================
+
+/** Dernière fiche proposée pour un livre. */
+export type ListingRequest = {
+  id: string;
+  listing: Listing;
+  /** Clés « summary », « keywords », « bio » ou « title:i » des propositions utilisées */
+  decisions: Record<string, SuggestionDecision>;
+  createdAt: string;
+};
+
+/**
+ * Dernière fiche terminée d'un livre, toutes versions confondues (RLS : les demandes de
+ * l'auteur seulement).
+ * @param bookId - Livre de l'auteur
+ * @returns La demande, ou null si aucune fiche lisible
+ */
+export async function getLatestListingRequest(bookId: string): Promise<ListingRequest | null> {
+  const supabase = await createClient();
+  const row = check(
+    await supabase
+      .from("workshop_requests")
+      .select("id, output, decisions, created_at")
+      .eq("book_id", bookId)
+      .eq("tool", "listing")
+      .eq("status", "done")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle<{ id: string; output: unknown; decisions: unknown; created_at: string }>(),
+    "fiche proposée",
+  );
+  const listing = row ? readListing(row.output) : null;
+  if (!row || !listing) return null;
+  return {
+    id: row.id,
+    listing,
+    decisions: readDecisions(row.decisions),
+    createdAt: row.created_at,
+  };
 }

@@ -3,9 +3,10 @@
  *  Fichier    : workshop-run.tsx
  *  Projet     : Kalami
  *  Description: Bouton qui lance le relecteur ou le conseiller de style de l'atelier sur un
- *               chapitre (v0.15.1) ; l'analyse peut durer jusqu'à deux minutes.
+ *               chapitre (v0.15.1), ou la rédaction de la fiche du livre (v0.15.2) ;
+ *               l'analyse peut durer jusqu'à deux minutes.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-10-25
  *  Dépendances: lib/author/workshop/actions.ts
  * =============================================================
@@ -19,14 +20,15 @@ import { FormMessage } from "@/components/ui/form";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { runWorkshopTool } from "@/lib/author/workshop/actions";
-import type { ChapterTool } from "@/lib/author/workshop/suggestions";
+import type { WorkshopTool } from "@/lib/author/workshop/run";
 
-const w = getDictionary().workshop.tools;
+const w = getDictionary().workshop;
 
 type WorkshopRunProps = {
   bookId: string;
-  chapterId: string;
-  tool: ChapterTool;
+  /** null pour la fiche du livre */
+  chapterId: string | null;
+  tool: WorkshopTool;
   /** Une analyse existe déjà : le bouton devient « Relancer » */
   done: boolean;
   disabled?: boolean;
@@ -45,6 +47,11 @@ export function WorkshopRun({ bookId, chapterId, tool, done, disabled }: Worksho
     });
   };
 
+  const label = tool === "listing"
+    ? (done ? w.listing.rerun : w.listing.run)
+    : interpolate(done ? w.tools.rerun : w.tools.run, { tool: w.tools.names[tool] });
+  const running = tool === "listing" ? w.listing.running : w.tools.running;
+
   return (
     <div className="flex flex-col gap-2">
       <button
@@ -53,9 +60,9 @@ export function WorkshopRun({ bookId, chapterId, tool, done, disabled }: Worksho
         disabled={busy || disabled}
         className={`${done ? BUTTON_SECONDARY : BUTTON_PRIMARY} w-fit`}
       >
-        {interpolate(done ? w.rerun : w.run, { tool: w.names[tool] })}
+        {label}
       </button>
-      {busy && <p role="status" className="text-small text-ink-muted">{w.running}</p>}
+      {busy && <p role="status" className="text-small text-ink-muted">{running}</p>}
       <FormMessage error={error} />
     </div>
   );

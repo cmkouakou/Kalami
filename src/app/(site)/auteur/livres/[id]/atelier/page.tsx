@@ -5,10 +5,10 @@
  *  Description: Atelier d'un livre (v0.15.0) : statistiques gratuites du manuscrit (version
  *               en attente, sinon publiée), liste de vérification avant soumission, outils
  *               IA par chapitre (relecture, style) et création d'une nouvelle version avec
- *               les suggestions acceptées (v0.15.1). 404 si le livre appartient à un autre
- *               auteur.
+ *               les suggestions acceptées (v0.15.1), lien vers la fiche rédigée par Claude
+ *               (v0.15.2). 404 si le livre appartient à un autre auteur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-25
  *  Dépendances: lib/author/workshop/queries.ts, lib/author/manuscript-stats.ts,
  *               lib/author/checklist.ts, lib/author/workshop/actions.ts,
@@ -222,7 +222,16 @@ function ToolsSection({
             </li>
           ))}
         </ul>
-        <p className="text-small text-ink-muted">{t.soon}</p>
+      </section>
+
+      <section className={`${CARD} flex flex-wrap items-center justify-between gap-3 p-6`}>
+        <div className="flex flex-col gap-1">
+          <h2 className="text-lg font-semibold">{t.listingTitle}</h2>
+          <p className="text-sm text-ink-muted">{t.listingIntro}</p>
+        </div>
+        <Link href={`/auteur/livres/${bookId}/atelier/fiche`} className={PILL}>
+          {t.listingOpen}
+        </Link>
       </section>
 
       <section className={`${PANEL_SAND} flex flex-col gap-3 p-6`}>

@@ -6,8 +6,9 @@
  *               du manuscrit, liste de vérification avant soumission et administration
  *               (réglages, forfaits, octroi, consommation).
  *               Relecteur, conseiller de style et nouvelle version (v0.15.1).
+ *               Fiche du livre rédigée par Claude (v0.15.2).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-25
  * =============================================================
  */
@@ -99,7 +100,11 @@ const workshopFr = {
     intro:
       "Faites relire chaque chapitre par l'IA (orthographe et grammaire, puis style). " +
       "Acceptez ou refusez chaque suggestion : rien n'est modifié sans votre accord.",
-    soon: "Bientôt : rédaction de la fiche du livre (résumé, accroche, mots-clés).",
+    listingTitle: "Fiche du livre",
+    listingIntro:
+      "Résumé, accroche, mots-clés, biographie et titres proposés par l'IA à partir du " +
+      "manuscrit.",
+    listingOpen: "Rédiger la fiche",
     credits: "Crédits Atelier",
     chapters: "Chapitres",
     open: "Ouvrir",
@@ -155,6 +160,37 @@ const workshopFr = {
       busy: "Le service est surchargé. Réessayez dans un instant.",
       failed: "L'analyse a échoué. Réessayez.",
     },
+  },
+  listing: {
+    title: "Fiche du livre — {title}",
+    intro:
+      "L'IA lit la fiche actuelle et le manuscrit (le début seulement pour un long livre), " +
+      "puis propose un résumé, une accroche, des mots-clés, votre biographie reformulée et " +
+      "des titres. Rien n'est enregistré sans votre clic sur « Utiliser ».",
+    run: "Rédiger la fiche",
+    rerun: "Proposer une autre fiche",
+    running: "Rédaction en cours… (jusqu'à deux minutes)",
+    none: "Aucune proposition pour ce livre.",
+    summary: "Résumé",
+    hook: "Accroche",
+    hookHelp: "À reprendre sur vos réseaux sociaux ou dans un message aux lecteurs.",
+    keywords: "Mots-clés",
+    bio: "Biographie de l'auteur",
+    noBio:
+      "Aucune biographie proposée : ajoutez d'abord la vôtre dans votre profil d'auteur. " +
+      "L'IA ne fait que la reformuler, sans rien inventer.",
+    titles: "Titres",
+    current: "Actuel : {value}",
+    use: "Utiliser",
+    used: "Utilisé ✓",
+    copy: "Copier",
+    copied: "Copié ✓",
+    locked:
+      "La fiche est verrouillée pendant la validation et après publication : les " +
+      "propositions restent consultables et la biographie peut toujours être reprise.",
+    saved: "Enregistré dans la fiche.",
+    savedBio: "Biographie enregistrée dans votre profil d'auteur.",
+    failed: "L'enregistrement a échoué. Réessayez.",
   },
   version: {
     title: "Créer une nouvelle version",

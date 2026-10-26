@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.15.2] - 2026-10-25 — Atelier de l'auteur (A3) : fiche du livre
+### Ajouté
+- `/auteur/livres/[id]/atelier/fiche` : Claude lit la fiche actuelle et le manuscrit (les
+  60 000 premiers caractères pour un long livre) et propose un résumé, une accroche, 6 à 10
+  mots-clés, la biographie de l'auteur reformulée (jamais inventée : vide si l'auteur n'en
+  a pas) et 3 à 5 titres avec sous-titre. Payé en Crédits Atelier.
+- Bouton « Utiliser » sur chaque proposition : résumé, mots-clés et titre vont dans la fiche
+  du livre (brouillon ou refusé seulement), la biographie dans le profil de l'auteur ;
+  l'accroche se copie. Les propositions reprises restent marquées « Utilisé ».
+- Tests unitaires de la fiche (8). Aucune migration.
+
+### Modifié
+- `workshop/run.ts` : réservation, appel à Claude et fin de demande mis en commun entre les
+  outils. Atelier d'un livre : carte « Fiche du livre » à la place de l'annonce « bientôt ».
+
 ## [v0.15.1] - 2026-10-25 — Atelier de l'auteur (A2) : relecteur et style
 ### Ajouté
 - Relecteur (orthographe, grammaire, accords, ponctuation, typographie française) et
