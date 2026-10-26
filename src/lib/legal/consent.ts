@@ -5,9 +5,10 @@
  *  Description: Témoin de consentement « kalami_consent » : format, lecture et écriture.
  *               Partagé entre le navigateur (bandeau) et le serveur (action).
  *               Format : « {choix}.{version}.{identifiant du visiteur} ».
+ *               v1.1 : liste version 2 (Google Analytics), événement de choix fait.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-16
+ *  Version    : 1.1
+ *  Date       : 2026-10-26
  *  Dépendances: (aucune)
  * =============================================================
  */
@@ -18,14 +19,18 @@ export const CONSENT_COOKIE = "kalami_consent";
 /**
  * Version de la liste des témoins. À augmenter dès qu'un témoin non nécessaire
  * (statistiques, publicité) est ajouté : le bandeau réapparaît alors pour tous.
+ * Version 2 (v0.15.3) : témoins de statistiques de Google Analytics.
  */
-export const CONSENT_VERSION = 1;
+export const CONSENT_VERSION = 2;
 
 /** Durée de conservation du choix : 6 mois (recommandation CNIL / Loi 25). */
 export const CONSENT_MAX_AGE_SECONDS = 60 * 60 * 24 * 182;
 
 /** Événement qui rouvre le bandeau (lien « Gérer les témoins »). */
 export const OPEN_CONSENT_EVENT = "kalami:gerer-temoins";
+
+/** Événement émis par le bandeau une fois le choix enregistré (charge ou coupe les statistiques). */
+export const CONSENT_CHANGED_EVENT = "kalami:temoins-choisis";
 
 export type ConsentChoice = "accepted" | "refused";
 
@@ -72,6 +77,11 @@ export function serializeConsent(state: ConsentState): string {
  */
 export function needsConsent(state: ConsentState | null): boolean {
   return !state || state.version < CONSENT_VERSION;
+}
+
+/** Vrai si les témoins de statistiques sont permis : « Accepter » sur la liste courante. */
+export function statisticsAllowed(state: ConsentState | null): boolean {
+  return state !== null && !needsConsent(state) && state.choice === "accepted";
 }
 
 /**

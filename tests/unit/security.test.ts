@@ -68,6 +68,15 @@ describe("contentSecurityPolicy", () => {
     expect(contentSecurityPolicy(undefined, false)).toContain("https://*.supabase.co");
     expect(contentSecurityPolicy("pas une url", false)).toContain("https://*.supabase.co");
   });
+
+  it("n'admet Google Analytics que s'il est configuré", () => {
+    expect(contentSecurityPolicy(SUPABASE, false)).not.toContain("googletagmanager");
+    const csp = contentSecurityPolicy(SUPABASE, false, true);
+    expect(csp).toMatch(/script-src [^;]*https:\/\/\*\.googletagmanager\.com/);
+    expect(csp).toMatch(/connect-src [^;]*https:\/\/\*\.google-analytics\.com/);
+    expect(csp).toMatch(/img-src [^;]*https:\/\/\*\.google-analytics\.com/);
+    expect(csp).toContain("frame-src 'none'");
+  });
 });
 
 describe("securityHeaders", () => {

@@ -1,6 +1,6 @@
 {
   "name": "kalami",
-  "version": "0.15.2",
+  "version": "0.15.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,9 +15,11 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",
+    "@next/third-parties": "^16.4.2",
     "@sparticuz/chromium": "^153.0.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
+    "@vercel/analytics": "^2.0.1",
     "docx": "9.8.1",
     "dom-serializer": "^3.1.1",
     "domhandler": "^6.0.1",

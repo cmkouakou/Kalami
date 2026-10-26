@@ -5,10 +5,11 @@
  *  Description: Configuration Next.js : Cache Components, préchargement partiel, images du
  *               catalogue servies par Supabase Storage, Tailwind via Turbopack, polices des PDF,
  *               PWA (useOffline, en-têtes du service worker) et en-têtes de sécurité (CSP,
- *               HSTS, cadres interdits : lib/security/headers.ts, Sprint 11s).
+ *               HSTS, cadres interdits : lib/security/headers.ts, Sprint 11s) ; v1.6 : CSP
+ *               ouverte à Google Analytics si NEXT_PUBLIC_GA_ID est défini.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-22
+ *  Version    : 1.6
+ *  Date       : 2026-10-26
  *  Dépendances: src/lib/security/headers.ts
  * =============================================================
  */
@@ -54,7 +55,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        headers: securityHeaders(process.env.NEXT_PUBLIC_SUPABASE_URL, isDev),
+        headers: securityHeaders(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          isDev,
+          Boolean(process.env.NEXT_PUBLIC_GA_ID?.trim()),
+        ),
       },
       { source: "/sw.js", headers: serviceWorker },
       { source: "/sw-routes.js", headers: serviceWorker },

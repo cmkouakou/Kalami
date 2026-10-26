@@ -8,10 +8,11 @@
  *               v2.2 : encart Kalami Stratégie sur la fiche du livre guide.
  *               v2.3 : achat par carte (Stripe Checkout).
  *               v2.4 : sommaire sans cadenas, tout cliquable, pour qui possède le livre.
+ *               v2.5 : référencement (aperçu Open Graph avec la couverture, JSON-LD Book).
  *  Auteur     : Claude Marcel
- *  Version    : 2.4
- *  Date       : 2026-10-19
- *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
+ *  Version    : 2.5
+ *  Date       : 2026-10-26
+ *  Dépendances: lib/catalog/queries.ts, lib/seo, components/catalog, components/ui
  * =============================================================
  */
 
@@ -35,11 +36,14 @@ import {
 } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth/dal";
+import { publicImageUrl } from "@/lib/catalog/images";
 import { getBookBySlug, getBookToc } from "@/lib/catalog/queries";
 import type { Author, BookDetail, TocEntry } from "@/lib/catalog/types";
+import { APP_URL } from "@/lib/config";
 import { getPdfStatus } from "@/lib/pdf/exports";
 import { hasStrategyPromo } from "@/lib/reader/promo";
 import { getReadingStatus } from "@/lib/reader/queries";
+import { bookJsonLd, serializeJsonLd } from "@/lib/seo/book-json-ld";
 
 const t = getDictionary();
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
@@ -60,10 +64,20 @@ export async function generateMetadata({
   if (!book) return {};
 
   const description = (book.summary ?? book.subtitle ?? "").slice(0, META_DESCRIPTION_LENGTH);
+  const title = `${book.title} — ${book.author.display_name}`;
+  const cover = publicImageUrl(book.cover_path);
   return {
-    title: `${book.title} — ${book.author.display_name}`,
+    title,
     description: description || undefined,
     alternates: { canonical: `/livres/${book.slug}` },
+    // Aperçu des liens partagés : la couverture remplace l'image générique de Kalami
+    openGraph: {
+      type: "book",
+      title,
+      description: description || undefined,
+      url: `/livres/${book.slug}`,
+      ...(cover && { images: [{ url: cover, alt: book.title }] }),
+    },
   };
 }
 
@@ -85,9 +99,15 @@ async function BookContent({ params }: { params: Promise<{ slug: string }> }) {
   const book = await getBookBySlug(slug);
   if (!book) notFound();
   const toc = await getBookToc(book.id);
+  const jsonLd = bookJsonLd(book, APP_URL, publicImageUrl(book.cover_path));
 
   return (
     <article className="flex flex-col gap-12">
+      {/* Données structurées « Book » pour Google (JSON-LD, « < » échappé) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       <Breadcrumb book={book} />
 
       <div className="grid gap-10 md:grid-cols-[minmax(0,22rem)_1fr]">

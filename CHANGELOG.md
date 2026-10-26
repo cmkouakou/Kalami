@@ -1,5 +1,24 @@
 # Journal des modifications
 
+## [v0.15.3] - 2026-10-26 — Mesure d'audience et référencement Google
+### Ajouté
+- Vercel Analytics (`@vercel/analytics`) dans le gabarit racine : sans témoin, aucun
+  consentement requis. À activer dans Vercel → projet → Analytics.
+- Google Analytics 4 (`@next/third-parties`) chargé seulement après « Accepter » ; un refus
+  ultérieur coupe la mesure et efface les témoins `_ga`. Actif si `NEXT_PUBLIC_GA_ID` est
+  défini (sinon rien n'est chargé et la CSP reste fermée à Google).
+- `/robots.txt` (espaces privés, liseuse et recherche fermés) et `/sitemap.xml` (accueil,
+  Stratégie, catégories, livres publiés, auteurs publiés, textes légaux).
+- Fiche du livre : aperçu Open Graph avec la couverture, données structurées JSON-LD `Book`.
+- Validation Google Search Console par balise (`NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`),
+  facultative si le domaine est validé par DNS.
+- Tests : `seo.test.ts` (6), CSP avec Google Analytics, consentement des statistiques.
+
+### Modifié
+- Consentement version 2 : le bandeau réapparaît pour tous ; nouveau texte qui mentionne
+  Google Analytics. Le bandeau émet `kalami:temoins-choisis` après un choix.
+- CSP : domaines Google Analytics admis seulement si GA est configuré.
+
 ## [v0.15.2] - 2026-10-25 — Atelier de l'auteur (A3) : fiche du livre
 ### Ajouté
 - `/auteur/livres/[id]/atelier/fiche` : Claude lit la fiche actuelle et le manuscrit (les

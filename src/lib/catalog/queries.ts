@@ -4,9 +4,10 @@
  *  Projet     : Kalami
  *  Description: Lectures publiques du catalogue, mises en cache ('use cache') et invalidées
  *               par l'étiquette « catalogue » lors des modifications faites en administration.
+ *               v1.1 : livres publiés pour le plan du site (sitemap.xml).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *  Version    : 1.1
+ *  Date       : 2026-10-26
  *  Dépendances: next/cache, supabase/public.ts
  * =============================================================
  */
@@ -233,4 +234,27 @@ export async function searchBooks(
 
   const rows = data as unknown as BookCard[];
   return { books: rows.slice(0, SEARCH_PAGE_SIZE), hasMore: rows.length > SEARCH_PAGE_SIZE };
+}
+
+// ==================== PLAN DU SITE ====================
+
+/** Livre publié tel que listé dans sitemap.xml. */
+export type SitemapBook = { slug: string; updated_at: string; author: { slug: string } };
+
+/**
+ * Livres publiés, avec leur auteur, pour le plan du site (sitemap.xml).
+ * @returns Livres du plus récent au plus ancien
+ */
+export async function getSitemapBooks(): Promise<SitemapBook[]> {
+  "use cache";
+  cacheLife("days");
+  cacheTag(CATALOG_TAG);
+
+  const { data, error } = await createPublicClient()
+    .from("books")
+    .select("slug, updated_at, author:authors!inner(slug)")
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
+  if (error) throw new Error(`Lecture du plan du site impossible : ${error.message}`);
+  return data as unknown as SitemapBook[];
 }

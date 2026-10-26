@@ -2,11 +2,12 @@
  * =============================================================
  *  Fichier    : config.ts
  *  Projet     : Kalami
- *  Description: Configuration centrale de l'application (nom, URL, domaines secondaires).
+ *  Description: Configuration centrale de l'application (nom, URL, domaines secondaires,
+ *               identifiants Google Analytics et Search Console).
  *               Aucune valeur de marque ne doit être écrite en dur ailleurs dans le code.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-06
+ *  Version    : 1.1
+ *  Date       : 2026-10-26
  * =============================================================
  */
 
@@ -48,3 +49,10 @@ export const APP_URL = normalizeUrl(process.env.NEXT_PUBLIC_APP_URL || DEFAULT_A
 
 /** Domaines secondaires redirigés en 301 vers APP_URL (ex. kalami-books.com). */
 export const REDIRECT_DOMAINS = parseDomainList(process.env.REDIRECT_DOMAINS);
+
+/** Identifiant de mesure Google Analytics 4 (G-XXXX) ; vide = Google Analytics désactivé. */
+export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID?.trim() || null;
+
+/** Jeton Google Search Console (balise meta) ; inutile si le domaine est validé par DNS. */
+export const GOOGLE_SITE_VERIFICATION =
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() || null;

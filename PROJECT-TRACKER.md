@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.15.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.15.3 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -72,7 +72,8 @@ Version actuelle : v0.15.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #66 | 2026-10-25 | v0.15.0 (A1) : atelier de l’auteur — Crédits Atelier (migration, achat, admin), vérification avant soumission, statistiques du manuscrit | ~450 000 | ~2.70 $ |
 | #67 | 2026-10-25 | v0.15.1 (A2) : relecteur et conseiller de style par chapitre, accepter/refuser, nouvelle version avec les corrections | ~350 000 | ~2.10 $ |
 | #68 | 2026-10-25 | v0.15.2 (A3) : fiche du livre par Claude (résumé, accroche, mots-clés, bio, titres), bouton « Utiliser » | ~250 000 | ~1.50 $ |
-| **TOTAL** | | | **~17 740 000** | **~106.44 $** |
+| #69 | 2026-10-26 | v0.15.3 : Vercel Analytics, Google Analytics 4 après consentement, robots.txt, sitemap.xml, JSON-LD Book, analyse ISBN | ~200 000 | ~1.20 $ |
+| **TOTAL** | | | **~17 940 000** | **~107.64 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -159,6 +160,10 @@ Version actuelle : v0.15.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [x] Atelier A2 (v0.15.1) — relecteur (orthographe, grammaire) et style par chapitre, accepter/refuser,
   « Créer une nouvelle version » soumise à la validation habituelle
 - [x] Atelier A3 (v0.15.2) — fiche du livre par Claude (résumé, accroche, mots-clés, bio, titres)
+- [x] Mesure d'audience et référencement (v0.15.3) — Vercel Analytics, GA4 avec consentement, sitemap, robots, JSON-LD
+- [ ] Activer Vercel Analytics, définir NEXT_PUBLIC_GA_ID, valider Search Console (DNS Porkbun) et soumettre le sitemap
+- [ ] Politique de confidentialité : statistiques Google Analytics (transfert hors Québec, Loi 25)
+- [ ] ISBN facultatif saisi par l'auteur (fiche + JSON-LD) — reporté
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)

@@ -6,22 +6,26 @@
  *               lien « Aller au contenu », bandeau hors ligne et service worker. L'en-tête
  *               et le pied de page sont propres à chaque espace : (site) pour la
  *               plateforme de lecture, strategie pour Kalami Stratégie. Icône d'onglet
- *               (favicon) déclarée explicitement (v0.14.6).
+ *               (favicon) déclarée explicitement (v0.14.6). Mesure d'audience (v0.15.3) :
+ *               Vercel Analytics sans témoin, Google Analytics après consentement,
+ *               validation Google Search Console.
  *  Auteur     : Claude Marcel
- *  Version    : 3.2
- *  Date       : 2026-10-25
+ *  Version    : 3.3
+ *  Date       : 2026-10-26
  *  Dépendances: lib/config.ts, lib/pwa/manifest.ts, components/pwa, i18n
  * =============================================================
  */
 
 import type { Metadata, Viewport } from "next";
 import { Literata, Source_Sans_3 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { ConsentBanner } from "@/components/legal/consent-banner";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
 import { ServiceWorker } from "@/components/pwa/service-worker";
 import { getDictionary } from "@/i18n";
-import { APP_NAME, APP_URL } from "@/lib/config";
+import { APP_NAME, APP_URL, GA_MEASUREMENT_ID, GOOGLE_SITE_VERIFICATION } from "@/lib/config";
 import { THEME_COLOR } from "@/lib/pwa/manifest";
 
 import "./globals.css";
@@ -57,6 +61,8 @@ export const metadata: Metadata = {
     icon: { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
     apple: "/icons/apple-touch-icon.png",
   },
+  // Google Search Console, méthode « balise HTML » (absente si validée par DNS)
+  verification: GOOGLE_SITE_VERIFICATION ? { google: GOOGLE_SITE_VERIFICATION } : undefined,
 };
 
 export const viewport: Viewport = {
@@ -80,6 +86,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <ConsentBanner />
         <ServiceWorker />
+        {/* Vercel Analytics : sans témoin, aucun consentement requis */}
+        <Analytics />
+        {GA_MEASUREMENT_ID && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
       </body>
     </html>
   );

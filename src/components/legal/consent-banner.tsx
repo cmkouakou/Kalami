@@ -4,10 +4,11 @@
  *  Projet     : Kalami
  *  Description: Bandeau des témoins (Loi 25 / RGPD) : « Accepter » ou « Refuser », choix
  *               consigné au registre. Affiché tant qu'aucun choix n'est fait pour la
- *               version courante ; rouvert par le lien « Gérer les témoins ».
+ *               version courante ; rouvert par le lien « Gérer les témoins ». v1.1 : annonce
+ *               le choix fait (CONSENT_CHANGED_EVENT) au chargeur de Google Analytics.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-16
+ *  Version    : 1.1
+ *  Date       : 2026-10-26
  *  Dépendances: lib/legal/consent.ts, lib/legal/actions.ts
  * =============================================================
  */
@@ -22,6 +23,7 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary } from "@/i18n";
 import { recordConsent } from "@/lib/legal/actions";
 import {
+  CONSENT_CHANGED_EVENT,
   needsConsent,
   OPEN_CONSENT_EVENT,
   readConsentFromCookies,
@@ -57,8 +59,13 @@ export function ConsentBanner() {
     setError(false);
     startTransition(async () => {
       const result = await recordConsent(choice);
-      if (result.ok) setOpen(false);
-      else setError(true);
+      if (!result.ok) {
+        setError(true);
+        return;
+      }
+      setOpen(false);
+      // Google Analytics se charge ou se coupe sans recharger la page
+      window.dispatchEvent(new Event(CONSENT_CHANGED_EVENT));
     });
   }
 

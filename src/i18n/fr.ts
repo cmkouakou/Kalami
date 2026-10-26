@@ -1429,9 +1429,9 @@ const fr = {
     consent: {
       title: "Témoins (cookies)",
       text:
-        "Kalami n'utilise que les témoins nécessaires au fonctionnement du site (connexion, " +
-        "devise, ce choix). Aucun témoin de statistiques ni de publicité n'est déposé sans " +
-        "votre accord.",
+        "Kalami utilise les témoins nécessaires au fonctionnement du site (connexion, devise, " +
+        "ce choix) et, seulement si vous acceptez, ceux de Google Analytics pour mesurer " +
+        "l'audience. Aucun témoin publicitaire.",
       more: "En savoir plus",
       accept: "Accepter",
       refuse: "Refuser",

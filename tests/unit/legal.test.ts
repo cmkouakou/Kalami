@@ -21,6 +21,7 @@ import {
   parseConsent,
   readConsentFromCookies,
   serializeConsent,
+  statisticsAllowed,
 } from "@/lib/legal/consent";
 import { isLegalKind, LEGAL_KINDS, legalPath } from "@/lib/legal/kinds";
 
@@ -76,6 +77,20 @@ describe("témoin de consentement", () => {
     const header = `a=1; ${CONSENT_COOKIE}=accepted.1.${VISITOR}; b=2`;
     expect(readConsentFromCookies(header)?.choice).toBe("accepted");
     expect(readConsentFromCookies("a=1; b=2")).toBeNull();
+  });
+
+  it("ne permet les statistiques qu'après « Accepter » sur la liste courante", () => {
+    const state = (choice: "accepted" | "refused", version: number) => ({
+      choice,
+      version,
+      visitorId: VISITOR,
+    });
+    expect(CONSENT_VERSION).toBeGreaterThanOrEqual(2);
+    expect(statisticsAllowed(null)).toBe(false);
+    expect(statisticsAllowed(state("accepted", CONSENT_VERSION))).toBe(true);
+    expect(statisticsAllowed(state("refused", CONSENT_VERSION))).toBe(false);
+    // Accord donné sur la liste 1, sans Google Analytics : il faut redemander
+    expect(statisticsAllowed(state("accepted", 1))).toBe(false);
   });
 });
 
