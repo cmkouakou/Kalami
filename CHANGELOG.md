@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.15.4] - 2026-10-26 — Âge minimum à l'inscription
+### Ajouté
+- Formulaire d'inscription : case obligatoire « J'ai 14 ans ou plus, ou l'accord d'un parent
+  ou tuteur », revérifiée par l'action serveur (`age_confirmed` dans les métadonnées du
+  compte). La mention sous l'inscription le rappelle aussi pour Google et le lien magique.
+- Politique de confidentialité complète rédigée (à publier dans /admin), contact
+  `confidentialite@kalami-livres.com`.
+
 ## [v0.15.3] - 2026-10-26 — Mesure d'audience et référencement Google
 ### Ajouté
 - Vercel Analytics (`@vercel/analytics`) dans le gabarit racine : sans témoin, aucun

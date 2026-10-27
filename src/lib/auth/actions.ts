@@ -7,8 +7,8 @@
  *               nouveau mot de passe, déconnexion. Limitation de débit par adresse IP et
  *               par courriel (Sprint 11s) : Supabase ne voit que l'adresse du serveur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-22
+ *  Version    : 1.3
+ *  Date       : 2026-10-26
  *  Dépendances: lib/supabase/server.ts, lib/auth/routes.ts, lib/security/rate-limit.ts, i18n
  * =============================================================
  */
@@ -176,6 +176,8 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
   const next = safeNextPath(field(formData, "suivant"));
   const invalid = validateCredentials(email, password);
   if (invalid) return { error: invalid };
+  // Âge minimum de la politique de confidentialité : case obligatoire, revérifiée ici
+  if (formData.get("age_confirmed") !== "on") return { error: t.auth.errors.ageRequired };
   if (!(await allowAuthAttempt("signup_ip", null, email))) {
     return { error: t.auth.errors.rateLimited };
   }
@@ -186,7 +188,7 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
     password,
     options: {
       emailRedirectTo: await callbackUrl(next),
-      data: displayName ? { display_name: displayName } : undefined,
+      data: { age_confirmed: true, ...(displayName ? { display_name: displayName } : {}) },
     },
   });
   if (error) return { error: authErrorMessage(error.code) };

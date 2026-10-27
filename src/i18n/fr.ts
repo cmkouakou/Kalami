@@ -5,8 +5,8 @@
  *  Description: Textes de l'interface en français (langue par défaut).
  *               « {appName} » est remplacé par APP_NAME au moment de l'affichage.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-25
+ *  Version    : 1.5
+ *  Date       : 2026-10-26
  * =============================================================
  */
 
@@ -380,6 +380,7 @@ const fr = {
       title: "Créer un compte",
       submit: "Créer mon compte",
       signInLink: "Se connecter",
+      ageConfirm: "J'ai 14 ans ou plus, ou l'accord d'un parent ou tuteur.",
       checkEmail:
         "Presque terminé ! Ouvrez le courriel de confirmation que nous venons d'envoyer.",
     },
@@ -405,6 +406,7 @@ const fr = {
       invalidEmail: "Adresse courriel invalide.",
       rateLimited: "Trop de tentatives. Réessayez dans quelques minutes.",
       linkExpired: "Ce lien est invalide ou a expiré. Demandez-en un nouveau.",
+      ageRequired: "Confirmez avoir 14 ans ou plus, ou l'accord d'un parent ou tuteur.",
       generic: "Une erreur est survenue. Réessayez.",
     },
   },
@@ -1423,7 +1425,8 @@ const fr = {
     version: "Version {version} — en vigueur depuis le {date}",
     missing: "Ce texte sera publié prochainement.",
     signupNotice:
-      "En créant un compte, vous acceptez les {terms} et la {privacy}.",
+      "En créant un compte, vous confirmez avoir 14 ans ou plus (ou l'accord d'un parent " +
+      "ou tuteur) et vous acceptez les {terms} et la {privacy}.",
     signupTerms: "conditions d'utilisation",
     signupPrivacy: "politique de confidentialité",
     consent: {

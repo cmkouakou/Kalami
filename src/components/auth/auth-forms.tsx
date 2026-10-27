@@ -7,8 +7,8 @@
  *               Google proposé en premier sur les deux pages. Mêmes formulaires pour le
  *               site et Kalami Stratégie : la page de retour choisit les liens.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-11
+ *  Version    : 1.3
+ *  Date       : 2026-10-26
  *  Dépendances: lib/auth/actions.ts, lib/auth/routes.ts, components/ui/form.tsx
  * =============================================================
  */
@@ -221,6 +221,10 @@ export function SignUpForm({ searchParams, defaultNext = "" }: AuthFormProps) {
           minLength={8}
           required
         />
+        <label className="flex min-h-11 items-center gap-3 text-sm">
+          <input type="checkbox" name="age_confirmed" required className="size-5 shrink-0" />
+          {t.auth.signUp.ageConfirm}
+        </label>
         <FormMessage {...state} />
         <SubmitButton>{t.auth.signUp.submit}</SubmitButton>
       </form>
