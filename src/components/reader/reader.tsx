@@ -19,10 +19,11 @@
  *  Auteur     : Claude Marcel
  *               v1.8 : avis « version pour ordinateur » sur téléphone.
  *               v1.9 : avis agrandi à la taille réelle de l'écran.
- *  Version    : 1.9
- *  Date       : 2026-10-22
+ *               v1.10 : partage du livre commun avec la page du livre (lib/catalog/share).
+ *  Version    : 1.10
+ *  Date       : 2026-10-28
  *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
- *               use-*, storage, lib/reader, lib/config, components/ui
+ *               use-*, storage, lib/reader, lib/catalog/share, components/ui
  * =============================================================
  */
 
@@ -57,7 +58,7 @@ import {
 } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
-import { APP_NAME, APP_URL } from "@/lib/config";
+import { shareBookLink } from "@/lib/catalog/share";
 import { PREVIEW_VERSION_PARAM } from "@/lib/content/access";
 import {
   addBookmark,
@@ -469,25 +470,9 @@ export function Reader({ data, price, buy }: ReaderProps) {
 
   /** Partage du lien du livre : menu natif, sinon copie du lien. */
   const shareBook = async () => {
-    const url = `${APP_URL}/livres/${book.slug}`;
-    const text = interpolate(t.reader.share.bookText, {
-      title: book.title,
-      author: book.authorName,
-      app: APP_NAME,
-    });
-    try {
-      if (typeof navigator.share === "function") {
-        await navigator.share({ title: book.title, text, url });
-        return;
-      }
-      await navigator.clipboard.writeText(`${text} ${url}`);
-      setNotice(t.reader.share.bookCopied);
-    } catch (error) {
-      // Annulation du menu de partage : rien à signaler
-      if (!(error instanceof DOMException && error.name === "AbortError")) {
-        setNotice(t.reader.share.error);
-      }
-    }
+    const outcome = await shareBookLink(book);
+    if (outcome === "copied") setNotice(t.reader.share.bookCopied);
+    if (outcome === "error") setNotice(t.reader.share.error);
   };
 
   /** Sélection dans un panneau : on va à la position et on referme le panneau. */

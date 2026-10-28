@@ -9,9 +9,10 @@
  *               v2.3 : achat par carte (Stripe Checkout).
  *               v2.4 : sommaire sans cadenas, tout cliquable, pour qui possède le livre.
  *               v2.5 : référencement (aperçu Open Graph avec la couverture, JSON-LD Book).
+ *               v2.6 : bouton « Partager ce livre », sans avoir à ouvrir la liseuse.
  *  Auteur     : Claude Marcel
- *  Version    : 2.5
- *  Date       : 2026-10-26
+ *  Version    : 2.6
+ *  Date       : 2026-10-28
  *  Dépendances: lib/catalog/queries.ts, lib/seo, components/catalog, components/ui
  * =============================================================
  */
@@ -25,6 +26,7 @@ import { BookCover } from "@/components/catalog/book-cover";
 import { BuySection } from "@/components/catalog/buy-section";
 import { PdfDownload } from "@/components/catalog/pdf-download";
 import { PriceTag } from "@/components/catalog/price-tag";
+import { ShareBookButton } from "@/components/catalog/share-book-button";
 import { StrategyPromo } from "@/components/reader/strategy-promo";
 import { IconLock } from "@/components/ui/icons";
 import {
@@ -211,6 +213,11 @@ function BookHeader({ book }: { book: BookDetail }) {
           >
             <ReadButton bookId={book.id} slug={book.slug} />
           </Suspense>
+          <ShareBookButton
+            slug={book.slug}
+            title={book.title}
+            authorName={book.author.display_name}
+          />
         </div>
         <Suspense fallback={null}>
           <PdfSection bookId={book.id} />

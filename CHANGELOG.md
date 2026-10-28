@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.15.8] - 2026-10-28 — Partager un livre depuis sa page
+### Ajouté
+- Page du livre : bouton « Partager ce livre » sous « Lire », sans compte ni ouverture de
+  la liseuse. Menu de partage du téléphone, sinon lien copié avec un message.
+### Modifié
+- Partage du livre commun à la liseuse et à la page (`lib/catalog/share.ts`).
+
 ## [v0.15.7] - 2026-10-28 — Renonciation au droit de rétractation
 ### Ajouté
 - Bouton d'achat : case obligatoire « Je demande l'accès immédiat à ce contenu numérique et
