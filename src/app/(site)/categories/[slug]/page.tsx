@@ -2,9 +2,10 @@
  * =============================================================
  *  Fichier    : page.tsx (categories/[slug])
  *  Projet     : Kalami
- *  Description: Livres publiés d'une catégorie, avec les autres catégories en pastilles.
+ *  Description: Livres publiés d'une catégorie, avec les autres catégories non vides en
+ *               pastilles.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-10-28
  *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
@@ -69,6 +70,8 @@ async function CategoryContent({ params }: { params: Promise<{ slug: string }> }
         <ul className="flex flex-wrap gap-2">
           {categories.map((category) => {
             const active = category.slug === result.category.slug;
+            // Catégories vides cachées, sauf celle affichée
+            if (!active && category.published_count === 0) return null;
             return (
               <li key={category.id}>
                 <Link

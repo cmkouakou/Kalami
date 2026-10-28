@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.15.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.15.11 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -74,7 +74,9 @@ Version actuelle : v0.15.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #68 | 2026-10-25 | v0.15.2 (A3) : fiche du livre par Claude (résumé, accroche, mots-clés, bio, titres), bouton « Utiliser » | ~250 000 | ~1.50 $ |
 | #69 | 2026-10-26 | v0.15.3 : Vercel Analytics, Google Analytics 4 après consentement, robots.txt, sitemap.xml, JSON-LD Book, analyse ISBN | ~200 000 | ~1.20 $ |
 | #70 | 2026-10-26 | v0.15.4 : politique de confidentialité complète, case « 14 ans ou plus » à l'inscription | ~40 000 | ~0.24 $ |
-| **TOTAL** | | | **~17 980 000** | **~107.88 $** |
+| #71 | 2026-10-28 | v0.15.5 à v0.15.10 : nouvelles catégories, administrateurs du site, renonciation au droit de rétractation, partage d'un livre (avec couverture), référencement des catégories et de l'accueil | non estimé | non estimé |
+| #72 | 2026-10-28 | Étude d'une édition anglaise du livre ; revue de code ; v0.15.11 : une seule règle « catégorie vide » (plan du site, accueil, pastilles), titre de l'accueil raccourci | ~150 000 | ~0.90 $ |
+| **TOTAL** | | | **~18 130 000** (hors #71) | **~108.78 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

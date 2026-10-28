@@ -5,9 +5,10 @@
  *  Description: Lectures publiques du catalogue, mises en cache ('use cache') et invalidées
  *               par l'étiquette « catalogue » lors des modifications faites en administration.
  *               v1.1 : livres publiés pour le plan du site (sitemap.xml).
+ *               v1.2 : nombre de livres publiés par catégorie (catégories vides cachées).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-26
+ *  Version    : 1.2
+ *  Date       : 2026-10-28
  *  Dépendances: next/cache, supabase/public.ts
  * =============================================================
  */
@@ -18,7 +19,16 @@ import { cacheLife, cacheTag } from "next/cache";
 
 import { createPublicClient } from "@/lib/supabase/public";
 
-import type { Author, BookCard, BookDetail, BookSearch, Category, TocEntry } from "./types";
+import type {
+  Author,
+  BookCard,
+  BookDetail,
+  BookSearch,
+  Category,
+  CategorySummary,
+  SitemapBook,
+  TocEntry,
+} from "./types";
 
 // ==================== CONSTANTES ====================
 
@@ -42,21 +52,37 @@ const DETAIL_COLUMNS =
 // ==================== CATÉGORIES ====================
 
 /**
- * Liste des catégories, dans l'ordre d'affichage.
+ * Liste des catégories, dans l'ordre d'affichage, avec leur nombre de livres publiés.
+ * Seule source de vérité « catégorie vide » : plan du site, accueil et navigation.
  * @returns Catégories triées par position puis par nom
  */
-export async function getCategories(): Promise<Category[]> {
+export async function getCategories(): Promise<CategorySummary[]> {
   "use cache";
   cacheLife("days");
   cacheTag(CATALOG_TAG);
 
-  const { data, error } = await createPublicClient()
-    .from("categories")
-    .select("id, slug, name, description, position")
-    .order("position")
-    .order("name");
-  if (error) throw new Error(`Lecture des catégories impossible : ${error.message}`);
-  return data as Category[];
+  const supabase = createPublicClient();
+  const [categories, books] = await Promise.all([
+    supabase
+      .from("categories")
+      .select("id, slug, name, description, position")
+      .order("position")
+      .order("name"),
+    supabase.from("books").select("category_id").eq("status", "published"),
+  ]);
+  if (categories.error) {
+    throw new Error(`Lecture des catégories impossible : ${categories.error.message}`);
+  }
+  if (books.error) throw new Error(`Lecture des livres impossible : ${books.error.message}`);
+
+  const counts = new Map<string, number>();
+  for (const { category_id: id } of books.data) {
+    if (id) counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  return (categories.data as Category[]).map((category) => ({
+    ...category,
+    published_count: counts.get(category.id) ?? 0,
+  }));
 }
 
 /**
@@ -238,14 +264,6 @@ export async function searchBooks(
 
 // ==================== PLAN DU SITE ====================
 
-/** Livre publié tel que listé dans sitemap.xml. */
-export type SitemapBook = {
-  slug: string;
-  updated_at: string;
-  author: { slug: string };
-  category: { slug: string } | null;
-};
-
 /**
  * Livres publiés, avec leur auteur, pour le plan du site (sitemap.xml).
  * @returns Livres du plus récent au plus ancien
@@ -257,7 +275,7 @@ export async function getSitemapBooks(): Promise<SitemapBook[]> {
 
   const { data, error } = await createPublicClient()
     .from("books")
-    .select("slug, updated_at, author:authors!inner(slug), category:categories(slug)")
+    .select("slug, updated_at, author:authors!inner(slug)")
     .eq("status", "published")
     .order("published_at", { ascending: false });
   if (error) throw new Error(`Lecture du plan du site impossible : ${error.message}`);

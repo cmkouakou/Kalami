@@ -5,8 +5,8 @@
  *  Description: Textes de l'interface en français (langue par défaut).
  *               « {appName} » est remplacé par APP_NAME au moment de l'affichage.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-26
+ *  Version    : 1.6
+ *  Date       : 2026-10-28
  * =============================================================
  */
 
@@ -27,7 +27,7 @@ const fr = {
     home: "Kalami, accueil",
   },
   home: {
-    seoTitle: "Kalami — Livres d'auteurs africains et francophones à lire en ligne",
+    seoTitle: "{appName} — Livres d'auteurs africains et francophones en ligne",
     kicker: "Librairie en ligne",
     title: "Des livres pour comprendre, décider et avancer.",
     subtitle:

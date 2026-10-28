@@ -6,14 +6,15 @@
  *               des robots (robots.txt). Fonctions pures, lues par app/sitemap.ts et
  *               app/robots.ts.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-10-28
- *  Dépendances: lib/legal/kinds.ts
+ *  Dépendances: lib/catalog/types.ts, lib/legal/kinds.ts
  * =============================================================
  */
 
 import type { MetadataRoute } from "next";
 
+import type { CategorySummary, SitemapBook } from "@/lib/catalog/types";
 import { LEGAL_KINDS, legalPath } from "@/lib/legal/kinds";
 
 // ==================== CONSTANTES ====================
@@ -46,13 +47,8 @@ export const DISALLOWED_PATHS = [
 
 /** Données du catalogue nécessaires au plan du site. */
 export type SitemapSource = {
-  books: {
-    slug: string;
-    updated_at: string;
-    author: { slug: string };
-    category: { slug: string } | null;
-  }[];
-  categories: { slug: string }[];
+  books: SitemapBook[];
+  categories: Pick<CategorySummary, "slug" | "published_count">[];
 };
 
 // ==================== FONCTIONS ====================
@@ -70,9 +66,8 @@ export function buildSitemap(appUrl: string, source: SitemapSource): MetadataRou
     { url: appUrl, changeFrequency: "daily", priority: 1 },
     { url: `${appUrl}/strategie`, changeFrequency: "monthly", priority: 0.6 },
   ];
-  const filled = new Set(source.books.map((book) => book.category?.slug));
   for (const category of source.categories) {
-    if (!filled.has(category.slug)) continue;
+    if (category.published_count === 0) continue;
     entries.push({ url: `${appUrl}/categories/${category.slug}`, priority: 0.6 });
   }
 

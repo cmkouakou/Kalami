@@ -5,8 +5,9 @@
  *  Description: Types du catalogue (catégories, auteurs, livres, prix), partagés entre le
  *               serveur et le client.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-07
+ *               v1.1 : nombre de livres publiés par catégorie, livre du plan du site.
+ *  Version    : 1.1
+ *  Date       : 2026-10-28
  * =============================================================
  */
 
@@ -29,6 +30,9 @@ export type Category = {
   description: string | null;
   position: number;
 };
+
+/** Catégorie et son nombre de livres publiés (0 = catégorie vide, cachée de la navigation). */
+export type CategorySummary = Category & { published_count: number };
 
 export type AuthorSummary = { slug: string; display_name: string };
 
@@ -83,4 +87,11 @@ export type TocEntry = {
   block_count: number;
   /** Chapitre lisible gratuitement (en tout ou en partie). */
   is_preview: boolean;
+};
+
+/** Livre publié tel que listé dans sitemap.xml. */
+export type SitemapBook = {
+  slug: string;
+  updated_at: string;
+  author: { slug: string };
 };

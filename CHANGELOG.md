@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## [v0.15.11] - 2026-10-28 — Catégories vides
+### Modifié
+- Une seule règle « catégorie vide » (nombre de livres publiés par catégorie) pour le plan
+  du site, l'accueil et les pastilles des pages catégories : les catégories sans livre
+  publié n'apparaissent plus dans la navigation.
+- Titre de l'accueil raccourci (60 caractères) et nom de l'application paramétrable.
+### Corrigé
+- Plan du site : il ne dépend plus de la jointure livres → catégories, qui pouvait vider
+  la liste des catégories sans erreur.
+
 ## [v0.15.10] - 2026-10-28 — Référencement
 ### Modifié
 - Plan du site : les catégories sans livre publié n’y figurent plus, et leur page est

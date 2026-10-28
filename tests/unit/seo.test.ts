@@ -4,7 +4,8 @@
  * Description: Tests du référencement : plan du site, règles des robots et données
  *              structurées « Book » (JSON-LD).
  * Auteur     : Claude Marcel
- * Date       : 2026-10-26
+ * Version    : 1.2
+ * Date       : 2026-10-28
  */
 
 import { describe, expect, it } from "vitest";
@@ -23,20 +24,13 @@ const APP = "https://kalami-livres.com";
 
 describe("buildSitemap", () => {
   const sitemap = buildSitemap(APP, {
-    categories: [{ slug: "roman" }, { slug: "vide" }],
+    categories: [
+      { slug: "roman", published_count: 1 },
+      { slug: "vide", published_count: 0 },
+    ],
     books: [
-      {
-        slug: "livre-a",
-        updated_at: "2026-10-01T00:00:00Z",
-        author: { slug: "awa" },
-        category: { slug: "roman" },
-      },
-      {
-        slug: "livre-b",
-        updated_at: "2026-10-20T00:00:00Z",
-        author: { slug: "awa" },
-        category: null,
-      },
+      { slug: "livre-a", updated_at: "2026-10-01T00:00:00Z", author: { slug: "awa" } },
+      { slug: "livre-b", updated_at: "2026-10-20T00:00:00Z", author: { slug: "awa" } },
     ],
   });
   const urls = sitemap.map((entry) => entry.url);

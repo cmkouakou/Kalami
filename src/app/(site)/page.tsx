@@ -5,7 +5,7 @@
  *  Description: Accueil : présentation, catégories, sélection, nouveautés et avantages.
  *               Données du catalogue en cache ; seuls les prix (devise) sont rendus en flux.
  *  Auteur     : Claude Marcel
- *  Version    : 3.1
+ *  Version    : 3.2
  *  Date       : 2026-10-28
  *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
@@ -24,14 +24,15 @@ import {
   PANEL_SAND,
   PILL,
 } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
+import { getDictionary, interpolate } from "@/i18n";
 import { getCategories, getFeaturedBooks, getNewReleases } from "@/lib/catalog/queries";
+import { APP_NAME } from "@/lib/config";
 
 const t = getDictionary();
 
 /** Titre complet pour Google et adresse de référence de l'accueil. */
 export const metadata: Metadata = {
-  title: { absolute: t.home.seoTitle },
+  title: { absolute: interpolate(t.home.seoTitle, { appName: APP_NAME }) },
   alternates: { canonical: "/" },
 };
 
@@ -39,11 +40,13 @@ export const metadata: Metadata = {
 const BENEFIT_ICONS = [IconBookOpen, IconSmartphone, IconShield];
 
 export default async function HomePage() {
-  const [featured, newReleases, categories] = await Promise.all([
+  const [featured, newReleases, allCategories] = await Promise.all([
     getFeaturedBooks(),
     getNewReleases(),
     getCategories(),
   ]);
+  // Catégories vides cachées : aucune page sans livre proposée aux visiteurs ni à Google
+  const categories = allCategories.filter((category) => category.published_count > 0);
   // Couvertures de la vitrine : la sélection d'abord, sinon les nouveautés
   const showcase = (featured.length > 0 ? featured : newReleases).slice(0, 3);
 
