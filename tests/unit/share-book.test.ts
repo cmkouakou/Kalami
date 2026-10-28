@@ -2,9 +2,10 @@
  * Fichier    : share-book.test.ts
  * Projet     : Kalami
  * Description: Tests unitaires du partage du lien d'un livre (v0.15.8) : menu natif,
- *              copie du lien à défaut, annulation silencieuse et échec.
+ *              copie du lien à défaut, annulation silencieuse et échec ; couverture jointe
+ *              quand l'appareil accepte les fichiers (v1.1).
  * Auteur     : Claude Marcel
- * Version    : 1.0
+ * Version    : 1.1
  * Date       : 2026-10-28
  */
 
@@ -27,6 +28,24 @@ describe("shareBookLink", () => {
     expect(share).toHaveBeenCalledWith(
       expect.objectContaining({ title: "Mon livre", url: `${APP_URL}/livres/mon-livre` }),
     );
+  });
+
+  it("joint la couverture et met le lien dans le texte si les fichiers sont acceptés", async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { share, canShare: () => true });
+    const cover = new File(["img"], "mon-livre.jpg", { type: "image/jpeg" });
+    expect(await shareBookLink({ ...BOOK, cover })).toBe("shared");
+    const data = share.mock.calls[0][0];
+    expect(data.files).toEqual([cover]);
+    expect(data.text).toContain(`${APP_URL}/livres/mon-livre`);
+  });
+
+  it("partage le lien seul si l'appareil refuse le fichier", async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("navigator", { share, canShare: () => false });
+    const cover = new File(["img"], "mon-livre.jpg", { type: "image/jpeg" });
+    expect(await shareBookLink({ ...BOOK, cover })).toBe("shared");
+    expect(share.mock.calls[0][0].files).toBeUndefined();
   });
 
   it("copie le texte et le lien sans menu natif", async () => {

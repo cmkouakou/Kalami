@@ -9,7 +9,8 @@
  *               v2.3 : achat par carte (Stripe Checkout).
  *               v2.4 : sommaire sans cadenas, tout cliquable, pour qui possède le livre.
  *               v2.5 : référencement (aperçu Open Graph avec la couverture, JSON-LD Book).
- *               v2.6 : bouton « Partager ce livre », sans avoir à ouvrir la liseuse.
+ *               v2.6 : bouton « Partager ce livre » (avec la couverture), sans ouvrir la
+ *               liseuse.
  *  Auteur     : Claude Marcel
  *  Version    : 2.6
  *  Date       : 2026-10-28
@@ -217,6 +218,7 @@ function BookHeader({ book }: { book: BookDetail }) {
             slug={book.slug}
             title={book.title}
             authorName={book.author.display_name}
+            coverUrl={publicImageUrl(book.cover_path)}
           />
         </div>
         <Suspense fallback={null}>

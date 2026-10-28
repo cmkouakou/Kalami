@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.15.9] - 2026-10-28 — Couverture dans le partage
+### Ajouté
+- Partage d'un livre (page du livre et liseuse) : sur téléphone, la couverture est jointe
+  au partage, avec le texte et le lien. Couverture préchargée pour ouvrir le menu sans
+  attente ; lien seul si l'appareil n’accepte pas les fichiers.
+### Corrigé
+- Mention de paiement sous le prix : Mobile Money Wave, Orange Money, MTN MoMo ou Moov Money.
+
 ## [v0.15.8] - 2026-10-28 — Partager un livre depuis sa page
 ### Ajouté
 - Page du livre : bouton « Partager ce livre » sous « Lire », sans compte ni ouverture de

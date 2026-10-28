@@ -91,7 +91,7 @@ const fr = {
       owned: "Ce livre fait partie de votre bibliothèque.",
       secure:
         "Paiement par carte, sécurisé par Stripe. En FCFA : Mobile Money (Wave, Orange " +
-        "Money), validé à la main sous 24 h.",
+        "Money, MTN MoMo ou Moov Money), validé à la main sous 24 h.",
       promoToggle: "J'ai un code promo",
       promoLabel: "Code promo",
       promoApply: "Appliquer",

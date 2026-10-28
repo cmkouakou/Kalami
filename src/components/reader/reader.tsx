@@ -19,7 +19,8 @@
  *  Auteur     : Claude Marcel
  *               v1.8 : avis « version pour ordinateur » sur téléphone.
  *               v1.9 : avis agrandi à la taille réelle de l'écran.
- *               v1.10 : partage du livre commun avec la page du livre (lib/catalog/share).
+ *               v1.10 : partage du livre commun avec la page du livre (lib/catalog/share),
+ *               couverture jointe sur téléphone.
  *  Version    : 1.10
  *  Date       : 2026-10-28
  *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
@@ -41,6 +42,7 @@ import {
   useState,
 } from "react";
 
+import { useCoverFile } from "@/components/catalog/share-book-button";
 import {
   IconArrowLeft,
   IconBookmark,
@@ -246,6 +248,7 @@ export function Reader({ data, price, buy }: ReaderProps) {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(data.bookmarks);
   const [highlights, setHighlights] = useState<Highlight[]>(data.highlights);
   const [notice, setNotice] = useState<string | null>(null);
+  const coverFile = useCoverFile(book.coverUrl, book.slug);
   const zoneRef = useRef<HTMLElement>(null);
 
   const chapter = opening.chapter;
@@ -468,9 +471,9 @@ export function Reader({ data, price, buy }: ReaderProps) {
     else setNotice(t.reader.annotations.error);
   };
 
-  /** Partage du lien du livre : menu natif, sinon copie du lien. */
+  /** Partage du lien du livre (couverture jointe sur téléphone), sinon copie du lien. */
   const shareBook = async () => {
-    const outcome = await shareBookLink(book);
+    const outcome = await shareBookLink({ ...book, cover: coverFile });
     if (outcome === "copied") setNotice(t.reader.share.bookCopied);
     if (outcome === "error") setNotice(t.reader.share.error);
   };
