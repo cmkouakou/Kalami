@@ -4,8 +4,8 @@
  *  Projet     : Kalami
  *  Description: Livres publiés d'une catégorie, avec les autres catégories en pastilles.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-09
+ *  Version    : 1.2
+ *  Date       : 2026-10-28
  *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
  */
@@ -34,6 +34,8 @@ export async function generateMetadata({
     title: result.category.name,
     description: result.category.description ?? undefined,
     alternates: { canonical: `/categories/${result.category.slug}` },
+    // Catégorie vide : pas d'indexation tant qu'aucun livre n'y est publié
+    ...(result.books.length === 0 ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

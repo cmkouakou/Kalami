@@ -27,6 +27,7 @@ const fr = {
     home: "Kalami, accueil",
   },
   home: {
+    seoTitle: "Kalami — Livres d'auteurs africains et francophones à lire en ligne",
     kicker: "Librairie en ligne",
     title: "Des livres pour comprendre, décider et avancer.",
     subtitle:

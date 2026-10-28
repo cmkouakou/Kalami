@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.15.10] - 2026-10-28 — Référencement
+### Modifié
+- Plan du site : les catégories sans livre publié n’y figurent plus, et leur page est
+  marquée « noindex » (liens toujours suivis).
+- Accueil : titre descriptif pour Google ; adresses canoniques sur l’accueil et /strategie.
+
 ## [v0.15.9] - 2026-10-28 — Couverture dans le partage
 ### Ajouté
 - Partage d'un livre (page du livre et liseuse) : sur téléphone, la couverture est jointe

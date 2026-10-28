@@ -11,7 +11,11 @@ import { describe, expect, it } from "vitest";
 
 import type { BookDetail } from "@/lib/catalog/types";
 import { bookJsonLd, serializeJsonLd } from "@/lib/seo/book-json-ld";
-import { buildRobots, buildSitemap, DISALLOWED_PATHS } from "@/lib/seo/site-map";
+import {
+  buildRobots,
+  buildSitemap,
+  DISALLOWED_PATHS,
+} from "@/lib/seo/site-map";
 
 const APP = "https://kalami-livres.com";
 
@@ -19,10 +23,20 @@ const APP = "https://kalami-livres.com";
 
 describe("buildSitemap", () => {
   const sitemap = buildSitemap(APP, {
-    categories: [{ slug: "roman" }],
+    categories: [{ slug: "roman" }, { slug: "vide" }],
     books: [
-      { slug: "livre-a", updated_at: "2026-10-01T00:00:00Z", author: { slug: "awa" } },
-      { slug: "livre-b", updated_at: "2026-10-20T00:00:00Z", author: { slug: "awa" } },
+      {
+        slug: "livre-a",
+        updated_at: "2026-10-01T00:00:00Z",
+        author: { slug: "awa" },
+        category: { slug: "roman" },
+      },
+      {
+        slug: "livre-b",
+        updated_at: "2026-10-20T00:00:00Z",
+        author: { slug: "awa" },
+        category: null,
+      },
     ],
   });
   const urls = sitemap.map((entry) => entry.url);
@@ -35,8 +49,14 @@ describe("buildSitemap", () => {
     expect(urls).toContain(`${APP}/confidentialite`);
   });
 
+  it("écarte les catégories sans livre publié", () => {
+    expect(urls).not.toContain(`${APP}/categories/vide`);
+  });
+
   it("liste chaque auteur une fois, daté de son livre le plus récent", () => {
-    const authors = sitemap.filter((entry) => entry.url === `${APP}/auteurs/awa`);
+    const authors = sitemap.filter(
+      (entry) => entry.url === `${APP}/auteurs/awa`,
+    );
     expect(authors).toHaveLength(1);
     expect(authors[0].lastModified).toBe("2026-10-20T00:00:00Z");
   });
@@ -57,7 +77,9 @@ describe("buildRobots", () => {
     );
     // « /auteur » sans « $ » bloquerait aussi /auteurs/…
     expect(DISALLOWED_PATHS).not.toContain("/auteur");
-    expect(DISALLOWED_PATHS.some((path) => path.startsWith("/auteurs"))).toBe(false);
+    expect(DISALLOWED_PATHS.some((path) => path.startsWith("/auteurs"))).toBe(
+      false,
+    );
   });
 });
 
@@ -80,7 +102,13 @@ describe("bookJsonLd", () => {
     chapter_count: 8,
     publication_year: 2026,
     published_at: "2026-10-01T00:00:00Z",
-    author: { id: "a1", slug: "awa", display_name: "Awa K.", bio: null, photo_path: null },
+    author: {
+      id: "a1",
+      slug: "awa",
+      display_name: "Awa K.",
+      bio: null,
+      photo_path: null,
+    },
     category: { slug: "roman", name: "Roman" },
   } satisfies BookDetail;
 
@@ -88,7 +116,10 @@ describe("bookJsonLd", () => {
     const data = bookJsonLd(book, APP, "https://cdn/couverture.webp");
     expect(data["@type"]).toBe("Book");
     expect(data.url).toBe(`${APP}/livres/livre-a`);
-    expect(data.author).toMatchObject({ name: "Awa K.", url: `${APP}/auteurs/awa` });
+    expect(data.author).toMatchObject({
+      name: "Awa K.",
+      url: `${APP}/auteurs/awa`,
+    });
     expect(data.numberOfPages).toBe(120);
     expect(data.genre).toBe("Roman");
     expect(data).not.toHaveProperty("alternativeHeadline");

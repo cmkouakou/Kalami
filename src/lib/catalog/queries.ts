@@ -239,7 +239,12 @@ export async function searchBooks(
 // ==================== PLAN DU SITE ====================
 
 /** Livre publié tel que listé dans sitemap.xml. */
-export type SitemapBook = { slug: string; updated_at: string; author: { slug: string } };
+export type SitemapBook = {
+  slug: string;
+  updated_at: string;
+  author: { slug: string };
+  category: { slug: string } | null;
+};
 
 /**
  * Livres publiés, avec leur auteur, pour le plan du site (sitemap.xml).
@@ -252,7 +257,7 @@ export async function getSitemapBooks(): Promise<SitemapBook[]> {
 
   const { data, error } = await createPublicClient()
     .from("books")
-    .select("slug, updated_at, author:authors!inner(slug)")
+    .select("slug, updated_at, author:authors!inner(slug), category:categories(slug)")
     .eq("status", "published")
     .order("published_at", { ascending: false });
   if (error) throw new Error(`Lecture du plan du site impossible : ${error.message}`);

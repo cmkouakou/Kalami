@@ -6,8 +6,8 @@
  *               des robots (robots.txt). Fonctions pures, lues par app/sitemap.ts et
  *               app/robots.ts.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-26
+ *  Version    : 1.1
+ *  Date       : 2026-10-28
  *  Dépendances: lib/legal/kinds.ts
  * =============================================================
  */
@@ -46,14 +46,20 @@ export const DISALLOWED_PATHS = [
 
 /** Données du catalogue nécessaires au plan du site. */
 export type SitemapSource = {
-  books: { slug: string; updated_at: string; author: { slug: string } }[];
+  books: {
+    slug: string;
+    updated_at: string;
+    author: { slug: string };
+    category: { slug: string } | null;
+  }[];
   categories: { slug: string }[];
 };
 
 // ==================== FONCTIONS ====================
 
 /**
- * Entrées du plan du site : accueil, Kalami Stratégie, catégories, livres publiés,
+ * Entrées du plan du site : accueil, Kalami Stratégie, catégories ayant au moins un livre
+ * publié (une catégorie vide n'est pas proposée à Google), livres publiés,
  * auteurs ayant au moins un livre publié, textes légaux.
  * @param appUrl - URL publique sans « / » final
  * @param source - Livres publiés et catégories
@@ -64,7 +70,9 @@ export function buildSitemap(appUrl: string, source: SitemapSource): MetadataRou
     { url: appUrl, changeFrequency: "daily", priority: 1 },
     { url: `${appUrl}/strategie`, changeFrequency: "monthly", priority: 0.6 },
   ];
+  const filled = new Set(source.books.map((book) => book.category?.slug));
   for (const category of source.categories) {
+    if (!filled.has(category.slug)) continue;
     entries.push({ url: `${appUrl}/categories/${category.slug}`, priority: 0.6 });
   }
 

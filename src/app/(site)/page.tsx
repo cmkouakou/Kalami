@@ -5,12 +5,13 @@
  *  Description: Accueil : présentation, catégories, sélection, nouveautés et avantages.
  *               Données du catalogue en cache ; seuls les prix (devise) sont rendus en flux.
  *  Auteur     : Claude Marcel
- *  Version    : 3.0
- *  Date       : 2026-10-09
+ *  Version    : 3.1
+ *  Date       : 2026-10-28
  *  Dépendances: lib/catalog/queries.ts, components/catalog, components/ui
  * =============================================================
  */
 
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BookGrid } from "@/components/catalog/book-card";
@@ -27,6 +28,12 @@ import { getDictionary } from "@/i18n";
 import { getCategories, getFeaturedBooks, getNewReleases } from "@/lib/catalog/queries";
 
 const t = getDictionary();
+
+/** Titre complet pour Google et adresse de référence de l'accueil. */
+export const metadata: Metadata = {
+  title: { absolute: t.home.seoTitle },
+  alternates: { canonical: "/" },
+};
 
 /** Icônes des trois avantages, dans l'ordre du dictionnaire. */
 const BENEFIT_ICONS = [IconBookOpen, IconSmartphone, IconShield];

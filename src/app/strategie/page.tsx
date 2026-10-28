@@ -11,14 +11,16 @@
  *               Présentation des cas d'entraînement en vente (v0.14.2). Bouton vers
  *               chaque cas du compte, à côté de « Nouvelle étude » (v0.14.4) ; aussi vers
  *               les cas en vente, dont la page demande le paiement (v0.14.5).
+ *               Adresse de référence pour Google (v0.15.10).
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
- *  Date       : 2026-10-24
+ *  Version    : 1.8
+ *  Date       : 2026-10-28
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
  *               lib/strategy/class-queries.ts, lib/auth/dal.ts
  * =============================================================
  */
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -50,6 +52,9 @@ import { getMyInvitations, type ReceivedInvitation } from "@/lib/strategy/team-q
 
 const t = getDictionary();
 const s = t.strategy;
+
+/** Adresse de référence de l'accueil Stratégie. */
+export const metadata: Metadata = { alternates: { canonical: "/strategie" } };
 
 const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 /** Dates AAAA-MM-JJ (sans heure) : lues en UTC pour ne pas reculer d'un jour. */
