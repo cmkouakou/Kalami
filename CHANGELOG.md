@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.15.5] - 2026-10-28 — Nouvelles catégories
+### Ajouté
+- Six catégories au catalogue : Romance, Motivation, Enfance, Aventure, Histoire d'amour,
+  Diaspora (migration `20261117120000_more_categories.sql`, à appliquer).
+
 ## [v0.15.4] - 2026-10-26 — Âge minimum à l'inscription
 ### Ajouté
 - Formulaire d'inscription : case obligatoire « J'ai 14 ans ou plus, ou l'accord d'un parent
