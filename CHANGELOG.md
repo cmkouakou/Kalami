@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.15.6] - 2026-10-28 — Administrateurs du site
+### Modifié
+- Administrateurs : clodiomarcel@gmail.com et graphfuzion@gmail.com, et seulement eux
+  (migration `20261118120000_admins.sql`, à appliquer). Les catégories se créent, se
+  modifient et se suppriment dans /admin/categories.
+
 ## [v0.15.5] - 2026-10-28 — Nouvelles catégories
 ### Ajouté
 - Six catégories au catalogue : Romance, Motivation, Enfance, Aventure, Histoire d'amour,
