@@ -5,12 +5,13 @@
  *  Description: Création d'une commande au nom de l'acheteur connecté, commune à la carte
  *               (Stripe) et au Mobile Money : la base vérifie prix, droits, code promo,
  *               remise enseignant et cadence (create_book_order, create_strategy_order,
- *               create_workshop_order depuis la v0.15.0).
+ *               create_workshop_order depuis la v0.15.0). v1.2 : date de la renonciation
+ *               au droit de rétractation conservée sur la commande.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-25
+ *  Version    : 1.2
+ *  Date       : 2026-10-28
  *  Dépendances: lib/payments/checkout-request.ts, lib/payments/promo.ts,
- *               lib/supabase/server.ts
+ *               lib/supabase/admin.ts, lib/supabase/server.ts
  * =============================================================
  */
 
@@ -19,6 +20,7 @@ import "server-only";
 import { PRIVATE_HEADERS } from "@/lib/content/responses";
 import type { CheckoutBody } from "@/lib/payments/checkout-request";
 import { PROMO_ERRORS } from "@/lib/payments/promo";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 /** Statut HTTP de chaque refus de la base. */
@@ -47,6 +49,22 @@ export function paymentError(code: string, status: number): Response {
  * @param body - Demande validée
  */
 export async function createOrder(body: CheckoutBody) {
+  const result = await insertOrder(body);
+  // Preuve de la renonciation, vérifiée par la route avant l'appel (v0.15.7)
+  if (result.data) {
+    await createAdminClient()
+      .from("orders")
+      .update({ withdrawal_waiver_at: new Date().toISOString() })
+      .eq("id", result.data.order_id);
+  }
+  return result;
+}
+
+/**
+ * Appelle la fonction de commande de la base selon l'article.
+ * @param body - Demande validée
+ */
+async function insertOrder(body: CheckoutBody) {
   const supabase = await createClient();
   const promo = body.promoCode ?? null;
   if (body.item === "book") {

@@ -7,10 +7,11 @@
  *               redirection vers la page de paiement Stripe. Les erreurs sont affichées sous
  *               le bouton, en clair. Code promo facultatif (v0.10.3) : prix réduit affiché,
  *               montant final recalculé par la base. En FCFA, le Mobile Money est proposé
- *               en second choix (v0.11.0).
+ *               en second choix (v0.11.0). v1.4 : case de renonciation au droit de
+ *               rétractation obligatoire avant tout paiement.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-19
+ *  Version    : 1.4
+ *  Date       : 2026-10-28
  *  Dépendances: api/paiement/checkout, lib/currency.ts, promo-code-field.tsx,
  *               mobile-money-choice.tsx
  * =============================================================
@@ -18,6 +19,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { BUTTON_PRIMARY } from "@/components/ui/styles";
@@ -63,6 +65,8 @@ export function BuyButton(props: BuyButtonProps) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [promo, setPromo] = useState<PromoPreview | null>(null);
+  // Accès immédiat demandé et renonciation au droit de rétractation (exigée par l'API)
+  const [waiver, setWaiver] = useState(false);
   const price = prices.find((p) => p.currency === currency) ?? prices[0];
   // Prix réduit dans la devise choisie (null : code absent ou sans effet dans cette devise)
   const reduced = promo ? discountedAmount(price, promo) : null;
@@ -82,6 +86,7 @@ export function BuyButton(props: BuyButtonProps) {
         body: JSON.stringify({
           ...item,
           currency,
+          withdrawalWaiver: true,
           ...(promoUsable ? { promoCode: promo.code } : {}),
         }),
       });
@@ -126,10 +131,28 @@ export function BuyButton(props: BuyButtonProps) {
           ))}
         </fieldset>
       )}
+      <label className="flex cursor-pointer items-start gap-2 text-small text-ink-muted">
+        <input
+          type="checkbox"
+          checked={waiver}
+          onChange={(event) => {
+            setWaiver(event.target.checked);
+            setError(null);
+          }}
+          className="mt-1 size-4 shrink-0"
+        />
+        <span>
+          {t.catalog.purchase.waiver}{" "}
+          <Link href="/conditions-de-vente" className="underline">
+            {t.catalog.purchase.waiverLink}
+          </Link>
+          ).
+        </span>
+      </label>
       <button
         type="button"
         onClick={startCheckout}
-        disabled={pending}
+        disabled={pending || !waiver}
         aria-busy={pending}
         className={`${BUTTON_PRIMARY} w-full`}
       >
@@ -155,7 +178,7 @@ export function BuyButton(props: BuyButtonProps) {
           groupName={groupName}
           amountMinor={promoUsable ? reduced : price.amount_minor}
           promoCode={promoUsable ? promo.code : null}
-          disabled={pending}
+          disabled={pending || !waiver}
           errorMessage={errorMessage}
         />
       )}

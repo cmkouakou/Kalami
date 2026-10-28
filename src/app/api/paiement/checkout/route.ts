@@ -24,6 +24,7 @@ import {
   cancelPathFor,
   type CheckoutBody,
   coachPackSaleItem,
+  hasWithdrawalWaiver,
   parseCheckoutBody,
   studyOfferSaleItem,
 } from "@/lib/payments/checkout-request";
@@ -75,8 +76,11 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) return errorResponse(401);
 
-  const body = parseCheckoutBody(await request.json().catch(() => null));
+  const raw: unknown = await request.json().catch(() => null);
+  const body = parseCheckoutBody(raw);
   if (!body) return errorResponse(400);
+  // Case de renonciation au droit de rétractation obligatoire (v0.15.7)
+  if (!hasWithdrawalWaiver(raw)) return paymentError("waiver_required", 400);
 
   const { data, error } = await createOrder(body);
   if (error || !data) return orderRefusal(error);

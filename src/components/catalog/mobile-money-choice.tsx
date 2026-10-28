@@ -7,8 +7,8 @@
  *               ouverts, fait choisir l'opérateur et le pays, crée la commande puis envoie
  *               l'acheteur sur sa page (montant, numéro, référence, déclaration).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-19
+ *  Version    : 1.1
+ *  Date       : 2026-10-28
  *  Dépendances: api/paiement/mobile-money, lib/currency.ts
  * =============================================================
  */
@@ -97,6 +97,8 @@ export function MobileMoneyChoice(props: MobileMoneyChoiceProps) {
           ...item,
           currency: "XOF",
           accountId,
+          // Case cochée dans le bouton d'achat (sinon ce choix reste désactivé)
+          withdrawalWaiver: true,
           ...(promoCode ? { promoCode } : {}),
         }),
       });

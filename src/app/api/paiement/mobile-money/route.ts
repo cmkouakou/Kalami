@@ -18,6 +18,7 @@
 
 import { getCurrentUser } from "@/lib/auth/dal";
 import { errorResponse, isSameOrigin, PRIVATE_HEADERS } from "@/lib/content/responses";
+import { hasWithdrawalWaiver } from "@/lib/payments/checkout-request";
 import { createOrder, orderRefusal, paymentError } from "@/lib/payments/create-order";
 import { parseMobileMoneyBody } from "@/lib/payments/mobile-money";
 import { getMobileMoneyProvider } from "@/lib/payments/mobile-money-provider";
@@ -52,8 +53,11 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) return errorResponse(401);
 
-  const body = parseMobileMoneyBody(await request.json().catch(() => null));
+  const raw: unknown = await request.json().catch(() => null);
+  const body = parseMobileMoneyBody(raw);
   if (!body) return errorResponse(400);
+  // Case de renonciation au droit de rétractation obligatoire (v0.15.7)
+  if (!hasWithdrawalWaiver(raw)) return paymentError("waiver_required", 400);
 
   const { data, error } = await createOrder(body);
   if (error || !data) return orderRefusal(error);

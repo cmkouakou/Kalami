@@ -4,12 +4,13 @@
  *  Projet     : Kalami
  *  Description: Lecture du corps d'une demande d'achat (livre, étude ou lot d'études,
  *               forfait du coach, cas d'entraînement depuis la v0.14.0, forfait Atelier
- *               de l'auteur depuis la v0.15.0, code promo facultatif depuis la v0.10.3) et
- *               adresse de retour si le paiement est abandonné.
+ *               de l'auteur depuis la v0.15.0, code promo facultatif depuis la v0.10.3),
+ *               renonciation au droit de rétractation (v0.15.7) et adresse de retour si le
+ *               paiement est abandonné.
  *               Fonctions pures : le prix et les droits sont vérifiés par la base.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-25
+ *  Version    : 1.4
+ *  Date       : 2026-10-28
  *  Dépendances: lib/admin/validation.ts, lib/currency.ts, catalog.ts
  * =============================================================
  */
@@ -94,6 +95,17 @@ function parseItem(body: Record<string, unknown>): CheckoutItem | null {
     return { item, packId: body.packId };
   }
   return null;
+}
+
+/**
+ * Vrai si l'acheteur a coché la renonciation au droit de rétractation (v0.15.7) : accès
+ * immédiat au contenu numérique demandé, rétractation perdue dès le début de l'exécution.
+ * @param raw - Corps JSON reçu
+ */
+export function hasWithdrawalWaiver(raw: unknown): boolean {
+  return (
+    !!raw && typeof raw === "object" && (raw as Record<string, unknown>).withdrawalWaiver === true
+  );
 }
 
 // ==================== CORRESPONDANCES ====================

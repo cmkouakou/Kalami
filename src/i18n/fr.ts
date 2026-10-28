@@ -101,7 +101,13 @@ const fr = {
       promoNotInCurrency:
         "Ce code ne s'applique pas aux paiements dans cette devise.",
       priceBefore: "Prix avant réduction :",
+      waiver:
+        "Je demande l'accès immédiat à ce contenu numérique et je reconnais perdre mon " +
+        "droit de rétractation dès qu'il m'est fourni (voir les",
+      waiverLink: "Conditions de vente",
       errors: {
+        waiver_required:
+          "Cochez la case d'accès immédiat pour continuer vers le paiement.",
         already_owned: "Vous possédez déjà ce livre : rechargez la page.",
         rate_limited: "Trop de tentatives en une heure. Réessayez plus tard.",
         not_for_sale: "Cet article n'est pas vendu dans cette devise.",

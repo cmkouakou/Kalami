@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## [v0.15.7] - 2026-10-28 — Renonciation au droit de rétractation
+### Ajouté
+- Bouton d'achat : case obligatoire « Je demande l'accès immédiat à ce contenu numérique et
+  je reconnais perdre mon droit de rétractation dès qu'il m'est fourni », avec lien vers les
+  Conditions de vente. Carte et Mobile Money restent désactivés tant qu'elle n'est pas cochée.
+- API de paiement (carte et Mobile Money) : refus `waiver_required` (400) sans la case.
+- Date de l'accord conservée sur la commande, `orders.withdrawal_waiver_at` (migration
+  `20261119120000_withdrawal_waiver.sql`, à appliquer).
+
 ## [v0.15.6] - 2026-10-28 — Administrateurs du site
 ### Modifié
 - Administrateurs : clodiomarcel@gmail.com et graphfuzion@gmail.com, et seulement eux

@@ -162,8 +162,21 @@ Version actuelle : v0.15.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
   « Créer une nouvelle version » soumise à la validation habituelle
 - [x] Atelier A3 (v0.15.2) — fiche du livre par Claude (résumé, accroche, mots-clés, bio, titres)
 - [x] Mesure d'audience et référencement (v0.15.3) — Vercel Analytics, GA4 avec consentement, sitemap, robots, JSON-LD
-- [ ] Activer Vercel Analytics, définir NEXT_PUBLIC_GA_ID, valider Search Console (DNS Porkbun) et soumettre le sitemap
-- [ ] Politique de confidentialité : statistiques Google Analytics (transfert hors Québec, Loi 25)
+- [x] Search Console : propriété Domaine kalami-livres.com validée (TXT DNS Porkbun), sitemap envoyé (2026-10-26)
+- [ ] Activer Vercel Analytics (Vercel → projet → Analytics)
+- [ ] Google Analytics 4 (2026-10-28) — créer la propriété kalami-livres.com, puis :
+  - [ ] Propriété → Collecte et modification des données → Collecte de données : Google Signals désactivé
+  - [ ] Propriété → Conservation des données : événements conservés 2 mois
+  - [ ] Compte → Détails du compte → Paramètres de partage des données : tout décocher
+  - [ ] Définir NEXT_PUBLIC_GA_ID (G-…) dans Vercel, redéployer, vérifier que GA ne charge qu'après « Accepter »
+- [ ] Référencement Google (2026-10-28) — Search Console → Inspection de l'URL → « Demander une indexation » :
+  - [ ] Kalami : https://kalami-livres.com/
+  - [ ] Kalami Stratégie : https://kalami-livres.com/strategie
+  - [ ] Première publication : https://kalami-livres.com/livres/la-strategie-d-entreprise
+  - [ ] Vérifier la fiche du livre avec le test des résultats enrichis (JSON-LD Book) et l'aperçu des liens
+  - [ ] Suivre Search Console → Pages (pages indexées) et Performances (requêtes) après 1 à 2 semaines
+  - [ ] Relayer les liens (LinkedIn, Facebook, WhatsApp) : les liens entrants aident l'indexation
+- [x] Politique de confidentialité complète publiée (v3, 2026-10-28) : Google Analytics, Loi 25, âge minimum
 - [ ] ISBN facultatif saisi par l'auteur (fiche + JSON-LD) — reporté
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
@@ -220,4 +233,4 @@ Version actuelle : v0.15.4 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 - [ ] S10b — cas Ajinomoto, Infosystem et corrigé — v0.14.0 données/vente/admin (migration appliquée, intégration 6/6) ; v0.14.1 pages écrites (à essayer en ligne) ; v0.14.3 cas résolu + liste des accès (migrations appliquées) ; v0.14.5 cas résolu supprimé au retrait de l'accès ; prix saisis le 2026-10-25 (2 500 FCFA · 4 € · 5 $ CA) ; Infosystem REPORTÉ (2026-10-25 : le livre sert lui-même de corrigé, à reprendre plus tard)
   - [ ] Paiement Stripe du cas Ajinomoto : achat test déjà fait ; remboursement lancé depuis Stripe le 2026-10-25 ; reste à vérifier l'effet (accès retiré, cas résolu supprimé, exercice gardé)
 - [x] S12 — débit des exports du plan limité à 20 par heure et par compte (v0.13.0)
-- [ ] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse
+- [x] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse (publié, vérifié le 2026-10-28)
