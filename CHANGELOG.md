@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.16.0] - 2026-10-28 — Menu de l'administration
+### Modifié
+- Administration : les 16 liens alignés sont remplacés par un menu latéral en 5 groupes
+  (Pilotage, Catalogue, Ventes, Kalami Stratégie, Juridique et sécurité), avec la page
+  courante mise en évidence et des pastilles « à traiter » (soumissions, paiements Mobile
+  Money à valider sur Commandes, versements). Menu repliable sur téléphone.
+- Kalami Stratégie : accès direct à « Étapes et guides » et « Coach IA » depuis le menu.
+
 ## [v0.15.11] - 2026-10-28 — Catégories vides
 ### Modifié
 - Une seule règle « catégorie vide » (nombre de livres publiés par catégorie) pour le plan

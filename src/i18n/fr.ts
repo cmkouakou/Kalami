@@ -720,6 +720,18 @@ const fr = {
       workshop: "Atelier des auteurs",
       audit: "Journal",
       site: "Voir le site",
+      strategyOverview: "Vue d'ensemble",
+      strategySteps: "Étapes et guides",
+      strategyCoach: "Coach IA",
+      menu: "Menu de l'administration",
+      toDo: "{count} à traiter",
+      groups: {
+        overview: "Pilotage",
+        catalog: "Catalogue",
+        sales: "Ventes",
+        strategy: "Kalami Stratégie",
+        legal: "Juridique et sécurité",
+      },
     },
     dashboard: {
       published: "Livres publiés",
