@@ -352,6 +352,17 @@ const fr = {
       stop: "Arrêter la lecture à voix haute",
       unsupported:
         "La lecture à voix haute n'est pas disponible dans ce navigateur.",
+      title: "Lecture à voix haute",
+      voice: "Voix",
+      recommended: "recommandée",
+      preview: "Écouter",
+      rate: "Vitesse",
+      rates: ["Lente", "Normale", "Rapide", "Très rapide"],
+      noVoice:
+        "Aucune voix de la langue du livre n'est installée sur cet appareil.",
+      betterVoices:
+        "Pour une voix plus naturelle : utilisez Microsoft Edge (voix « Natural ») ou " +
+        "installez une voix « améliorée » dans les réglages d'accessibilité de votre appareil.",
     },
     lock: {
       title: "Vous avez terminé l'extrait gratuit",

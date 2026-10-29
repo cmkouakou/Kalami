@@ -13,9 +13,10 @@
  *  Auteur     : Claude Marcel
  *               v1.3 : isDesktopViewOnPhone() (avis de la liseuse).
  *               v1.4 : desktopViewScale() (avis affiché à taille réelle).
- *  Version    : 1.4
- *  Date       : 2026-10-22
- *  Dépendances: lib/reader/types.ts, lib/reader/position.ts
+ *               v1.5 : préférences de la lecture à voix haute (voix par langue, vitesse).
+ *  Version    : 1.5
+ *  Date       : 2026-10-29
+ *  Dépendances: lib/reader/types.ts, lib/reader/position.ts, lib/reader/voices.ts
  * =============================================================
  */
 
@@ -29,8 +30,10 @@ import {
   type ReaderSettings,
   type SavedPosition,
 } from "@/lib/reader/types";
+import { SPEECH_RATES } from "@/lib/reader/voices";
 
 const SETTINGS_KEY = "kalami:liseuse:reglages";
+const VOICE_KEY = "kalami:liseuse:voix";
 const POSITION_PREFIX = "kalami:liseuse:position:";
 
 /**
@@ -150,6 +153,35 @@ export function loadSettings(): ReaderSettings {
 
 export function saveSettings(settings: ReaderSettings): void {
   writeJson(SETTINGS_KEY, settings);
+}
+
+// ==================== VOIX ====================
+
+/** Préférences de la lecture à voix haute : voix choisie par langue, vitesse. */
+export type VoicePrefs = {
+  /** Identifiant (voiceURI) de la voix choisie, par langue du livre */
+  voices: Record<string, string>;
+  /** Indice dans SPEECH_RATES */
+  rate: number;
+};
+
+/** Vitesse normale par défaut. */
+const DEFAULT_RATE = SPEECH_RATES.indexOf(1);
+
+/** Préférences enregistrées sur l'appareil (sans voix choisie : la meilleure est prise). */
+export function loadVoicePrefs(): VoicePrefs {
+  const saved = (readJson(VOICE_KEY) ?? {}) as Record<string, unknown>;
+  const voices: Record<string, string> = {};
+  if (saved.voices && typeof saved.voices === "object") {
+    for (const [language, uri] of Object.entries(saved.voices)) {
+      if (typeof uri === "string" && uri) voices[language] = uri;
+    }
+  }
+  return { voices, rate: indexIn(SPEECH_RATES, saved.rate, DEFAULT_RATE) };
+}
+
+export function saveVoicePrefs(prefs: VoicePrefs): void {
+  writeJson(VOICE_KEY, prefs);
 }
 
 // ==================== POSITION ====================

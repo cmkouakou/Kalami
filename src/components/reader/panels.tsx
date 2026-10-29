@@ -7,11 +7,13 @@
  *               recherche dans le texte (parties autorisées seulement) et réglages de
  *               lecture (mode, thème, police, taille, interligne).
  *               v1.2 : choix du mode remplacé par une note sur téléphone (défilement imposé).
+ *               v1.3 : réglages de la lecture à voix haute (voix, vitesse, essai).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-22
+ *  Version    : 1.3
+ *  Date       : 2026-10-29
  *  Dépendances: i18n, components/ui/icons, lib/reader/annotations.ts,
- *               lib/reader/types.ts, API /api/livres/{id}/recherche
+ *               lib/reader/types.ts, lib/reader/voices.ts, use-read-aloud.ts,
+ *               API /api/livres/{id}/recherche
  * =============================================================
  */
 
@@ -30,6 +32,7 @@ import {
   shareExcerpt,
 } from "@/lib/reader/annotations";
 import { parseSearchQuery, SEARCH_MAX_HITS } from "@/lib/reader/search";
+import { isNaturalVoice, SPEECH_RATES, voiceLabel } from "@/lib/reader/voices";
 import {
   type Bookmark,
   FONT_SIZES,
@@ -45,6 +48,8 @@ import {
   type ReaderSettings,
   type SearchHit,
 } from "@/lib/reader/types";
+
+import type { ReadAloud } from "./use-read-aloud";
 
 const t = getDictionary();
 
@@ -584,16 +589,76 @@ function Choice<T extends string | number>({
   );
 }
 
+/** Réglages de la lecture à voix haute : voix de la langue du livre, vitesse, essai. */
+function SpeechSettings({ speech }: { speech: ReadAloud }) {
+  const s = t.reader.readAloud;
+  const { voices, voice } = speech;
+
+  return (
+    // min-w-0 : un fieldset garde sinon la largeur du nom de voix le plus long
+    <fieldset className="flex min-w-0 flex-col gap-3">
+      <legend className="mb-1 text-sm font-medium">{s.title}</legend>
+      {voices.length === 0 ? (
+        <p className="text-sm opacity-80">{s.noVoice}</p>
+      ) : (
+        <div className="flex flex-col gap-1">
+          <label htmlFor="liseuse-voix" className="text-sm">
+            {s.voice}
+          </label>
+          <div className="flex gap-2">
+            <select
+              id="liseuse-voix"
+              value={voice?.voiceURI ?? ""}
+              onChange={(event) => speech.chooseVoice(event.target.value)}
+              className="liseuse-champ min-h-11 min-w-0 flex-1 rounded-md border px-2"
+            >
+              {voices.map((item, index) => (
+                <option key={item.voiceURI} value={item.voiceURI}>
+                  {voiceLabel(item)}
+                  {index === 0 ? ` — ${s.recommended}` : ""}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className={BUTTON}
+              disabled={speech.status !== "idle"}
+              onClick={speech.preview}
+            >
+              {s.preview}
+            </button>
+          </div>
+        </div>
+      )}
+      <Choice
+        legend={s.rate}
+        options={SPEECH_RATES.map((_, index) => ({
+          value: index,
+          label: s.rates[index],
+        }))}
+        value={speech.rate}
+        onChange={speech.chooseRate}
+      />
+      {voices.length > 0 && !voices.some(isNaturalVoice) && (
+        <p className="text-xs opacity-80">{s.betterVoices}</p>
+      )}
+    </fieldset>
+  );
+}
+
 /** Réglages de lecture, enregistrés sur l'appareil. */
 export function SettingsPanel({
   settings,
   onChange,
   phone = false,
+  speech,
 }: {
   settings: ReaderSettings;
   onChange: (settings: ReaderSettings) => void;
   /** Téléphone : défilement imposé, le choix du mode est masqué */
   phone?: boolean;
+  /** Lecture à voix haute (absente si le navigateur ne la propose pas) */
+  speech?: ReadAloud;
 }) {
   const s = t.reader.settings;
   const update = (patch: Partial<ReaderSettings>) =>
@@ -658,6 +723,7 @@ export function SettingsPanel({
         value={settings.lineHeight}
         onChange={(lineHeight) => update({ lineHeight })}
       />
+      {speech?.supported && <SpeechSettings speech={speech} />}
       <p className="text-xs opacity-80">{t.reader.protection}</p>
       <p className="text-xs opacity-80">{t.reader.shortcuts}</p>
     </div>

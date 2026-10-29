@@ -21,8 +21,9 @@
  *               v1.9 : avis agrandi à la taille réelle de l'écran.
  *               v1.10 : partage du livre commun avec la page du livre (lib/catalog/share),
  *               couverture jointe sur téléphone.
- *  Version    : 1.10
- *  Date       : 2026-10-28
+ *               v1.11 : voix et vitesse de la lecture à voix haute dans les réglages.
+ *  Version    : 1.11
+ *  Date       : 2026-10-29
  *  Dépendances: flip-view, scroll-view, seek-bar, panels, lock-screen, annotation-layer,
  *               use-*, storage, lib/reader, lib/catalog/share, components/ui
  * =============================================================
@@ -853,6 +854,7 @@ export function Reader({ data, price, buy }: ReaderProps) {
                 settings={settings}
                 onChange={changeSettings}
                 phone={phone}
+                speech={speech}
               />
             )}
           </Panel>

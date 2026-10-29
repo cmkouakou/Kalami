@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.16.5] - 2026-10-29 — Voix plus naturelle pour la lecture à voix haute
+### Ajouté
+- La liseuse choisit d'office la voix la plus naturelle de la langue du livre : voix
+  neuronales (« Natural » d'Edge, « Premium » / « Améliorée » d'Apple), puis « Google »,
+  puis voix système ; les voix fantaisie et eSpeak passent en dernier
+  (`src/lib/reader/voices.ts`).
+- Réglages › Lecture à voix haute : choix de la voix, vitesse (lente à très rapide),
+  bouton « Écouter » et conseil pour obtenir une voix plus naturelle si l'appareil n'en a
+  pas. Choix mémorisés sur l'appareil, voix par langue ; un changement en cours de lecture
+  reprend au paragraphe courant.
+
+### Modifié
+- Chaque paragraphe est lu phrase par phrase (énoncés de 200 caractères au plus) : Chrome
+  coupait les voix en ligne au-delà d'une quinzaine de secondes.
+
 ## [v0.16.4] - 2026-10-29 — Pages plus légères
 ### Performance
 - Le dictionnaire de l'interface est scindé : les textes de Kalami Stratégie
