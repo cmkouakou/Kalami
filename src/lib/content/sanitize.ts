@@ -92,7 +92,8 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedClasses: {
     p: [
       "vers", "encadre", "encadre-fond", "encadre-trait", "encadre-debut", "encadre-fin",
-      "encadre-titre", "chapitre-surtitre", "chapitre-chapeau", "sommaire-1", "sommaire-2",
+      "encadre-titre", "chapitre-surtitre", "chapitre-chapeau", "sommaire-titre", "sommaire-1",
+      "sommaire-2",
     ],
     span: ["encadre-label", "sommaire-surtitre"],
     figure: ["illustration"],

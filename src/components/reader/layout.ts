@@ -6,9 +6,10 @@
  *               des pages selon la zone disponible, puis découpe mesurée dans une page
  *               cachée (polices et images chargées). Partagée par la vue et par le compteur
  *               des pages du livre, qui doivent obtenir exactement les mêmes pages.
+ *               v1.1 : sommaire écrit à la main sur sa propre page.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-22
+ *  Version    : 1.1
+ *  Date       : 2026-10-28
  *  Dépendances: dom.ts, lib/reader/paginate.ts, lib/reader/opening.ts
  * =============================================================
  */
@@ -16,7 +17,7 @@
 import type { ChapterPayload } from "@/lib/content/types";
 import { paginate } from "@/lib/reader/paginate";
 import { chapterKicker } from "@/lib/reader/opening";
-import type { Page } from "@/lib/reader/types";
+import type { BlockInfo, Page } from "@/lib/reader/types";
 
 import {
   blockInfo,
@@ -51,6 +52,24 @@ export function layoutFor(width: number, height: number) {
     contentWidth: pageWidth - 2 * padX,
     contentHeight: Math.floor(height) - PADDING.top - PADDING.bottom,
   };
+}
+
+/**
+ * Sommaire écrit à la main (« SOMMAIRE » puis ses lignes) : il commence une page neuve et
+ * le texte qui suit aussi.
+ * @param elements - Éléments du chapitre (titre compris)
+ * @param infos    - Description des blocs (modifiée sur place)
+ */
+function markContentsPage(elements: HTMLElement[], infos: BlockInfo[]): void {
+  const start = elements.findIndex((element) =>
+    element.classList.contains("sommaire-titre"),
+  );
+  if (start < 1) return;
+  infos[start - 1] = { ...infos[start - 1], breakAfter: true };
+  let last = start;
+  while (elements[last + 1]?.classList.contains("sommaire-1")) last++;
+  if (last < elements.length - 1)
+    infos[last] = { ...infos[last], breakAfter: true };
 }
 
 /** Chapitre découpé : éléments (titre compris), pages et présence d'une page d'ouverture. */
@@ -88,6 +107,7 @@ export async function layoutChapter(
   // Page d'ouverture d'un module : surtitre, titre et chapeau seuls sur leur page
   const end = openerEnd(elements, kicker);
   if (end !== null) infos[end] = { ...infos[end], breakAfter: true };
+  markContentsPage(elements, infos);
 
   const measurer = createMeasurer(
     host,

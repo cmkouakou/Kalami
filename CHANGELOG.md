@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## [v0.16.2] - 2026-10-28 — Mise en page des manuscrits Word
+### Ajouté
+- Import Word : un paragraphe tout en italique placé sous une image devient sa légende
+  (dans l'illustration, avec un filet, et texte alternatif de l'image), au lieu d'être
+  mêlé au texte du livre.
+- Import Word : un titre « CHAPITRE I », « ÉPILOGUE », « ANNEXE », « PROLOGUE »… suivi
+  d'un sous-titre court devient surtitre + titre (« Les éclaireurs ») sur la page
+  d'ouverture du chapitre.
+- Import Word : un sommaire écrit à la main (« SOMMAIRE » puis une ligne par chapitre,
+  sans styles « TM ») est reconnu, mis en évidence, placé sur sa propre page et rendu
+  cliquable vers chaque chapitre ; il est aussi mis en forme dans le PDF.
+
 ## [v0.16.1] - 2026-10-28 — Lecture et audience
 ### Ajouté
 - Administration → Pilotage → « Lecture et audience » : visites, pages vues, lecteurs

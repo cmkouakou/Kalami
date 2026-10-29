@@ -9,9 +9,10 @@
  *               (« MODULE 3 »). Attributs « data-vers-* » : la liseuse pose déjà data-bloc
  *               sur chaque bloc affiché, ce qui écraserait la cible.
  *               Les blocs sont déjà nettoyés : seuls des attributs numériques sont ajoutés.
+ *               v1.1 : entrée écrite « Chapitre I  Titre » reliée par surtitre + titre.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-17
+ *  Version    : 1.1
+ *  Date       : 2026-10-28
  *  Dépendances: types.ts
  * =============================================================
  */
@@ -67,6 +68,18 @@ export function comparable(html: string): string {
     .toLowerCase();
 }
 
+/** Texte comparable sans tirets, deux-points ni points de conduite entre les mots. */
+function withoutSeparators(html: string): string {
+  return comparable(html)
+    .replace(/[\s.:·–—-]+/g, " ")
+    .trim();
+}
+
+/** Échappe un titre brut pour l'insérer dans un bloc HTML. */
+function escapeText(text: string): string {
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 /**
  * Cherche un intertitre dans un chapitre, à partir d'un bloc donné.
  * @returns Indice du bloc, ou -1
@@ -94,6 +107,11 @@ function findSubheading(blocks: string[], text: string, from: number): number {
  */
 export function linkContents(chapters: ConvertedChapter[]): void {
   const titles = chapters.map((chapter) => comparable(chapter.title));
+  const kickers = chapters.map((chapter) => KICKER.exec(chapter.blocks[0] ?? "")?.[1] ?? null);
+  // Entrée écrite « Chapitre I  Les éclaireurs » : surtitre et titre du chapitre réunis
+  const announced = chapters.map((chapter, index) =>
+    kickers[index] ? withoutSeparators(`${kickers[index]} ${chapter.title}`) : null,
+  );
   let current: Target | null = null;
 
   /** Intertitre recherché d'abord après l'entrée précédente, puis dans tout le livre. */
@@ -113,9 +131,15 @@ export function linkContents(chapters: ConvertedChapter[]): void {
     chapter.blocks = chapter.blocks.map((block) => {
       const match = ENTRY.exec(block);
       if (!match) return block;
-      const [, level, label] = match;
+      const [, level] = match;
+      let label = match[2];
       const text = comparable(label);
-      const titled = titles.indexOf(text);
+      let titled = titles.indexOf(text);
+      if (titled < 0 && level === "sommaire-1") {
+        // Le surtitre est rendu à part : l'entrée ne garde que le titre
+        titled = announced.indexOf(withoutSeparators(label));
+        if (titled >= 0) label = escapeText(chapters[titled].title);
+      }
       let target: Target | null = null;
       if (level === "sommaire-1" && titled >= 0) target = { chapter: titled + 1, block: 0 };
       else target = locate(text) ?? (titled >= 0 ? { chapter: titled + 1, block: 0 } : null);

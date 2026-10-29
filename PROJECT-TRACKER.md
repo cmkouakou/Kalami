@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.16.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.16.2 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -77,7 +77,8 @@ Version actuelle : v0.16.1 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #71 | 2026-10-28 | v0.15.5 à v0.15.10 : nouvelles catégories, administrateurs du site, renonciation au droit de rétractation, partage d'un livre (avec couverture), référencement des catégories et de l'accueil | non estimé | non estimé |
 | #72 | 2026-10-28 | Étude d'une édition anglaise du livre ; revue de code ; v0.15.11 : une seule règle « catégorie vide » (plan du site, accueil, pastilles), titre de l'accueil raccourci | ~150 000 | ~0.90 $ |
 | #73 | 2026-10-28 | v0.16.0 : menu de l'administration regroupé par thème ; v0.16.1 : tableau de bord « Lecture et audience » (lecteurs, temps, chapitres, pays, visites anonymes, conservation 12 mois) | ~180 000 | ~1.08 $ |
-| **TOTAL** | | | **~18 310 000** (hors #71) | **~109.86 $** |
+| #74 | 2026-10-28 | v0.16.2 : import Word — légendes en italique sous les illustrations, « CHAPITRE I » + sous-titre en page d'ouverture, sommaire écrit à la main mis en évidence et cliquable (manuscrit « Un éclaireur pour la paix ») | ~160 000 | ~0.96 $ |
+| **TOTAL** | | | **~18 470 000** (hors #71) | **~110.82 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

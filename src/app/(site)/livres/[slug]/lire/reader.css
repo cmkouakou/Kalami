@@ -335,13 +335,22 @@
   background: #ffffff;
 }
 
+/* Légende : sous l'image, séparée du texte du livre par un filet court */
 .liseuse-texte figcaption {
-  margin-top: 0.5em;
+  max-width: 34em;
+  margin: 0.6em auto 0;
+  padding-top: 0.45em;
+  border-top: 1px solid var(--liseuse-bordure);
   color: var(--liseuse-doux);
   font-family: var(--police-interface), "Segoe UI", system-ui, sans-serif;
   font-size: 0.78em;
   line-height: 1.4;
   text-align: center;
+  text-indent: 0;
+}
+
+.liseuse-texte figure.illustration {
+  margin-bottom: 1.4em;
 }
 
 /* Encadré : une suite de paragraphes dessinée comme un seul cadre (début, fin) ; coupé
@@ -466,6 +475,27 @@
 
 .liseuse-texte p.sommaire-2 + p.sommaire-1 {
   margin-top: 1.1em;
+}
+
+/* Titre d'un sommaire écrit à la main : seul en haut de sa page (layout.ts) */
+.liseuse-texte p.sommaire-titre {
+  margin: 0.5em 0 1.2em;
+  padding-bottom: 0.6em;
+  border-bottom: 2px solid var(--liseuse-accent);
+  color: var(--liseuse-accent-texte);
+  font-family: var(--police-interface), "Segoe UI", system-ui, sans-serif;
+  font-size: 1.15em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-indent: 0;
+  text-transform: uppercase;
+}
+
+.liseuse-texte p.sommaire-titre ~ p.sommaire-1 {
+  margin: 0;
+  padding: 0.55em 0.3em;
+  border-bottom: 1px dotted var(--liseuse-bordure);
 }
 
 .liseuse-texte .sommaire-surtitre {

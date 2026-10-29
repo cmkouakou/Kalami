@@ -139,7 +139,8 @@ body { margin: 0; }
 .chapitre tbody tr:nth-child(even) { background: #f4f6f9; }
 .chapitre figure { margin: 10pt 0; text-align: center; break-inside: avoid; }
 .chapitre figure img { max-width: 100%; max-height: 170mm; height: auto; }
-.chapitre figcaption { margin-top: 4pt; font-size: 8.5pt; color: #6b6257; }
+.chapitre figcaption { margin: 4pt auto 0; padding-top: 3pt; max-width: 120mm; }
+.chapitre figcaption { border-top: 0.5pt solid #d8cfc3; font-size: 8.5pt; color: #6b6257; }
 .chapitre p.encadre { margin: 0; padding: 0 9pt 5pt; background: #fbefe4; }
 .chapitre p.encadre-fond { border-left: 3pt solid #d9772b; }
 .chapitre p.encadre-trait { background: none; border: 0.5pt solid #b9ae9f; }
@@ -157,7 +158,11 @@ body { margin: 0; }
 .chapitre p.chapitre-chapeau { margin: -8pt 0 16pt; font-size: 11pt; color: #4a4239; }
 .chapitre p.sommaire-1 { margin: 8pt 0 2pt; font-weight: bold; text-align: left; }
 .chapitre p.sommaire-2 { margin: 0 0 2pt 14pt; text-align: left; }
-.chapitre .sommaire-surtitre { font-size: 8pt; letter-spacing: 0.1em; color: #a8521a; }`;
+.chapitre .sommaire-surtitre { font-size: 8pt; letter-spacing: 0.1em; color: #a8521a; }
+.chapitre .sommaire-surtitre { display: block; text-transform: uppercase; }
+.chapitre p.sommaire-titre { break-before: page; margin: 0 0 14pt; padding-bottom: 6pt; }
+.chapitre p.sommaire-titre { border-bottom: 1.5pt solid #d9772b; text-align: center; }
+.chapitre p.sommaire-titre { font-weight: bold; letter-spacing: 0.16em; color: #a8521a; }`;
 }
 
 // ==================== GABARIT ====================

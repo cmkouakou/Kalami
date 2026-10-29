@@ -112,6 +112,16 @@ describe("arrangeLayout — illustrations", () => {
     expect(html).toContain("<p>Texte ordinaire.</p>");
   });
 
+  it("prend comme légende le paragraphe en italique qui suit l'image", () => {
+    const html = arrange(
+      `<p><img src="${PIXEL}" /></p><p><em>Le bivouac, au pied d’un fromager.</em></p>` +
+        "<p>Après le repas, <em>komien</em>.</p>",
+    );
+    expect(html).toContain("<figcaption><em>Le bivouac, au pied d’un fromager.</em></figcaption>");
+    expect(html).toContain('alt="Le bivouac, au pied d’un fromager."');
+    expect(html).toContain("<p>Après le repas, <em>komien</em>.</p>");
+  });
+
   it("laisse une image placée dans du texte", () => {
     const html = arrange(`<p>Voir <img src="${PIXEL}" /> ci-contre.</p>`);
     expect(html).not.toContain("<figure");
@@ -212,6 +222,23 @@ describe("arrangeLayout — ouvertures de chapitre", () => {
     );
   });
 
+  it("fait de « CHAPITRE I » le surtitre et de son sous-titre le titre", () => {
+    const html = arrange(
+      "<h1>CHAPITRE I</h1><p><strong>Les éclaireurs</strong></p><p>Le soleil.</p>" +
+        "<h1>ÉPILOGUE</h1><p>Un peuple qui danse</p><p>Les saisons.</p>",
+    );
+    expect(html).toBe(
+      '<h1>Les éclaireurs</h1><p class="chapitre-surtitre">CHAPITRE I</p><p>Le soleil.</p>' +
+        '<h1>Un peuple qui danse</h1><p class="chapitre-surtitre">ÉPILOGUE</p>' +
+        "<p>Les saisons.</p>",
+    );
+  });
+
+  it("garde « CHAPITRE I » comme titre quand le texte commence aussitôt", () => {
+    const html = arrange("<h1>CHAPITRE I</h1><p>Il était une fois.</p>");
+    expect(html).toBe("<h1>CHAPITRE I</h1><p>Il était une fois.</p>");
+  });
+
   it("laisse un paragraphe ordinaire et un titre sans surtitre", () => {
     const html = arrange("<p>Module de gestion</p><h1>Titre</h1><p>Texte <em>mêlé</em>.</p>");
     expect(html).toBe("<p>Module de gestion</p><h1>Titre</h1><p>Texte <em>mêlé</em>.</p>");
@@ -259,6 +286,37 @@ describe("table des matières", () => {
       '<p class="sommaire-2" data-vers-chapitre="3" data-vers-bloc="2">À vous de jouer</p>',
       '<p class="sommaire-2">Introuvable</p>',
     ]);
+  });
+
+  it("reconnaît un sommaire écrit à la main et relie « Chapitre I  Titre »", () => {
+    const html = arrange(
+      "<p><strong>SOMMAIRE</strong></p><p><strong>Chapitre I</strong>   Les éclaireurs</p>" +
+        "<p><strong>Épilogue</strong>   Un peuple qui danse</p>",
+    );
+    expect(html).toBe(
+      '<p class="sommaire-titre">SOMMAIRE</p>' +
+        '<p class="sommaire-1">Chapitre I Les éclaireurs</p>' +
+        '<p class="sommaire-1">Épilogue Un peuple qui danse</p>',
+    );
+    const chapters = [
+      { title: "Début", blocks: ["<p>x</p>"], word_count: 0 },
+      {
+        title: "Les éclaireurs",
+        blocks: ['<p class="chapitre-surtitre">CHAPITRE I</p>', "<p>Texte.</p>"],
+        word_count: 0,
+      },
+    ];
+    chapters[0].blocks = ['<p class="sommaire-1">Chapitre I Les éclaireurs</p>'];
+    linkContents(chapters);
+    expect(chapters[0].blocks[0]).toBe(
+      '<p class="sommaire-1" data-vers-chapitre="2" data-vers-bloc="0">' +
+        '<span class="sommaire-surtitre">CHAPITRE I</span> Les éclaireurs</p>',
+    );
+  });
+
+  it("ne voit pas de sommaire dans un « Sommaire » suivi du texte", () => {
+    const html = arrange("<p>Sommaire</p><p>Un seul paragraphe.</p>");
+    expect(html).toBe("<p>Sommaire</p><p>Un seul paragraphe.</p>");
   });
 
   it("garde les cibles numériques et les classes d'ouverture à la liste blanche", () => {

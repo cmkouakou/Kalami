@@ -10,9 +10,12 @@
  *               - v1.1 : ouverture de chapitre (surtitre « MODULE 3 » rattaché au chapitre
  *                 qu'il annonce, chapeau en italique) et table des matières Word (numéros de
  *                 page retirés).
+ *               - v1.2 : légende en italique sous une illustration, titre « CHAPITRE I »
+ *                 suivi de son sous-titre (surtitre + titre), sommaire écrit à la main
+ *                 (« SOMMAIRE » puis une ligne par chapitre) reconnu et cliquable.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-17
+ *  Version    : 1.2
+ *  Date       : 2026-10-28
  *  Dépendances: domhandler, domutils
  * =============================================================
  */
@@ -68,6 +71,23 @@ const CAPTION =
 const KICKER_WORDS = "module|partie|chapitre|livre|unité|leçon|séquence|part|chapter|unit";
 const KICKER = new RegExp(`^(?:${KICKER_WORDS})\\s+[\\dIVXLC]{1,6}$`, "iu");
 
+/** Section sans numéro qui peut aussi servir de surtitre (« ÉPILOGUE », puis son titre). */
+const SECTION =
+  /^(?:prologue|épilogue|epilogue|annexe|appendice|préface|postface|avant-propos|interlude|appendix|foreword|afterword)$/iu;
+
+/** Sous-titre d'un chapitre au plus de cette longueur, sans ponctuation de fin de phrase. */
+const MAX_SUBTITLE = 120;
+const SENTENCE_END = /[.,;:!?…»"]$/u;
+
+/** Légende en italique au plus de cette longueur (au-delà : c'est un paragraphe du texte). */
+const MAX_ITALIC_CAPTION = 300;
+
+/** Titre d'une table des matières écrite à la main. */
+const CONTENTS_TITLE = /^(?:sommaire|table des matières|contents|table of contents)$/iu;
+
+/** Entrée d'une table des matières écrite à la main : courte ligne. */
+const MAX_CONTENTS_ENTRY = 150;
+
 /** Chapeau au plus de cette longueur (au-delà : c'est un paragraphe ordinaire). */
 const MAX_LEAD = 500;
 
@@ -109,6 +129,20 @@ function plain(node: ChildNode): string {
 /** Nœud vide (espaces entre deux balises). */
 function isBlank(node: ChildNode): boolean {
   return isText(node) && !node.data.trim();
+}
+
+/**
+ * Indique si tout le texte du paragraphe est en italique (chapeau, légende).
+ * @param node - Nœud à examiner
+ * @param max  - Longueur maximale du texte
+ */
+function isItalicOnly(node: ChildNode, max: number): node is Element {
+  if (!isTag(node) || node.name !== "p" || node.attribs.class) return false;
+  const text = plain(node);
+  if (!text || text.length > max) return false;
+  return node.children.every((child) =>
+    isText(child) ? !child.data.trim() : isTag(child) && /^(em|i)$/.test(child.name),
+  );
 }
 
 /** Indique si le paragraphe ne contient qu'une (ou des) image(s). */
@@ -167,6 +201,12 @@ function groupBoxes(nodes: ChildNode[]): void {
 
 // ==================== ILLUSTRATIONS ====================
 
+/** Légende d'une illustration : « Figure 2.1 – … » ou paragraphe court tout en italique. */
+function isCaption(node: ChildNode | undefined): node is Element {
+  if (!node || !isTag(node) || node.name !== "p") return false;
+  return CAPTION.test(plain(node)) || isItalicOnly(node, MAX_ITALIC_CAPTION);
+}
+
 /**
  * Transforme chaque image seule sur sa ligne en figure, légende comprise si le paragraphe
  * suivant en est une. Sans texte de remplacement, l'image reçoit celui de la légende.
@@ -184,10 +224,7 @@ function buildFigures(nodes: ChildNode[]): ChildNode[] {
     let next = index + 1;
     while (next < nodes.length && isBlank(nodes[next])) next++;
     const candidate = nodes[next];
-    const caption =
-      candidate && isTag(candidate) && candidate.name === "p" && CAPTION.test(plain(candidate))
-        ? candidate
-        : null;
+    const caption = isCaption(candidate) ? candidate : null;
 
     const children: ChildNode[] = [...node.children];
     if (caption) {
@@ -215,26 +252,61 @@ function isPlainParagraph(node: ChildNode): node is Element {
 
 /** Paragraphe dont tout le texte est en italique : le chapeau qui suit un titre. */
 function isLead(node: ChildNode): node is Element {
-  if (!isPlainParagraph(node)) return false;
+  return isItalicOnly(node, MAX_LEAD);
+}
+
+/** Sous-titre d'un chapitre : ligne courte, sans ponctuation de fin de phrase. */
+function isSubtitle(node: ChildNode | undefined): node is Element {
+  if (!node || !isPlainParagraph(node) || isLead(node)) return false;
   const text = plain(node);
-  if (!text || text.length > MAX_LEAD) return false;
-  return node.children.every((child) =>
-    isText(child) ? !child.data.trim() : isTag(child) && /^(em|i)$/.test(child.name),
-  );
+  return !!text && text.length <= MAX_SUBTITLE && !SENTENCE_END.test(text);
+}
+
+/**
+ * Titre « CHAPITRE I » (ou « ÉPILOGUE ») suivi de son sous-titre : le sous-titre devient
+ * le titre du chapitre et l'ancien titre son surtitre.
+ * @param title - Titre de chapitre (h1, modifié sur place)
+ * @param nodes - Nœuds de premier niveau
+ * @param index - Indice du titre dans nodes
+ * @returns Paragraphe de surtitre et indice du sous-titre absorbé, ou null
+ */
+function absorbSubtitle(
+  title: Element,
+  nodes: ChildNode[],
+  index: number,
+): { kicker: Element; last: number } | null {
+  const text = plain(title);
+  if (!KICKER.test(text) && !SECTION.test(text)) return null;
+  let next = index + 1;
+  while (next < nodes.length && isBlank(nodes[next])) next++;
+  const subtitle = nodes[next];
+  if (!isSubtitle(subtitle)) return null;
+  title.children = [new Text(plain(subtitle))];
+  const kicker = new Element("p", { class: "chapitre-surtitre" }, [new Text(text)]);
+  return { kicker, last: next };
 }
 
 /**
  * Prépare l'ouverture des chapitres : le surtitre placé juste avant un titre (« MODULE 3 »)
- * passe juste après lui, pour ouvrir le chapitre au lieu de clore le précédent ; le
- * paragraphe en italique qui suit le titre devient son chapeau.
+ * passe juste après lui, pour ouvrir le chapitre au lieu de clore le précédent ; un titre
+ * « CHAPITRE I » suivi de son sous-titre devient surtitre + titre ; le paragraphe en
+ * italique qui suit le titre devient son chapeau.
  * @param nodes - Nœuds de premier niveau
  * @returns Nouvelle liste de nœuds
  */
 function markOpenings(nodes: ChildNode[]): ChildNode[] {
   const result: ChildNode[] = [];
   let awaitingLead = false;
-  for (const node of nodes) {
+  for (let index = 0; index < nodes.length; index++) {
+    const node = nodes[index];
     if (isChapterTitle(node)) {
+      const absorbed = absorbSubtitle(node as Element, nodes, index);
+      if (absorbed) {
+        result.push(node, absorbed.kicker);
+        index = absorbed.last;
+        awaitingLead = true;
+        continue;
+      }
       let last = result.length - 1;
       while (last >= 0 && isBlank(result[last])) last--;
       const previous = result[last];
@@ -261,6 +333,39 @@ function markOpenings(nodes: ChildNode[]): ChildNode[] {
 // ==================== TABLE DES MATIÈRES ====================
 
 /**
+ * Reconnaît une table des matières écrite à la main (sans styles « TM » de Word) : un
+ * paragraphe « SOMMAIRE » suivi de courtes lignes, une par chapitre. Le titre reçoit la
+ * classe « sommaire-titre », chaque ligne « sommaire-1 » (rendue cliquable ensuite par
+ * linkContents). Sans au moins deux lignes, rien n'est changé.
+ * @param nodes - Nœuds de premier niveau (modifiés sur place)
+ */
+function markWrittenContents(nodes: ChildNode[]): void {
+  const content = nodes.filter((node) => !isBlank(node));
+  const hasWordContents = content.some(
+    (node) => isTag(node) && CONTENTS_KINDS.includes(node.attribs.class ?? ""),
+  );
+  if (hasWordContents) return;
+  const start = content.findIndex(
+    (node) => isPlainParagraph(node) && CONTENTS_TITLE.test(plain(node)),
+  );
+  if (start < 0) return;
+
+  const entries: Element[] = [];
+  for (let index = start + 1; index < content.length; index++) {
+    const node = content[index];
+    const text = isPlainParagraph(node) ? plain(node) : "";
+    if (!text || text.length > MAX_CONTENTS_ENTRY) break;
+    entries.push(node as Element);
+  }
+  if (entries.length < 2) return;
+
+  const title = content[start] as Element;
+  title.attribs.class = "sommaire-titre";
+  title.children = [new Text(plain(title))];
+  for (const entry of entries) entry.attribs.class = "sommaire-1";
+}
+
+/**
  * Nettoie les entrées de la table des matières Word : texte seul (lien interne retiré),
  * sans le numéro de page, qui ne correspond pas aux pages de la liseuse. La liseuse rend
  * ensuite chaque entrée cliquable (voir linkContents).
@@ -284,6 +389,7 @@ function cleanContents(nodes: ChildNode[]): void {
  */
 export function arrangeLayout(nodes: ChildNode[]): ChildNode[] {
   groupBoxes(nodes);
+  markWrittenContents(nodes);
   cleanContents(nodes);
   return markOpenings(buildFigures(nodes));
 }
