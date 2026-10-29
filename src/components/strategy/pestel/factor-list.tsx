@@ -17,7 +17,7 @@
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   FACTORS_MAX,
   NATURES,
@@ -26,9 +26,10 @@ import {
   type PestelDimension,
   type PestelFactor,
 } from "@/lib/strategy/templates/pestel";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.pestel;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.pestel;
 
 /** Zone de texte qui s'agrandit avec son contenu (les tendances longues restent lisibles). */
 const GROWING = `${CONTROL} resize-y py-2 [field-sizing:content]`;
@@ -76,7 +77,7 @@ function FactorCard({
           <button
             type="button"
             className={BUTTON_ICON}
-            aria-label={`${t.strategy.template.remove} : ${factor.factor || p.untitled}`}
+            aria-label={`${tStrategy.template.remove} : ${factor.factor || p.untitled}`}
             onClick={() => onRemove(factor.id)}
           >
             <IconTrash size={18} />

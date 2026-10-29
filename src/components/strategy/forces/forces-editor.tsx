@@ -18,16 +18,16 @@ import { ComparisonTable } from "@/components/strategy/forces/comparison-table";
 import { ForceList } from "@/components/strategy/forces/force-list";
 import { TemplateFrame, type TemplateFrameProps } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
-import { getDictionary } from "@/i18n";
 import {
   ACTORS_MAX,
   CRITERIA_MAX,
   forcesChecklist,
   type ForcesPayload,
 } from "@/lib/strategy/templates/forces";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const f = t.strategy.forces;
+const tStrategy = getStrategyDictionary();
+const f = tStrategy.forces;
 
 type ForcesEditorProps = TemplateFrameProps & {
   initial: ForcesPayload;

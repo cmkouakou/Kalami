@@ -20,13 +20,14 @@ import { Suspense } from "react";
 import { ActionForm } from "@/components/admin/action-form";
 import { Field, SelectField, TextArea } from "@/components/ui/form";
 import { BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { saveStepGuide, setGuideBook } from "@/lib/admin/strategy-actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { getGuideSettings, listStepGuidesForAdmin } from "@/lib/strategy/queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const a = t.strategy.admin;
+const tStrategy = getStrategyDictionary();
+const a = tStrategy.admin;
 const g = a.guides;
 
 export const metadata: Metadata = { title: g.title };
@@ -80,7 +81,7 @@ async function AdminGuides() {
             <h2 className="text-xl font-semibold">
               {interpolate(g.stepTitle, {
                 no: String(step.step_no),
-                title: t.strategy.steps[step.step_no].title,
+                title: tStrategy.steps[step.step_no].title,
               })}
             </h2>
             <ActionForm action={saveStepGuide} submitLabel={g.save}>

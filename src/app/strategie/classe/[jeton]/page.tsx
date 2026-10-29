@@ -20,14 +20,15 @@ import { Suspense } from "react";
 
 import { JoinClassButton } from "@/components/strategy/classes/join-class-button";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { signOut } from "@/lib/auth/actions";
 import { requireUser } from "@/lib/auth/dal";
 import { authPath, STRATEGY_HOME } from "@/lib/auth/routes";
 import { getClassByToken } from "@/lib/strategy/class-queries";
 import type { ClassByToken } from "@/lib/strategy/classes";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const j = s.classes.join;
 
 export const metadata: Metadata = { title: j.title };

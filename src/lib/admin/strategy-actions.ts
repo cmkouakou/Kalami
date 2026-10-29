@@ -24,16 +24,17 @@
 
 import { refresh } from "next/cache";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { isUuid } from "@/lib/admin/validation";
 import { PROMPT_FUNCTIONS } from "@/lib/strategy/coach/context";
 import { isStepNo } from "@/lib/strategy/steps";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const a = t.strategy.admin;
+const tStrategy = getStrategyDictionary();
+const a = tStrategy.admin;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NOTE_MAX = 500;
@@ -88,7 +89,7 @@ export async function grantStudyCredits(
   if (error) {
     if (error.message === "user_not_found") return { error: a.userNotFound };
     if (error.message === "invalid_quantity") return { error: a.invalidQuantity };
-    return { error: t.strategy.errors.generic };
+    return { error: tStrategy.errors.generic };
   }
   refresh();
   return { message: interpolate(a.granted, { quantity: String(quantity), email }) };
@@ -111,7 +112,7 @@ export async function setStrategyTeacher(
   });
   if (error) {
     if (error.message === "user_not_found") return { error: a.userNotFound };
-    return { error: t.strategy.errors.generic };
+    return { error: tStrategy.errors.generic };
   }
   refresh();
   return { message: interpolate(enabled ? a.teachers.enabled : a.teachers.disabled, { email }) };
@@ -130,7 +131,7 @@ export async function saveStepGuide(_prev: FormState, formData: FormData): Promi
   const rawChapter = String(formData.get("chapter") ?? "").trim();
   const chapter = rawChapter === "" ? null : Number(rawChapter);
 
-  if (!isStepNo(stepNo)) return { error: t.strategy.errors.generic };
+  if (!isStepNo(stepNo)) return { error: tStrategy.errors.generic };
   if (explanation.length > GUIDE_TEXT_MAX || example.length > GUIDE_TEXT_MAX) {
     return { error: interpolate(a.guides.tooLong, { max: String(GUIDE_TEXT_MAX) }) };
   }
@@ -149,7 +150,7 @@ export async function saveStepGuide(_prev: FormState, formData: FormData): Promi
     p_lock_reason: lockReason,
     p_chapter_position: chapter,
   });
-  if (error) return { error: t.strategy.errors.generic };
+  if (error) return { error: tStrategy.errors.generic };
   refresh();
   return { message: a.guides.saved };
 }
@@ -158,13 +159,13 @@ export async function saveStepGuide(_prev: FormState, formData: FormData): Promi
 export async function setGuideBook(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
   const raw = String(formData.get("bookId") ?? "").trim();
-  if (raw !== "" && !isUuid(raw)) return { error: t.strategy.errors.generic };
+  if (raw !== "" && !isUuid(raw)) return { error: tStrategy.errors.generic };
 
   const supabase = await createClient();
   const { error } = await supabase.rpc("admin_set_strategy_guide_book", {
     p_book_id: raw === "" ? null : raw,
   });
-  if (error) return { error: t.strategy.errors.generic };
+  if (error) return { error: tStrategy.errors.generic };
   refresh();
   return { message: a.guides.bookSaved };
 }
@@ -210,7 +211,7 @@ export async function saveCoachSettings(
     p_search_price: searchPrice,
     p_search_max_uses: searchMaxUses,
   });
-  if (error) return { error: t.strategy.errors.generic };
+  if (error) return { error: tStrategy.errors.generic };
   refresh();
   return { message: c.saved };
 }
@@ -226,7 +227,7 @@ export async function grantCoachAllowance(
   const amount = readNumber(formData, "amount");
   const note = String(formData.get("note") ?? "").trim().slice(0, NOTE_MAX);
 
-  if (!isUuid(studyId)) return { error: t.strategy.errors.generic };
+  if (!isUuid(studyId)) return { error: tStrategy.errors.generic };
   if (!Number.isFinite(amount) || amount < 0.01 || amount > AMOUNT_MAX) {
     return { error: c.invalidAmount };
   }
@@ -239,7 +240,7 @@ export async function grantCoachAllowance(
   });
   if (error) {
     if (error.message === "invalid_amount") return { error: c.invalidAmount };
-    return { error: t.strategy.errors.generic };
+    return { error: tStrategy.errors.generic };
   }
   refresh();
   return { message: interpolate(c.granted, { amount: amount.toFixed(2).replace(".", ",") }) };
@@ -250,7 +251,7 @@ export async function grantCoachAllowance(
 /** Messages des refus levés par les fonctions SQL des forfaits. */
 function packError(message: string): string {
   const errors: Record<string, string> = a.coachPacks.errors;
-  return errors[message] ?? t.strategy.errors.generic;
+  return errors[message] ?? tStrategy.errors.generic;
 }
 
 /** Lit un prix facultatif : null si vide, NaN si invalide. */
@@ -276,7 +277,7 @@ export async function saveCoachPack(_prev: FormState, formData: FormData): Promi
   const position = Number(formData.get("position") ?? 0);
   const teacherDiscount = Number(formData.get("teacherDiscount") ?? 0);
 
-  if (rawId !== "" && !isUuid(rawId)) return { error: t.strategy.errors.generic };
+  if (rawId !== "" && !isUuid(rawId)) return { error: tStrategy.errors.generic };
   if (name.length < 1 || name.length > 80) return { error: errors.invalid_name };
   if (!Number.isFinite(cost) || cost < 0.01 || cost > AMOUNT_MAX) {
     return { error: errors.invalid_amount };
@@ -288,7 +289,7 @@ export async function saveCoachPack(_prev: FormState, formData: FormData): Promi
     return { error: errors.invalid_price };
   }
   if (!Number.isInteger(position) || position < 0 || position > POSITION_MAX) {
-    return { error: t.strategy.errors.generic };
+    return { error: tStrategy.errors.generic };
   }
   if (!Number.isInteger(teacherDiscount) || teacherDiscount < 0 || teacherDiscount > 90) {
     return { error: errors.invalid_discount };
@@ -318,7 +319,7 @@ export async function grantCoachPack(_prev: FormState, formData: FormData): Prom
   const studyId = String(formData.get("studyId") ?? "").trim();
   const packId = String(formData.get("packId") ?? "").trim();
   const note = String(formData.get("note") ?? "").trim().slice(0, NOTE_MAX);
-  if (!isUuid(studyId) || !isUuid(packId)) return { error: t.strategy.errors.generic };
+  if (!isUuid(studyId) || !isUuid(packId)) return { error: tStrategy.errors.generic };
 
   const supabase = await createClient();
   const { error } = await supabase.rpc("admin_grant_coach_pack", {
@@ -340,7 +341,7 @@ function promptError(message: string): string {
   if (message === "not_a_draft") return p.notDraft;
   if (message === "prompt_not_found") return p.notFound;
   if (message === "invalid_prompt") return p.invalid;
-  return t.strategy.errors.generic;
+  return tStrategy.errors.generic;
 }
 
 /**
@@ -399,7 +400,7 @@ async function promptAction(
 ): Promise<FormState> {
   await requireAdmin();
   const id = String(formData.get("id") ?? "").trim();
-  if (!isUuid(id)) return { error: t.strategy.errors.generic };
+  if (!isUuid(id)) return { error: tStrategy.errors.generic };
 
   const supabase = await createClient();
   const { error } = await supabase.rpc(rpc, { p_id: id });
@@ -448,7 +449,7 @@ export async function saveCoachRule(_prev: FormState, formData: FormData): Promi
   const explanation = String(formData.get("explanation") ?? "").trim();
   const position = Number(String(formData.get("position") ?? "0").trim() || "0");
 
-  if (rawId !== "" && !isUuid(rawId)) return { error: t.strategy.errors.generic };
+  if (rawId !== "" && !isUuid(rawId)) return { error: tStrategy.errors.generic };
   if (rawId === "" && !RULE_CODE_PATTERN.test(code)) return { error: r.invalidCode };
   if (stepNo === undefined || title === "" || title.length > RULE_TITLE_MAX
     || !Number.isInteger(position) || position < 0 || position > POSITION_MAX) {
@@ -475,7 +476,7 @@ export async function saveCoachRule(_prev: FormState, formData: FormData): Promi
       code_taken: r.codeTaken,
       rule_not_found: r.notFound,
     };
-    return { error: known[error.message] ?? t.strategy.errors.generic };
+    return { error: known[error.message] ?? tStrategy.errors.generic };
   }
   refresh();
   return { message: rawId === "" ? r.created : r.saved };

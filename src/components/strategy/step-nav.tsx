@@ -13,10 +13,11 @@
 
 import Link from "next/link";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 
 /** Classe commune des liens de navigation (cible tactile d'au moins 44 px). */
 const NAV_LINK = "flex min-h-11 flex-col justify-center rounded-lg border border-line px-4 py-2 " +

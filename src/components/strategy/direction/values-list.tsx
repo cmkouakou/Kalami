@@ -16,16 +16,17 @@
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   GESTURE_MAX,
   VALUE_NAME_MAX,
   VALUES_MAX,
   type CoreValue,
 } from "@/lib/strategy/templates/direction";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.direction;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.direction;
 
 type ValuesListProps = {
   values: CoreValue[];
@@ -78,7 +79,7 @@ export function ValuesList({ values, readOnly, onAdd, onChange, onRemove }: Valu
                   type="button"
                   className={`${BUTTON_ICON} self-end`}
                   aria-label={
-                    `${t.strategy.template.remove} : ${value.name.trim() || s.untitledValue}`
+                    `${tStrategy.template.remove} : ${value.name.trim() || s.untitledValue}`
                   }
                   onClick={() => onRemove(value.id)}
                 >

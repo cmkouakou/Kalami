@@ -18,11 +18,10 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { StrategyFooter, StrategyHeader } from "@/components/strategy/strategy-chrome";
-import { getDictionary } from "@/i18n";
 import { STRATEGY_MANIFEST_PATH } from "@/lib/pwa/manifest";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 export const metadata: Metadata = {
   title: { default: s.title, template: `%s · ${s.title}` },

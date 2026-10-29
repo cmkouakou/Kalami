@@ -19,7 +19,7 @@ import { LinkPicker, type LinkOption } from "@/components/strategy/synthesis/lin
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconAlert, IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   LINKS_MAX,
   NAME_MAX,
@@ -31,9 +31,10 @@ import {
   type Phase,
   type Workstream,
 } from "@/lib/strategy/templates/action";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.action;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.action;
 
 type WorkstreamPatch = Partial<Omit<Workstream, "id">>;
 
@@ -136,7 +137,7 @@ function Phases({ workstream, readOnly, onChange }: PhasesProps) {
               <button
                 type="button"
                 className={BUTTON_ICON}
-                aria-label={`${t.strategy.template.remove} : ${phase.name.trim() || label}`}
+                aria-label={`${tStrategy.template.remove} : ${phase.name.trim() || label}`}
                 onClick={() => onChange(phases.filter((item) => item.id !== phase.id))}
               >
                 <IconTrash size={18} />
@@ -213,7 +214,7 @@ function WorkstreamItem({
             type="button"
             className={BUTTON_ICON}
             aria-label={
-              `${t.strategy.template.remove} : ${workstream.name.trim() || s.untitledWorkstream}`
+              `${tStrategy.template.remove} : ${workstream.name.trim() || s.untitledWorkstream}`
             }
             onClick={onRemove}
           >

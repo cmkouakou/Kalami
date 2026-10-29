@@ -22,7 +22,7 @@ import { Suspense } from "react";
 import { WorkshopReview } from "@/components/author/workshop-review";
 import { WorkshopRun } from "@/components/author/workshop-run";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import { requireAuthor } from "@/lib/author/queries";
 import { balanceMessage, canRunTools } from "@/lib/author/workshop/balance";
@@ -32,8 +32,9 @@ import {
   listLatestChapterRequests,
 } from "@/lib/author/workshop/queries";
 import { CHAPTER_TOOLS } from "@/lib/author/workshop/suggestions";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const w = getDictionary().workshop;
+const w = getWorkshopDictionary();
 
 export const metadata: Metadata = { title: w.title };
 

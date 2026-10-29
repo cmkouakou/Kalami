@@ -17,11 +17,12 @@
 import { useActionState } from "react";
 
 import { Field, FormMessage, SubmitButton } from "@/components/ui/form";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { updateClassCoach } from "@/lib/strategy/class-actions";
 import { type ClassRow, COACH_STEPS } from "@/lib/strategy/classes";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const st = s.classes.settings;
 
 type ClassCoachFormProps = {

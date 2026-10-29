@@ -18,14 +18,15 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BADGE, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { removeStudent } from "@/lib/strategy/class-actions";
 import type { ClassStudent } from "@/lib/strategy/classes";
 import { memberLabel } from "@/lib/strategy/team";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cl = s.classes;
 
 /** Liste des étudiants avec retrait confirmé. */

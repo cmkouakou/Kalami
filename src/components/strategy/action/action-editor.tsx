@@ -22,7 +22,6 @@ import { WorkstreamsList } from "@/components/strategy/action/workstreams-list";
 import type { LinkOption } from "@/components/strategy/synthesis/link-picker";
 import { TemplateFrame, type TemplateFrameProps } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
-import { getDictionary } from "@/i18n";
 import {
   actionChecklist,
   INDICATORS_MAX,
@@ -34,9 +33,10 @@ import {
   type ActionPayload,
   type Perspective,
 } from "@/lib/strategy/templates/action";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.action;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.action;
 
 type ActionEditorProps = TemplateFrameProps & {
   initial: ActionPayload;

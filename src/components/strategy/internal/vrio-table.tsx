@@ -18,7 +18,7 @@
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ANSWERS,
   RESOURCES_MAX,
@@ -29,9 +29,10 @@ import {
   type TestAnswer,
   type VrioTest,
 } from "@/lib/strategy/templates/internal";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const n = t.strategy.internal;
+const tStrategy = getStrategyDictionary();
+const n = tStrategy.internal;
 
 type VrioTableProps = {
   resources: Resource[];
@@ -96,7 +97,7 @@ function ResourceCard({
           <button
             type="button"
             className={BUTTON_ICON}
-            aria-label={`${t.strategy.template.remove} : ${resource.name || n.untitledResource}`}
+            aria-label={`${tStrategy.template.remove} : ${resource.name || n.untitledResource}`}
             onClick={() => onRemove(resource.id)}
           >
             <IconTrash size={18} />

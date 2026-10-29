@@ -19,14 +19,14 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getStudy } from "@/lib/strategy/queries";
 import { describeActivity } from "@/lib/strategy/team";
 import { ACTIVITY_PAGE, getStudyActivity } from "@/lib/strategy/team-queries";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const tm = getDictionary().strategy.team;
+const tm = getStrategyDictionary().team;
 const j = tm.journal;
 
 export const metadata: Metadata = { title: j.title };

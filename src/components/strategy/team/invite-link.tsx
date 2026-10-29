@@ -16,9 +16,9 @@
 import { useState } from "react";
 
 import { BUTTON_SECONDARY } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const tm = getDictionary().strategy.team;
+const tm = getStrategyDictionary().team;
 
 /** Lien d'invitation avec bouton de copie. */
 export function InviteLink({ link }: { link: string }) {

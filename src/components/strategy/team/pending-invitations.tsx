@@ -19,12 +19,13 @@ import { useState, useTransition } from "react";
 import { InviteLink } from "@/components/strategy/team/invite-link";
 import { FormMessage } from "@/components/ui/form";
 import { BADGE, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { type InviteState, renewInvitation, revokeInvitation } from "@/lib/strategy/team-actions";
 import type { PendingInvitation } from "@/lib/strategy/team-queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const tm = s.team;
 
 type PendingInvitationsProps = {

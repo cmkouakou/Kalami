@@ -17,16 +17,16 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { StepStatusBadge } from "@/components/strategy/step-status";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   PROFILE_PREREQUISITE,
   type StepDefinition,
   type StepNo,
   type StepStatus,
 } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 type StepCardProps = {
   studyId: string;

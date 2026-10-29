@@ -21,13 +21,13 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { reopenStep, startStep, validateStep } from "@/lib/strategy/actions";
 import type { StepNo, StepStatus, StudyRole } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 type StepActionsProps = {
   studyId: string;

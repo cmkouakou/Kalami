@@ -16,7 +16,7 @@
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ENGAGEMENTS,
   LEVEL_MAX,
@@ -25,9 +25,10 @@ import {
   type Engagement,
   type Stakeholder,
 } from "@/lib/strategy/templates/stakeholders";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.stakeholders;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.stakeholders;
 
 const LEVELS = Array.from({ length: LEVEL_MAX - LEVEL_MIN + 1 }, (_, i) => LEVEL_MIN + i);
 
@@ -141,7 +142,7 @@ function StakeholderCard({
           <button
             type="button"
             className={BUTTON_ICON}
-            aria-label={`${t.strategy.template.remove} : ${stakeholder.name || s.untitled}`}
+            aria-label={`${tStrategy.template.remove} : ${stakeholder.name || s.untitled}`}
             onClick={() => onRemove(stakeholder.id)}
           >
             <IconTrash size={18} />

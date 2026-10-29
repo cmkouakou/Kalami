@@ -17,7 +17,7 @@ import { LinkPicker, type LinkGroup } from "@/components/strategy/synthesis/link
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ISSUE_EXPLANATION_MAX,
   ISSUE_TITLE_MAX,
@@ -27,9 +27,10 @@ import {
   type Issue,
   type SynthesisPayload,
 } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.synthesis;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.synthesis;
 
 type IssuesListProps = {
   payload: SynthesisPayload;
@@ -90,7 +91,7 @@ export function IssuesList({ payload, readOnly, onAdd, onChange, onRemove }: Iss
                       type="button"
                       className={BUTTON_ICON}
                       aria-label={
-                        `${t.strategy.template.remove} : ${issue.title.trim() || s.untitledIssue}`
+                        `${tStrategy.template.remove} : ${issue.title.trim() || s.untitledIssue}`
                       }
                       onClick={() => onRemove(issue.id)}
                     >

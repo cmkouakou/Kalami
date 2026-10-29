@@ -27,7 +27,6 @@ import { MemberList } from "@/components/strategy/team/member-list";
 import { PendingInvitations } from "@/components/strategy/team/pending-invitations";
 import { StepAssignments } from "@/components/strategy/team/step-assignments";
 import { CARD } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getStudyClass } from "@/lib/strategy/class-queries";
 import { getStudy } from "@/lib/strategy/queries";
@@ -37,8 +36,9 @@ import {
   getPendingInvitations,
   getStudyMembers,
 } from "@/lib/strategy/team-queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const tm = s.team;
 
 export const metadata: Metadata = { title: tm.title };

@@ -16,15 +16,15 @@
 
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { CONTROL } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import {
   JUSTIFICATION_MAX,
   type GenericChoice,
   type GenericPosition,
 } from "@/lib/strategy/templates/choice";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.choice;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.choice;
 
 /** Disposition de la grille : une ligne par cible, une colonne par avantage. */
 const GRID: { target: "broad" | "narrow"; cells: GenericPosition[] }[] = [

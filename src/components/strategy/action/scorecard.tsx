@@ -18,7 +18,7 @@ import { LinkPicker, type LinkOption } from "@/components/strategy/synthesis/lin
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconCheck, IconPlus, IconTrash } from "@/components/ui/icons";
 import { BADGE, BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   DEFINITION_MAX,
   FIELD_MAX,
@@ -33,9 +33,10 @@ import {
   type Indicator,
   type Perspective,
 } from "@/lib/strategy/templates/action";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.action;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.action;
 
 type IndicatorPatch = Partial<Omit<Indicator, "id" | "perspective">>;
 
@@ -95,7 +96,7 @@ function IndicatorItem({ indicator, objectives, readOnly, onChange, onRemove }: 
             type="button"
             className={BUTTON_ICON}
             aria-label={
-              `${t.strategy.template.remove} : ${indicator.name.trim() || s.untitledIndicator}`
+              `${tStrategy.template.remove} : ${indicator.name.trim() || s.untitledIndicator}`
             }
             onClick={onRemove}
           >

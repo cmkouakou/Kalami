@@ -18,15 +18,16 @@
 import { shortLabel } from "@/components/strategy/synthesis/link-picker";
 import { IconPlus } from "@/components/ui/icons";
 import { BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   OPTIONS_MAX,
   type AnsoffCell,
   type StrategicOption,
 } from "@/lib/strategy/templates/choice";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.choice;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.choice;
 
 /** Disposition : une ligne par marché, une colonne par produit (actuels puis nouveaux). */
 const GRID: { market: "current" | "new"; cells: AnsoffCell[] }[] = [

@@ -29,11 +29,12 @@ import {
 } from "@/components/strategy/comments/comment-thread";
 import { IconMessage } from "@/components/ui/icons";
 import { BADGE, BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { type CommentThread, groupThreads, type StepComment } from "@/lib/strategy/comments";
 import { addComment } from "@/lib/strategy/comments-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const cm = getDictionary().strategy.comments;
+const cm = getStrategyDictionary().comments;
 
 /** Préfixe des ancres de commentaire (liens des notifications et des courriels). */
 const COMMENT_HASH = "#commentaire-";

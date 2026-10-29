@@ -25,7 +25,6 @@ import { StakeholdersEditor } from "@/components/strategy/stakeholders/stakehold
 import type { LinkOption } from "@/components/strategy/synthesis/link-picker";
 import { SynthesisEditor } from "@/components/strategy/synthesis/synthesis-editor";
 import type { TemplateFrameProps } from "@/components/strategy/template-frame";
-import { getDictionary } from "@/i18n";
 import type { StepNo } from "@/lib/strategy/steps";
 import { readAction } from "@/lib/strategy/templates/action";
 import { readChoice } from "@/lib/strategy/templates/choice";
@@ -38,8 +37,9 @@ import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
 import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 
 import { PlanView } from "./plan-view";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 
 // ==================== TYPES ====================
 

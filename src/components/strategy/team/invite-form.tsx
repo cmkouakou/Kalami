@@ -18,11 +18,11 @@ import { useActionState } from "react";
 
 import { InviteLink } from "@/components/strategy/team/invite-link";
 import { Field, FormMessage, SelectField, SubmitButton } from "@/components/ui/form";
-import { getDictionary } from "@/i18n";
 import { EMAIL_MAX, INVITE_ROLES } from "@/lib/strategy/team";
 import { inviteMember } from "@/lib/strategy/team-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const tm = s.team;
 
 /** Formulaire d'invitation d'un membre. */

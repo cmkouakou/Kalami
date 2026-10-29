@@ -17,14 +17,14 @@
 
 import { refresh } from "next/cache";
 
-import { getDictionary } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { isUuid } from "@/lib/admin/validation";
 import { createClient } from "@/lib/supabase/server";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const t = getDictionary();
-const w = t.workshop.admin;
+const tWorkshop = getWorkshopDictionary();
+const w = tWorkshop.admin;
 
 // ==================== CONSTANTES ====================
 

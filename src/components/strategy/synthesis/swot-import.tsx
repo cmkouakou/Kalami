@@ -18,12 +18,13 @@
 import { useState } from "react";
 
 import { BADGE, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { SwotCandidate } from "@/lib/strategy/synthesis-sources";
 import { originLabel, SWOT_KEYS } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.synthesis;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.synthesis;
 
 type SwotImportProps = {
   candidates: SwotCandidate[];

@@ -25,7 +25,7 @@ import {
   PILL,
   PILL_ACTIVE,
 } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { distributeStudies } from "@/lib/strategy/class-actions";
 import {
   type ClassStudent,
@@ -36,8 +36,9 @@ import {
   teamGroups,
 } from "@/lib/strategy/classes";
 import { memberLabel } from "@/lib/strategy/team";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const cl = getDictionary().strategy.classes;
+const cl = getStrategyDictionary().classes;
 const d = cl.distribute;
 
 type Mode = "individual" | "teams";

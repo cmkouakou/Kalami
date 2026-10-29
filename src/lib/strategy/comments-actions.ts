@@ -21,7 +21,6 @@ import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 
-import { getDictionary } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import type { FormState } from "@/lib/auth/actions";
 import { requireUser } from "@/lib/auth/dal";
@@ -38,8 +37,9 @@ import { isStepNo, type StepNo } from "@/lib/strategy/steps";
 import { memberLabel } from "@/lib/strategy/team";
 import { getStudyMembers, type StudyMember } from "@/lib/strategy/team-queries";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cm = s.comments;
 
 /** Résultat d'une publication : identifiant du commentaire créé, ou erreur. */

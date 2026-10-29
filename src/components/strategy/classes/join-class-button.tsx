@@ -18,11 +18,11 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_PRIMARY } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { joinClass } from "@/lib/strategy/class-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const j = getDictionary().strategy.classes.join;
+const j = getStrategyDictionary().classes.join;
 
 /** Inscription à la classe désignée par le jeton. */
 export function JoinClassButton({ token }: { token: string }) {

@@ -23,10 +23,11 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { usePresence } from "@/components/strategy/presence/presence-context";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { saveConflictCopy, saveStepPayload } from "@/lib/strategy/actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const pr = getDictionary().strategy.presence;
+const pr = getStrategyDictionary().presence;
 
 // ==================== TYPES ====================
 

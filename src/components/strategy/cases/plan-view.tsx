@@ -14,11 +14,12 @@
  */
 
 import { CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { PlanBlock, PlanPayload } from "@/lib/strategy/templates/plan";
 import { DATE_LONG_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 
 /** Préfixe d'une ligne de liste dans le texte d'un paragraphe. */
 const LIST_PREFIX = "- ";

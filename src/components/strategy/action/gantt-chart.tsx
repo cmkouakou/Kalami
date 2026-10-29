@@ -17,7 +17,7 @@
 import { Fragment } from "react";
 
 import { CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   GANTT_MONTHS_MAX,
   ganttLayout,
@@ -27,9 +27,10 @@ import {
   type Workstream,
 } from "@/lib/strategy/templates/action";
 import { MONTH_FORMAT, MONTH_YEAR_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.action;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.action;
 
 /** Date UTC du premier jour d'un mois AAAA-MM. */
 function monthDate(month: string): Date {

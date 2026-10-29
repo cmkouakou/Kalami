@@ -18,10 +18,10 @@
 import { useState } from "react";
 
 import { BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import type { ExportFormat } from "@/lib/strategy/plan-export";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const e = getDictionary().strategy.plan.export;
+const e = getStrategyDictionary().plan.export;
 
 /** Nom du fichier tiré de l'en-tête Content-Disposition, sinon un nom par défaut. */
 function fileNameOf(response: Response, format: ExportFormat): string {

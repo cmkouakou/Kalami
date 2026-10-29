@@ -19,7 +19,6 @@ import { ImpactGrid } from "@/components/strategy/pestel/impact-grid";
 import { ScenarioMatrix } from "@/components/strategy/pestel/scenario-matrix";
 import { TemplateFrame, type TemplateFrameProps } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
-import { getDictionary } from "@/i18n";
 import {
   FACTORS_MAX,
   newFactor,
@@ -27,9 +26,10 @@ import {
   pivotCandidates,
   type PestelPayload,
 } from "@/lib/strategy/templates/pestel";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.pestel;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.pestel;
 
 type PestelEditorProps = TemplateFrameProps & {
   initial: PestelPayload;

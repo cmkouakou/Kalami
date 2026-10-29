@@ -21,7 +21,6 @@
 
 import { refresh } from "next/cache";
 
-import { getDictionary } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import { requireUser } from "@/lib/auth/dal";
 import { storedFileMatchesExtension } from "@/lib/security/file-signature";
@@ -37,8 +36,9 @@ import { getCoachUsage, type CoachUsage } from "@/lib/strategy/coach/queries";
 import { mergeProposals, readExtract, type Extract } from "@/lib/strategy/prefill";
 import { profileDataSchema, readProfileData } from "@/lib/strategy/profile";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const a = s.attachments;
 
 // ==================== TYPES ====================

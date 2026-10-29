@@ -14,7 +14,7 @@
  * =============================================================
  */
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { ProfileData } from "@/lib/strategy/profile";
 import {
   FREQUENCIES,
@@ -41,6 +41,7 @@ import {
   SWOT_KEYS,
   type SynthesisPayload,
 } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 // ==================== TYPES ====================
 
@@ -60,7 +61,7 @@ type Draft = { text: string; sources: PlanSource[] };
 
 // ==================== VARIABLES GLOBALES ====================
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const t = s.plan.assembled;
 
 /** Identifiants du profil citables (étape 0). */

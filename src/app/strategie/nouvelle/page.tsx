@@ -20,14 +20,14 @@ import { ActionForm } from "@/components/admin/action-form";
 import { StudyOffers } from "@/components/strategy/study-offers";
 import { Field, TextArea } from "@/components/ui/form";
 import { BUTTON_TERTIARY, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { createStudy } from "@/lib/strategy/actions";
 import { COMPANY_NAME_MAX, QUESTION_MAX } from "@/lib/strategy/profile";
 import { countAvailableCredits } from "@/lib/strategy/queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 export const metadata: Metadata = { title: s.create.title };
 

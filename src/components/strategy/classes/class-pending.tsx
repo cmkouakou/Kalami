@@ -19,7 +19,7 @@ import { useState, useTransition } from "react";
 import { ManualLinks } from "@/components/strategy/classes/manual-links";
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   type ClassInviteState,
   renewClassInvitation,
@@ -27,8 +27,9 @@ import {
 } from "@/lib/strategy/class-actions";
 import type { PendingClassInvitation } from "@/lib/strategy/class-queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cl = s.classes;
 
 type ClassPendingProps = {

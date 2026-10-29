@@ -17,7 +17,7 @@
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ACTORS_MAX,
   actorAverage,
@@ -27,10 +27,11 @@ import {
   type ForcesPayload,
   type ScoreCell,
 } from "@/lib/strategy/templates/forces";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const f = t.strategy.forces;
-const remove = t.strategy.template.remove;
+const tStrategy = getStrategyDictionary();
+const f = tStrategy.forces;
+const remove = tStrategy.template.remove;
 
 const SCORES = Array.from({ length: SCORE_MAX - SCORE_MIN + 1 }, (_, i) => SCORE_MIN + i);
 const AVERAGE_FORMAT = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });

@@ -21,15 +21,15 @@ import { Suspense } from "react";
 import { ActionForm } from "@/components/admin/action-form";
 import { Field, SelectField } from "@/components/ui/form";
 import { BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { grantCoachAllowance, saveCoachSettings } from "@/lib/admin/strategy-actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { getCoachSettings, listCoachUsageForAdmin } from "@/lib/strategy/coach/queries";
 import { listStudiesForAdmin } from "@/lib/strategy/queries";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const c = t.strategy.admin.coach;
+const tStrategy = getStrategyDictionary();
+const c = tStrategy.admin.coach;
 const MONEY_FORMAT = new Intl.NumberFormat("fr-FR", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,

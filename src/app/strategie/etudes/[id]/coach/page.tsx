@@ -25,7 +25,7 @@ import { Suspense } from "react";
 import { BuyButton } from "@/components/catalog/buy-button";
 import { UsageGauge } from "@/components/strategy/coach-panel";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
 import { getPreferredCurrency } from "@/lib/currency-server";
@@ -33,8 +33,9 @@ import { pricesOf } from "@/lib/payments/offers";
 import { getStudyClass } from "@/lib/strategy/class-queries";
 import { getCoachOverview } from "@/lib/strategy/coach/queries";
 import { getStudy } from "@/lib/strategy/queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cp = s.coachPage;
 
 const PCT_FORMAT = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });

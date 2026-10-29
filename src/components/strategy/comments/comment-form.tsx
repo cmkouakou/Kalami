@@ -18,10 +18,11 @@ import { type KeyboardEvent, useId, useRef, useState, useTransition } from "reac
 
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_PRIMARY, BUTTON_TERTIARY, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { COMMENT_MAX, type MentionMember, mentionQuery } from "@/lib/strategy/comments";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const cm = getDictionary().strategy.comments;
+const cm = getStrategyDictionary().comments;
 
 /** Nombre maximal de membres proposés après « @ ». */
 const SUGGESTIONS_MAX = 6;

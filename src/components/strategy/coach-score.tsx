@@ -15,11 +15,12 @@
 
 "use client";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { CoachRuleTitle, CoachScore as CoachScoreResult } from "@/lib/strategy/coach/queries";
 import { SCORE_CRITERIA } from "@/lib/strategy/coach/schemas";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const c = getDictionary().strategy.coach;
+const c = getStrategyDictionary().coach;
 const sc = c.score;
 
 type CoachScoreProps = {

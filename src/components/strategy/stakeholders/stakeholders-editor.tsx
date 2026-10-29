@@ -19,7 +19,6 @@ import { PowerInterestGrid } from "@/components/strategy/stakeholders/power-inte
 import { StakeholderList } from "@/components/strategy/stakeholders/stakeholder-list";
 import { TemplateFrame, type TemplateFrameProps } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
-import { getDictionary } from "@/i18n";
 import {
   autoQuadrant,
   namedStakeholders,
@@ -31,9 +30,10 @@ import {
   type Stakeholder,
   type StakeholdersPayload,
 } from "@/lib/strategy/templates/stakeholders";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.stakeholders;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.stakeholders;
 
 type StakeholdersEditorProps = TemplateFrameProps & {
   initial: StakeholdersPayload;

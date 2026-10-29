@@ -19,14 +19,15 @@ import { Suspense } from "react";
 
 import { ClassInfoForm } from "@/components/strategy/classes/class-info-form";
 import { BADGE, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { STRATEGY_HOME } from "@/lib/auth/routes";
 import { type ClassSummary, isTeacher, listMyClasses } from "@/lib/strategy/class-queries";
 import { countAvailableCredits } from "@/lib/strategy/queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cl = s.classes;
 
 export const metadata: Metadata = { title: cl.title };

@@ -15,14 +15,15 @@
 
 import "server-only";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { APP_URL } from "@/lib/config";
 import type { EmailMessage } from "@/lib/email/send";
 import { escapeHtml } from "@/lib/pdf/render";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 export { newInvitationToken } from "@/lib/strategy/team-email";
 
-const em = getDictionary().strategy.classes.email;
+const em = getStrategyDictionary().classes.email;
 
 /** Adresse publique de la page d'inscription (lien de classe ou invitation). */
 export function classJoinUrl(token: string): string {

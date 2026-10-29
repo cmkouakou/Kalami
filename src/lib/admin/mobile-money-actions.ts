@@ -26,13 +26,14 @@ import {
   normalizePhone,
 } from "@/lib/payments/mobile-money";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 const am = getDictionary().admin.mobileMoney;
 
 /** Message d'erreur connu, ou message générique. */
 function mobileMoneyError(code: string): string {
   const errors: Record<string, string> = am.errors;
-  return errors[code] ?? getDictionary().strategy.errors.generic;
+  return errors[code] ?? getStrategyDictionary().errors.generic;
 }
 
 /**

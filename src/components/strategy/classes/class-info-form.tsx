@@ -16,7 +16,6 @@
 import { useActionState } from "react";
 
 import { Field, FormMessage, SubmitButton } from "@/components/ui/form";
-import { getDictionary } from "@/i18n";
 import { createClass, updateClassInfo } from "@/lib/strategy/class-actions";
 import {
   CLASS_NAME_MAX,
@@ -24,8 +23,9 @@ import {
   INSTITUTION_MAX,
   TERM_MAX,
 } from "@/lib/strategy/classes";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const cl = getDictionary().strategy.classes;
+const cl = getStrategyDictionary().classes;
 
 type ClassInfoFormProps = {
   /** Classe à modifier ; absente pour une création. */

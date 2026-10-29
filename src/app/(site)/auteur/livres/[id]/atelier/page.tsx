@@ -23,7 +23,7 @@ import { Suspense } from "react";
 
 import { ActionForm } from "@/components/admin/action-form";
 import { CARD, PANEL_SAND, PILL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import { bookChecklist } from "@/lib/author/checklist";
 import { analyzeManuscript, type ManuscriptStats } from "@/lib/author/manuscript-stats";
@@ -36,8 +36,9 @@ import {
   type WorkshopChapter,
 } from "@/lib/author/workshop/queries";
 import { CHAPTER_TOOLS } from "@/lib/author/workshop/suggestions";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const w = getDictionary().workshop;
+const w = getWorkshopDictionary();
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
 
 export const metadata: Metadata = { title: w.title };

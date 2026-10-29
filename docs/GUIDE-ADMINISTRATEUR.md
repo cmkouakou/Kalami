@@ -150,7 +150,7 @@ migration `20261118120000_admins.sql` ; pour en changer, écrire une nouvelle mi
 | `src/app/api/` | Routes serveur : chapitres, PDF, paiements, webhooks, crons |
 | `src/lib/` | Logique métier, une famille par dossier (`catalog`, `payments`, `strategy`…) |
 | `src/components/` | Composants d'interface, rangés comme `lib` ; styles communs dans `components/ui/styles.ts` |
-| `src/i18n/` | **Tous** les textes affichés (aucun texte en dur dans les composants) |
+| `src/i18n/` | **Tous** les textes affichés (aucun texte en dur dans les composants) : `getDictionary()` pour la librairie, `getStrategyDictionary()` et `getWorkshopDictionary()` pour Stratégie et l'atelier |
 | `src/lib/format/date.ts` | Formats de date (un seul fuseau pour serveur et navigateur) |
 | `supabase/migrations/` | Schéma, RLS et fonctions SQL |
 | `tests/unit/`, `tests/integration/` | Tests (Vitest) |

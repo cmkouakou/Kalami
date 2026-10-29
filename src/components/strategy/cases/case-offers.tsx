@@ -17,15 +17,15 @@
 import Link from "next/link";
 
 import { BADGE, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
 import { getPreferredCurrency } from "@/lib/currency-server";
 import { pricesOf } from "@/lib/payments/offers";
 import { getMyCaseAccess, listCasesForSale } from "@/lib/strategy/cases/queries";
 import { getPracticeCase } from "@/lib/strategy/cases/registry";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const c = getDictionary().strategy.cases;
+const c = getStrategyDictionary().cases;
 
 /** Section des cas d'entraînement en vente. */
 export async function CaseOffers() {

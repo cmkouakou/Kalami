@@ -21,7 +21,7 @@ import { Suspense } from "react";
 import { ActionForm } from "@/components/admin/action-form";
 import { Field, TextArea } from "@/components/ui/form";
 import { BADGE, BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   discardCoachPromptDraft,
   publishCoachPrompt,
@@ -34,9 +34,10 @@ import { diffLines, hasChanges } from "@/lib/strategy/coach/diff";
 import { listCoachPromptsForAdmin, type CoachPromptVersion } from "@/lib/strategy/coach/queries";
 import type { StepNo } from "@/lib/strategy/steps";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.admin.coachPrompts;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.admin.coachPrompts;
 
 export const metadata: Metadata = { title: p.title };
 

@@ -15,13 +15,14 @@
 
 import { BuyButton } from "@/components/catalog/buy-button";
 import { CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { formatPrice } from "@/lib/currency";
 import { getPreferredCurrency } from "@/lib/currency-server";
 import { pricesOf } from "@/lib/payments/offers";
 import { listStudyOffers } from "@/lib/strategy/queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const so = getDictionary().strategy.studies.offers;
+const so = getStrategyDictionary().studies.offers;
 
 type StudyOffersProps = {
   /** Identifiant du titre (plusieurs sections sur une page) */

@@ -23,15 +23,16 @@ import { Suspense } from "react";
 import { AttachmentsPanel } from "@/components/strategy/attachments-panel";
 import { ProfileForm } from "@/components/strategy/profile-form";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getAttachmentsState } from "@/lib/strategy/attachment-queries";
 import { missingProfileFields, type ProfileData } from "@/lib/strategy/profile";
 import { getStudy } from "@/lib/strategy/queries";
 import { canEdit } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.profile;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.profile;
 const f = p.fields as Record<string, string>;
 
 export const metadata: Metadata = { title: p.title };
@@ -49,7 +50,7 @@ export default function StudyProfilePage({ params }: PageProps<"/strategie/etude
 
 /** Valeur lisible d'une réponse du profil (liste, équipes, nombre ou texte). */
 function display(key: keyof ProfileData, data: ProfileData): string {
-  if (key === "scope") return t.strategy.profile.scopes[data.scope];
+  if (key === "scope") return tStrategy.profile.scopes[data.scope];
   if (key === "teams") {
     return data.teams
       .map((team) => (team.headcount === null ? team.role : `${team.role} (${team.headcount})`))

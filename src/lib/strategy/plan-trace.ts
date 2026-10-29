@@ -15,7 +15,7 @@
  * =============================================================
  */
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { PlanInputs } from "@/lib/strategy/plan-assemble";
 import {
   sourceKey,
@@ -25,6 +25,7 @@ import {
   type PlanSourceStep,
 } from "@/lib/strategy/templates/plan";
 import { SWOT_KEYS } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 // ==================== TYPES ====================
 
@@ -44,7 +45,7 @@ export type TraceRow = {
 
 // ==================== VARIABLES GLOBALES ====================
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const t = s.plan.trace;
 
 /** Longueur maximale de l'extrait cité dans un libellé. */

@@ -14,10 +14,10 @@
 "use client";
 
 import { InviteLink } from "@/components/strategy/team/invite-link";
-import { getDictionary } from "@/i18n";
 import type { ManualLink } from "@/lib/strategy/class-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const cl = getDictionary().strategy.classes;
+const cl = getStrategyDictionary().classes;
 
 /** Liste des liens à transmettre, avec bouton de copie. */
 export function ManualLinks({ links }: { links: ManualLink[] }) {

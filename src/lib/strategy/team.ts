@@ -14,10 +14,11 @@
  * =============================================================
  */
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { isStepNo, type StudyRole } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const tm = s.team;
 
 // ==================== RÔLES ET CHAMPS ====================

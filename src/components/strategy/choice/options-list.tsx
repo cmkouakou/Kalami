@@ -19,7 +19,7 @@ import { LinkPicker, type LinkOption } from "@/components/strategy/synthesis/lin
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconAlert, IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ANSOFF_CELLS,
   COMMENT_MAX,
@@ -33,9 +33,10 @@ import {
   RATINGS,
   type StrategicOption,
 } from "@/lib/strategy/templates/choice";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.choice;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.choice;
 
 type OptionsListProps = {
   options: StrategicOption[];
@@ -126,7 +127,7 @@ export function OptionsList({
                       type="button"
                       className={BUTTON_ICON}
                       aria-label={
-                        `${t.strategy.template.remove} : ${option.text.trim() || s.untitledOption}`
+                        `${tStrategy.template.remove} : ${option.text.trim() || s.untitledOption}`
                       }
                       onClick={() => onRemove(option.id)}
                     >

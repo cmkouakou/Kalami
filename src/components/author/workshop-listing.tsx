@@ -18,11 +18,12 @@ import { useState, useTransition, type ReactNode } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BADGE, BUTTON_SECONDARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { applyListingField } from "@/lib/author/workshop/actions";
 import type { Listing, ListingField } from "@/lib/author/workshop/listing";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const l = getDictionary().workshop.listing;
+const l = getWorkshopDictionary().listing;
 
 /** Valeurs actuelles de la fiche et du profil, pour comparaison. */
 export type ListingCurrent = {

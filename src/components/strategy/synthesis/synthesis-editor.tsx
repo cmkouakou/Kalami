@@ -22,7 +22,6 @@ import { SwotImport } from "@/components/strategy/synthesis/swot-import";
 import { TowsBoard } from "@/components/strategy/synthesis/tows-board";
 import { TemplateFrame, type TemplateFrameProps } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
-import { getDictionary } from "@/i18n";
 import {
   importCandidates,
   swotCandidates,
@@ -40,9 +39,10 @@ import {
   type SwotKey,
   type SynthesisPayload,
 } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.synthesis;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.synthesis;
 
 type SynthesisEditorProps = TemplateFrameProps & {
   initial: SynthesisPayload;
@@ -79,7 +79,7 @@ export function SynthesisEditor({ initial, revision, sources, ...frame }: Synthe
     enabled: !readOnly,
   });
   const { value, update } = autosave;
-  const candidates = swotCandidates(sources, t.strategy.forces.names, value);
+  const candidates = swotCandidates(sources, tStrategy.forces.names, value);
 
   return (
     <TemplateFrame

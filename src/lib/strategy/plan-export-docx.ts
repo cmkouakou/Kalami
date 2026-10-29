@@ -42,7 +42,7 @@ import {
   type ITableCellBorders,
 } from "docx";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type {
   ExportBar,
   ExportGantt,
@@ -53,10 +53,11 @@ import type {
   ExportTrace,
   PlanExport,
 } from "@/lib/strategy/plan-export";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 // ==================== VARIABLES GLOBALES ====================
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const e = s.plan.export;
 const a = s.action;
 

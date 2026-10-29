@@ -17,15 +17,15 @@
 
 import { redirect } from "next/navigation";
 
-import { getDictionary } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { requireUser } from "@/lib/auth/dal";
 import type { StepNo } from "@/lib/strategy/steps";
 import { createClient } from "@/lib/supabase/server";
 
 import { getPracticeCase } from "./registry";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 
 /** Étapes préremplies dans l'étude résolue. */
 const EXAMPLE_STEPS: StepNo[] = [1, 2, 3, 4, 5, 6, 7, 8];

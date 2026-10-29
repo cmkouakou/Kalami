@@ -36,7 +36,7 @@ import {
   CARD,
   PANEL_SAND,
 } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   analyzeAttachment,
   attachmentLink,
@@ -57,8 +57,9 @@ import {
 import type { ProfileData } from "@/lib/strategy/profile";
 import { createClient } from "@/lib/supabase/client";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const a = s.attachments;
 
 /** Message du contrôle préalable d'un fichier. */

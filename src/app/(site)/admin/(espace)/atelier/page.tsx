@@ -19,7 +19,7 @@ import { Suspense } from "react";
 import { ActionForm } from "@/components/admin/action-form";
 import { Field, SelectField } from "@/components/ui/form";
 import { CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { listAuthorsAdmin } from "@/lib/admin/catalog-queries";
 import {
   grantWorkshopPack,
@@ -35,8 +35,9 @@ import {
   type WorkshopSettings,
 } from "@/lib/author/workshop/queries";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const w = getDictionary().workshop.admin;
+const w = getWorkshopDictionary().admin;
 /** Coût moyen d'un chapitre relu (dollars US), comme workshop_chapter_cost() en base. */
 const CHAPTER_COST = 0.25;
 

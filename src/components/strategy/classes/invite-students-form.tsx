@@ -18,10 +18,10 @@ import { useActionState } from "react";
 
 import { ManualLinks } from "@/components/strategy/classes/manual-links";
 import { FormMessage, SubmitButton, TextArea } from "@/components/ui/form";
-import { getDictionary } from "@/i18n";
 import { inviteStudents } from "@/lib/strategy/class-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const cl = getDictionary().strategy.classes;
+const cl = getStrategyDictionary().classes;
 
 /** Formulaire d'invitation des étudiants. */
 export function InviteStudentsForm({ classId }: { classId: string }) {

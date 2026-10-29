@@ -13,7 +13,7 @@
  *               inscription, distribution, suivi et statut enseignant (S10a), page du coach
  *               d'une étude et forfaits du coach (v0.11.1), achat des études, des lots et
  *               des forfaits (v0.10.2).
- *               Rattachés à fr.ts sous « strategy ».
+ *               Lus via getStrategyDictionary() (strategy.ts).
  *  Auteur     : Claude Marcel
  *  Version    : 2.7
  *  Date       : 2026-10-23

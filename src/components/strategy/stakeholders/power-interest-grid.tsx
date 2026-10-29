@@ -19,7 +19,7 @@
 import { useState, type DragEvent } from "react";
 
 import { BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   autoQuadrant,
   quadrantOf,
@@ -27,9 +27,10 @@ import {
   type StakeQuadrant,
   type Stakeholder,
 } from "@/lib/strategy/templates/stakeholders";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.stakeholders;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.stakeholders;
 
 /** Ordre d'affichage : pouvoir fort en haut, intérêt fort à droite. */
 const LAYOUT: readonly StakeQuadrant[] = ["satisfy", "manage", "monitor", "inform"];

@@ -28,8 +28,10 @@ import { STUDY_OFFER_CODES } from "@/lib/payments/checkout-request";
 import { buildDecisionEmail } from "@/lib/payments/mobile-money-email";
 import { createRefund, existingFullRefund } from "@/lib/payments/stripe";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 const t = getDictionary();
+const tStrategy = getStrategyDictionary();
 const o = t.admin.orders;
 
 /** Plafond d'un prix saisi (même ordre de grandeur que les forfaits du coach). */
@@ -40,7 +42,7 @@ const PRICE_MAX = 10_000_000;
 /** Message d'erreur connu, ou message générique. */
 function orderError(code: string): string {
   const errors: Record<string, string> = o.errors;
-  return errors[code] ?? t.strategy.errors.generic;
+  return errors[code] ?? tStrategy.errors.generic;
 }
 
 /** Lit un prix facultatif (virgule acceptée) : null si vide, NaN si invalide. */

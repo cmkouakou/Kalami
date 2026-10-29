@@ -22,10 +22,11 @@ import { createContext, type ReactNode, useContext, useMemo, useState } from "re
 import { ElementEditors } from "@/components/strategy/presence/element-editors";
 import { ELEMENT_ATTRIBUTE } from "@/components/strategy/presence/presence-context";
 import { IconMessage } from "@/components/ui/icons";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { CommentTarget } from "@/lib/strategy/comments";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const cm = getDictionary().strategy.comments;
+const cm = getStrategyDictionary().comments;
 
 /** Identifiant de la section de discussion et de sa zone de saisie (ancres). */
 export const COMMENTS_ANCHOR = "commentaires";

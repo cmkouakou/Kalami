@@ -20,7 +20,6 @@
 
 "use server";
 
-import { getDictionary } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import { requireUser } from "@/lib/auth/dal";
 import {
@@ -37,8 +36,9 @@ import { PLAN_STEP } from "@/lib/strategy/steps";
 import { hasTemplate } from "@/lib/strategy/templates";
 import { PLAN_SECTIONS, type PlanSectionKey } from "@/lib/strategy/templates/plan";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const c = getDictionary().strategy.coach;
+const c = getStrategyDictionary().coach;
 
 // ==================== TYPES ====================
 

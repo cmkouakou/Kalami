@@ -27,8 +27,10 @@ import { sendEmail } from "@/lib/email/send";
 import { buildPayoutAlert, buildPayoutDecision } from "@/lib/revenue/payout-email";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 const t = getDictionary();
+const tStrategy = getStrategyDictionary();
 const r = t.author.revenue;
 const ap = t.admin.payouts;
 
@@ -48,7 +50,7 @@ type DecisionRow = {
  * @param code - Code renvoyé par la base
  */
 function payoutError(errors: Record<string, string>, code: string): string {
-  return errors[code] ?? t.strategy.errors.generic;
+  return errors[code] ?? tStrategy.errors.generic;
 }
 
 /**

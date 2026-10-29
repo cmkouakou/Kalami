@@ -16,11 +16,12 @@
 "use client";
 
 import { BADGE, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { CoachDecision, CoachResearch } from "@/lib/strategy/coach/queries";
 import type { ResearchFact } from "@/lib/strategy/coach/schemas";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const strategy = getDictionary().strategy;
+const strategy = getStrategyDictionary();
 const r = strategy.coach.research;
 
 /** Libellés des destinations possibles d'un fait : dimensions PESTEL et cinq forces. */

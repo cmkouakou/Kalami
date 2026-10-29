@@ -15,10 +15,11 @@
 "use client";
 
 import { BADGE, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { CoachDecision, CoachDeepen } from "@/lib/strategy/coach/queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const c = getDictionary().strategy.coach;
+const c = getStrategyDictionary().coach;
 const d = c.deepen;
 
 type CoachQuestionsProps = {

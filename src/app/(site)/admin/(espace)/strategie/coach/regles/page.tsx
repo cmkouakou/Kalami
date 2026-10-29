@@ -19,22 +19,23 @@ import { Suspense } from "react";
 import { ActionForm } from "@/components/admin/action-form";
 import { Field, SelectField, TextArea } from "@/components/ui/form";
 import { BADGE, BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { saveCoachRule } from "@/lib/admin/strategy-actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { listCoachRulesForAdmin, type CoachRuleAdmin } from "@/lib/strategy/coach/queries";
 import { STEPS, type StepNo } from "@/lib/strategy/steps";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const r = t.strategy.admin.coachRules;
+const tStrategy = getStrategyDictionary();
+const r = tStrategy.admin.coachRules;
 
 /** Choix de l'étape : générale ou une des étapes. */
 const STEP_OPTIONS = [
   { value: "", label: r.general },
   ...STEPS.map(({ no }) => ({
     value: String(no),
-    label: `${interpolate(r.stepLabel, { no: String(no) })} · ${t.strategy.steps[no].title}`,
+    label: `${interpolate(r.stepLabel, { no: String(no) })} · ${tStrategy.steps[no].title}`,
   })),
 ];
 

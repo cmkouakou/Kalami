@@ -29,7 +29,7 @@ import { InviteStudentsForm } from "@/components/strategy/classes/invite-student
 import { StudentList } from "@/components/strategy/classes/student-list";
 import { TrackingList } from "@/components/strategy/classes/tracking-list";
 import { BADGE, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import {
   getClass,
@@ -40,8 +40,9 @@ import {
 import { type ClassRow, todayIso } from "@/lib/strategy/classes";
 import { countAvailableCredits } from "@/lib/strategy/queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cl = s.classes;
 
 /** Onglets : valeur d'URL → libellé. */

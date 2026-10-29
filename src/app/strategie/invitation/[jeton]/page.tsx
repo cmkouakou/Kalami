@@ -20,13 +20,14 @@ import { Suspense } from "react";
 
 import { InvitationResponse } from "@/components/strategy/team/invitation-response";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { signOut } from "@/lib/auth/actions";
 import { requireUser } from "@/lib/auth/dal";
 import { authPath, STRATEGY_HOME } from "@/lib/auth/routes";
 import { getInvitationByToken, type InvitationPreview } from "@/lib/strategy/team-queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const inv = s.team.invitation;
 
 export const metadata: Metadata = { title: inv.kicker };

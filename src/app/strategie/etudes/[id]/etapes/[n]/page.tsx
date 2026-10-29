@@ -46,7 +46,7 @@ import type { LinkOption } from "@/components/strategy/synthesis/link-picker";
 import type { TemplateFrameProps } from "@/components/strategy/template-frame";
 import { IconLock } from "@/components/ui/icons";
 import { CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getCoachState, getPlanCoachState } from "@/lib/strategy/coach/queries";
 import { commentTargets, countByTarget } from "@/lib/strategy/comments";
@@ -84,9 +84,9 @@ import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 import { memberLabel } from "@/lib/strategy/team";
 import { getStudyMembers } from "@/lib/strategy/team-queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 export const metadata: Metadata = { title: s.map.kicker };
 

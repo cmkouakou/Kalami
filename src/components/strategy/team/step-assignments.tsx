@@ -19,14 +19,15 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { STEPS, type StepNo } from "@/lib/strategy/steps";
 import { canBeAssigned, memberLabel } from "@/lib/strategy/team";
 import { assignStep } from "@/lib/strategy/team-actions";
 import type { StudyMember } from "@/lib/strategy/team-queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const tm = s.team;
 
 type StepAssignmentsProps = {

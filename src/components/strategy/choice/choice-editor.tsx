@@ -23,7 +23,6 @@ import { StatementBlock } from "@/components/strategy/choice/statement-block";
 import type { LinkOption } from "@/components/strategy/synthesis/link-picker";
 import { TemplateFrame, type TemplateFrameProps } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
-import { getDictionary } from "@/i18n";
 import {
   choiceChecklist,
   newOption,
@@ -33,9 +32,10 @@ import {
   type AnsoffCell,
   type ChoicePayload,
 } from "@/lib/strategy/templates/choice";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.choice;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.choice;
 
 type ChoiceEditorProps = TemplateFrameProps & {
   initial: ChoicePayload;

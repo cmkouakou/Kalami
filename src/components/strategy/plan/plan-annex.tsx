@@ -17,11 +17,12 @@
 import { useMemo } from "react";
 
 import { CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { traceRows, type CatalogEntry } from "@/lib/strategy/plan-trace";
 import { sourceKey, type PlanPayload } from "@/lib/strategy/templates/plan";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const p = getDictionary().strategy.plan;
+const p = getStrategyDictionary().plan;
 
 type PlanAnnexProps = {
   plan: PlanPayload;

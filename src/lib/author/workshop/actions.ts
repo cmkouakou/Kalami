@@ -45,9 +45,10 @@ import { CATALOG_TAG } from "@/lib/catalog/queries";
 import { polishChapters } from "@/lib/content/typography";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
 const t = getDictionary();
-const w = t.workshop;
+const w = getWorkshopDictionary();
 
 /** Plus grand nombre de décisions notées en une fois. */
 const MAX_DECISIONS = 150;

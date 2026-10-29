@@ -28,7 +28,7 @@ import { PresenceProvider } from "@/components/strategy/presence/presence-contex
 import { StepCard } from "@/components/strategy/step-card";
 import { IconCheck, IconPencil } from "@/components/ui/icons";
 import { BADGE, BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getStudyClass } from "@/lib/strategy/class-queries";
 import { isLate, todayIso } from "@/lib/strategy/classes";
@@ -44,9 +44,9 @@ import {
 import { memberLabel } from "@/lib/strategy/team";
 import { getStudyMembers } from "@/lib/strategy/team-queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 export const metadata: Metadata = { title: s.map.kicker };
 

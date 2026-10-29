@@ -21,7 +21,7 @@ import { CommentForm } from "@/components/strategy/comments/comment-form";
 import { IconCheck } from "@/components/ui/icons";
 import { FormMessage } from "@/components/ui/form";
 import { BADGE, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import {
   type CommentThread as Thread,
@@ -36,8 +36,9 @@ import {
   resolveThread,
 } from "@/lib/strategy/comments-actions";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const cm = getDictionary().strategy.comments;
+const cm = getStrategyDictionary().comments;
 
 export type ThreadContext = {
   studyId: string;

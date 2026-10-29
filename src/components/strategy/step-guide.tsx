@@ -16,11 +16,11 @@
 import Link from "next/link";
 
 import { BUTTON_TERTIARY, CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import type { StepGuide as StepGuideData } from "@/lib/strategy/queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const g = t.strategy.guide;
+const tStrategy = getStrategyDictionary();
+const g = tStrategy.guide;
 
 /** Paragraphes d'un texte de l'auteur (séparés par une ligne vide). */
 function Paragraphs({ text }: { text: string }) {

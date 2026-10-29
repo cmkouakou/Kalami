@@ -22,7 +22,7 @@ import { VrioTable } from "@/components/strategy/internal/vrio-table";
 import { TemplateFrame, type TemplateFrameProps } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ACTIVITIES_MAX,
   internalChecklist,
@@ -35,9 +35,10 @@ import {
   type InternalPayload,
   type ValueChainModel,
 } from "@/lib/strategy/templates/internal";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const n = t.strategy.internal;
+const tStrategy = getStrategyDictionary();
+const n = tStrategy.internal;
 
 /** Libellés des activités de départ de chaque modèle. */
 const MODEL_LABELS: Record<ValueChainModel, Record<string, string>> = {

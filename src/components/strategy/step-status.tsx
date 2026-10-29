@@ -12,10 +12,10 @@
  */
 
 import { IconAlert, IconCheck, IconCircle, IconClock, IconLock } from "@/components/ui/icons";
-import { getDictionary } from "@/i18n";
 import type { StepStatus } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
+const tStrategy = getStrategyDictionary();
 
 /** Couleurs et icône de chaque statut (jetons de la charte). */
 const LOOK: Record<StepStatus, { className: string; Icon: typeof IconCheck }> = {
@@ -36,7 +36,7 @@ export function StepStatusBadge({ status, locked = false }: StepStatusBadgeProps
     return (
       <span className={`${PILL} bg-sand text-ink-muted`}>
         <IconLock size={14} />
-        {t.strategy.map.locked}
+        {tStrategy.map.locked}
       </span>
     );
   }
@@ -44,7 +44,7 @@ export function StepStatusBadge({ status, locked = false }: StepStatusBadgeProps
   return (
     <span className={`${PILL} ${className}`}>
       <Icon size={14} />
-      {t.strategy.status[status]}
+      {tStrategy.status[status]}
     </span>
   );
 }

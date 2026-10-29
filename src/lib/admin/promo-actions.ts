@@ -23,14 +23,16 @@ import { requireAdmin } from "@/lib/auth/dal";
 import { parsePromoCodeForm } from "@/lib/admin/promo-validation";
 import { isUuid } from "@/lib/admin/validation";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 const t = getDictionary();
+const tStrategy = getStrategyDictionary();
 const p = t.admin.promos;
 
 /** Message d'erreur connu, ou message générique. */
 function promoError(code: string): string {
   const errors: Record<string, string> = p.errors;
-  return errors[code] ?? t.strategy.errors.generic;
+  return errors[code] ?? tStrategy.errors.generic;
 }
 
 // ==================== CODES PROMO ====================
@@ -75,11 +77,11 @@ export async function setPromoCodeActive(id: string, active: boolean): Promise<F
  */
 export async function setStripeTax(enabled: boolean): Promise<FormState> {
   await requireAdmin();
-  if (typeof enabled !== "boolean") return { error: t.strategy.errors.generic };
+  if (typeof enabled !== "boolean") return { error: tStrategy.errors.generic };
 
   const supabase = await createClient();
   const { error } = await supabase.rpc("admin_set_stripe_tax", { p_enabled: enabled });
-  if (error) return { error: t.strategy.errors.generic };
+  if (error) return { error: tStrategy.errors.generic };
   refresh();
   return { message: enabled ? p.taxEnabled : p.taxDisabled };
 }

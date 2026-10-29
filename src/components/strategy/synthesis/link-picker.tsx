@@ -15,11 +15,11 @@
 
 "use client";
 
-import { getDictionary } from "@/i18n";
 import { LINKS_MAX } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.synthesis;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.synthesis;
 
 /** Longueur maximale d'un libellé d'élément affiché. */
 const LABEL_MAX = 90;

@@ -21,8 +21,10 @@ import { getDictionary } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 const t = getDictionary();
+const tStrategy = getStrategyDictionary();
 const o = t.admin.orders;
 
 /** Plafond d'un prix saisi (comme les offres d'étude). */
@@ -36,7 +38,7 @@ const CASE_CODE = /^[a-z0-9-]{2,40}$/;
 /** Message d'erreur connu, ou message générique. */
 function caseError(code: string): string {
   const errors: Record<string, string> = o.errors;
-  return errors[code] ?? t.strategy.errors.generic;
+  return errors[code] ?? tStrategy.errors.generic;
 }
 
 /** Lit un prix facultatif (virgule acceptée) : null si vide, NaN si invalide. */

@@ -11,7 +11,6 @@
 
 import { describe, expect, it } from "vitest";
 
-import { getDictionary } from "@/i18n";
 import { sanitizePlan } from "@/lib/strategy/coach/plan-output";
 import {
   assemblePlan,
@@ -42,8 +41,9 @@ import {
   replaceSection,
 } from "@/lib/strategy/templates/plan";
 import { emptySynthesis, newIssue, newSwotItem } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary().strategy.plan;
+const t = getStrategyDictionary().plan;
 const NOW = new Date("2026-10-15T12:00:00.000Z");
 
 // ==================== JEUX DE DONNÉES ====================

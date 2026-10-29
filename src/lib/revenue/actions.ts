@@ -24,6 +24,7 @@ import { toMinorUnits } from "@/lib/currency";
 import { isMobileMoneyOperator } from "@/lib/payments/mobile-money";
 import { percentToBps } from "@/lib/revenue/ledger";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 const ar = getDictionary().admin.revenue;
 
@@ -33,7 +34,7 @@ const MAX_FEE_PERCENT = 20;
 /** Message d'erreur connu, ou message générique. */
 function revenueError(code: string): string {
   const errors: Record<string, string> = ar.errors;
-  return errors[code] ?? getDictionary().strategy.errors.generic;
+  return errors[code] ?? getStrategyDictionary().errors.generic;
 }
 
 /**

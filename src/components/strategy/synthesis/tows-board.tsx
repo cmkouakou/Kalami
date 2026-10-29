@@ -17,7 +17,7 @@ import { LinkPicker } from "@/components/strategy/synthesis/link-picker";
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ITEM_TEXT_MAX,
   TOWS_CROSS,
@@ -27,9 +27,10 @@ import {
   type TowsItem,
   type TowsQuadrant,
 } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.synthesis;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.synthesis;
 
 type TowsBoardProps = {
   swot: SynthesisPayload["swot"];
@@ -78,7 +79,7 @@ function TowsRow({
           <button
             type="button"
             className={BUTTON_ICON}
-            aria-label={`${t.strategy.template.remove} : ${item.text.trim() || s.untitled}`}
+            aria-label={`${tStrategy.template.remove} : ${item.text.trim() || s.untitled}`}
             onClick={() => onRemove(item.id)}
           >
             <IconTrash size={18} />

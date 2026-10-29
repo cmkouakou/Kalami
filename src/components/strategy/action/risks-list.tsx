@@ -17,16 +17,17 @@ import { shortLabel } from "@/components/strategy/synthesis/link-picker";
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   RISK_TEXT_MAX,
   RISKS_MAX,
   type Risk,
   type Workstream,
 } from "@/lib/strategy/templates/action";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.action;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.action;
 
 type RiskPatch = Partial<Omit<Risk, "id">>;
 
@@ -91,7 +92,7 @@ export function RisksList({
                       type="button"
                       className={BUTTON_ICON}
                       aria-label={
-                        `${t.strategy.template.remove} : ${risk.text.trim() || s.untitledRisk}`
+                        `${tStrategy.template.remove} : ${risk.text.trim() || s.untitledRisk}`
                       }
                       onClick={() => onRemove(risk.id)}
                     >

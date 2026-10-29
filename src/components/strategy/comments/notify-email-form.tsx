@@ -16,10 +16,10 @@
 import { useActionState } from "react";
 
 import { FormMessage, SubmitButton } from "@/components/ui/form";
-import { getDictionary } from "@/i18n";
 import { saveNotifyEmail } from "@/lib/strategy/comments-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const pref = getDictionary().strategy.notifications.preference;
+const pref = getStrategyDictionary().notifications.preference;
 
 /** Case à cocher de la préférence de courriel, enregistrée par une action serveur. */
 export function NotifyEmailForm({ enabled }: { enabled: boolean }) {

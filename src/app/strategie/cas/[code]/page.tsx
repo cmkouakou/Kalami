@@ -29,7 +29,7 @@ import { CaseBlocks } from "@/components/strategy/cases/case-blocks";
 import { CaseStepView, type CaseSide } from "@/components/strategy/cases/step-view";
 import { IconLock } from "@/components/ui/icons";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { authPath } from "@/lib/auth/routes";
 import { getPreferredCurrency } from "@/lib/currency-server";
@@ -48,8 +48,9 @@ import {
 } from "@/lib/strategy/cases/unlock";
 import { getSourcePayloads, getStudy } from "@/lib/strategy/queries";
 import { isStepNo, PLAN_STEP, type StepNo } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const c = s.cases;
 
 const TABS = { dossier: c.tabs.statement, corrige: c.tabs.correction };

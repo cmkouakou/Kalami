@@ -20,14 +20,15 @@ import { Suspense } from "react";
 import { ActionForm } from "@/components/admin/action-form";
 import { Field, SelectField } from "@/components/ui/form";
 import { BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { grantCoachPack, saveCoachPack } from "@/lib/admin/strategy-actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { listCoachPacksForAdmin, type CoachPackAdmin } from "@/lib/strategy/coach/queries";
 import { listStudiesForAdmin } from "@/lib/strategy/queries";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.admin.coachPacks;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.admin.coachPacks;
 
 export const metadata: Metadata = { title: p.title };
 

@@ -18,7 +18,7 @@ import { LinkPicker, type LinkOption } from "@/components/strategy/synthesis/lin
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconCheck, IconPlus, IconTrash } from "@/components/ui/icons";
 import { BADGE, BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ISSUE_LINKS_MAX,
   isSmart,
@@ -28,9 +28,10 @@ import {
   SMART_KEYS,
   type Objective,
 } from "@/lib/strategy/templates/direction";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.direction;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.direction;
 
 type ObjectivesListProps = {
   objectives: Objective[];
@@ -95,7 +96,7 @@ export function ObjectivesList({
                       type="button"
                       className={BUTTON_ICON}
                       aria-label={
-                        `${t.strategy.template.remove} : ` +
+                        `${tStrategy.template.remove} : ` +
                         `${objective.text.trim() || s.untitledObjective}`
                       }
                       onClick={() => onRemove(objective.id)}

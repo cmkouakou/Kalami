@@ -16,13 +16,14 @@ import "server-only";
 
 import { randomBytes } from "node:crypto";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { APP_URL } from "@/lib/config";
 import type { EmailMessage } from "@/lib/email/send";
 import { escapeHtml } from "@/lib/pdf/render";
 import type { InviteRole } from "@/lib/strategy/team";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const em = s.team.email;
 
 /** Jeton d'invitation : 32 octets aléatoires en base64url (43 caractères). */

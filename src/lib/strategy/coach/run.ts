@@ -33,7 +33,6 @@ import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 
-import { getDictionary } from "@/i18n";
 import { getCoachClient, isCoachConfigured } from "@/lib/strategy/coach/client";
 import {
   buildCoachMessage,
@@ -83,6 +82,7 @@ import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
 import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 // ==================== CONSTANTES ====================
 
@@ -107,7 +107,7 @@ const SEARCH_INPUT_ALLOWANCE = 10_000;
 /** Nom de l'outil client par lequel le modèle remet ses faits. */
 const SUBMIT_TOOL = "soumettre_faits";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 
 // ==================== TYPES ====================
 

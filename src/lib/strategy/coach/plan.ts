@@ -18,7 +18,6 @@
 
 import "server-only";
 
-import { getDictionary } from "@/i18n";
 import { isCoachConfigured } from "@/lib/strategy/coach/client";
 import { escapeTags, profileLines } from "@/lib/strategy/coach/context";
 import {
@@ -40,8 +39,9 @@ import { catalogIndex, sourceCatalog, type CatalogEntry } from "@/lib/strategy/p
 import { getSourcePayloads } from "@/lib/strategy/queries";
 import { PLAN_STEP } from "@/lib/strategy/steps";
 import { readPlan, type PlanSection, type PlanSectionKey } from "@/lib/strategy/templates/plan";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 
 // ==================== CONSTANTES ====================
 

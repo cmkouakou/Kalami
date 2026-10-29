@@ -21,15 +21,15 @@ import { Suspense } from "react";
 import { ActionForm } from "@/components/admin/action-form";
 import { Field } from "@/components/ui/form";
 import { BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { grantStudyCredits, setStrategyTeacher } from "@/lib/admin/strategy-actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { type AdminTeacherRow, listTeachersForAdmin } from "@/lib/strategy/class-queries";
 import { listStudiesForAdmin } from "@/lib/strategy/queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const a = t.strategy.admin;
+const tStrategy = getStrategyDictionary();
+const a = tStrategy.admin;
 
 export const metadata: Metadata = { title: a.title };
 

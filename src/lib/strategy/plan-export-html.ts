@@ -16,7 +16,7 @@
  * =============================================================
  */
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { escapeCssString, escapeHtml, type PdfFonts } from "@/lib/pdf/render";
 import type {
   ExportBar,
@@ -28,10 +28,11 @@ import type {
   ExportTrace,
   PlanExport,
 } from "@/lib/strategy/plan-export";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 // ==================== VARIABLES GLOBALES ====================
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const e = s.plan.export;
 const a = s.action;
 

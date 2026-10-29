@@ -19,10 +19,10 @@ import { useState, useTransition } from "react";
 import { InviteLink } from "@/components/strategy/team/invite-link";
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { type ClassLinkState, setClassLink } from "@/lib/strategy/class-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cl = s.classes;
 
 type ClassLinkProps = {

@@ -15,7 +15,6 @@
 
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { CARD, CONTROL, PILL, PILL_ACTIVE } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import {
   FORCES,
   INTENSITIES,
@@ -23,9 +22,10 @@ import {
   type ForceKey,
   type ForcesPayload,
 } from "@/lib/strategy/templates/forces";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const f = t.strategy.forces;
+const tStrategy = getStrategyDictionary();
+const f = tStrategy.forces;
 
 type ForceListProps = {
   forces: ForcesPayload["forces"];

@@ -18,13 +18,14 @@
 import { useComments } from "@/components/strategy/comments/comments-context";
 import { joinNames } from "@/components/strategy/presence/element-editors";
 import { usePresence } from "@/components/strategy/presence/presence-context";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { initials, type Peer, peersOnStep } from "@/lib/strategy/presence";
 import { TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const pr = t.strategy.presence;
-const steps = t.strategy.steps;
+const tStrategy = getStrategyDictionary();
+const pr = tStrategy.presence;
+const steps = tStrategy.steps;
 
 // ==================== SOUS-COMPOSANTS ====================
 

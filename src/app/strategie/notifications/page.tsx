@@ -20,7 +20,6 @@ import { Suspense } from "react";
 
 import { NotifyEmailForm } from "@/components/strategy/comments/notify-email-form";
 import { BADGE, BUTTON_SECONDARY, BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { describeNotification, type NotificationEntry } from "@/lib/strategy/comments";
 import { markAllRead, openNotification } from "@/lib/strategy/comments-actions";
@@ -30,8 +29,9 @@ import {
   NOTIFICATIONS_PAGE,
 } from "@/lib/strategy/comments-queries";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const n = s.notifications;
 
 const PATH = "/strategie/notifications";

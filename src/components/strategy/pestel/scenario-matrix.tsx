@@ -15,7 +15,7 @@
 "use client";
 
 import { CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   SCENARIO_CELLS,
   type PestelFactor,
@@ -24,9 +24,10 @@ import {
   type ScenarioAxis,
   type ScenarioCell,
 } from "@/lib/strategy/templates/pestel";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.pestel;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.pestel;
 
 type Scenarios = PestelPayload["scenarios"];
 

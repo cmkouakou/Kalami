@@ -23,15 +23,15 @@ import { StepActions } from "@/components/strategy/step-actions";
 import type { Autosave } from "@/components/strategy/use-autosave";
 import { VersionHistory } from "@/components/strategy/version-history";
 import { BUTTON_TERTIARY, CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { CoachState } from "@/lib/strategy/coach/queries";
 import type { StepVersion } from "@/lib/strategy/queries";
 import type { StepNo, StepStatus, StudyRole } from "@/lib/strategy/steps";
 import { hasTemplate } from "@/lib/strategy/templates";
 import { TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 const tpl = s.template;
 
 export type TemplateFrameProps = {

@@ -21,7 +21,7 @@
 import { useState } from "react";
 
 import { BADGE, BUTTON_PRIMARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { CoachDecision, CoachSynthesize } from "@/lib/strategy/coach/queries";
 import {
   defaultSelection,
@@ -34,8 +34,9 @@ import {
   SWOT_KEYS,
   type SynthesisPayload,
 } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const strategy = getDictionary().strategy;
+const strategy = getStrategyDictionary();
 const y = strategy.coach.synthesize;
 const s = strategy.synthesis;
 

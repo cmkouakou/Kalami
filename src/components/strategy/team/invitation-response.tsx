@@ -17,11 +17,11 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { respondInvitation } from "@/lib/strategy/team-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const tm = getDictionary().strategy.team;
+const tm = getStrategyDictionary().team;
 
 /** Accepter ou refuser une invitation. */
 export function InvitationResponse({ invitationId }: { invitationId: string }) {

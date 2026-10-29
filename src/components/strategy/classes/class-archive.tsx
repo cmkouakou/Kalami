@@ -18,11 +18,11 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import { setClassArchived } from "@/lib/strategy/class-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const st = s.classes.settings;
 
 /** Bouton d'archivage ou de réactivation. */

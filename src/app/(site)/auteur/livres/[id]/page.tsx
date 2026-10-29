@@ -41,8 +41,10 @@ import {
   type AuthorBook,
 } from "@/lib/author/queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
 const t = getDictionary();
+const tWorkshop = getWorkshopDictionary();
 const b = t.author.book;
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
 
@@ -106,7 +108,7 @@ async function BookContent({
           href={`/auteur/livres/${book.id}/atelier`}
           className="w-fit text-sm text-encre hover:underline"
         >
-          {t.workshop.bookLink}
+          {tWorkshop.bookLink}
         </Link>
       </header>
 

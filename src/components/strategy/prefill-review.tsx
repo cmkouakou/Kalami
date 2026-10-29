@@ -20,13 +20,13 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BADGE, BUTTON_PRIMARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { applyProposals } from "@/lib/strategy/attachment-actions";
 import type { AttachmentAnalysis } from "@/lib/strategy/attachment-queries";
 import { isAlreadyInProfile, type Proposal } from "@/lib/strategy/prefill";
 import type { ProfileData } from "@/lib/strategy/profile";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const a = s.attachments;
 const fields = s.profile.fields as Record<string, string>;
 

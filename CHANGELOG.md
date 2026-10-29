@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## [v0.16.4] - 2026-10-29 — Pages plus légères
+### Performance
+- Le dictionnaire de l'interface est scindé : les textes de Kalami Stratégie
+  (`getStrategyDictionary()`, `src/i18n/strategy.ts`) et de l'atelier d'écriture
+  (`getWorkshopDictionary()`, `src/i18n/workshop.ts`) ne sont plus téléchargés par les pages
+  de la librairie. Textes chargés partout : ~134 Ko → ~53 Ko (~43 Ko → ~18 Ko compressés).
+
+### Modifié
+- 150 fichiers : `t.strategy` / `t.workshop` remplacés par les nouveaux accès.
+
 ## [v0.16.3] - 2026-10-29 — Stabilité et maintenance
 ### Corrigé
 - Erreur React #418 (hydratation) : les dates et heures étaient formatées dans le fuseau du

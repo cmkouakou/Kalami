@@ -16,7 +16,7 @@
  * =============================================================
  */
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { slugify } from "@/lib/slug";
 import { formatMonth, type PlanInputs } from "@/lib/strategy/plan-assemble";
 import { sourceCatalog, traceRows } from "@/lib/strategy/plan-trace";
@@ -29,6 +29,7 @@ import {
   type Perspective,
 } from "@/lib/strategy/templates/action";
 import type { PlanPayload, PlanSectionKey } from "@/lib/strategy/templates/plan";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 // ==================== TYPES ====================
 
@@ -119,7 +120,7 @@ export type PlanExport = {
 
 // ==================== VARIABLES GLOBALES ====================
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const p = s.plan;
 const e = p.export;
 const a = s.action;

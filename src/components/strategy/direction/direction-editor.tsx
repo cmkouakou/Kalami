@@ -24,7 +24,6 @@ import type { LinkOption } from "@/components/strategy/synthesis/link-picker";
 import { TemplateFrame, type TemplateFrameProps } from "@/components/strategy/template-frame";
 import { useAutosave } from "@/components/strategy/use-autosave";
 import { CONTROL } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import {
   directionChecklist,
   newObjective,
@@ -34,9 +33,10 @@ import {
   VALUES_MAX,
   type DirectionPayload,
 } from "@/lib/strategy/templates/direction";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.direction;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.direction;
 
 type DirectionEditorProps = TemplateFrameProps & {
   initial: DirectionPayload;

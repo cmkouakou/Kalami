@@ -21,12 +21,12 @@ import { ActionForm } from "@/components/admin/action-form";
 import { Field, TextArea } from "@/components/ui/form";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary } from "@/i18n";
 import { saveProfile } from "@/lib/strategy/actions";
 import type { ProfileData, Scope } from "@/lib/strategy/profile";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.profile;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.profile;
 const f = p.fields;
 
 type ProfileFormProps = {
@@ -103,7 +103,7 @@ export function ProfileForm({ studyId, companyName, strategicQuestion, data }: P
         <TextArea
           name="strategicQuestion"
           label={`${f.strategicQuestion} *`}
-          hint={t.strategy.create.questionHint}
+          hint={tStrategy.create.questionHint}
           rows={3}
           maxLength={1000}
           defaultValue={strategicQuestion}

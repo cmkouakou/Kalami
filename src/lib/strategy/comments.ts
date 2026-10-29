@@ -13,7 +13,7 @@
  * =============================================================
  */
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
 import { readAction } from "@/lib/strategy/templates/action";
 import { readChoice } from "@/lib/strategy/templates/choice";
@@ -24,8 +24,9 @@ import { readPestel } from "@/lib/strategy/templates/pestel";
 import { readPlan } from "@/lib/strategy/templates/plan";
 import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
 import { readSynthesis, SWOT_KEYS } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cm = s.comments;
 
 // ==================== RÉFÉRENCES ====================

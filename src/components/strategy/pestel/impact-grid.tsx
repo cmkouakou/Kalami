@@ -18,11 +18,12 @@
 import { useState, type DragEvent } from "react";
 
 import { CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { QUADRANTS, type PestelFactor, type Quadrant } from "@/lib/strategy/templates/pestel";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.pestel;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.pestel;
 
 /** Ordre d'affichage : impact fort en haut, incertitude forte à droite. */
 const LAYOUT: readonly Quadrant[] = ["trend", "pivot", "minor", "watch"];

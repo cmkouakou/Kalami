@@ -13,7 +13,6 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-import { getDictionary } from "@/i18n";
 import { buildClassInvitationEmail, classJoinUrl, newInvitationToken }
   from "@/lib/strategy/class-email";
 import {
@@ -32,8 +31,9 @@ import {
 } from "@/lib/strategy/classes";
 import type { StepStatus } from "@/lib/strategy/steps";
 import { describeActivity } from "@/lib/strategy/team";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cl = s.classes;
 
 const A = "11111111-1111-4111-8111-111111111111";

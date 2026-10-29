@@ -19,14 +19,15 @@ import { Suspense } from "react";
 
 import { BuyButton } from "@/components/catalog/buy-button";
 import { CARD, PANEL_SAND } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { listAuthorBooks, requireAuthor } from "@/lib/author/queries";
 import { balanceMessage } from "@/lib/author/workshop/balance";
 import { getWorkshopBalance, listWorkshopOffers } from "@/lib/author/workshop/queries";
 import { getPreferredCurrency } from "@/lib/currency-server";
 import { pricesOf } from "@/lib/payments/offers";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const w = getDictionary().workshop;
+const w = getWorkshopDictionary();
 
 export const metadata: Metadata = { title: w.title };
 

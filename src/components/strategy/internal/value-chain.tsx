@@ -18,7 +18,7 @@
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { IconPlus, IconTrash } from "@/components/ui/icons";
 import { BUTTON_ICON, BUTTON_TERTIARY, CARD, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   ACTIVITIES_MAX,
   ACTIVITY_KINDS,
@@ -27,9 +27,10 @@ import {
   type ActivityKind,
   type Evaluation,
 } from "@/lib/strategy/templates/internal";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const n = t.strategy.internal;
+const tStrategy = getStrategyDictionary();
+const n = tStrategy.internal;
 
 type ValueChainProps = {
   activities: Activity[];
@@ -73,7 +74,7 @@ function ActivityCard({
           <button
             type="button"
             className={BUTTON_ICON}
-            aria-label={`${t.strategy.template.remove} : ${activity.name || n.untitled}`}
+            aria-label={`${tStrategy.template.remove} : ${activity.name || n.untitled}`}
             onClick={() => onRemove(activity.id)}
           >
             <IconTrash size={18} />

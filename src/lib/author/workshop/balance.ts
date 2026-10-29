@@ -11,10 +11,11 @@
  * =============================================================
  */
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { WorkshopBalance } from "@/lib/author/workshop/queries";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const w = getDictionary().workshop;
+const w = getWorkshopDictionary();
 
 /** Message du solde selon l'état des crédits. */
 export function balanceMessage(balance: WorkshopBalance): string {

@@ -20,7 +20,7 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import type { FormState } from "@/lib/auth/actions";
 import { type CurrentUser, requireUser } from "@/lib/auth/dal";
@@ -36,8 +36,9 @@ import {
 import { buildInvitationEmail, invitationUrl, newInvitationToken } from "@/lib/strategy/team-email";
 import { getMyDisplayName } from "@/lib/strategy/team-queries";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const tm = s.team;
 
 /** Résultat d'une invitation : message, et lien à transmettre si le courriel n'est pas parti. */

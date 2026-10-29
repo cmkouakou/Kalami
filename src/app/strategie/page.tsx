@@ -35,7 +35,7 @@ import {
   CARD,
   PANEL_SAND,
 } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { authPath, STRATEGY_HOME } from "@/lib/auth/routes";
 import {
@@ -50,9 +50,9 @@ import { countAvailableCredits, listMyStudies } from "@/lib/strategy/queries";
 import { PHASES } from "@/lib/strategy/steps";
 import { getMyInvitations, type ReceivedInvitation } from "@/lib/strategy/team-queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 /** Adresse de référence de l'accueil Stratégie. */
 export const metadata: Metadata = { alternates: { canonical: "/strategie" } };

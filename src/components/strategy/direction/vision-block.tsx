@@ -19,7 +19,7 @@ import { useState } from "react";
 
 import { CommentBadge } from "@/components/strategy/comments/comments-context";
 import { CARD, CONTROL, PILL, PILL_ACTIVE } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   COMPETITOR_MAX,
   NAME_TEST_ANSWERS,
@@ -30,9 +30,10 @@ import {
   type NameTest,
   type NameTestAnswer,
 } from "@/lib/strategy/templates/direction";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.direction;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.direction;
 
 /** Valeur du menu qui ouvre la saisie libre d'un nom. */
 const OTHER = "__autre__";

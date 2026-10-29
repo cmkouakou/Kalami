@@ -20,15 +20,16 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BADGE, BUTTON_SECONDARY, BUTTON_TERTIARY, CONTROL } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { FormState } from "@/lib/auth/actions";
 import type { StudyRole } from "@/lib/strategy/steps";
 import { INVITE_ROLES, memberLabel } from "@/lib/strategy/team";
 import { removeMember, setMemberRole } from "@/lib/strategy/team-actions";
 import type { StudyMember } from "@/lib/strategy/team-queries";
 import { DATE_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const tm = s.team;
 
 type MemberListProps = {

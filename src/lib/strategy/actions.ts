@@ -20,7 +20,7 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { isUuid } from "@/lib/admin/validation";
 import type { FormState } from "@/lib/auth/actions";
 import { requireUser } from "@/lib/auth/dal";
@@ -28,9 +28,9 @@ import { COMPANY_NAME_MAX, parseProfileForm, QUESTION_MAX } from "@/lib/strategy
 import { isStepNo } from "@/lib/strategy/steps";
 import { isEditableStep, parseStepPayload } from "@/lib/strategy/templates";
 import { createClient } from "@/lib/supabase/server";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 type StrategyErrorKey = keyof typeof s.errors;
 

@@ -35,7 +35,7 @@ import {
   CARD,
   PANEL_SAND,
 } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import type { PlanCoachState } from "@/lib/strategy/coach/queries";
 import { assemblePlanForStudy } from "@/lib/strategy/plan-actions";
 import type { CatalogEntry } from "@/lib/strategy/plan-trace";
@@ -48,9 +48,9 @@ import {
   type PlanPayload,
 } from "@/lib/strategy/templates/plan";
 import { DATE_TIME_LONG_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 const p = s.plan;
 
 // ==================== TYPES ====================

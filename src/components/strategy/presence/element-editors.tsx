@@ -16,10 +16,11 @@
 
 import { usePresence } from "@/components/strategy/presence/presence-context";
 import { IconPencil } from "@/components/ui/icons";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { editorsOf, initials } from "@/lib/strategy/presence";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const pr = getDictionary().strategy.presence;
+const pr = getStrategyDictionary().presence;
 
 // ==================== FONCTIONS UTILITAIRES ====================
 

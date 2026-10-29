@@ -10,7 +10,6 @@
 
 import { describe, expect, it, vi } from "vitest";
 
-import { getDictionary } from "@/i18n";
 import { assemblePlan, type PlanInputs } from "@/lib/strategy/plan-assemble";
 import {
   buildPlanExport,
@@ -28,11 +27,12 @@ import { emptyChoice } from "@/lib/strategy/templates/choice";
 import { emptyDirection } from "@/lib/strategy/templates/direction";
 import { editSection } from "@/lib/strategy/templates/plan";
 import { emptySynthesis } from "@/lib/strategy/templates/synthesis";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 // render.ts (échappement) passe par sanitize.ts, réservé au serveur
 vi.mock("server-only", () => ({}));
 
-const e = getDictionary().strategy.plan.export;
+const e = getStrategyDictionary().plan.export;
 const NOW = new Date("2026-10-15T12:00:00.000Z");
 
 // ==================== JEUX DE DONNÉES ====================

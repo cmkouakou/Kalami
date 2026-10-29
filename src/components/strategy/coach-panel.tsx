@@ -46,7 +46,7 @@ import {
   PILL,
   PILL_ACTIVE,
 } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { decideMany, decideSuggestion, requestCoach } from "@/lib/strategy/coach/actions";
 import {
   COACH_FUNCTIONS,
@@ -70,8 +70,9 @@ import { applyProposals, indexProposals } from "@/lib/strategy/synthesis-proposa
 import type { TemplateStep } from "@/lib/strategy/templates";
 import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const c = getDictionary().strategy.coach;
+const c = getStrategyDictionary().coach;
 
 const PCT_FORMAT = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
 

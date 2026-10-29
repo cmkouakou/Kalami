@@ -31,9 +31,10 @@ import { getBookBySlug } from "@/lib/catalog/queries";
 import { APP_NAME } from "@/lib/config";
 import { getUnreadCount } from "@/lib/strategy/comments-queries";
 import { GUIDE_BOOK_SLUG } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 const t = getDictionary();
-const s = t.strategy;
+const s = getStrategyDictionary();
 
 const LINKS = [
   { href: STRATEGY_HOME, label: s.nav.home },

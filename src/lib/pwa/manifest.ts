@@ -17,8 +17,10 @@ import type { MetadataRoute } from "next";
 import { getDictionary } from "@/i18n";
 import { STRATEGY_HOME } from "@/lib/auth/routes";
 import { APP_NAME } from "@/lib/config";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 const t = getDictionary();
+const tStrategy = getStrategyDictionary();
 
 // ==================== CONSTANTES ====================
 
@@ -65,9 +67,9 @@ export function buildManifest(space: "site" | "strategy"): MetadataRoute.Manifes
     return {
       ...common,
       id: STRATEGY_HOME,
-      name: t.strategy.title,
+      name: tStrategy.title,
       short_name: t.pwa.strategyShortName,
-      description: t.strategy.description,
+      description: tStrategy.description,
       // Sans barre oblique finale : « /strategie » doit rester dans la portée
       start_url: STRATEGY_HOME,
       scope: STRATEGY_HOME,

@@ -18,13 +18,14 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_SECONDARY, BUTTON_TERTIARY, CARD } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { restoreStepVersion } from "@/lib/strategy/actions";
 import type { StepVersion } from "@/lib/strategy/queries";
 import { DATE_TIME_FORMAT } from "@/lib/format/date";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const v = t.strategy.template.versions;
+const tStrategy = getStrategyDictionary();
+const v = tStrategy.template.versions;
 
 type VersionHistoryProps = {
   studyId: string;

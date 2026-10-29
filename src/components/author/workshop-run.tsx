@@ -18,11 +18,12 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { runWorkshopTool } from "@/lib/author/workshop/actions";
 import type { WorkshopTool } from "@/lib/author/workshop/run";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const w = getDictionary().workshop;
+const w = getWorkshopDictionary();
 
 type WorkshopRunProps = {
   bookId: string;

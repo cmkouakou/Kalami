@@ -16,10 +16,10 @@
 
 import { z } from "zod";
 
-import { getDictionary } from "@/i18n";
 import { type StepNo, type StepStatus, STEPS, type StudyRole } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const cl = s.classes;
 
 // ==================== CONSTANTES ====================

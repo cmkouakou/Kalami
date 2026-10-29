@@ -16,11 +16,11 @@
 import { useActionState } from "react";
 
 import { Field, FormMessage, SubmitButton } from "@/components/ui/form";
-import { getDictionary } from "@/i18n";
 import { DISPLAY_NAME_MAX } from "@/lib/strategy/team";
 import { saveDisplayName } from "@/lib/strategy/team-actions";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const tm = getDictionary().strategy.team;
+const tm = getStrategyDictionary().team;
 
 type DisplayNameFormProps = {
   studyId: string;

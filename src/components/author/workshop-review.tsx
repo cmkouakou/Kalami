@@ -19,14 +19,15 @@ import { useState, useTransition } from "react";
 
 import { FormMessage } from "@/components/ui/form";
 import { BADGE, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { decideWorkshopSuggestions } from "@/lib/author/workshop/actions";
 import type {
   ChapterReview,
   SuggestionDecision,
 } from "@/lib/author/workshop/suggestions";
+import { getWorkshopDictionary } from "@/i18n/workshop";
 
-const w = getDictionary().workshop.tools;
+const w = getWorkshopDictionary().tools;
 
 type WorkshopReviewProps = {
   requestId: string;

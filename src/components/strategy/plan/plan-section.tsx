@@ -34,7 +34,7 @@ import {
   CONTROL,
   PANEL_SAND,
 } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { decideSuggestion, requestPlanSection } from "@/lib/strategy/coach/actions";
 import type { PlanProposal } from "@/lib/strategy/coach/plan-output";
 import type { CoachUsage } from "@/lib/strategy/coach/queries";
@@ -46,9 +46,10 @@ import {
   type PlanBlock,
   type PlanSection as Section,
 } from "@/lib/strategy/templates/plan";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const p = t.strategy.plan;
+const tStrategy = getStrategyDictionary();
+const p = tStrategy.plan;
 
 // ==================== TYPES ====================
 
@@ -244,7 +245,7 @@ export function PlanSection({
       const assembled = await assemblePlanSection(studyId, section.key).catch(() => null);
       setPending(null);
       if (assembled) onReplace(assembled);
-      else setError(t.strategy.errors.generic);
+      else setError(tStrategy.errors.generic);
     });
   }
 
@@ -256,7 +257,7 @@ export function PlanSection({
       const result = await requestPlanSection(studyId, section.key).catch(() => null);
       setPending(null);
       if (!result) {
-        setError(t.strategy.coach.errors.failed);
+        setError(tStrategy.coach.errors.failed);
         return;
       }
       if (result.usage) onUsage(result.usage);

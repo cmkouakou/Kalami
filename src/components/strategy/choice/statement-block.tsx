@@ -22,7 +22,7 @@ import {
   CONTROL,
   PANEL_SAND,
 } from "@/components/ui/styles";
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import {
   RENUNCIATION_MAX,
   RENUNCIATIONS_MAX,
@@ -30,9 +30,10 @@ import {
   type ChoicePayload,
   type Renunciation,
 } from "@/lib/strategy/templates/choice";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const t = getDictionary();
-const s = t.strategy.choice;
+const tStrategy = getStrategyDictionary();
+const s = tStrategy.choice;
 
 type StatementBlockProps = {
   payload: ChoicePayload;
@@ -120,7 +121,7 @@ export function StatementBlock({
                     <button
                       type="button"
                       className={BUTTON_ICON}
-                      aria-label={`${t.strategy.template.remove} : ${label}`}
+                      aria-label={`${tStrategy.template.remove} : ${label}`}
                       onClick={() => onRemove(item.id)}
                     >
                       <IconTrash size={18} />

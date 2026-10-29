@@ -10,7 +10,6 @@
 
 import { describe, expect, it, vi } from "vitest";
 
-import { getDictionary } from "@/i18n";
 import { APP_URL } from "@/lib/config";
 import {
   ACTIVITY_ACTIONS,
@@ -28,11 +27,12 @@ import {
   invitationUrl,
   newInvitationToken,
 } from "@/lib/strategy/team-email";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
 // team-email.ts et render.ts (échappement) sont réservés au serveur
 vi.mock("server-only", () => ({}));
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const tm = s.team;
 
 /** Entrée de journal minimale, complétée par `extra`. */

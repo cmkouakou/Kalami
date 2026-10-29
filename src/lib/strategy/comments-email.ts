@@ -14,13 +14,14 @@
 
 import "server-only";
 
-import { getDictionary, interpolate } from "@/i18n";
+import { interpolate } from "@/i18n";
 import { APP_URL } from "@/lib/config";
 import type { EmailMessage } from "@/lib/email/send";
 import { escapeHtml } from "@/lib/pdf/render";
 import type { StepNo } from "@/lib/strategy/steps";
+import { getStrategyDictionary } from "@/i18n/strategy";
 
-const s = getDictionary().strategy;
+const s = getStrategyDictionary();
 const em = s.notifications.email;
 
 /** Longueur de l'extrait du commentaire cité dans le courriel. */
