@@ -29,13 +29,12 @@ import {
   getNotifyEmail,
   NOTIFICATIONS_PAGE,
 } from "@/lib/strategy/comments-queries";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const n = s.notifications;
 
 const PATH = "/strategie/notifications";
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 export const metadata: Metadata = { title: n.title };
 
@@ -134,7 +133,7 @@ function NotificationItem({ entry }: { entry: NotificationEntry }) {
           className="text-caption text-ink-muted"
           suppressHydrationWarning
         >
-          {DATE_FORMAT.format(new Date(entry.created_at))}
+          {DATE_TIME_FORMAT.format(new Date(entry.created_at))}
         </time>
       </div>
       <p className={unread ? "font-semibold" : ""}>{describeNotification(entry)}</p>

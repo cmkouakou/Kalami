@@ -1,5 +1,28 @@
 # Journal des modifications
 
+## [v0.16.3] - 2026-10-29 — Stabilité et maintenance
+### Corrigé
+- Erreur React #418 (hydratation) : les dates et heures étaient formatées dans le fuseau du
+  serveur (UTC) puis dans celui du navigateur ; le texte différait et la page pouvait être
+  reconstruite (historique des versions, coach, commentaires, plan, présence…). Tout
+  l'affichage passe désormais par `src/lib/format/date.ts`, dans le fuseau d'Abidjan.
+- Liseuse : un clic sur une entrée du sommaire écrit à la main ne tourne plus la page.
+
+### Ajouté
+- Pages d'erreur : librairie, espace auteur et administration (`(site)/error.tsx`),
+  Kalami Stratégie (`strategie/error.tsx`) et dernier filet (`global-error.tsx`). Message
+  clair, bouton « Réessayer », retour à l'accueil et référence de l'incident pour les
+  journaux Vercel, sans aucun détail technique.
+- `docs/GUIDE-ADMINISTRATEUR.md` : services, variables, déploiement et retour arrière,
+  migrations pas à pas, tâches planifiées, administration courante, dépannage.
+- Test de maintenance : toute variable d'environnement lue par le code doit figurer dans
+  `.env.example`.
+
+### Modifié
+- 48 fichiers : les formats de date locaux (55 copies) sont remplacés par les formats
+  partagés.
+- `.env.example` : `ANTHROPIC_API_KEY` (coach IA) et prix des cas pratiques documentés.
+
 ## [v0.16.2] - 2026-10-28 — Mise en page des manuscrits Word
 ### Ajouté
 - Import Word : un paragraphe tout en italique placé sous une image devient sa légende

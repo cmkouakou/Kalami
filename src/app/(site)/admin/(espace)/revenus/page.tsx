@@ -32,11 +32,10 @@ import {
   listPlatformEntries,
   type RevenueSettings,
 } from "@/lib/revenue/queries";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const ar = t.admin.revenue;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 export const metadata: Metadata = { title: ar.title };
 
@@ -114,7 +113,7 @@ async function AdminRevenue() {
                   return (
                     <tr key={entry.id} className="border-b border-line">
                       <td className="py-2 pr-3">
-                        {DATE_FORMAT.format(new Date(entry.created_at))}
+                        {DATE_TIME_FORMAT.format(new Date(entry.created_at))}
                       </td>
                       <td className="py-2 pr-3 font-mono text-xs">{entry.reference}</td>
                       <td className="py-2 pr-3">{entry.label}</td>

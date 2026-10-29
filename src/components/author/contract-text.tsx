@@ -14,9 +14,9 @@
 import { CARD } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import type { Contract } from "@/lib/author/queries";
+import { DATE_LONG_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" });
 
 /** Contrat dans un cadre défilant (hauteur limitée pour garder le formulaire visible). */
 export function ContractText({ contract }: { contract: Contract }) {
@@ -28,7 +28,7 @@ export function ContractText({ contract }: { contract: Contract }) {
         <p className="text-sm text-ink-muted">
           {interpolate(t.author.contract.version, {
             version: String(contract.version),
-            date: DATE_FORMAT.format(new Date(contract.published_at)),
+            date: DATE_LONG_FORMAT.format(new Date(contract.published_at)),
           })}
         </p>
       </header>

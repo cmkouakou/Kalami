@@ -19,6 +19,7 @@ import { getDictionary } from "@/i18n";
 import { listBooksAdmin } from "@/lib/admin/catalog-queries";
 import { requireAdmin } from "@/lib/auth/dal";
 import type { BookStatus } from "@/lib/catalog/types";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const l = t.admin.books;
@@ -32,8 +33,6 @@ const STATUS_CLASS: Record<BookStatus, string> = {
   published: "bg-success/15 text-ink",
   rejected: "bg-danger/15 text-ink",
 };
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 export default function AdminBooksPage() {
   return (

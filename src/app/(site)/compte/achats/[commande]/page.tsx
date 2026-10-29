@@ -33,21 +33,16 @@ import {
 } from "@/lib/payments/mobile-money";
 import { declareTransaction } from "@/lib/payments/mobile-money-actions";
 import { getMyOrder, orderItemLink, type OrderSummary } from "@/lib/payments/queries";
+import { DATE_TIME_LONG_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const mo = t.mobileMoney.order;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", {
-  dateStyle: "long",
-  timeStyle: "short",
-  timeZone: "UTC",
-});
 
 export const metadata: Metadata = { title: mo.title, robots: { index: false } };
 
 /** Date lisible (UTC, précisé à l'acheteur). */
 function formatDate(iso: string | null): string {
-  return iso ? `${DATE_FORMAT.format(new Date(iso))} (UTC)` : "—";
+  return iso ? `${DATE_TIME_LONG_FORMAT.format(new Date(iso))} (UTC)` : "—";
 }
 
 // ==================== ÉTAPES ====================

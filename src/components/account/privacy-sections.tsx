@@ -21,11 +21,11 @@ import { getDictionary, interpolate } from "@/i18n";
 import { cancelAccountDeletion, requestAccountDeletion } from "@/lib/account/actions";
 import { getDeletionState } from "@/lib/account/deletion";
 import { legalPath, type LegalSpace } from "@/lib/legal/kinds";
+import { DATE_LONG_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const p = t.account.privacy;
 const d = t.account.deletion;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "UTC" });
 
 /** Export des données personnelles et lien vers la politique de l'espace. */
 export function AccountPrivacySection({ space }: { space: LegalSpace }) {
@@ -56,7 +56,7 @@ export async function AccountDeletionSection({ userId }: { userId: string }) {
       {scheduledFor ? (
         <>
           <p className="font-semibold">
-            {interpolate(d.pending, { date: DATE_FORMAT.format(new Date(scheduledFor)) })}
+            {interpolate(d.pending, { date: DATE_LONG_FORMAT.format(new Date(scheduledFor)) })}
           </p>
           <p className="text-sm text-ink-muted">{d.pendingHelp}</p>
           <ActionForm action={cancelAccountDeletion} submitLabel={d.cancel}>

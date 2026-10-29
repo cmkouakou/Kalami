@@ -32,11 +32,10 @@ import {
   getRevenueSettings,
   listAuthorEntries,
 } from "@/lib/revenue/queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const r = t.author.revenue;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 export const metadata: Metadata = { title: r.title };
 

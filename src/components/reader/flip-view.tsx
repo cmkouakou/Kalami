@@ -69,9 +69,9 @@ const SWIPE_SETTLE = 120;
 /** Numérotation inconnue (compteur absent) : pages sans numéro. */
 const NO_NUMBERING = () => null;
 /** Éléments dont le clic ne tourne jamais la page. */
-const NO_TURN = ".liseuse-page-texte, a, button, input, textarea";
-/** Commandes d'une page légère : leur clic ne tourne pas la page. */
-const COMMANDS = "a, button, input, textarea";
+const NO_TURN = ".liseuse-page-texte, a, button, input, textarea, [data-vers-chapitre]";
+/** Commandes d'une page légère, entrées du sommaire comprises : leur clic ne la tourne pas. */
+const COMMANDS = "a, button, input, textarea, [data-vers-chapitre]";
 /**
  * Nombre de caractères sous lequel une page est « légère » (ouverture de module, encart,
  * fin de partie) : rien à y annoter, elle se tourne comme une marge.

@@ -16,10 +16,9 @@
 import { CARD } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import type { PlanBlock, PlanPayload } from "@/lib/strategy/templates/plan";
+import { DATE_LONG_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" });
 
 /** Préfixe d'une ligne de liste dans le texte d'un paragraphe. */
 const LIST_PREFIX = "- ";
@@ -65,7 +64,7 @@ export function PlanView({ plan }: { plan: PlanPayload }) {
       {plan.generatedAt && (
         <p className="text-small text-ink-muted">
           {interpolate(s.cases.planDate, {
-            date: DATE_FORMAT.format(new Date(plan.generatedAt)),
+            date: DATE_LONG_FORMAT.format(new Date(plan.generatedAt)),
           })}
         </p>
       )}

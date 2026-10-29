@@ -20,12 +20,11 @@ import { joinNames } from "@/components/strategy/presence/element-editors";
 import { usePresence } from "@/components/strategy/presence/presence-context";
 import { getDictionary, interpolate } from "@/i18n";
 import { initials, type Peer, peersOnStep } from "@/lib/strategy/presence";
+import { TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const pr = t.strategy.presence;
 const steps = t.strategy.steps;
-
-const TIME_FORMAT = new Intl.DateTimeFormat("fr-FR", { timeStyle: "short" });
 
 // ==================== SOUS-COMPOSANTS ====================
 

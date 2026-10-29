@@ -35,10 +35,9 @@ import {
   editComment,
   resolveThread,
 } from "@/lib/strategy/comments-actions";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const cm = getDictionary().strategy.comments;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 export type ThreadContext = {
   studyId: string;
@@ -113,7 +112,7 @@ function CommentItem({
           {comment.author_name ?? cm.someone}
         </span>
         <time dateTime={comment.created_at} suppressHydrationWarning>
-          {DATE_FORMAT.format(new Date(comment.created_at))}
+          {DATE_TIME_FORMAT.format(new Date(comment.created_at))}
         </time>
         {comment.edited_at && <span>({cm.edited})</span>}
       </p>

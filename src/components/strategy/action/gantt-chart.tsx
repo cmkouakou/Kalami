@@ -26,17 +26,10 @@ import {
   type GanttBar,
   type Workstream,
 } from "@/lib/strategy/templates/action";
+import { MONTH_FORMAT, MONTH_YEAR_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const s = t.strategy.action;
-
-/** Mois abrégé ; en UTC pour que le serveur et le navigateur affichent la même chose. */
-const MONTH_FORMAT = new Intl.DateTimeFormat("fr-FR", { month: "short", timeZone: "UTC" });
-const PERIOD_FORMAT = new Intl.DateTimeFormat("fr-FR", {
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
 
 /** Date UTC du premier jour d'un mois AAAA-MM. */
 function monthDate(month: string): Date {
@@ -46,7 +39,7 @@ function monthDate(month: string): Date {
 
 /** Libellé d'un mois dans un texte (« janvier 2027 »). */
 function periodLabel(month: string): string {
-  return PERIOD_FORMAT.format(monthDate(month));
+  return MONTH_YEAR_FORMAT.format(monthDate(month));
 }
 
 /** Colonnes de grille d'une barre (la colonne 1 porte les libellés). */

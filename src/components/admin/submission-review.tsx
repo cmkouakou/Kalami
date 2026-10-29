@@ -19,10 +19,10 @@ import { BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import type { BookVersionSummary } from "@/lib/admin/content-queries";
 import { reviewSubmission } from "@/lib/admin/submission-actions";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const s = t.admin.submissions;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
 
 type SubmissionReviewProps = {

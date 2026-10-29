@@ -83,11 +83,10 @@ import { readStakeholders } from "@/lib/strategy/templates/stakeholders";
 import { readSynthesis } from "@/lib/strategy/templates/synthesis";
 import { memberLabel } from "@/lib/strategy/team";
 import { getStudyMembers } from "@/lib/strategy/team-queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const s = t.strategy;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 export const metadata: Metadata = { title: s.map.kicker };
 

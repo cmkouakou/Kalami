@@ -39,11 +39,10 @@ import {
 } from "@/lib/strategy/class-queries";
 import { type ClassRow, todayIso } from "@/lib/strategy/classes";
 import { countAvailableCredits } from "@/lib/strategy/queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const cl = s.classes;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeZone: "UTC" });
 
 /** Onglets : valeur d'URL → libellé. */
 const TABS = {

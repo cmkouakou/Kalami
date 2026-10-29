@@ -24,11 +24,11 @@ import {
   listAuditEntries,
 } from "@/lib/admin/audit-queries";
 import { requireAdmin } from "@/lib/auth/dal";
+import { DATE_TIME_SECONDS_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const au = t.admin.audit;
 
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "short", timeStyle: "medium" });
 const PAGE_URL = "/admin/journal";
 
 export const metadata: Metadata = { title: au.title };
@@ -150,7 +150,7 @@ function AuditRow({ entry }: { entry: AuditEntry }) {
   return (
     <tr className="border-b border-line align-top">
       <td className="whitespace-nowrap py-2 pr-3">
-        {DATE_FORMAT.format(new Date(entry.created_at))}
+        {DATE_TIME_SECONDS_FORMAT.format(new Date(entry.created_at))}
       </td>
       <td className="py-2 pr-3">{entry.actor_email ?? au.system}</td>
       <td className="py-2 pr-3 font-mono text-xs">{entry.action}</td>

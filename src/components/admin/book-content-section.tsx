@@ -30,11 +30,11 @@ import type {
   EntitlementRow,
   PdfPurchaseRow,
 } from "@/lib/admin/content-queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const l = t.admin.content;
 
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
 
 const CARD_CLASS = "flex flex-col gap-4 rounded-lg border border-line bg-surface p-4 sm:p-6";

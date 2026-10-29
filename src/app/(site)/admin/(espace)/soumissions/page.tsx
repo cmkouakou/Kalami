@@ -17,10 +17,10 @@ import { Suspense } from "react";
 
 import { getDictionary } from "@/i18n";
 import { listOpenSubmissions } from "@/lib/author/queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const s = t.admin.submissions;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 export const metadata: Metadata = { title: s.title };
 

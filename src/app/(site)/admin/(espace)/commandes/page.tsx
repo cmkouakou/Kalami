@@ -52,10 +52,10 @@ import {
   listCaseAccessesForAdmin,
   listPracticeCasesForAdmin,
 } from "@/lib/strategy/cases/queries";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const o = t.admin.orders;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 /** Tableau de bord Stripe (mode réel) : page d'un paiement. */
 const STRIPE_PAYMENT_URL = "https://dashboard.stripe.com/payments/";
 
@@ -298,7 +298,7 @@ async function CaseAccessList({ code }: { code: string }) {
                 <span className="text-caption text-ink-muted">
                   {access.source === "purchase" ? o.caseSourcePurchase : o.caseSourceGrant}
                   {" · "}
-                  {DATE_FORMAT.format(new Date(access.grantedAt))}
+                  {DATE_TIME_FORMAT.format(new Date(access.grantedAt))}
                   {" · "}
                   {studiesLabel(access)}
                 </span>
@@ -372,7 +372,7 @@ function MobileMoneyDetails({ order }: { order: AdminOrderRow }) {
           ? interpolate(o.mmTransaction, {
               transaction: order.mm_transaction_id ?? "—",
               payer: order.mm_payer_number ?? "—",
-              date: DATE_FORMAT.format(new Date(order.mm_declared_at)),
+              date: DATE_TIME_FORMAT.format(new Date(order.mm_declared_at)),
             })
           : o.mmNotDeclared}
       </p>
@@ -433,7 +433,7 @@ function OrderRow({ order }: { order: AdminOrderRow }) {
       </div>
       <p className="break-all text-small text-ink-muted">
         {order.buyer_email ?? "—"} · {o.statuses[order.status]} ·{" "}
-        {DATE_FORMAT.format(new Date(date))}
+        {DATE_TIME_FORMAT.format(new Date(date))}
       </p>
       {isMobileMoney && <MobileMoneyDetails order={order} />}
       {toReview && <MobileMoneyReview order={order} />}

@@ -26,11 +26,10 @@ import type { StudyRole } from "@/lib/strategy/steps";
 import { INVITE_ROLES, memberLabel } from "@/lib/strategy/team";
 import { removeMember, setMemberRole } from "@/lib/strategy/team-actions";
 import type { StudyMember } from "@/lib/strategy/team-queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const tm = s.team;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 type MemberListProps = {
   studyId: string;

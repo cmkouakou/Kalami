@@ -70,6 +70,8 @@ kalami/
 - Domaine principal : `kalami-livres.com` ; domaines secondaires listés dans `REDIRECT_DOMAINS`.
 
 ## 📌 Notes importantes
+- **Exploitation et maintenance** : voir le [guide de l'administrateur](docs/GUIDE-ADMINISTRATEUR.md)
+  (déploiement, migrations, tâches planifiées, dépannage).
 - Aucun secret dans le code : tout passe par les variables d'environnement.
 - `SUPABASE_SECRET_KEY` contourne la RLS : uniquement côté serveur (`src/lib/supabase/admin.ts`).
 - Next.js 16 : l'ancien `middleware.ts` s'appelle désormais `proxy.ts`.

@@ -56,11 +56,10 @@ import {
 } from "@/lib/strategy/attachments";
 import type { ProfileData } from "@/lib/strategy/profile";
 import { createClient } from "@/lib/supabase/client";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const a = s.attachments;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 /** Message du contrôle préalable d'un fichier. */
 const CHECK_ERRORS = {
@@ -149,12 +148,12 @@ function AttachmentItem({ studyId, attachment, profile, editor, blocked }: Attac
           <p className="break-words font-medium">{attachment.fileName}</p>
           <p className="text-small text-ink-muted">
             {formatSize(attachment.sizeBytes)} ·{" "}
-            {interpolate(a.addedAt, { date: DATE_FORMAT.format(new Date(attachment.createdAt)) })}
+            {interpolate(a.addedAt, { date: DATE_TIME_FORMAT.format(new Date(attachment.createdAt)) })}
             {attachment.analyzedAt && (
               <>
                 {" · "}
                 {interpolate(a.analyzedAt, {
-                  date: DATE_FORMAT.format(new Date(attachment.analyzedAt)),
+                  date: DATE_TIME_FORMAT.format(new Date(attachment.analyzedAt)),
                 })}
               </>
             )}

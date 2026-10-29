@@ -31,10 +31,10 @@ import {
 import { PROMO_SCOPES } from "@/lib/admin/promo-validation";
 import { requireAdmin } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const p = t.admin.promos;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 export const metadata: Metadata = { title: p.title };
 

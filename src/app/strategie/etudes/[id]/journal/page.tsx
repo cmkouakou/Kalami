@@ -24,11 +24,10 @@ import { requireUser } from "@/lib/auth/dal";
 import { getStudy } from "@/lib/strategy/queries";
 import { describeActivity } from "@/lib/strategy/team";
 import { ACTIVITY_PAGE, getStudyActivity } from "@/lib/strategy/team-queries";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const tm = getDictionary().strategy.team;
 const j = tm.journal;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 export const metadata: Metadata = { title: j.title };
 
@@ -93,7 +92,7 @@ async function StudyJournal({
                 dateTime={entry.created_at}
                 className="shrink-0 text-small text-ink-muted sm:w-44"
               >
-                {DATE_FORMAT.format(new Date(entry.created_at))}
+                {DATE_TIME_FORMAT.format(new Date(entry.created_at))}
               </time>
               <span>{describeActivity(entry)}</span>
             </li>

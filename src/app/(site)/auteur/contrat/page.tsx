@@ -19,10 +19,10 @@ import { ContractText } from "@/components/author/contract-text";
 import { getDictionary, interpolate } from "@/i18n";
 import { acceptContract } from "@/lib/author/actions";
 import { requireAuthor } from "@/lib/author/queries";
+import { DATE_LONG_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const c = t.author.contract;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" });
 
 export const metadata: Metadata = { title: c.title };
 
@@ -46,7 +46,7 @@ async function ContractContent() {
     <>
       {acceptedAt ? (
         <p role="status" className="rounded-lg bg-success/15 p-4 text-sm">
-          {interpolate(c.acceptedOn, { date: DATE_FORMAT.format(new Date(acceptedAt)) })}
+          {interpolate(c.acceptedOn, { date: DATE_LONG_FORMAT.format(new Date(acceptedAt)) })}
         </p>
       ) : (
         <p role="status" className="rounded-lg bg-warning/15 p-4 text-sm">

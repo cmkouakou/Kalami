@@ -47,12 +47,11 @@ import {
   replaceSection,
   type PlanPayload,
 } from "@/lib/strategy/templates/plan";
+import { DATE_TIME_LONG_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const s = t.strategy;
 const p = s.plan;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeStyle: "short" });
 
 // ==================== TYPES ====================
 
@@ -139,7 +138,7 @@ export function PlanEditor({
       ) : (
         <section className="flex flex-col gap-3">
           <p className="text-small text-ink-muted">
-            {interpolate(p.generatedAt, { date: DATE_FORMAT.format(new Date(plan.generatedAt)) })}
+            {interpolate(p.generatedAt, { date: DATE_TIME_LONG_FORMAT.format(new Date(plan.generatedAt)) })}
             {" "}{p.neverValidated}
           </p>
           {editor && !confirmAll && (

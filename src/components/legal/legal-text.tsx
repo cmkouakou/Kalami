@@ -14,9 +14,9 @@
 import { getDictionary, interpolate } from "@/i18n";
 import { getLegalDocument } from "@/lib/legal/documents";
 import type { LegalKind } from "@/lib/legal/kinds";
+import { DATE_LONG_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "UTC" });
 
 /** Paragraphes d'un texte : séparés par une ligne vide, retours à la ligne conservés. */
 export function LegalParagraphs({ body }: { body: string }) {
@@ -51,7 +51,7 @@ export async function LegalText({ kind }: { kind: LegalKind }) {
         <p className="text-sm text-ink-muted">
           {interpolate(t.legal.version, {
             version: String(document.version),
-            date: DATE_FORMAT.format(new Date(document.published_at)),
+            date: DATE_LONG_FORMAT.format(new Date(document.published_at)),
           })}
         </p>
       </header>

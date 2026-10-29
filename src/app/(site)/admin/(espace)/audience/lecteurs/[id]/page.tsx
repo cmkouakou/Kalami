@@ -22,10 +22,9 @@ import { listReaderDays, listReaders } from "@/lib/admin/audience-queries";
 import { isUuid } from "@/lib/admin/validation";
 import { formatDuration, readerStatus } from "@/lib/analytics/audience";
 import { requireAdmin } from "@/lib/auth/dal";
+import { DATE_FULL_FORMAT } from "@/lib/format/date";
 
 const a = getDictionary().admin.audience;
-
-const DAY_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "full", timeZone: "UTC" });
 
 export const metadata: Metadata = { title: a.readerTitle };
 
@@ -115,7 +114,7 @@ async function ReaderDetail({ params }: PageProps<"/admin/audience/lecteurs/[id]
                 {days.map((day) => (
                   <tr key={`${day.day}-${day.book_id}`} className="border-b border-line">
                     <td className="whitespace-nowrap py-2 pr-3">
-                      {DAY_FORMAT.format(new Date(day.day))}
+                      {DATE_FULL_FORMAT.format(new Date(day.day))}
                     </td>
                     <td className="py-2 pr-3">{titles.get(day.book_id) ?? "—"}</td>
                     <td className="py-2 pr-3">{formatDuration(day.seconds)}</td>

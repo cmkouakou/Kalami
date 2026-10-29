@@ -34,9 +34,9 @@ import {
   type WorkshopPackAdmin,
   type WorkshopSettings,
 } from "@/lib/author/workshop/queries";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const w = getDictionary().workshop.admin;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 /** Coût moyen d'un chapitre relu (dollars US), comme workshop_chapter_cost() en base. */
 const CHAPTER_COST = 0.25;
 
@@ -295,7 +295,7 @@ async function AdminWorkshop() {
                     <td className="py-2 pr-3">{row.spent.toFixed(2)}</td>
                     <td className="py-2 pr-3">{row.budget.toFixed(2)}</td>
                     <td className="py-2">
-                      {row.last_at ? DATE_FORMAT.format(new Date(row.last_at)) : "—"}
+                      {row.last_at ? DATE_TIME_FORMAT.format(new Date(row.last_at)) : "—"}
                     </td>
                   </tr>
                 ))}

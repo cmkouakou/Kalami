@@ -1565,6 +1565,13 @@ const fr = {
     title: "Page introuvable",
     text: "Cette adresse ne correspond à aucune page, ou la page n'est plus disponible.",
   },
+  error: {
+    title: "Un incident est survenu",
+    text:
+      "La page n'a pas pu s'afficher. Il s'agit souvent d'une coupure passagère : réessayez " +
+      "dans un instant. Vos données enregistrées ne sont pas perdues.",
+    reference: "Référence de l'incident : {digest}",
+  },
   strategy: strategyFr,
   workshop: workshopFr,
 };

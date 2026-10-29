@@ -43,13 +43,10 @@ import {
 } from "@/lib/strategy/steps";
 import { memberLabel } from "@/lib/strategy/team";
 import { getStudyMembers } from "@/lib/strategy/team-queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const s = t.strategy;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
-/** Dates AAAA-MM-JJ (sans heure) : lues en UTC pour ne pas reculer d'un jour. */
-const DUE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeZone: "UTC" });
 
 export const metadata: Metadata = { title: s.map.kicker };
 
@@ -104,7 +101,7 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
           {studyClass?.due_date && (
             <p className="text-small text-ink-muted">
               {interpolate(s.classes.study.due, {
-                date: DUE_FORMAT.format(new Date(studyClass.due_date)),
+                date: DATE_FORMAT.format(new Date(studyClass.due_date)),
               })}
               {isLate(STEPS.map((step) => statuses[step.no]), studyClass.due_date, todayIso()) && (
                 <span className="text-warning"> · {s.classes.study.late}</span>

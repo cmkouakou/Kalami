@@ -19,11 +19,10 @@ import { BADGE, CARD } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import { isLate, progressOf, type TrackingRow } from "@/lib/strategy/classes";
 import type { StepNo, StepStatus } from "@/lib/strategy/steps";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const tr = s.classes.tracking;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 /** Couleur de la pastille d'une étape selon son statut. */
 const DOT: Record<StepStatus, string> = {

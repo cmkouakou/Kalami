@@ -27,10 +27,10 @@ import { publishLegalDocument } from "@/lib/legal/actions";
 import { getPrivacyCounters } from "@/lib/legal/admin-queries";
 import { getLegalDocument } from "@/lib/legal/documents";
 import { LEGAL_KINDS, legalPath, type LegalKind } from "@/lib/legal/kinds";
+import { DATE_LONG_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const l = t.admin.legal;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "UTC" });
 
 export const metadata: Metadata = { title: l.title };
 
@@ -92,7 +92,7 @@ async function LegalDocumentAdmin({ kind }: { kind: LegalKind }) {
             <p className="text-sm text-ink-muted">
               {interpolate(t.legal.version, {
                 version: String(document.version),
-                date: DATE_FORMAT.format(new Date(document.published_at)),
+                date: DATE_LONG_FORMAT.format(new Date(document.published_at)),
               })}
             </p>
             <div tabIndex={0} className="max-h-72 overflow-y-auto text-sm">

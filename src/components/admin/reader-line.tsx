@@ -17,10 +17,10 @@ import Link from "next/link";
 import { getDictionary, interpolate } from "@/i18n";
 import type { ReaderRow } from "@/lib/admin/audience-queries";
 import { daysSince, formatDuration, type ReaderStatus } from "@/lib/analytics/audience";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const a = getDictionary().admin.audience;
 
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 const PERCENT = new Intl.NumberFormat("fr-FR", { style: "percent" });
 const REGIONS = new Intl.DisplayNames(["fr"], { type: "region" });
 

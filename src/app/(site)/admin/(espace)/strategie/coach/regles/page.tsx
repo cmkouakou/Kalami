@@ -24,10 +24,10 @@ import { saveCoachRule } from "@/lib/admin/strategy-actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { listCoachRulesForAdmin, type CoachRuleAdmin } from "@/lib/strategy/coach/queries";
 import { STEPS, type StepNo } from "@/lib/strategy/steps";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const r = t.strategy.admin.coachRules;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 /** Choix de l'étape : générale ou une des étapes. */
 const STEP_OPTIONS = [
@@ -123,7 +123,7 @@ function RuleSection({ rule }: { rule: CoachRuleAdmin }) {
               <li key={index} className="flex flex-col gap-1 py-2">
                 <p className="text-ink-muted">
                   {interpolate(r.changedAt, {
-                    date: DATE_FORMAT.format(new Date(version.changedAt)),
+                    date: DATE_TIME_FORMAT.format(new Date(version.changedAt)),
                   })}
                   {" · "}
                   {stepLabel(version.stepNo)} · {r.position} {version.position} ·{" "}

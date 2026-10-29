@@ -26,10 +26,10 @@ import { grantStudyCredits, setStrategyTeacher } from "@/lib/admin/strategy-acti
 import { requireAdmin } from "@/lib/auth/dal";
 import { type AdminTeacherRow, listTeachersForAdmin } from "@/lib/strategy/class-queries";
 import { listStudiesForAdmin } from "@/lib/strategy/queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const a = t.strategy.admin;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 export const metadata: Metadata = { title: a.title };
 

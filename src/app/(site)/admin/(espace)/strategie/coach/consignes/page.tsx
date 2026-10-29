@@ -33,10 +33,10 @@ import { PROMPT_FUNCTIONS, type PromptFunction } from "@/lib/strategy/coach/cont
 import { diffLines, hasChanges } from "@/lib/strategy/coach/diff";
 import { listCoachPromptsForAdmin, type CoachPromptVersion } from "@/lib/strategy/coach/queries";
 import type { StepNo } from "@/lib/strategy/steps";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const p = t.strategy.admin.coachPrompts;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 export const metadata: Metadata = { title: p.title };
 
@@ -131,7 +131,7 @@ function PromptSection({ group }: { group: PromptGroup }) {
             <span className={BADGE}>{p.status.current}</span>{" "}
             {interpolate(p.version, { version: String(current.version) })} ·{" "}
             {current.publishedAt && interpolate(p.publishedAt, {
-              date: DATE_FORMAT.format(new Date(current.publishedAt)),
+              date: DATE_TIME_FORMAT.format(new Date(current.publishedAt)),
             })}
           </summary>
           {current.note && <p className="mt-2 text-small text-ink-muted">{current.note}</p>}
@@ -149,7 +149,7 @@ function PromptSection({ group }: { group: PromptGroup }) {
           <p className="text-small">
             <span className={BADGE}>{p.status.draft}</span>{" "}
             {interpolate(p.version, { version: String(draft.version) })} ·{" "}
-            {interpolate(p.createdAt, { date: DATE_FORMAT.format(new Date(draft.createdAt)) })}
+            {interpolate(p.createdAt, { date: DATE_TIME_FORMAT.format(new Date(draft.createdAt)) })}
           </p>
           <DraftForm
             key={`${draft.id}-${draft.createdAt}`}
@@ -192,7 +192,7 @@ function PromptSection({ group }: { group: PromptGroup }) {
                   <span className={BADGE}>{p.status.archived}</span>{" "}
                   {interpolate(p.version, { version: String(version.version) })}
                   {version.publishedAt && ` · ${interpolate(p.publishedAt, {
-                    date: DATE_FORMAT.format(new Date(version.publishedAt)),
+                    date: DATE_TIME_FORMAT.format(new Date(version.publishedAt)),
                   })}`}
                 </p>
                 {version.note && <p className="text-small text-ink-muted">{version.note}</p>}

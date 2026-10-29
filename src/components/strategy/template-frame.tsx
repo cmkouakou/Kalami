@@ -28,12 +28,11 @@ import type { CoachState } from "@/lib/strategy/coach/queries";
 import type { StepVersion } from "@/lib/strategy/queries";
 import type { StepNo, StepStatus, StudyRole } from "@/lib/strategy/steps";
 import { hasTemplate } from "@/lib/strategy/templates";
+import { TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const s = t.strategy;
 const tpl = s.template;
-
-const TIME_FORMAT = new Intl.DateTimeFormat("fr-FR", { timeStyle: "short" });
 
 export type TemplateFrameProps = {
   studyId: string;

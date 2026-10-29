@@ -40,16 +40,12 @@ import {
 } from "@/lib/analytics/audience";
 import { type SourceKind, sourceKind } from "@/lib/analytics/visit";
 import { requireAdmin } from "@/lib/auth/dal";
+import { DAY_MONTH_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const a = t.admin.audience;
 
 const PAGE_URL = "/admin/audience";
-const DAY_FORMAT = new Intl.DateTimeFormat("fr-FR", {
-  day: "numeric",
-  month: "short",
-  timeZone: "UTC",
-});
 const NUMBER = new Intl.NumberFormat("fr-FR");
 
 export const metadata: Metadata = { title: a.title };
@@ -210,7 +206,7 @@ function Bars({
       <figcaption className="text-sm font-semibold">{title}</figcaption>
       <ol className="flex h-32 items-end gap-px">
         {days.map((day) => {
-          const text = `${DAY_FORMAT.format(new Date(day.day))} : ${label(day)}`;
+          const text = `${DAY_MONTH_FORMAT.format(new Date(day.day))} : ${label(day)}`;
           const height = (value(day) / max) * 100;
           return (
             <li key={day.day} className="flex h-full flex-1 items-end" title={text}>
@@ -225,8 +221,8 @@ function Bars({
       </ol>
       {first && last && (
         <div className="flex justify-between text-caption text-ink-muted" aria-hidden="true">
-          <span>{DAY_FORMAT.format(new Date(first.day))}</span>
-          <span>{DAY_FORMAT.format(new Date(last.day))}</span>
+          <span>{DAY_MONTH_FORMAT.format(new Date(first.day))}</span>
+          <span>{DAY_MONTH_FORMAT.format(new Date(last.day))}</span>
         </div>
       )}
     </figure>

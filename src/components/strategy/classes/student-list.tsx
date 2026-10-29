@@ -23,11 +23,10 @@ import type { FormState } from "@/lib/auth/actions";
 import { removeStudent } from "@/lib/strategy/class-actions";
 import type { ClassStudent } from "@/lib/strategy/classes";
 import { memberLabel } from "@/lib/strategy/team";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const cl = s.classes;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 /** Liste des étudiants avec retrait confirmé. */
 export function StudentList({ classId, students }: { classId: string; students: ClassStudent[] }) {

@@ -24,11 +24,10 @@ import { requireUser } from "@/lib/auth/dal";
 import { STRATEGY_HOME } from "@/lib/auth/routes";
 import { type ClassSummary, isTeacher, listMyClasses } from "@/lib/strategy/class-queries";
 import { countAvailableCredits } from "@/lib/strategy/queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const cl = s.classes;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeZone: "UTC" });
 
 export const metadata: Metadata = { title: cl.title };
 

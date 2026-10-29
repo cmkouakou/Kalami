@@ -49,16 +49,13 @@ import { listMyCases } from "@/lib/strategy/cases/queries";
 import { countAvailableCredits, listMyStudies } from "@/lib/strategy/queries";
 import { PHASES } from "@/lib/strategy/steps";
 import { getMyInvitations, type ReceivedInvitation } from "@/lib/strategy/team-queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const s = t.strategy;
 
 /** Adresse de référence de l'accueil Stratégie. */
 export const metadata: Metadata = { alternates: { canonical: "/strategie" } };
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
-/** Dates AAAA-MM-JJ (sans heure) : lues en UTC pour ne pas reculer d'un jour. */
-const DUE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeZone: "UTC" });
 
 export default function StrategyHomePage() {
   return (
@@ -228,7 +225,7 @@ function MyClasses({ classes, studies }: { classes: StudentClass[]; studies: Cla
                     name: row.teacher_name ?? s.team.journal.someone,
                   })}
                   {row.due_date && ` · ${interpolate(st.due, {
-                    date: DUE_FORMAT.format(new Date(row.due_date)),
+                    date: DATE_FORMAT.format(new Date(row.due_date)),
                   })}`}
                 </span>
               </div>

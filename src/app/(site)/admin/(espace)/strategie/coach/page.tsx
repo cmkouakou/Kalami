@@ -26,10 +26,10 @@ import { grantCoachAllowance, saveCoachSettings } from "@/lib/admin/strategy-act
 import { requireAdmin } from "@/lib/auth/dal";
 import { getCoachSettings, listCoachUsageForAdmin } from "@/lib/strategy/coach/queries";
 import { listStudiesForAdmin } from "@/lib/strategy/queries";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const c = t.strategy.admin.coach;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 const MONEY_FORMAT = new Intl.NumberFormat("fr-FR", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
@@ -213,7 +213,7 @@ async function AdminCoach() {
                     <td className="py-2 pr-4">{MONEY_FORMAT.format(row.spent)}</td>
                     <td className="py-2 pr-4">{MONEY_FORMAT.format(row.budget)}</td>
                     <td className="py-2">
-                      {row.last_at ? DATE_FORMAT.format(new Date(row.last_at)) : "—"}
+                      {row.last_at ? DATE_TIME_FORMAT.format(new Date(row.last_at)) : "—"}
                     </td>
                   </tr>
                 ))}

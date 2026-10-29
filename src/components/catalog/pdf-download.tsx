@@ -20,9 +20,9 @@ import { useState } from "react";
 
 import { BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
+import { DATE_TIME_LONG_FORMAT } from "@/lib/format/date";
 
 const p = getDictionary().pdf;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeStyle: "short" });
 
 type ErrorCode = keyof typeof p.errors;
 
@@ -108,7 +108,7 @@ export function PdfDownload({ bookId, reference, remaining, initialExport }: Pdf
       {left === 0 && !error && <p className="text-small text-ink-muted">{p.errors.exhausted}</p>}
       {file && left > 0 && (
         <p className="text-small text-ink-muted" suppressHydrationWarning>
-          {interpolate(p.expiresAt, { date: DATE_FORMAT.format(new Date(file.expires_at)) })}
+          {interpolate(p.expiresAt, { date: DATE_TIME_LONG_FORMAT.format(new Date(file.expires_at)) })}
         </p>
       )}
       {error && (

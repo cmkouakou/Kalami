@@ -28,12 +28,11 @@ import { formatPrice } from "@/lib/currency";
 import { approvePayout, rejectPayout } from "@/lib/revenue/payout-actions";
 import { listPayoutsAdmin, signProofUrls } from "@/lib/revenue/payout-queries";
 import { isPayoutStatus, type PayoutRequest, type PayoutStatus } from "@/lib/revenue/payouts";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const ap = t.admin.payouts;
 const statuses = t.author.revenue.statuses;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 const PAGE_URL = "/admin/versements";
 
@@ -132,7 +131,7 @@ function PayoutCard({ payout, proofUrl }: PayoutCardProps) {
         </p>
       </div>
       <p className="text-sm text-ink-muted">
-        {interpolate(ap.requestedOn, { date: DATE_FORMAT.format(new Date(payout.created_at)) })}
+        {interpolate(ap.requestedOn, { date: DATE_TIME_FORMAT.format(new Date(payout.created_at)) })}
       </p>
       <PayoutDetails payout={payout} />
       <PayoutStep payout={payout} proofUrl={proofUrl} />
@@ -162,7 +161,7 @@ function PayoutDetails({ payout }: { payout: PayoutRequest }) {
 
 /** Étape suivante (approuver, payer, refuser) ou résultat d'une demande terminée. */
 function PayoutStep({ payout, proofUrl }: PayoutCardProps) {
-  const date = (value: string | null) => (value ? DATE_FORMAT.format(new Date(value)) : "—");
+  const date = (value: string | null) => (value ? DATE_TIME_FORMAT.format(new Date(value)) : "—");
 
   if (payout.status === "paid") {
     return (

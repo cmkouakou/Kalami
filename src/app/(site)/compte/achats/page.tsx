@@ -27,11 +27,10 @@ import {
   orderItemLink,
   type OrderSummary,
 } from "@/lib/payments/queries";
+import { DATE_LONG_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const tp = t.account.purchases;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "UTC" });
 
 export const metadata: Metadata = { title: tp.title, robots: { index: false } };
 
@@ -57,10 +56,10 @@ const MM_STATUS: Partial<Record<MobileMoneyStage, string>> = {
  */
 function statusText(order: OrderSummary): string {
   if (order.status === "refunded" && order.refunded_at) {
-    return interpolate(tp.refundedOn, { date: DATE_FORMAT.format(new Date(order.refunded_at)) });
+    return interpolate(tp.refundedOn, { date: DATE_LONG_FORMAT.format(new Date(order.refunded_at)) });
   }
   if (order.status === "paid" && order.paid_at) {
-    return interpolate(tp.paidOn, { date: DATE_FORMAT.format(new Date(order.paid_at)) });
+    return interpolate(tp.paidOn, { date: DATE_LONG_FORMAT.format(new Date(order.paid_at)) });
   }
   const stage = mobileMoneyStage(order);
   return (stage && MM_STATUS[stage]) ?? tp.pending;

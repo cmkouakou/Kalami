@@ -40,10 +40,10 @@ import {
   requireAuthor,
   type AuthorBook,
 } from "@/lib/author/queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const b = t.author.book;
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 const NUMBER_FORMAT = new Intl.NumberFormat("fr-FR");
 
 export const metadata: Metadata = { title: b.details };

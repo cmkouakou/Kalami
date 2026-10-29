@@ -26,11 +26,10 @@ import {
   revokeClassInvitation,
 } from "@/lib/strategy/class-actions";
 import type { PendingClassInvitation } from "@/lib/strategy/class-queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const cl = s.classes;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 type ClassPendingProps = {
   classId: string;

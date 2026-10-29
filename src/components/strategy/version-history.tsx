@@ -21,11 +21,10 @@ import { BUTTON_SECONDARY, BUTTON_TERTIARY, CARD } from "@/components/ui/styles"
 import { getDictionary, interpolate } from "@/i18n";
 import { restoreStepVersion } from "@/lib/strategy/actions";
 import type { StepVersion } from "@/lib/strategy/queries";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const t = getDictionary();
 const v = t.strategy.template.versions;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 
 type VersionHistoryProps = {
   studyId: string;
@@ -75,7 +74,7 @@ export function VersionHistory({
           {versions.map((version) => (
             <li key={version.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 py-2">
               <span className="text-small">
-                {DATE_FORMAT.format(new Date(version.created_at))} · {v.reasons[version.reason]}
+                {DATE_TIME_FORMAT.format(new Date(version.created_at))} · {v.reasons[version.reason]}
                 <span className="text-ink-muted">
                   {" "}· {interpolate(v.revision, { revision: String(version.revision) })}
                 </span>

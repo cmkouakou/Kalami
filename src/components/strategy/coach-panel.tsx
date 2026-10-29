@@ -69,10 +69,10 @@ import type { Suggestion } from "@/lib/strategy/coach/schemas";
 import { applyProposals, indexProposals } from "@/lib/strategy/synthesis-proposals";
 import type { TemplateStep } from "@/lib/strategy/templates";
 import { readSynthesis } from "@/lib/strategy/templates/synthesis";
+import { DATE_TIME_FORMAT } from "@/lib/format/date";
 
 const c = getDictionary().strategy.coach;
 
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short" });
 const PCT_FORMAT = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 });
 
 /** Part du forfait (en %) à partir de laquelle l'alerte s'affiche. */
@@ -331,7 +331,7 @@ export function CoachPanel<T>({
   const tabs = COACH_FUNCTIONS.filter((fn) => isFunctionAvailable(fn, stepNo));
   const current = results[tab];
   const outdated = current !== null && !fresh[tab] && current.revision !== revision;
-  const date = current ? DATE_FORMAT.format(new Date(current.createdAt)) : "";
+  const date = current ? DATE_TIME_FORMAT.format(new Date(current.createdAt)) : "";
 
   let blocked: string | null = null;
   if (coach.classDisabled) blocked = c.classDisabled;

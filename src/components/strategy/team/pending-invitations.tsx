@@ -22,11 +22,10 @@ import { BADGE, BUTTON_SECONDARY, BUTTON_TERTIARY } from "@/components/ui/styles
 import { getDictionary, interpolate } from "@/i18n";
 import { type InviteState, renewInvitation, revokeInvitation } from "@/lib/strategy/team-actions";
 import type { PendingInvitation } from "@/lib/strategy/team-queries";
+import { DATE_FORMAT } from "@/lib/format/date";
 
 const s = getDictionary().strategy;
 const tm = s.team;
-
-const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium" });
 
 type PendingInvitationsProps = {
   studyId: string;
