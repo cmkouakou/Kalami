@@ -5,8 +5,8 @@
  *              → 403 (CSRF), visiteur → 401, corps invalide → 400, livre absent → 404,
  *              enregistrement → 204 avec l'avancement arrondi.
  * Auteur     : Claude Marcel
- * Version    : 1.0
- * Date       : 2026-10-09
+ * Version    : 1.1 (activité de lecture)
+ * Date       : 2026-10-28
  */
 
 import { NextRequest } from "next/server";
@@ -24,6 +24,7 @@ const db = {
   user: null as CurrentUser | null,
   error: null as { code: string; message: string } | null,
   upserts: [] as Record<string, unknown>[],
+  activity: [] as Record<string, unknown>[],
 };
 
 vi.mock("@/lib/auth/dal", () => ({ getCurrentUser: async () => db.user }));
@@ -36,6 +37,10 @@ vi.mock("@/lib/supabase/server", () => ({
         return { error: db.error };
       },
     }),
+    rpc: async (name: string, args: Record<string, unknown>) => {
+      db.activity.push({ name, ...args });
+      return { error: null };
+    },
   }),
 }));
 
@@ -57,6 +62,7 @@ beforeEach(() => {
   db.user = READER;
   db.error = null;
   db.upserts = [];
+  db.activity = [];
 });
 
 // ==================== TESTS ====================
@@ -72,6 +78,12 @@ describe("PUT /api/livres/[id]/position", () => {
       block_index: 5,
       char_offset: 120,
       progress: 0.1235,
+    });
+    expect(db.activity[0]).toEqual({
+      name: "record_reading_activity",
+      p_book_id: BOOK_ID,
+      p_chapter: 2,
+      p_country: null,
     });
   });
 

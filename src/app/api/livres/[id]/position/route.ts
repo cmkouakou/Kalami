@@ -6,15 +6,17 @@
  *               connecté (synchronisée entre ses appareils). Route plutôt qu'action serveur
  *               pour accepter les envois « keepalive » à la fermeture de l'onglet.
  *               Écriture avec le client utilisateur : la RLS limite à ses propres lignes.
+ *               Note aussi l'activité du jour (statistiques de lecture, v0.16.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-09
- *  Dépendances: lib/supabase/server.ts, lib/reader/position.ts, lib/content/responses.ts
+ *  Version    : 1.1
+ *  Date       : 2026-10-28
+ *  Dépendances: lib/analytics/visit.ts, lib/supabase/server.ts, lib/reader/position.ts, lib/content/responses.ts
  * =============================================================
  */
 
 import type { NextRequest } from "next/server";
 
+import { countryCode } from "@/lib/analytics/visit";
 import { isUuid } from "@/lib/admin/validation";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { errorResponse, isSameOrigin, PRIVATE_HEADERS } from "@/lib/content/responses";
@@ -74,6 +76,13 @@ export async function PUT(request: NextRequest, ctx: RouteContext<"/api/livres/[
   );
   if (error?.code === FOREIGN_KEY_VIOLATION) return errorResponse(404);
   if (error) throw new Error(`Enregistrement de la position impossible : ${error.message}`);
+
+  // Statistiques de lecture (temps, chapitres, pays) : un échec n'empêche pas le marque-page
+  await supabase.rpc("record_reading_activity", {
+    p_book_id: id,
+    p_chapter: saved.chapter,
+    p_country: countryCode(request.headers.get("x-vercel-ip-country")) || null,
+  });
 
   return new Response(null, { status: 204, headers: PRIVATE_HEADERS });
 }

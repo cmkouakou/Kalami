@@ -3,6 +3,7 @@
   "crons": [
     { "path": "/api/cron/pdf", "schedule": "30 4 * * *" },
     { "path": "/api/cron/comptes", "schedule": "45 4 * * *" },
-    { "path": "/api/cron/commandes", "schedule": "0 5 * * *" }
+    { "path": "/api/cron/commandes", "schedule": "0 5 * * *" },
+    { "path": "/api/cron/statistiques", "schedule": "15 5 * * *" }
   ]
 }

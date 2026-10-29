@@ -6,7 +6,7 @@
  *               mise en évidence, pastilles « à traiter ». Colonne latérale sur grand
  *               écran, menu repliable sur téléphone.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1 (Lecture et audience, v0.16.1)
  *  Date       : 2026-10-28
  *  Dépendances: i18n, components/ui/icons.tsx
  * =============================================================
@@ -37,7 +37,10 @@ type NavGroup = { title: string; links: NavLink[] };
 const GROUPS: NavGroup[] = [
   {
     title: n.groups.overview,
-    links: [{ href: "/admin", label: n.dashboard }],
+    links: [
+      { href: "/admin", label: n.dashboard },
+      { href: "/admin/audience", label: n.audience },
+    ],
   },
   {
     title: n.groups.catalog,

@@ -8,10 +8,11 @@
  *               plateforme de lecture, strategie pour Kalami Stratégie. Icône d'onglet
  *               (favicon) déclarée explicitement (v0.14.6). Mesure d'audience (v0.15.3) :
  *               Vercel Analytics sans témoin, Google Analytics après consentement,
- *               validation Google Search Console.
+ *               validation Google Search Console. Statistiques de Kalami (v0.16.1) : pages
+ *               vues anonymes, sans témoin.
  *  Auteur     : Claude Marcel
- *  Version    : 3.3
- *  Date       : 2026-10-26
+ *  Version    : 3.4
+ *  Date       : 2026-10-28
  *  Dépendances: lib/config.ts, lib/pwa/manifest.ts, components/pwa, i18n
  * =============================================================
  */
@@ -19,8 +20,10 @@
 import type { Metadata, Viewport } from "next";
 import { Literata, Source_Sans_3 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { Suspense } from "react";
 
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { VisitTracker } from "@/components/analytics/visit-tracker";
 import { ConsentBanner } from "@/components/legal/consent-banner";
 import { OfflineBanner } from "@/components/pwa/offline-banner";
 import { ServiceWorker } from "@/components/pwa/service-worker";
@@ -89,6 +92,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Vercel Analytics : sans témoin, aucun consentement requis */}
         <Analytics />
         {GA_MEASUREMENT_ID && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
+        {/* Statistiques de Kalami : lit l'adresse courante, donc sous <Suspense> */}
+        <Suspense fallback={null}>
+          <VisitTracker />
+        </Suspense>
       </body>
     </html>
   );

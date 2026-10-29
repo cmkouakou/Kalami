@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## [v0.16.1] - 2026-10-28 — Lecture et audience
+### Ajouté
+- Administration → Pilotage → « Lecture et audience » : visites, pages vues, lecteurs
+  actifs, temps de lecture, nouvelles lectures et lecteurs sans lecture depuis 30 jours ;
+  histogrammes jour par jour ; pages les plus vues ; pays ; provenance des visites
+  (direct, moteurs, réseaux sociaux, courriel, autres sites) ; période 7, 30, 90 jours
+  ou 12 mois.
+- Liste des lecteurs : nom et courriel, livre, avancement et chapitre, chapitres ouverts,
+  début et jours depuis le début, dernière lecture et jours sans lecture, temps total,
+  jours actifs, pays, statut (actif, en pause, abandonné, terminé) avec filtre.
+- Fiche d'un lecteur : livres lus et activité jour par jour (temps, chapitres, pays).
+- Statistiques de visite de Kalami : pages vues anonymes, agrégées par jour, sans témoin
+  ni adresse IP ; rien n'est envoyé si le navigateur demande à ne pas être suivi (GPC,
+  Do Not Track). Robots, administration et API ignorés.
+- Activité de lecture notée à chaque marque-page (temps estimé, chapitres, pays).
+- Tâche planifiée quotidienne `/api/cron/statistiques` : au-delà de 12 mois, le détail est
+  réduit en totaux mensuels anonymes puis effacé.
+
+### Base de données
+- Migration `20261120120000_reading_analytics.sql` (à appliquer).
+
 ## [v0.16.0] - 2026-10-28 — Menu de l'administration
 ### Modifié
 - Administration : les 16 liens alignés sont remplacés par un menu latéral en 5 groupes
