@@ -185,6 +185,11 @@ Version actuelle : v0.16.5 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
   - [ ] Relayer les liens (LinkedIn, Facebook, WhatsApp) : les liens entrants aident l'indexation
 - [x] Politique de confidentialité complète publiée (v3, 2026-10-28) : Google Analytics, Loi 25, âge minimum
 - [ ] ISBN facultatif saisi par l'auteur (fiche + JSON-LD) — reporté
+- [x] v0.16.5 — lecture à voix haute : voix du navigateur la plus naturelle, choix de la voix et
+  de la vitesse (validé par l'utilisateur le 2026-10-29 : « déjà mieux », suffisant pour l'instant)
+- [ ] Voix neuronale Azure (payante) pour la lecture à voix haute — reportée au moment où Kalami
+  aura des revenus (décision 2026-10-29). Audio généré par le serveur et mis en cache, environ
+  15 USD par million de caractères, soit environ 5 à 10 USD par livre, payés une seule fois
 
 ## 🧭 Kalami Stratégie (projet 2) — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
 - [x] S0+S1 — fondations, profil, carte des 9 étapes, cascade, crédits admin (Stratégie v0.2.0)
