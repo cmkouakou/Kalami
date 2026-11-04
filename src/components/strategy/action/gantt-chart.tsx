@@ -102,7 +102,7 @@ export function GanttChart({ workstreams }: { workstreams: Workstream[] }) {
 
               {layout.rows.map((row) => (
                 <Fragment key={row.id}>
-                  <span className="truncate pr-2 font-semibold">
+                  <span className="col-start-1 truncate pr-2 font-semibold">
                     {row.name.trim() || s.untitledWorkstream}
                   </span>
                   <span

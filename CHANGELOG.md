@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.16.6] - 2026-11-04 — Gantt de la feuille de route aligné
+### Corrigé
+- Kalami Stratégie, étape 8 : dans la vue Gantt, le nom d'un chantier se plaçait sur la
+  ligne précédente, à côté d'une barre courte, et décalait toute la liste. Les libellés
+  des chantiers sont désormais forcés dans la première colonne, comme ceux des phases
+  (`src/components/strategy/action/gantt-chart.tsx`).
+
 ## [v0.16.5] - 2026-10-29 — Voix plus naturelle pour la lecture à voix haute
 ### Ajouté
 - La liseuse choisit d'office la voix la plus naturelle de la langue du livre : voix
