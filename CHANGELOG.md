@@ -1,5 +1,18 @@
 # Journal des modifications
 
+## [v0.17.1] - 2026-11-05 — Kalami Données : pré-affichage et navigation
+### Corrigé
+- Accueil et pages de leçon de `/powerbi` : le contenu privé est lu dans une zone
+  `Suspense`, comme `/compte` et `/strategie`. L'alerte « Blocking Route » de Next.js
+  disparaît et la page ne bloque plus le pré-affichage.
+- Les 25 adresses de leçons sont connues dès la construction (`generateStaticParams`).
+- Navigation « Leçon précédente / suivante » : elle saute désormais les leçons « à venir »
+  et mène au résumé rédigé le plus proche, comme l'accueil où ces leçons ne sont pas
+  cliquables. Des flèches reprennent le bas de page du guide d'origine (`powerbi4you`).
+
+### Ajouté
+- Tests de la carte du parcours et de la navigation (`tests/unit/powerbi-modules.test.ts`).
+
 ## [v0.17.0] - 2026-11-05 — Kalami Données : parcours de préparation PL-300
 ### Ajouté
 - Nouvel espace privé `/powerbi` (« Kalami Données ») : parcours de révision de la

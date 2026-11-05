@@ -5,9 +5,10 @@
  *  Description: Carte du parcours de préparation à la certification Microsoft PL-300 :
  *               modules, leçons, durées et lien vers la page officielle Microsoft Learn
  *               de chaque leçon. Ne contient que la structure ; le texte des leçons vit
- *               dans lessons/ et les questions dans quiz/.
+ *               dans lessons/ et les questions dans quiz/. La navigation entre leçons
+ *               saute les leçons non rédigées (v0.17.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lessons/index.ts (registre des résumés écrits)
  * =============================================================
@@ -42,7 +43,7 @@ export interface Module {
   lecons: Lesson[];
 }
 
-import { compterResumes } from "@/lib/powerbi/lessons";
+import { aUnResume, compterResumes } from "@/lib/powerbi/lessons";
 
 const LEARN = "https://learn.microsoft.com/fr-ca/training/modules";
 
@@ -288,15 +289,29 @@ export function getLesson(
   return trouve && lecon ? { module: trouve, lecon } : undefined;
 }
 
-/** Leçon suivante et précédente dans le parcours, tous modules confondus. */
+/** Toutes les leçons du parcours, dans l'ordre, chacune avec son module. */
+export function getToutesLesLecons(): { module: Module; lecon: Lesson }[] {
+  return MODULES.flatMap((module) => module.lecons.map((lecon) => ({ module, lecon })));
+}
+
+/**
+ * Leçons rédigées les plus proches, avant et après, tous modules confondus.
+ *
+ * Les leçons « à venir » sont sautées : comme sur l'accueil, où elles ne sont pas
+ * cliquables, la navigation ne mène qu'à un résumé écrit.
+ */
 export function getVoisines(
   moduleSlug: string,
   lessonSlug: string,
 ): { precedente?: { module: Module; lecon: Lesson }; suivante?: { module: Module; lecon: Lesson } } {
-  const plat = MODULES.flatMap((module) => module.lecons.map((lecon) => ({ module, lecon })));
+  const plat = getToutesLesLecons();
   const i = plat.findIndex((e) => e.module.slug === moduleSlug && e.lecon.slug === lessonSlug);
   if (i === -1) return {};
-  return { precedente: plat[i - 1], suivante: plat[i + 1] };
+  const redigee = (e: { module: Module; lecon: Lesson }) => aUnResume(e.module.slug, e.lecon.slug);
+  return {
+    precedente: plat.slice(0, i).reverse().find(redigee),
+    suivante: plat.slice(i + 1).find(redigee),
+  };
 }
 
 /** Nombre de résumés écrits, sur le nombre total de leçons du parcours. */

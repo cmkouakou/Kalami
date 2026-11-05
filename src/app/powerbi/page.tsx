@@ -5,14 +5,17 @@
  *  Description: Accueil du parcours PL-300 : présentation, avancement de la rédaction,
  *               puis les modules avec leurs leçons. Une leçon non rédigée reste visible
  *               mais grisée, pour que la carte du parcours soit complète dès le départ.
+ *               Contenu lu dans une zone Suspense, comme les autres pages privées, pour
+ *               que la page ne bloque plus le pré-affichage (v0.17.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/modules.ts, lib/auth/dal.ts, i18n
  * =============================================================
  */
 
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { BADGE, CARD, PANEL_SAND } from "@/components/ui/styles";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
@@ -24,7 +27,16 @@ import { getAvancement, MODULES, type Module } from "@/lib/powerbi/modules";
 
 const d = getPowerbiDictionary();
 
-export default async function PowerbiHomePage() {
+export default function PowerbiHomePage() {
+  return (
+    <Suspense fallback={<div aria-hidden="true" className="h-64 animate-pulse" />}>
+      <PowerbiHome />
+    </Suspense>
+  );
+}
+
+/** Contenu privé : lu dans une zone Suspense (cookies de session). */
+async function PowerbiHome() {
   await requireUser(POWERBI_HOME);
   const { pretes, total } = getAvancement();
 

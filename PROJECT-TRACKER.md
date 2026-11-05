@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.16.6 · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.17.1 (espace /powerbi ajouté) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -82,7 +82,8 @@ Version actuelle : v0.16.6 · Stratégie v0.11.4 | Statut : 🟡 En cours (proje
 | #76 | 2026-10-29 | v0.16.4 : dictionnaire scindé (Stratégie, atelier), pages de la librairie allégées de ~25 Ko compressés | ~40 000 | ~0.24 $ |
 | #77 | 2026-10-29 | v0.16.5 : lecture à voix haute — voix la plus naturelle choisie d'office, choix de la voix et de la vitesse, essai, lecture phrase par phrase | ~90 000 | ~0.54 $ |
 | #78 | 2026-11-04 | v0.16.6 : étude de démonstration PlacaliKro saisie dans Kalami Stratégie (captures, GIF) ; correction de l'alignement du Gantt (étape 8) | ~400 000 | ~2.40 $ |
-| **TOTAL** | | | **~19 150 000** (hors #71) | **~114.90 $** |
+| #79 | 2026-11-05 | v0.17.0 : intégration de l'espace privé /powerbi (Kalami Données, PL-300) par correctif git ; v0.17.1 : Suspense (alerte Blocking Route), navigation limitée aux leçons rédigées, tests | ~150 000 | ~0.90 $ |
+| **TOTAL** | | | **~19 300 000** (hors #71) | **~115.80 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

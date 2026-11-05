@@ -6,8 +6,11 @@
  *               Learn dont elle vient, et la navigation vers les leçons voisines. Une
  *               leçon encore sans résumé affiche une explication plutôt qu'une erreur,
  *               pour que la carte du parcours reste parcourable de bout en bout.
+ *               v0.17.1 : les 25 adresses sont connues à la construction, et le contenu
+ *               privé est lu dans une zone Suspense ; la navigation ne mène plus qu'aux
+ *               leçons rédigées, avec flèches comme le guide d'origine.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/modules.ts, lib/powerbi/lessons, components/powerbi
  * =============================================================
@@ -16,6 +19,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { LessonBlocks } from "@/components/powerbi/lesson-blocks";
 import { PANEL_SAND } from "@/components/ui/styles";
@@ -24,11 +28,16 @@ import { getPowerbiDictionary } from "@/i18n/powerbi";
 import { requireUser } from "@/lib/auth/dal";
 import { POWERBI_HOME } from "@/lib/auth/routes";
 import { getResume } from "@/lib/powerbi/lessons";
-import { getLesson, getVoisines } from "@/lib/powerbi/modules";
+import { getLesson, getToutesLesLecons, getVoisines } from "@/lib/powerbi/modules";
 
 const d = getPowerbiDictionary();
 
 type Params = Promise<{ module: string; lecon: string }>;
+
+/** Les 25 leçons du parcours, pré-affichées à la construction. */
+export function generateStaticParams(): { module: string; lecon: string }[] {
+  return getToutesLesLecons().map((e) => ({ module: e.module.slug, lecon: e.lecon.slug }));
+}
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { module: moduleSlug, lecon: lessonSlug } = await params;
@@ -37,7 +46,16 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return { title: trouve.lecon.titre, description: trouve.lecon.accroche };
 }
 
-export default async function LeconPage({ params }: { params: Params }) {
+export default function LeconPage({ params }: { params: Params }) {
+  return (
+    <Suspense fallback={<div aria-hidden="true" className="h-64 animate-pulse" />}>
+      <Lecon params={params} />
+    </Suspense>
+  );
+}
+
+/** Contenu privé de la leçon : lu dans une zone Suspense (cookies de session). */
+async function Lecon({ params }: { params: Params }) {
   await requireUser(POWERBI_HOME);
 
   const { module: moduleSlug, lecon: lessonSlug } = await params;
@@ -98,7 +116,10 @@ export default async function LeconPage({ params }: { params: Params }) {
             href={`${POWERBI_HOME}/${precedente.module.slug}/${precedente.lecon.slug}`}
             className="max-w-xs hover:underline"
           >
-            <span className="block text-caption text-ink-muted">{d.lecon.precedente}</span>
+            <span className="block text-caption text-ink-muted">
+              <span aria-hidden="true">← </span>
+              {d.lecon.precedente}
+            </span>
             <span className="text-encre">{precedente.lecon.titre}</span>
           </Link>
         ) : (
@@ -109,7 +130,10 @@ export default async function LeconPage({ params }: { params: Params }) {
             href={`${POWERBI_HOME}/${suivante.module.slug}/${suivante.lecon.slug}`}
             className="max-w-xs text-right hover:underline"
           >
-            <span className="block text-caption text-ink-muted">{d.lecon.suivante}</span>
+            <span className="block text-caption text-ink-muted">
+              {d.lecon.suivante}
+              <span aria-hidden="true"> →</span>
+            </span>
             <span className="text-encre">{suivante.lecon.titre}</span>
           </Link>
         )}
