@@ -20,6 +20,8 @@ export const PROTECTED_PREFIXES = [
   "/strategie/nouvelle",
   "/strategie/invitation",
   "/strategie/compte",
+  // Kalami Données reste entièrement privé pendant sa construction
+  "/powerbi",
 ] as const;
 
 /** Vrai si le chemin exige une connexion. */
@@ -42,6 +44,9 @@ export function safeNextPath(next: string | null | undefined, fallback = "/"): s
 
 /** Accueil de Kalami Stratégie : ses pages de connexion vivent sous ce préfixe. */
 export const STRATEGY_HOME = "/strategie";
+
+/** Accueil de Kalami Données (préparation PL-300). */
+export const POWERBI_HOME = "/powerbi";
 
 /** Pages de connexion, présentes sur le site et dans Kalami Stratégie. */
 const AUTH_PAGES = [

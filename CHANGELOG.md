@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## [v0.17.0] - 2026-11-05 — Kalami Données : parcours de préparation PL-300
+### Ajouté
+- Nouvel espace privé `/powerbi` (« Kalami Données ») : parcours de révision de la
+  certification Microsoft PL-300, bâti sur le même patron que Kalami Stratégie — gabarit,
+  en-tête et pied de page propres, connexion et déconnexion qui ramènent à l'espace
+  (`src/app/powerbi/layout.tsx`, `src/components/powerbi/powerbi-chrome.tsx`).
+- Carte du parcours : quatre modules et vingt-cinq leçons, avec durée et lien vers la page
+  officielle Microsoft Learn de chacune (`src/lib/powerbi/modules.ts`).
+- Résumés de leçons écrits en TypeScript typé plutôt qu'en Markdown, pour rester versionnés
+  et relus en revue de code, sans ajouter de dépendance de rendu : blocs titre, paragraphe,
+  liste, tableau, encadré et code (`src/lib/powerbi/content.ts`,
+  `src/components/powerbi/lesson-blocks.tsx`).
+- Quatre premiers résumés rédigés ; une leçon sans résumé reste visible et annoncée comme
+  « à venir », le registre faisant foi (`src/lib/powerbi/lessons/`).
+- Textes français de l'espace, séparés du dictionnaire principal (`src/i18n/fr-powerbi.ts`).
+
+### Sécurité
+- `/powerbi` ajouté aux préfixes protégés : l'espace entier exige une connexion pendant sa
+  construction, et son gabarit demande aux moteurs de recherche de ne pas l'indexer
+  (`src/lib/auth/routes.ts`).
+
 ## [v0.16.6] - 2026-11-04 — Gantt de la feuille de route aligné
 ### Corrigé
 - Kalami Stratégie, étape 8 : dans la vue Gantt, le nom d'un chantier se plaçait sur la
