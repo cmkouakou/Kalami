@@ -87,6 +87,11 @@ export const sprint1: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
+      pastilles: {
+        colonne: 1,
+        teintes: ["dim", "dim", "fait", "fait"],
+      },
       entetes: [
         "Couche",
         "Qui la crée",
@@ -131,6 +136,7 @@ export const sprint1: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Rôle",
         "Peut consulter",
@@ -262,6 +268,11 @@ export const sprint1: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
+      pastilles: {
+        colonne: 1,
+        teintes: ["dim", "fait", "fait", "fait", "fait"],
+      },
       entetes: ["Vue", "Rôle", "Contient"],
       lignes: [
         [
@@ -294,6 +305,11 @@ export const sprint1: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
+      pastilles: {
+        colonne: 1,
+        teintes: ["dim", "fait", "fait", "fait"],
+      },
       entetes: ["Vue", "Rôle", "Contient"],
       lignes: [
         [
@@ -321,6 +337,11 @@ export const sprint1: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
+      pastilles: {
+        colonne: 1,
+        teintes: ["fait", "fait", "fait"],
+      },
       entetes: ["Vue", "Rôle", "Contient"],
       lignes: [
         [
@@ -343,6 +364,11 @@ export const sprint1: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
+      pastilles: {
+        colonne: 1,
+        teintes: ["dim"],
+      },
       entetes: ["Vue", "Rôle", "Contient"],
       lignes: [
         [
@@ -367,6 +393,11 @@ export const sprint1: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
+      pastilles: {
+        colonne: 1,
+        teintes: ["dim", "dim", "dim", "fait", "fait", "fait", "fait"],
+      },
       entetes: [
         "Vue",
         "Rôle",

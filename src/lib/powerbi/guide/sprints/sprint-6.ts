@@ -38,6 +38,7 @@ export const sprint6: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Page",
         "Question à laquelle elle répond",
@@ -74,6 +75,7 @@ export const sprint6: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [1],
       entetes: [
         "Question posée",
         "Visuel Power BI",

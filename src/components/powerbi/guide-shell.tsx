@@ -6,7 +6,8 @@
  *               en-tête de page (surtitre, titre, introduction, pastille d'avancement),
  *               sommaire latéral et pied de carte « précédent / suivant ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *               v1.1 (v0.21.2) : mention de fin « Chantier terminé ».
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: progress-ring.tsx, powerbi.css (classes .topbar, nav.sprints, .footfoot)
  * =============================================================
@@ -136,6 +137,8 @@ type FootfootProps = {
   /** Mots d'appel : « ← Précédent : » / « Prochain : ». */
   motPrecedent: string;
   motSuivant: string;
+  /** Mention affichée à la place du lien suivant, sur la dernière page. */
+  fin?: string;
 };
 
 /**
@@ -143,7 +146,7 @@ type FootfootProps = {
  * @param props - Position, voisins et mots d'appel
  */
 export function Footfoot(props: FootfootProps) {
-  const { nom, position, precedent, suivant, motPrecedent, motSuivant } = props;
+  const { nom, position, precedent, suivant, motPrecedent, motSuivant, fin } = props;
   return (
     <nav className="footfoot" aria-label={nom}>
       {precedent && (
@@ -159,6 +162,7 @@ export function Footfoot(props: FootfootProps) {
           <span aria-hidden="true"> →</span>
         </Link>
       )}
+      {!suivant && fin && <b className="fin">{fin}</b>}
     </nav>
   );
 }

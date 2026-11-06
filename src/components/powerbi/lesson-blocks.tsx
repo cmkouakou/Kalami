@@ -11,7 +11,8 @@
  *               v1.2 (v0.21.0) : classes de la charte powerbi4you (powerbi.css) ; les
  *               blocs sont rendus à plat, comme enfants directs de la carte.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *               v1.3 (v0.21.2) : passages en couleur (pastilles, colonnes mono, code).
+ *  Version    : 1.3
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/content.ts, inline-text.tsx, guide-visuals.tsx,
  *               guide-checklist.tsx, i18n
@@ -145,7 +146,9 @@ function Bloc({ bloc, progression }: { bloc: ContentBlock; progression?: Progres
     case "code":
       return (
         <pre className="codebox">
-          <code>{bloc.texte}</code>
+          <code>
+            <CodeColore texte={bloc.texte} accents={bloc.accents} />
+          </code>
         </pre>
       );
 
@@ -265,6 +268,54 @@ function ContenuCarte({ carte }: { carte: Carte }) {
   );
 }
 
+/** Cellule de tableau : pastille de rôle dans la colonne prévue, texte sinon. */
+function Cellule(props: {
+  bloc: Extract<ContentBlock, { kind: "tableau" }>;
+  ligne: number;
+  colonne: number;
+  texte: string;
+}) {
+  const { bloc, ligne, colonne, texte } = props;
+  const teinte = bloc.pastilles?.colonne === colonne ? bloc.pastilles.teintes[ligne] : null;
+  if (!teinte) return <InlineText texte={texte} />;
+  return (
+    <span className={`role ${teinte}`}>
+      <InlineText texte={texte} />
+    </span>
+  );
+}
+
+/** Échappe un texte pour l'insérer dans une expression régulière. */
+function echapper(texte: string): string {
+  return texte.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Code avec ses passages en couleur, comme dans le guide d'origine.
+ * Les mots isolés (CALCULATE, SUM…) ne sont colorés qu'en mot entier.
+ * @param props - Texte du code et passages à colorer
+ */
+function CodeColore({ texte, accents }: { texte: string; accents?: string[] }) {
+  if (!accents?.length) return <>{texte}</>;
+  const motifs = [...accents]
+    .sort((a, b) => b.length - a.length)
+    .map((a) => (/^\w+$/.test(a) ? `\\b${echapper(a)}\\b` : echapper(a)));
+  const morceaux = texte.split(new RegExp(`(${motifs.join("|")})`, "g"));
+  return (
+    <>
+      {morceaux.map((m, i) =>
+        i % 2 === 1 ? (
+          <span key={i} className="c">
+            {m}
+          </span>
+        ) : (
+          m
+        ),
+      )}
+    </>
+  );
+}
+
 /** Tableau à en-tête, avec sa légende éventuelle au-dessus. */
 function Tableau({ bloc }: { bloc: Extract<ContentBlock, { kind: "tableau" }> }) {
   return (
@@ -284,8 +335,8 @@ function Tableau({ bloc }: { bloc: Extract<ContentBlock, { kind: "tableau" }> })
           {bloc.lignes.map((ligne, i) => (
             <tr key={i}>
               {ligne.map((cellule, j) => (
-                <td key={j}>
-                  <InlineText texte={cellule} />
+                <td key={j} className={bloc.colonnesMono?.includes(j) ? "vname" : undefined}>
+                  <Cellule bloc={bloc} ligne={i} colonne={j} texte={cellule} />
                 </td>
               ))}
             </tr>

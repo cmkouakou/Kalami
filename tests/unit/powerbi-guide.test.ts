@@ -109,6 +109,25 @@ describe("sprints du chantier", () => {
     }
   });
 
+  it("ont des passages en couleur qui visent des cellules et du code existants", () => {
+    for (const sprint of SPRINTS) {
+      for (const bloc of tousLesBlocs(sprint.contenu)) {
+        if (bloc.kind === "tableau") {
+          for (const c of bloc.colonnesMono ?? []) {
+            expect(c).toBeLessThan(bloc.entetes.length);
+          }
+          if (bloc.pastilles) {
+            expect(bloc.pastilles.colonne).toBeLessThan(bloc.entetes.length);
+            expect(bloc.pastilles.teintes).toHaveLength(bloc.lignes.length);
+          }
+        }
+        if (bloc.kind === "code") {
+          for (const accent of bloc.accents ?? []) expect(bloc.texte).toContain(accent);
+        }
+      }
+    }
+  });
+
   it("ne relient pas v_fundamentals au calendrier (sprint 4.6)", () => {
     const schema = tousLesBlocs(SPRINTS[0].contenu).find((b) => b.kind === "schema");
     expect(schema?.kind).toBe("schema");

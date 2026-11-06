@@ -31,6 +31,7 @@ export const sprint3: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: ["Type", "Où", "Pour"],
       lignes: [
         [
@@ -73,6 +74,7 @@ export const sprint3: Sprint = {
     },
     {
       kind: "code",
+      accents: ["\"Valeur transigée (M FCFA)\"", "type number"],
       texte: "= Table.AddColumn(#\"Colonnes renommées\", \"Valeur transigée (M FCFA)\",\n    " +
         "each [Valeur transigée (FCFA)] / 1000000, type number)",
     },

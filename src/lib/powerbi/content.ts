@@ -12,7 +12,9 @@
  *               Balisage en ligne accepté dans les textes : **gras**, *italique*, `code`
  *               et [lien](https://…). Voir lib/powerbi/inline.ts.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *               v1.2 (v0.21.2) : passages en couleur du guide d'origine (colonnes en
+ *               police mono, pastilles dimension / fait, accents dans le code).
+ *  Version    : 1.2
  *  Date       : 2026-11-05
  * =============================================================
  */
@@ -53,6 +55,10 @@ export type TableBlock = {
   entetes: string[];
   lignes: string[][];
   legende?: string;
+  /** Colonnes en police à chasse fixe (noms de vues, de colonnes, de mesures). */
+  colonnesMono?: number[];
+  /** Colonne dont les cellules sont des pastilles : dimension (sarcelle) ou fait (ocre). */
+  pastilles?: { colonne: number; teintes: ("dim" | "fait")[] };
 };
 
 /** Encadré mis en valeur, éventuellement suivi de points. */
@@ -65,7 +71,13 @@ export type NoteBlock = {
 };
 
 /** Extrait de code ou de formule, affiché en police à chasse fixe. */
-export type CodeBlock = { kind: "code"; langage?: string; texte: string };
+export type CodeBlock = {
+  kind: "code";
+  langage?: string;
+  texte: string;
+  /** Passages mis en couleur : fonctions DAX, types M, nouveaux noms. */
+  accents?: string[];
+};
 
 /** Notion dépliable : un approfondissement qu'on ouvre si on en a besoin. */
 export type NotionBlock = {

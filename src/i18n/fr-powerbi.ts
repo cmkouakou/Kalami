@@ -8,7 +8,8 @@
  *  Auteur     : Claude Marcel
  *               v1.1 (v0.21.0) : textes du cadre powerbi4you (sommaire, pastilles,
  *               pieds de carte).
- *  Version    : 1.1
+ *               v1.2 (v0.21.2) : mention « Chantier terminé ».
+ *  Version    : 1.2
  *  Date       : 2026-11-05
  * =============================================================
  */
@@ -88,6 +89,7 @@ const powerbiFr = {
     termine: "Terminé",
     precedent: "Précédent",
     suivant: "Prochain",
+    fin: "Chantier terminé",
     navigation: "Navigation entre les sprints",
     notion: "Notion",
     references: "Microsoft Learn",

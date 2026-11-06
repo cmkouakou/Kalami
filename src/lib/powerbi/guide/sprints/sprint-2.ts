@@ -97,6 +97,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Colonne",
         "Type Power Query correct",
@@ -139,6 +140,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Colonne",
         "Type Power Query correct",
@@ -181,6 +183,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Colonne",
         "Type Power Query correct",
@@ -285,6 +288,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Colonne",
         "Type Power Query correct",
@@ -333,6 +337,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Colonne",
         "Type Power Query correct",
@@ -356,6 +361,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Colonne",
         "Type Power Query correct",
@@ -403,6 +409,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Colonne",
         "Type Power Query correct",
@@ -459,6 +466,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "code",
+      accents: ["type date", "type number", "Int64.Type"],
       texte: "= Table.TransformColumnTypes(#\"Navigation\",{\n    {\"session_date\", type " +
         "date},\n    {\"close\", type number},\n    {\"volume\", Int64.Type}\n})",
     },
@@ -551,6 +559,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Vue",
         "Clé d'unicité à sélectionner",
@@ -601,6 +610,7 @@ export const sprint2: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0],
       entetes: [
         "Nom technique",
         "Nom d'affichage",

@@ -83,6 +83,7 @@ export const sprint4: Sprint = {
     },
     {
       kind: "tableau",
+      colonnesMono: [0, 1],
       entetes: [
         "Depuis",
         "Vers",
@@ -297,6 +298,7 @@ export const sprint4: Sprint = {
     },
     {
       kind: "code",
+      accents: ["CALCULATE", "DISTINCTCOUNT", "TRUE", "SUM"],
       texte: "Nombre de titres actifs = CALCULATE(\n    DISTINCTCOUNT(v_stocks[ticker]),\n    " +
         "v_stocks[is_active] = TRUE()\n)\n\nVolume total = " +
         "SUM(v_quotes_history[volume])\n\nTotal abonnements (FCFA) = " +

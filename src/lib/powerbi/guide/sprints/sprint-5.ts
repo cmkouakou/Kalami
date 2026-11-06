@@ -54,6 +54,7 @@ export const sprint5: Sprint = {
     },
     {
       kind: "code",
+      accents: ["CALCULATE", "DATESYTD"],
       texte: "Volume YTD =\nCALCULATE(\n    [Volume total],\n    " +
         "DATESYTD(v_dim_date[date_jour])\n)",
     },
@@ -72,6 +73,7 @@ export const sprint5: Sprint = {
     },
     {
       kind: "code",
+      accents: ["CALCULATE", "SAMEPERIODLASTYEAR", "DIVIDE"],
       texte: "Volume N-1 (même période) =\nCALCULATE(\n    [Volume total],\n    " +
         "SAMEPERIODLASTYEAR(v_dim_date[date_jour])\n)\n\nÉvolution volume vs N-1 (%) " +
         "=\nDIVIDE(\n    [Volume total] - [Volume N-1 (même période)],\n    [Volume N-1 (même " +
@@ -100,6 +102,7 @@ export const sprint5: Sprint = {
     },
     {
       kind: "code",
+      accents: ["CALCULATE", "FILTER", "ALLSELECTED", "MAX"],
       texte: "Cumul abonnements (FCFA) =\nCALCULATE(\n    [Total abonnements (FCFA)],\n    " +
         "FILTER(\n        ALLSELECTED(v_dim_date),\n        v_dim_date[date_jour] <= " +
         "MAX(v_dim_date[date_jour])\n    )\n)",
@@ -125,6 +128,7 @@ export const sprint5: Sprint = {
     },
     {
       kind: "code",
+      accents: ["DIVIDE", "SUM"],
       texte: "Ratio Crédits/Dépôts =\nDIVIDE(\n    SUM(v_fundamentals[credit_xof]),\n    " +
         "SUM(v_fundamentals[depot_xof])\n)",
     },

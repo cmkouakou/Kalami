@@ -9,7 +9,8 @@
  *  Auteur     : Claude Marcel
  *               v1.1 (v0.21.0) : cadre du guide powerbi4you (en-tête, sommaire des
  *               sprints, carte, pied « précédent / prochain »).
- *  Version    : 1.1
+ *               v1.2 (v0.21.2) : « Chantier terminé » au pied du dernier sprint.
+ *  Version    : 1.2
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/guide, components/powerbi, lib/auth/dal.ts, i18n
  * =============================================================
@@ -122,6 +123,7 @@ async function SprintContenu({ params }: { params: Params }) {
             })}
             motPrecedent={d.chantier.precedent}
             motSuivant={d.chantier.suivant}
+            fin={d.chantier.fin}
             precedent={
               precedent && {
                 href: `${CHANTIER_HOME}/${precedent.slug}`,

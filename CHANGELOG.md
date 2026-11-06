@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## [v0.21.2] - 2026-11-05 — Kalami Données : passages en couleur du guide
+### Ajouté
+- Pastilles « dimension » (sarcelle) et « fait » (ocre) dans les tableaux des vues, comme
+  dans le guide d’origine.
+- Noms de vues, de colonnes et de mesures en police à chasse fixe dans les tableaux.
+- Fonctions DAX, types M et nouveaux noms en couleur dans les blocs de code.
+- « Chantier terminé » en sarcelle au pied du dernier sprint.
+- Test : chaque passage en couleur vise une cellule ou un code existant.
+
 ## [v0.21.1] - 2026-11-05 — Kalami Données réservé à l’administrateur
 ### Modifié
 - L’espace /powerbi n’est plus ouvert à tout compte connecté : seuls les administrateurs y

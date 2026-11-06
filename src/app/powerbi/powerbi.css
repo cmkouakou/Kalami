@@ -11,7 +11,9 @@
                priorité. Les jetons de Kalami (--paper, --encre…) y sont redirigés vers
                ceux du guide, pour que les utilitaires restants suivent la même charte.
   Auteur     : Claude Marcel
-  Version    : 1.0
+               v1.1 (v0.21.2) : passages en couleur (pastilles dimension / fait,
+               colonnes mono, accents du code, fin du chantier).
+  Version    : 1.1
   Date       : 2026-11-05
   Dépend de  : globals.css (Tailwind 4), polices chargées par app/powerbi/layout.tsx
 =============================================================
@@ -689,6 +691,32 @@
     border-bottom: 0;
   }
 
+  .p4y table.views td.vname {
+    font-family: var(--p4y-mono), ui-monospace, monospace;
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+
+  /* Pastilles de rôle : dimension (sarcelle) ou fait (ocre) */
+  .p4y .role {
+    display: inline-block;
+    font-size: 10.5px;
+    font-family: var(--p4y-mono), ui-monospace, monospace;
+    padding: 2px 7px;
+    border-radius: 100px;
+    letter-spacing: 0.03em;
+  }
+
+  .p4y .role.dim {
+    background: var(--teal-soft);
+    color: var(--teal-ink);
+  }
+
+  .p4y .role.fait {
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+  }
+
   /* ==================== TABLEAU DE BORD VISÉ (BOARD) ==================== */
 
   .p4y .board {
@@ -943,6 +971,10 @@
     line-height: 1.55;
   }
 
+  .p4y pre.codebox .c {
+    color: var(--code-accent);
+  }
+
   /* ==================== CASES DE FIN DE SPRINT ==================== */
 
   .p4y .card .checklist {
@@ -1028,6 +1060,10 @@
 
   .p4y .footfoot-nav:hover b {
     color: var(--accent-ink);
+  }
+
+  .p4y .footfoot .fin {
+    color: var(--teal-ink);
   }
 
   /* ==================== LISTE DES LEÇONS D'UN MODULE ==================== */
