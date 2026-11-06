@@ -9,7 +9,8 @@
  *               v1.1 (v0.21.0) : textes du cadre powerbi4you (sommaire, pastilles,
  *               pieds de carte).
  *               v1.2 (v0.21.2) : mention « Chantier terminé ».
- *  Version    : 1.2
+ *               v1.3 (v0.21.4) : texte de l'écran d'attente.
+ *  Version    : 1.3
  *  Date       : 2026-11-05
  * =============================================================
  */
@@ -22,6 +23,7 @@ const powerbiFr = {
     "leçon officielle, et un chantier pratique mené sur une vraie base de données.",
 
   sommaire: "Sommaire",
+  chargement: "Chargement de la page…",
 
   nav: {
     home: "Le parcours",

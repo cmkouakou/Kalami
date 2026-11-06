@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.21.4] - 2026-11-05 — Kalami Données : navigation plus réactive
+### Corrigé
+- Les liens « précédent / prochain » et le sommaire semblaient ne pas répondre : la page
+  restait affichée jusqu’à l’arrivée complète de la suivante. Un écran d’attente
+  (`loading.tsx` dans /powerbi, les sprints et les leçons) s’affiche désormais dès le clic.
+- Point d’attente dans les liens du pied de carte pendant la navigation.
+
 ## [v0.21.3] - 2026-11-05 — Accès à la formation depuis l’administration
 ### Ajouté
 - Groupe « Formation » dans le menu de l’administration : liens vers le parcours PL-300

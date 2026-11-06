@@ -7,7 +7,8 @@
  *               sommaire latéral et pied de carte « précédent / suivant ».
  *  Auteur     : Claude Marcel
  *               v1.1 (v0.21.2) : mention de fin « Chantier terminé ».
- *  Version    : 1.1
+ *               v1.2 (v0.21.4) : signal d'attente dans les liens du pied de carte.
+ *  Version    : 1.2
  *  Date       : 2026-11-05
  *  Dépendances: progress-ring.tsx, powerbi.css (classes .topbar, nav.sprints, .footfoot)
  * =============================================================
@@ -19,6 +20,7 @@ import type { ReactNode } from "react";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
 
 import { Etiquette } from "./lesson-blocks";
+import { LienEnCours } from "./lien-en-cours";
 import { ProgressRing } from "./progress-ring";
 
 const d = getPowerbiDictionary();
@@ -153,6 +155,7 @@ export function Footfoot(props: FootfootProps) {
         <Link href={precedent.href} className="footfoot-nav">
           <span aria-hidden="true">← </span>
           {motPrecedent} : <b>{precedent.libelle}</b>
+          <LienEnCours />
         </Link>
       )}
       <span>{position}</span>
@@ -160,6 +163,7 @@ export function Footfoot(props: FootfootProps) {
         <Link href={suivant.href} className="footfoot-nav">
           {motSuivant} : <b>{suivant.libelle}</b>
           <span aria-hidden="true"> →</span>
+          <LienEnCours />
         </Link>
       )}
       {!suivant && fin && <b className="fin">{fin}</b>}

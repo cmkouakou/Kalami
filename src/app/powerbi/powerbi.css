@@ -13,7 +13,8 @@
   Auteur     : Claude Marcel
                v1.1 (v0.21.2) : passages en couleur (pastilles dimension / fait,
                colonnes mono, accents du code, fin du chantier).
-  Version    : 1.1
+               v1.2 (v0.21.4) : écran d'attente et signal des liens précédent / suivant.
+  Version    : 1.2
   Date       : 2026-11-05
   Dépend de  : globals.css (Tailwind 4), polices chargées par app/powerbi/layout.tsx
 =============================================================
@@ -1064,6 +1065,69 @@
 
   .p4y .footfoot .fin {
     color: var(--teal-ink);
+  }
+
+  /* Point d'attente : visible dès le clic, jusqu'à l'arrivée de la page */
+  .p4y .lien-attente {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-left: 8px;
+    border-radius: 50%;
+    background: var(--accent-ink);
+    vertical-align: middle;
+    opacity: 0;
+  }
+
+  .p4y .lien-attente.actif {
+    opacity: 1;
+    animation: p4y-pulse 0.9s ease-in-out infinite;
+  }
+
+  /* ==================== ÉCRAN D'ATTENTE ==================== */
+
+  .p4y .chargement {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 8px;
+  }
+
+  .p4y .chargement .ligne {
+    height: 14px;
+    border-radius: 6px;
+    background: var(--border);
+    animation: p4y-pulse 1.4s ease-in-out infinite;
+  }
+
+  .p4y .chargement .ligne.courte {
+    width: 30%;
+  }
+
+  .p4y .chargement .ligne.titre {
+    width: 60%;
+    height: 30px;
+  }
+
+  .p4y .chargement .ligne.moyenne {
+    width: 70%;
+  }
+
+  @keyframes p4y-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .p4y .lien-attente.actif,
+    .p4y .chargement .ligne {
+      animation: none;
+    }
   }
 
   /* ==================== LISTE DES LEÇONS D'UN MODULE ==================== */
