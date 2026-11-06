@@ -21,7 +21,7 @@ const AVEC_RESUME = getToutesLesLecons().filter(({ module, lecon }) =>
 describe("résumés de leçons", () => {
   it("sont comptés à l'identique par le registre et la carte", () => {
     expect(AVEC_RESUME.length).toBe(compterResumes());
-    expect(compterResumes()).toBeGreaterThanOrEqual(13);
+    expect(compterResumes()).toBeGreaterThanOrEqual(25);
   });
 
   it.each(AVEC_RESUME.map(({ module, lecon }) => [`${module.slug}/${lecon.slug}`]))(

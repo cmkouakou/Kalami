@@ -45,6 +45,11 @@ describe("getVoisines", () => {
 
   it("depuis une leçon non rédigée, propose les résumés écrits les plus proches", () => {
     const iAVenir = toutes.findIndex((e) => !aUnResume(e.module.slug, e.lecon.slug));
+    // Parcours entièrement rédigé : il n'y a plus de leçon « à venir » à tester
+    if (iAVenir === -1) {
+      expect(redigees).toHaveLength(toutes.length);
+      return;
+    }
     const { module, lecon } = toutes[iAVenir];
     const { suivante } = getVoisines(module.slug, lecon.slug);
     const attendue = toutes

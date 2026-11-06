@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.19.0 (13 résumés PL-300 sur 25) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.20.0 (25 résumés PL-300 sur 25) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -85,7 +85,8 @@ Version actuelle : v0.19.0 (13 résumés PL-300 sur 25) · Stratégie v0.11.4 | 
 | #79 | 2026-11-05 | v0.17.0 : intégration de l'espace privé /powerbi (Kalami Données, PL-300) par correctif git ; v0.17.1 : Suspense (alerte Blocking Route), navigation limitée aux leçons rédigées, tests | ~150 000 | ~0.90 $ |
 | #80 | 2026-11-05 | v0.18.0 : migration du chantier BRVM Power BI (7 sprints, cases enregistrées sur le compte, schéma et maquettes) dans /powerbi | ~200 000 | ~1.20 $ |
 | #81 | 2026-11-05 | v0.19.0 : 9 résumés de leçons PL-300 (modules « Framework de modèle » et « Nettoyer et transformer » complets), test d’intégrité des résumés | ~120 000 | ~0.72 $ |
-| **TOTAL** | | | **~19 620 000** (hors #71) | **~117.72 $** |
+| #82 | 2026-11-05 | v0.20.0 : 12 derniers résumés PL-300 (modules « Fabric » et « Obtenir les données »), liens Microsoft Learn corrigés | ~110 000 | ~0.66 $ |
+| **TOTAL** | | | **~19 730 000** (hors #71) | **~118.38 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

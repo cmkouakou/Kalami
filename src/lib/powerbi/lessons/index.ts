@@ -20,6 +20,20 @@ type LessonKey = `${string}/${string}`;
 
 /** Chargeurs des résumés, par clé de leçon. */
 const RESUMES: Partial<Record<LessonKey, () => Promise<{ default: LessonContent }>>> = {
+  "fabric/analytique-de-bout-en-bout": () => import("./fabric/analytique-de-bout-en-bout"),
+  "fabric/equipes-de-donnees": () => import("./fabric/equipes-de-donnees"),
+  "fabric/activer-et-utiliser-fabric": () => import("./fabric/activer-et-utiliser-fabric"),
+  "obtenir-les-donnees/fichiers": () => import("./obtenir-les-donnees/fichiers"),
+  "obtenir-les-donnees/bases-relationnelles": () =>
+    import("./obtenir-les-donnees/bases-relationnelles"),
+  "obtenir-les-donnees/rapports-dynamiques": () =>
+    import("./obtenir-les-donnees/rapports-dynamiques"),
+  "obtenir-les-donnees/nosql": () => import("./obtenir-les-donnees/nosql"),
+  "obtenir-les-donnees/services-en-ligne": () => import("./obtenir-les-donnees/services-en-ligne"),
+  "obtenir-les-donnees/mode-de-stockage": () => import("./obtenir-les-donnees/mode-de-stockage"),
+  "obtenir-les-donnees/analysis-services": () => import("./obtenir-les-donnees/analysis-services"),
+  "obtenir-les-donnees/performance": () => import("./obtenir-les-donnees/performance"),
+  "obtenir-les-donnees/erreurs-import": () => import("./obtenir-les-donnees/erreurs-import"),
   "framework-de-modele/introduction": () => import("./framework-de-modele/introduction"),
   "framework-de-modele/fondements-du-modele": () =>
     import("./framework-de-modele/fondements-du-modele"),

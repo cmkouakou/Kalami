@@ -1,5 +1,21 @@
 # Journal des modifications
 
+## [v0.20.0] - 2026-11-05 — Kalami Données : les 25 résumés de leçons
+### Ajouté
+- Module « Découvrir Microsoft Fabric » complet : analytique de bout en bout, équipes de
+  données, activer et utiliser Fabric.
+- Module « Obtenir les données » complet : fichiers, bases relationnelles, rapports
+  dynamiques, NoSQL, services en ligne, mode de stockage, Analysis Services, performance,
+  erreurs d’importation.
+- Les 25 leçons du parcours PL-300 ont désormais un résumé, paraphrasé en français à partir
+  des pages officielles Microsoft Learn.
+
+### Corrigé
+- Liens Microsoft Learn des modules « Fabric » et « Obtenir les données » : les adresses
+  d’unités menaient à des pages 404 (`src/lib/powerbi/modules.ts`).
+- Durée de la leçon « L’analytique de bout en bout » : 5 minutes, comme sur Microsoft Learn.
+- Test de navigation adapté au parcours entièrement rédigé.
+
 ## [v0.19.0] - 2026-11-05 — Kalami Données : 9 nouveaux résumés de leçons
 ### Ajouté
 - Module « Choisir un framework de modèle » complet : modèle d’importation, modèle
