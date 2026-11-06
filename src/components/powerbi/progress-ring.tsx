@@ -6,7 +6,8 @@
  *               d'origine. Le chiffre est aussi écrit en texte à côté : l'anneau est
  *               décoratif pour les lecteurs d'écran.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *               v1.1 (v0.21.0) : couleurs et épaisseur de la charte powerbi4you.
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  * =============================================================
  */
@@ -19,18 +20,19 @@ const CIRCONFERENCE = 2 * Math.PI * RAYON;
 export function ProgressRing({ valeur, total }: { valeur: number; total: number }) {
   const part = total > 0 ? Math.min(valeur / total, 1) : 0;
   return (
-    <svg viewBox="0 0 36 36" className="size-9 shrink-0 -rotate-90" aria-hidden="true">
-      <circle cx={18} cy={18} r={RAYON} fill="none" strokeWidth={3} className="stroke-sand" />
+    <svg viewBox="0 0 36 36" className="progress-ring" aria-hidden="true">
+      <circle cx={18} cy={18} r={RAYON} fill="none" strokeWidth={3.5} className="fond" />
       <circle
         cx={18}
         cy={18}
         r={RAYON}
         fill="none"
-        strokeWidth={3}
+        strokeWidth={3.5}
         strokeLinecap="round"
         strokeDasharray={CIRCONFERENCE}
         strokeDashoffset={CIRCONFERENCE * (1 - part)}
-        className="stroke-success"
+        className="avance"
+        transform="rotate(-90 18 18)"
       />
     </svg>
   );

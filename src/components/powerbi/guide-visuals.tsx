@@ -7,8 +7,10 @@
  *               maquette de la fenêtre de fusion. Ce sont des repères pour se situer
  *               avant d'ouvrir Power BI Desktop, pas des captures : tout est en texte,
  *               donc lisible par un lecteur d'écran et net à toutes les tailles.
+ *               v1.1 (v0.21.0) : classes de la charte powerbi4you (powerbi.css) ; barre
+ *               de formule sous les volets, comme dans le guide d'origine.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/content.ts, i18n
  * =============================================================
@@ -58,10 +60,9 @@ export function SchemaDiagram({ bloc }: { bloc: SchemaBlock }) {
   });
 
   return (
-    <figure className="flex flex-col gap-2">
+    <figure className="schema-wrap">
       <svg
         viewBox={`0 0 ${LARGEUR} ${hauteur}`}
-        className="w-full max-w-2xl"
         role="img"
         aria-label={bloc.legende ?? "Schéma du modèle"}
       >
@@ -71,20 +72,20 @@ export function SchemaDiagram({ bloc }: { bloc: SchemaBlock }) {
           const y1 = hautBoite(lien.de, bloc.gauche.length, total) + BOITE_H / 2 + dy;
           const y2 = hautBoite(lien.vers, bloc.droite.length, total) + BOITE_H / 2 + dy;
           return (
-            <g key={i} className="text-ink-muted">
+            <g key={i}>
               <line
                 x1={xLienG}
                 y1={y1}
                 x2={xDroite}
                 y2={y2}
-                stroke="currentColor"
+                className="lien"
                 strokeWidth={1.5}
                 strokeDasharray={lien.inactif ? "5 4" : undefined}
               />
-              <text x={xLienG + 6} y={y1 - 4} fontSize={11} fill="currentColor">
+              <text x={xLienG + 6} y={y1 - 4} fontSize={11} className="lien-texte">
                 1
               </text>
-              <text x={xDroite - 12} y={y2 - 4} fontSize={11} fill="currentColor">
+              <text x={xDroite - 12} y={y2 - 4} fontSize={11} className="lien-texte">
                 *
               </text>
               {lien.libelle && (
@@ -93,7 +94,7 @@ export function SchemaDiagram({ bloc }: { bloc: SchemaBlock }) {
                   y={(y1 + y2) / 2 - 5}
                   fontSize={10.5}
                   textAnchor="middle"
-                  fill="currentColor"
+                  className="lien-texte"
                 >
                   {lien.libelle}
                 </text>
@@ -108,9 +109,7 @@ export function SchemaDiagram({ bloc }: { bloc: SchemaBlock }) {
           <Boite key={nom} x={xDroite} y={hautBoite(i, bloc.droite.length, total)} nom={nom} />
         ))}
       </svg>
-      {bloc.legende && (
-        <figcaption className="text-caption text-ink-muted">{bloc.legende}</figcaption>
-      )}
+      {bloc.legende && <figcaption>{bloc.legende}</figcaption>}
       {/* Les relations en texte, pour un lecteur d'écran */}
       <ul className="sr-only">
         {bloc.liens.map((lien, i) => (
@@ -125,26 +124,12 @@ export function SchemaDiagram({ bloc }: { bloc: SchemaBlock }) {
   );
 }
 
-/** Une table du schéma ; les dimensions sont teintées encre. */
+/** Une table du schéma : dimensions en sarcelle, faits en ocre. */
 function Boite({ x, y, nom, dim }: { x: number; y: number; nom: string; dim?: boolean }) {
   return (
-    <g>
-      <rect
-        x={x}
-        y={y}
-        width={BOITE_L}
-        height={BOITE_H}
-        rx={6}
-        className={dim ? "fill-encre-soft stroke-encre" : "fill-sand stroke-line"}
-        strokeWidth={1.2}
-      />
-      <text
-        x={x + BOITE_L / 2}
-        y={y + BOITE_H / 2 + 4.5}
-        fontSize={13}
-        textAnchor="middle"
-        className={dim ? "fill-encre font-mono" : "fill-ink font-mono"}
-      >
+    <g className={dim ? "dim" : "fait"}>
+      <rect x={x} y={y} width={BOITE_L} height={BOITE_H} rx={6} strokeWidth={1.2} />
+      <text x={x + BOITE_L / 2} y={y + BOITE_H / 2 + 4.5} fontSize={13} textAnchor="middle">
         {nom}
       </text>
     </g>
@@ -153,68 +138,62 @@ function Boite({ x, y, nom, dim }: { x: number; y: number; nom: string; dim?: bo
 
 // ==================== MAQUETTE POWER QUERY ====================
 
-/** Petit titre de zone, en capitales comme dans l'éditeur. */
-const ZONE_TITRE = "px-3 py-2 text-caption uppercase text-ink-muted border-b border-line";
-
-/** Trois volets côte à côte dès la tablette ; empilés sur mobile. */
-const GRILLE_COMPLETE =
-  "md:grid-cols-[minmax(0,12rem)_minmax(0,1fr)_minmax(0,13rem)]";
-
-/** Maquette de l'éditeur Power Query : ruban, requêtes, aperçu, étapes, formule. */
+/**
+ * Maquette de l'éditeur Power Query : ruban, requêtes, aperçu, étapes, formule.
+ * La grille s'adapte aux volets présents (requêtes et aperçu sont facultatifs).
+ */
 export function PowerQueryMock({ bloc }: { bloc: PowerQueryMockBlock }) {
   const { onglets, requetes, apercu, etapes, formule } = bloc;
+  const corps = [
+    "pq-body",
+    requetes ? "" : "sans-requetes",
+    apercu ? "" : "sans-apercu",
+  ].filter(Boolean);
   return (
-    <figure
-      className="overflow-hidden rounded-lg border border-line bg-surface text-small"
-      aria-label="Maquette de l'éditeur Power Query"
-    >
+    <figure className="pq-mock" aria-label="Maquette de l'éditeur Power Query">
       {onglets && (
-        <div className="flex flex-wrap gap-1 border-b border-line bg-sand px-2 py-1.5">
+        <div className="pq-ribbon">
           {onglets.map((onglet, i) => (
-            <span
-              key={onglet}
-              className={
-                i === 0
-                  ? "rounded-sm bg-surface px-2 py-0.5 font-semibold text-encre"
-                  : "px-2 py-0.5 text-ink-muted"
-              }
-            >
+            <span key={onglet} className={i === 0 ? "on" : undefined}>
               {onglet}
             </span>
           ))}
         </div>
       )}
-      {formule && (
-        <p className="border-b border-line px-3 py-1.5 font-mono text-caption text-ink-muted">
-          {formule}
-        </p>
-      )}
-      <div className={`grid gap-px bg-line ${requetes && apercu ? GRILLE_COMPLETE : ""}`}>
+      <div className={corps.join(" ")}>
         {requetes && <Requetes requetes={requetes} />}
         {apercu && <Apercu apercu={apercu} />}
         <Etapes etapes={etapes} />
       </div>
+      {formule && <BarreFormule formule={formule} />}
     </figure>
+  );
+}
+
+/** Barre de formule : le préfixe « fx » est mis en relief, comme dans l'éditeur. */
+function BarreFormule({ formule }: { formule: string }) {
+  if (!formule.startsWith("fx")) return <div className="pq-fx">{formule}</div>;
+  return (
+    <div className="pq-fx">
+      <b>fx</b>
+      {formule.slice(2)}
+    </div>
   );
 }
 
 /** Volet des requêtes, la requête active surlignée. */
 function Requetes({ requetes }: { requetes: NonNullable<PowerQueryMockBlock["requetes"]> }) {
   return (
-    <div className="bg-surface">
-      <p className={ZONE_TITRE}>
+    <div className="pq-col">
+      <h4>
         {d.maquette.requetes} [{requetes.noms.length}]
-      </p>
-      <ul className="flex flex-col py-1 font-mono text-caption">
+      </h4>
+      <ul className="pq-queries">
         {requetes.noms.map((nom) => (
           <li
             key={nom}
             aria-current={nom === requetes.selection ? "true" : undefined}
-            className={
-              nom === requetes.selection
-                ? "bg-encre-soft px-3 py-1 font-semibold text-encre"
-                : "px-3 py-1"
-            }
+            className={nom === requetes.selection ? "sel" : undefined}
           >
             {nom}
           </li>
@@ -227,40 +206,36 @@ function Requetes({ requetes }: { requetes: NonNullable<PowerQueryMockBlock["req
 /** Aperçu des données : en-têtes, ligne des types, premières lignes. */
 function Apercu({ apercu }: { apercu: NonNullable<PowerQueryMockBlock["apercu"]> }) {
   return (
-    <div className="min-w-0 bg-surface">
-      <p className={ZONE_TITRE}>{apercu.titre}</p>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse font-mono text-caption">
+    <div className="pq-col">
+      <h4>{apercu.titre}</h4>
+      <div className="pq-grid">
+        <table>
           <thead>
-            <tr className="border-b border-line text-left">
+            <tr>
               {apercu.colonnes.map((c) => (
-                <th key={c} scope="col" className="px-3 py-1.5 font-semibold text-encre">
+                <th key={c} scope="col">
                   {c}
                 </th>
               ))}
             </tr>
-            <tr className="border-b border-line text-left text-ocre-text">
+            <tr className="typ">
               {apercu.types.map((t, i) => (
-                <td key={i} className="px-3 py-1">
-                  {t}
-                </td>
+                <td key={i}>{t}</td>
               ))}
             </tr>
           </thead>
           <tbody>
             {apercu.lignes.map((ligne, i) => (
-              <tr key={i} className="border-b border-line last:border-b-0">
+              <tr key={i}>
                 {ligne.map((v, j) => (
-                  <td key={j} className="px-3 py-1">
-                    {v}
-                  </td>
+                  <td key={j}>{v}</td>
                 ))}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {apercu.note && <p className="px-3 py-2 text-caption text-ink-muted">{apercu.note}</p>}
+      {apercu.note && <p className="pq-note">{apercu.note}</p>}
     </div>
   );
 }
@@ -269,24 +244,20 @@ function Apercu({ apercu }: { apercu: NonNullable<PowerQueryMockBlock["apercu"]>
 function Etapes({ etapes }: { etapes: PowerQueryMockBlock["etapes"] }) {
   const derniere = etapes.noms.length - 1;
   return (
-    <div className="bg-surface">
-      <p className={ZONE_TITRE}>{etapes.titre}</p>
-      <ol className="flex flex-col py-1 text-caption">
+    <div className="pq-col">
+      <h4>{etapes.titre}</h4>
+      <ol className="pq-steps">
         {etapes.noms.map((nom, i) => (
           <li
             key={nom}
             aria-current={i === derniere ? "step" : undefined}
-            className={
-              i === derniere
-                ? "bg-encre-soft px-3 py-1 font-semibold text-encre"
-                : "px-3 py-1"
-            }
+            className={i === derniere ? "cur" : undefined}
           >
             {nom}
           </li>
         ))}
       </ol>
-      {etapes.note && <p className="px-3 pb-2 text-caption text-ink-muted">{etapes.note}</p>}
+      {etapes.note && <p className="pq-note">{etapes.note}</p>}
     </div>
   );
 }
@@ -296,27 +267,14 @@ function Etapes({ etapes }: { etapes: PowerQueryMockBlock["etapes"] }) {
 /** Fenêtre « Fusionner des requêtes » : deux tables, leur clé commune, la jointure. */
 export function MergeMock({ bloc }: { bloc: MergeMockBlock }) {
   return (
-    <figure
-      className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-3 text-small"
-      aria-label={d.maquette.fusionTitre}
-    >
-      <p className="text-caption uppercase text-ink-muted">{d.maquette.fusionTitre}</p>
-      <div className="grid gap-3 sm:grid-cols-2">
+    <figure className="merge-mock" aria-label={d.maquette.fusionTitre}>
+      <div className="merge-tables">
         {bloc.tables.map((table) => (
-          <div key={table.titre} className="overflow-hidden rounded-md border border-line">
-            <p className="border-b border-line bg-sand px-3 py-1.5 font-semibold">
-              {table.titre}
-            </p>
-            <ul className="flex flex-wrap gap-1.5 p-2 font-mono text-caption">
+          <div key={table.titre} className="t">
+            <h4>{table.titre}</h4>
+            <ul>
               {table.colonnes.map((col) => (
-                <li
-                  key={col}
-                  className={
-                    col === table.cle
-                      ? "rounded-sm border border-encre bg-encre-soft px-2 py-1 text-encre"
-                      : "rounded-sm border border-line px-2 py-1"
-                  }
-                >
+                <li key={col} className={col === table.cle ? "col match" : "col"}>
                   {col}
                   {col === table.cle && <span className="sr-only"> ({d.maquette.cle})</span>}
                 </li>
@@ -325,17 +283,12 @@ export function MergeMock({ bloc }: { bloc: MergeMockBlock }) {
           </div>
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-caption text-ink-muted">{d.maquette.jointure} :</span>
+      <div className="merge-join" role="group" aria-label={d.maquette.jointure}>
         {bloc.jointures.map((j) => (
           <span
             key={j}
             aria-current={j === bloc.choisie ? "true" : undefined}
-            className={
-              j === bloc.choisie
-                ? "rounded-full bg-encre px-3 py-1 text-caption text-on-encre"
-                : "rounded-full bg-sand px-3 py-1 text-caption text-ink-muted"
-            }
+            className={j === bloc.choisie ? "on" : undefined}
           >
             {j}
           </span>

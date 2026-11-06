@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.21.0] - 2026-11-05 — Kalami Données : design du guide powerbi4you
+### Ajouté
+- Feuille de style dédiée à l’espace /powerbi (`src/app/powerbi/powerbi.css`), reprise du
+  guide powerbi4you : polices Fraunces, IBM Plex Sans et Plex Mono, teintes papier, ocre et
+  sarcelle, thème sombre.
+- Cadre commun des pages (`src/components/powerbi/guide-shell.tsx`) : en-tête avec pastille
+  d’avancement, sommaire latéral, pied de carte « précédent / prochain ».
+
+### Modifié
+- Parcours PL-300, pages de leçon, accueil et sprints du chantier BRVM : même mise en page
+  que le guide d’origine (sommaire à gauche, contenu en cartes, étiquettes Pratique, Info,
+  Repère).
+- Encadrés, notions dépliables, tableaux, schéma de modèle et maquettes Power Query et de
+  fusion : classes de la nouvelle charte.
+
 ## [v0.20.0] - 2026-11-05 — Kalami Données : les 25 résumés de leçons
 ### Ajouté
 - Module « Découvrir Microsoft Fabric » complet : analytique de bout en bout, équipes de

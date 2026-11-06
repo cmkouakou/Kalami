@@ -6,7 +6,9 @@
  *               PL-300 : navigation, accueil, liste des modules, page de leçon et
  *               mentions du parcours. Lus via getPowerbiDictionary() (powerbi.ts).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *               v1.1 (v0.21.0) : textes du cadre powerbi4you (sommaire, pastilles,
+ *               pieds de carte).
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  * =============================================================
  */
@@ -18,6 +20,8 @@ const powerbiFr = {
     "Préparation à la certification Microsoft PL-300 : des résumés structurés de chaque " +
     "leçon officielle, et un chantier pratique mené sur une vraie base de données.",
 
+  sommaire: "Sommaire",
+
   nav: {
     home: "Le parcours",
     workshop: "Le chantier",
@@ -28,28 +32,33 @@ const powerbiFr = {
   },
 
   accueil: {
+    surtitre: "Microsoft Learn · parcours PL-300",
     titre: "Préparer le PL-300, une leçon à la fois",
     intro:
       "Chaque leçon du parcours officiel Microsoft, résumée pour la compréhension : " +
       "l'idée centrale d'abord, puis les détails que l'examen vérifie. Le lien vers la " +
       "page d'origine reste visible pour pouvoir y revenir.",
-    avancement: "{pretes} leçons rédigées sur {total}",
-    modulesTitre: "Les modules",
-    lireLecon: "Lire",
+    redigees: "leçons rédigées",
+    module: "Module {n}",
+    sommaireNom: "Modules du parcours",
     aVenir: "À venir",
     minutes: "{n} min",
     lecons: "{n} leçons",
   },
 
   lecon: {
-    retour: "Retour au parcours",
+    surtitre: "Parcours PL-300 · module {n}",
+    numero: "Leçon {n} · {minutes}",
+    position: "Leçon {n} / {total} — {module}",
+    sommaireNom: "Leçons du module",
+    navigation: "Navigation entre les leçons",
     source: "Page officielle Microsoft Learn",
-    precedente: "Leçon précédente",
-    suivante: "Leçon suivante",
+    precedente: "Précédente",
+    suivante: "Suivante",
     nonRedigee: "Cette leçon n'est pas encore rédigée.",
     nonRedigeeAide:
       "Le résumé sera ajouté au fil de la progression dans le parcours. En attendant, " +
-      "la page officielle reste accessible ci-dessous.",
+      "la page officielle reste accessible dans la carte.",
   },
 
   encadre: {
@@ -71,15 +80,14 @@ const powerbiFr = {
       info: "contexte / explication, rien à cliquer",
       repere: "checklist de fin de sprint",
     },
-    sprintsTitre: "Les sprints",
     sprint: "Sprint {n}",
-    avancement: "{n} / {total} sprints terminés",
+    termines: "sprints terminés",
+    position: "Sprint {n} / {total} — {titre}",
+    sommaireNom: "Sprints du guide",
     cases: "{n} / {total} étapes cochées",
     termine: "Terminé",
-    ouvrir: "Ouvrir",
-    retour: "Retour au chantier",
-    precedent: "Sprint précédent",
-    suivant: "Sprint suivant",
+    precedent: "Précédent",
+    suivant: "Prochain",
     navigation: "Navigation entre les sprints",
     notion: "Notion",
     references: "Microsoft Learn",

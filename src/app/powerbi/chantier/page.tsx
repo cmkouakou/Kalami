@@ -5,8 +5,9 @@
  *  Description: Accueil du chantier BRVM Power BI : présentation, repères de lecture
  *               (Pratique, Info, Repère), anneau d'avancement et les 7 sprints avec leurs
  *               cases cochées. Contenu privé lu dans une zone Suspense.
+ *               v1.1 (v0.21.0) : cadre du guide powerbi4you (en-tête, sommaire, cartes).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/guide, components/powerbi, lib/auth/dal.ts, i18n
  * =============================================================
@@ -16,10 +17,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { LegendeChantier, Sommaire, Topbar } from "@/components/powerbi/guide-shell";
 import { InlineText } from "@/components/powerbi/inline-text";
-import { Etiquette } from "@/components/powerbi/lesson-blocks";
-import { ProgressRing } from "@/components/powerbi/progress-ring";
-import { CARD } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
 import { requireUser } from "@/lib/auth/dal";
@@ -52,84 +51,51 @@ async function Chantier() {
 
   return (
     <>
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <p className="text-caption uppercase text-ocre-text">{d.chantier.surtitre}</p>
-          <h1 className="font-serif text-h1 font-semibold text-encre">{d.chantier.titre}</h1>
-          <p className="max-w-prose text-ink-muted">{d.chantier.intro}</p>
-        </div>
-        <div className={`${CARD} flex items-center gap-3 rounded-full py-2 pl-2 pr-4`}>
-          <ProgressRing valeur={termines} total={SPRINTS.length} />
-          <span className="text-small text-ink-muted">
-            {interpolate(d.chantier.avancement, {
-              n: String(termines),
-              total: String(SPRINTS.length),
-            })}
-          </span>
-        </div>
-      </header>
+      <Topbar
+        surtitre={d.chantier.surtitre}
+        titre={d.chantier.titre}
+        intro={d.chantier.intro}
+        avancement={{ valeur: termines, total: SPRINTS.length, libelle: d.chantier.termines }}
+      >
+        <LegendeChantier />
+      </Topbar>
 
-      <section aria-labelledby="reperes" className="flex flex-col gap-2">
-        <h2 id="reperes" className="sr-only">
-          {d.chantier.legendeTitre}
-        </h2>
-        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-small text-ink-muted">
-          {(["pratique", "info", "repere"] as const).map((tag) => (
-            <li key={tag} className="flex items-center gap-2">
-              <Etiquette tag={tag} />
-              {d.chantier.legende[tag]}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div className="layout">
+        <Sommaire
+          nom={d.chantier.sommaireNom}
+          entrees={SPRINTS.map((s, i) => ({
+            href: `${CHANTIER_HOME}/${s.slug}`,
+            num: `S${s.numero}`,
+            libelle: s.titre,
+            fait: avancements[i].termine,
+          }))}
+        />
 
-      <section aria-labelledby="sprints" className="flex flex-col gap-4">
-        <h2 id="sprints" className="font-serif text-h2 font-semibold text-encre">
-          {d.chantier.sprintsTitre}
-        </h2>
-        <ol className="flex flex-col gap-3">
+        <ol className="stack">
           {SPRINTS.map((sprint, i) => {
             const { cochees: n, total, termine } = avancements[i];
             return (
-              <li key={sprint.slug}>
-                <Link
-                  href={`${CHANTIER_HOME}/${sprint.slug}`}
-                  className={`${CARD} flex flex-col gap-2 p-4 transition-colors
-                    hover:border-encre sm:flex-row sm:items-start sm:gap-4`}
-                >
-                  <span
-                    className={
-                      termine
-                        ? "inline-flex size-9 shrink-0 items-center justify-center rounded-full " +
-                          "bg-success text-small font-semibold text-on-encre"
-                        : "inline-flex size-9 shrink-0 items-center justify-center rounded-full " +
-                          "bg-sand text-small font-semibold text-ink-muted"
-                    }
-                    aria-hidden="true"
-                  >
-                    {termine ? "✓" : sprint.numero}
+              <li key={sprint.slug} className="card">
+                <div className="sprint-head">
+                  <span className="tag">
+                    {interpolate(d.chantier.sprint, { n: String(sprint.numero) })}
                   </span>
-                  <span className="flex flex-1 flex-col gap-1">
-                    <span className="text-caption uppercase text-ink-muted">
-                      {interpolate(d.chantier.sprint, { n: String(sprint.numero) })}
-                      {termine && ` · ${d.chantier.termine}`}
-                    </span>
-                    <span className="font-serif text-h3 font-semibold text-encre">
-                      {sprint.titre}
-                    </span>
-                    <span className="max-w-prose text-small text-ink-muted">
-                      <InlineText texte={sprint.lede} />
-                    </span>
-                  </span>
-                  <span className="shrink-0 text-caption text-ink-muted">
-                    {interpolate(d.chantier.cases, { n: String(n), total: String(total) })}
-                  </span>
-                </Link>
+                  <h2>
+                    <Link href={`${CHANTIER_HOME}/${sprint.slug}`}>{sprint.titre}</Link>
+                  </h2>
+                  {termine && <span className="step-tag recap">{d.chantier.termine}</span>}
+                </div>
+                <p className="lede">
+                  <InlineText texte={sprint.lede} />
+                </p>
+                <p className="discret">
+                  {interpolate(d.chantier.cases, { n: String(n), total: String(total) })}
+                </p>
               </li>
             );
           })}
         </ol>
-      </section>
+      </div>
     </>
   );
 }

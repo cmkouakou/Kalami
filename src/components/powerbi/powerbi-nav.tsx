@@ -4,8 +4,9 @@
  *  Projet     : Kalami Données
  *  Description: Liens entre les deux sections de l'espace — le parcours PL-300 et le
  *               chantier BRVM — avec la section courante marquée (aria-current).
+ *               v1.1 (v0.21.0) : onglets de la charte powerbi4you (powerbi.css).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/auth/routes.ts, i18n
  * =============================================================
@@ -21,10 +22,6 @@ import { CHANTIER_HOME, POWERBI_HOME } from "@/lib/auth/routes";
 
 const d = getPowerbiDictionary();
 
-const LIEN =
-  "inline-flex min-h-11 items-center border-b-2 px-1 text-label transition-colors " +
-  "duration-150 ease-kalami";
-
 /** Navigation principale de l'espace. */
 export function PowerbiNav() {
   const chemin = usePathname();
@@ -35,17 +32,12 @@ export function PowerbiNav() {
   ];
 
   return (
-    <ul aria-label={d.nav.principale} className="flex gap-4">
+    <ul aria-label={d.nav.principale} className="onglets">
       {liens.map((lien) => (
         <li key={lien.href}>
           <Link
             href={lien.href}
             aria-current={lien.actif ? "page" : undefined}
-            className={
-              lien.actif
-                ? `${LIEN} border-encre text-encre`
-                : `${LIEN} border-transparent text-ink-muted hover:text-encre`
-            }
           >
             {lien.texte}
           </Link>

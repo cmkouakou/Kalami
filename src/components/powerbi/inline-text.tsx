@@ -6,7 +6,8 @@
  *               [lien](url)) lu par parseInline. Aucun HTML n'est injecté : chaque nœud
  *               devient un élément React, le texte reste échappé.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *               v1.1 (v0.21.0) : style du code et des liens laissé à powerbi.css.
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/inline.ts
  * =============================================================
@@ -37,7 +38,7 @@ function Noeud({ noeud }: { noeud: InlineNode }) {
       return <>{noeud.texte}</>;
     case "code":
       return (
-        <code className="rounded-sm bg-sand px-1 py-0.5 font-mono text-[0.9em] text-encre">
+        <code>
           {noeud.texte}
         </code>
       );
@@ -58,7 +59,6 @@ function Noeud({ noeud }: { noeud: InlineNode }) {
       return (
         <a
           href={noeud.url}
-          className="text-encre underline underline-offset-2 hover:text-encre-strong"
           {...(externe ? { target: "_blank", rel: "noopener noreferrer" } : {})}
         >
           <Noeuds noeuds={noeud.enfants} />

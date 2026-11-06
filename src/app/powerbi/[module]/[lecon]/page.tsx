@@ -10,7 +10,9 @@
  *               privé est lu dans une zone Suspense ; la navigation ne mène plus qu'aux
  *               leçons rédigées, avec flèches comme le guide d'origine.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *               v1.2 (v0.21.0) : cadre du guide powerbi4you (en-tête du module,
+ *               sommaire des leçons, carte, pied « précédente / suivante »).
+ *  Version    : 1.2
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/modules.ts, lib/powerbi/lessons, components/powerbi
  * =============================================================
@@ -21,8 +23,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { Footfoot, Sommaire, Topbar } from "@/components/powerbi/guide-shell";
 import { LessonBlocks } from "@/components/powerbi/lesson-blocks";
-import { PANEL_SAND } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
 import { requireUser } from "@/lib/auth/dal";
@@ -65,79 +67,88 @@ async function Lecon({ params }: { params: Params }) {
   const { module, lecon } = trouve;
   const contenu = await getResume(moduleSlug, lessonSlug);
   const { precedente, suivante } = getVoisines(moduleSlug, lessonSlug);
+  const rangLecon = module.lecons.findIndex((l) => l.slug === lessonSlug) + 1;
+  const adresse = (m: string, l: string) => `${POWERBI_HOME}/${m}/${l}`;
 
   return (
-    <article className="flex flex-col gap-6">
-      <nav aria-label={d.lecon.retour}>
-        <Link href={POWERBI_HOME} className="text-small text-ink-muted hover:underline">
-          ← {d.lecon.retour}
-        </Link>
-      </nav>
-
-      <header className="flex flex-col gap-2">
-        <p className="text-small text-ink-muted">
-          {module.rang}. {module.titre}
-        </p>
-        <h1 className="font-serif text-h1 font-semibold text-encre">{lecon.titre}</h1>
-        <p className="max-w-prose text-ink-muted">{lecon.accroche}</p>
-        <p className="text-caption text-ink-muted">
-          {interpolate(d.accueil.minutes, { n: String(lecon.minutes) })}
-        </p>
-      </header>
-
-      {contenu ? (
-        <LessonBlocks contenu={contenu} />
-      ) : (
-        <div className={`${PANEL_SAND} max-w-prose px-4 py-3`}>
-          <p className="font-medium text-encre">{d.lecon.nonRedigee}</p>
-          <p className="mt-1 text-small text-ink-muted">{d.lecon.nonRedigeeAide}</p>
-        </div>
-      )}
-
-      {lecon.microsoftLearn && (
-        <p className="text-small">
-          <a
-            href={lecon.microsoftLearn}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-encre underline"
-          >
-            {d.lecon.source}
-          </a>
-        </p>
-      )}
-
-      <nav
-        aria-label={d.lecon.suivante}
-        className="mt-4 flex flex-wrap justify-between gap-4 border-t border-line pt-4 text-small"
-      >
-        {precedente ? (
-          <Link
-            href={`${POWERBI_HOME}/${precedente.module.slug}/${precedente.lecon.slug}`}
-            className="max-w-xs hover:underline"
-          >
-            <span className="block text-caption text-ink-muted">
-              <span aria-hidden="true">← </span>
-              {d.lecon.precedente}
-            </span>
-            <span className="text-encre">{precedente.lecon.titre}</span>
+    <>
+      <Topbar
+        surtitre={
+          <Link href={POWERBI_HOME}>
+            {interpolate(d.lecon.surtitre, { n: String(module.rang) })}
           </Link>
-        ) : (
-          <span />
-        )}
-        {suivante && (
-          <Link
-            href={`${POWERBI_HOME}/${suivante.module.slug}/${suivante.lecon.slug}`}
-            className="max-w-xs text-right hover:underline"
-          >
-            <span className="block text-caption text-ink-muted">
-              {d.lecon.suivante}
-              <span aria-hidden="true"> →</span>
+        }
+        titre={module.titre}
+        intro={module.resume}
+      />
+
+      <div className="layout">
+        <Sommaire
+          nom={d.lecon.sommaireNom}
+          lienTete={`${POWERBI_HOME}#${module.slug}`}
+          entrees={module.lecons.map((l, i) => ({
+            href: adresse(module.slug, l.slug),
+            num: `L${i + 1}`,
+            libelle: l.titre,
+            courant: l.slug === lessonSlug,
+          }))}
+        />
+
+        <article className="card stack">
+          <div className="sprint-head">
+            <span className="tag">
+              {interpolate(d.lecon.numero, {
+                n: String(rangLecon),
+                minutes: interpolate(d.accueil.minutes, { n: String(lecon.minutes) }),
+              })}
             </span>
-            <span className="text-encre">{suivante.lecon.titre}</span>
-          </Link>
-        )}
-      </nav>
-    </article>
+            <h2>{lecon.titre}</h2>
+          </div>
+          <p className="lede">{lecon.accroche}</p>
+
+          {contenu ? (
+            <LessonBlocks contenu={contenu} />
+          ) : (
+            <aside className="callout info">
+              <p>
+                <b>{d.lecon.nonRedigee}</b> {d.lecon.nonRedigeeAide}
+              </p>
+            </aside>
+          )}
+
+          {lecon.microsoftLearn && (
+            <p className="msref">
+              <span className="ms">Microsoft Learn</span>
+              <a href={lecon.microsoftLearn} target="_blank" rel="noopener noreferrer">
+                {d.lecon.source}
+              </a>
+            </p>
+          )}
+
+          <Footfoot
+            nom={d.lecon.navigation}
+            position={interpolate(d.lecon.position, {
+              n: String(rangLecon),
+              total: String(module.lecons.length),
+              module: module.titre,
+            })}
+            motPrecedent={d.lecon.precedente}
+            motSuivant={d.lecon.suivante}
+            precedent={
+              precedente && {
+                href: adresse(precedente.module.slug, precedente.lecon.slug),
+                libelle: precedente.lecon.titre,
+              }
+            }
+            suivant={
+              suivante && {
+                href: adresse(suivante.module.slug, suivante.lecon.slug),
+                libelle: suivante.lecon.titre,
+              }
+            }
+          />
+        </article>
+      </div>
+    </>
   );
 }

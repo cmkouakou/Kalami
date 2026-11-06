@@ -7,7 +7,9 @@
  *               enregistrées sur le compte. Les 7 adresses sont connues à la construction ;
  *               le contenu privé est lu dans une zone Suspense.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *               v1.1 (v0.21.0) : cadre du guide powerbi4you (en-tête, sommaire des
+ *               sprints, carte, pied « précédent / prochain »).
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/guide, components/powerbi, lib/auth/dal.ts, i18n
  * =============================================================
@@ -18,6 +20,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { Footfoot, LegendeChantier, Sommaire, Topbar } from "@/components/powerbi/guide-shell";
 import { InlineText } from "@/components/powerbi/inline-text";
 import { LessonBlocks } from "@/components/powerbi/lesson-blocks";
 import { interpolate } from "@/i18n";
@@ -26,7 +29,12 @@ import { requireUser } from "@/lib/auth/dal";
 import { CHANTIER_HOME } from "@/lib/auth/routes";
 import { texteBrut } from "@/lib/powerbi/inline";
 import { getProgressionChantier } from "@/lib/powerbi/guide/progress";
-import { getSprint, getSprintsVoisins, SPRINTS } from "@/lib/powerbi/guide/sprints";
+import {
+  getAvancementSprint,
+  getSprint,
+  getSprintsVoisins,
+  SPRINTS,
+} from "@/lib/powerbi/guide/sprints";
 
 const d = getPowerbiDictionary();
 
@@ -64,56 +72,71 @@ async function SprintContenu({ params }: { params: Params }) {
   if (!sprint) notFound();
 
   const progression = await getProgressionChantier();
+  const cochees = new Set(progression.coches);
+  const avancements = SPRINTS.map((s) => getAvancementSprint(s, cochees));
+  const termines = avancements.filter((a) => a.termine).length;
   const { precedent, suivant } = getSprintsVoisins(slug);
+  const etiquette = (n: number) => interpolate(d.chantier.sprint, { n: String(n) });
 
   return (
-    <article className="flex flex-col gap-6">
-      <nav aria-label={d.chantier.retour}>
-        <Link href={CHANTIER_HOME} className="text-small text-ink-muted hover:underline">
-          ← {d.chantier.retour}
-        </Link>
-      </nav>
-
-      <header className="flex flex-col gap-2">
-        <p className="text-caption uppercase text-ocre-text">
-          {interpolate(d.chantier.sprint, { n: String(sprint.numero) })}
-        </p>
-        <h1 className="font-serif text-h1 font-semibold text-encre">{sprint.titre}</h1>
-        <p className="max-w-prose text-ink-muted">
-          <InlineText texte={sprint.lede} />
-        </p>
-      </header>
-
-      <LessonBlocks contenu={sprint.contenu} progression={progression} />
-
-      <nav
-        aria-label={d.chantier.navigation}
-        className="mt-4 flex flex-wrap justify-between gap-4 border-t border-line pt-4 text-small"
+    <>
+      <Topbar
+        surtitre={<Link href={CHANTIER_HOME}>{d.chantier.surtitre}</Link>}
+        titre={d.chantier.titre}
+        intro={d.chantier.intro}
+        avancement={{ valeur: termines, total: SPRINTS.length, libelle: d.chantier.termines }}
       >
-        {precedent ? (
-          <Link href={`${CHANTIER_HOME}/${precedent.slug}`} className="max-w-xs hover:underline">
-            <span className="block text-caption text-ink-muted">
-              <span aria-hidden="true">← </span>
-              {d.chantier.precedent}
-            </span>
-            <span className="text-encre">{precedent.titre}</span>
-          </Link>
-        ) : (
-          <span />
-        )}
-        {suivant && (
-          <Link
-            href={`${CHANTIER_HOME}/${suivant.slug}`}
-            className="max-w-xs text-right hover:underline"
-          >
-            <span className="block text-caption text-ink-muted">
-              {d.chantier.suivant}
-              <span aria-hidden="true"> →</span>
-            </span>
-            <span className="text-encre">{suivant.titre}</span>
-          </Link>
-        )}
-      </nav>
-    </article>
+        <LegendeChantier />
+      </Topbar>
+
+      <div className="layout">
+        <Sommaire
+          nom={d.chantier.sommaireNom}
+          lienTete={CHANTIER_HOME}
+          entrees={SPRINTS.map((s, i) => ({
+            href: `${CHANTIER_HOME}/${s.slug}`,
+            num: `S${s.numero}`,
+            libelle: s.titre,
+            fait: avancements[i].termine,
+            courant: s.slug === slug,
+          }))}
+        />
+
+        <article className="card stack">
+          <div className="sprint-head">
+            <span className="tag">{etiquette(sprint.numero)}</span>
+            <h2>{sprint.titre}</h2>
+          </div>
+          <p className="lede">
+            <InlineText texte={sprint.lede} />
+          </p>
+
+          <LessonBlocks contenu={sprint.contenu} progression={progression} />
+
+          <Footfoot
+            nom={d.chantier.navigation}
+            position={interpolate(d.chantier.position, {
+              n: String(sprint.numero),
+              total: String(SPRINTS.length),
+              titre: sprint.titre,
+            })}
+            motPrecedent={d.chantier.precedent}
+            motSuivant={d.chantier.suivant}
+            precedent={
+              precedent && {
+                href: `${CHANTIER_HOME}/${precedent.slug}`,
+                libelle: etiquette(precedent.numero),
+              }
+            }
+            suivant={
+              suivant && {
+                href: `${CHANTIER_HOME}/${suivant.slug}`,
+                libelle: `${etiquette(suivant.numero)} — ${suivant.titre}`,
+              }
+            }
+          />
+        </article>
+      </div>
+    </>
   );
 }

@@ -7,7 +7,8 @@
  *               état précédent et un message l'explique. Si l'enregistrement n'est pas
  *               disponible (table absente), les cases restent utilisables sans mémoire.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *               v1.1 (v0.21.0) : liste .checklist de la charte powerbi4you.
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/guide/actions.ts, inline-text.tsx, i18n
  * =============================================================
@@ -63,29 +64,26 @@ export function GuideChecklist({ items, cochesInitiaux, enregistrable }: Props) 
   };
 
   return (
-    <div className="flex max-w-prose flex-col gap-2 rounded-lg border border-line bg-surface p-4">
-      <ul className="flex flex-col gap-1">
+    <>
+      <ul className="checklist">
         {items.map((item) => (
           <li key={item.id}>
-            <label className="flex min-h-11 cursor-pointer items-start gap-3 py-1.5">
-              <input
-                type="checkbox"
-                id={item.id}
-                checked={coches.has(item.id)}
-                onChange={(e) => basculer(item.id, e.target.checked)}
-                className="mt-1 size-5 shrink-0 accent-encre"
-              />
-              <span className={coches.has(item.id) ? "text-ink-muted line-through" : ""}>
-                <InlineText texte={item.texte} />
-              </span>
+            <input
+              type="checkbox"
+              id={item.id}
+              checked={coches.has(item.id)}
+              onChange={(e) => basculer(item.id, e.target.checked)}
+            />
+            <label htmlFor={item.id}>
+              <InlineText texte={item.texte} />
             </label>
           </li>
         ))}
       </ul>
-      {!enregistrable && <p className="text-caption text-ink-muted">{d.chantier.horsLigne}</p>}
-      <p role="status" aria-live="polite" className="text-caption text-danger">
+      {!enregistrable && <p className="discret">{d.chantier.horsLigne}</p>}
+      <p role="status" aria-live="polite" className="statut">
         {erreur ? d.chantier.erreur : ""}
       </p>
-    </div>
+    </>
   );
 }

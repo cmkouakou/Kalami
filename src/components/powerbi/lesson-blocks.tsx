@@ -8,15 +8,16 @@
  *               par la couleur de leur filet gauche autant que par leur intitulé, pour
  *               rester lisibles sans dépendre de la seule couleur.
  *               v1.1 (v0.18.0) : blocs du chantier BRVM et balisage en ligne.
+ *               v1.2 (v0.21.0) : classes de la charte powerbi4you (powerbi.css) ; les
+ *               blocs sont rendus à plat, comme enfants directs de la carte.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-05
  *  Dépendances: lib/powerbi/content.ts, inline-text.tsx, guide-visuals.tsx,
  *               guide-checklist.tsx, i18n
  * =============================================================
  */
 
-import { BADGE } from "@/components/ui/styles";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
 import type {
   ContentBlock,
@@ -32,13 +33,15 @@ import { InlineText } from "./inline-text";
 
 const d = getPowerbiDictionary();
 
-/** Filet gauche de chaque ton d'encadré. */
-const TON_BORDURE: Record<NoteTone, string> = {
-  info: "border-l-encre",
-  examen: "border-l-ocre",
-  memo: "border-l-ink-muted",
-  precision: "border-l-encre",
-  attention: "border-l-ocre",
+// ==================== CORRESPONDANCES AVEC LA CHARTE ====================
+
+/** Variante d'encadré de chaque ton (filet ocre par défaut). */
+const TON_CLASSE: Record<NoteTone, string> = {
+  info: "callout info",
+  examen: "callout",
+  memo: "callout memo",
+  precision: "callout info",
+  attention: "callout",
 };
 
 /** Intitulé par défaut de chaque ton ; les tons du chantier portent le leur dans le texte. */
@@ -50,11 +53,11 @@ const TON_TITRE: Record<NoteTone, string | null> = {
   attention: null,
 };
 
-/** Couleur du badge de chaque nature de section. */
+/** Classe d'étiquette de chaque nature de section. */
 const ETIQUETTE_CLASSE: Record<SectionTag, string> = {
-  pratique: "bg-encre-soft text-encre",
-  info: "bg-sand text-ink-muted",
-  repere: "bg-ocre/15 text-ocre-text",
+  pratique: "action",
+  info: "info",
+  repere: "recap",
 };
 
 /** Progression du lecteur, pour les cases à cocher d'un sprint. */
@@ -62,29 +65,32 @@ export type Progression = { coches: string[]; enregistrable: boolean };
 
 type Props = { contenu: LessonContent; progression?: Progression };
 
-/** Rend la suite des blocs d'une leçon ou d'un sprint. */
+type Carte = Extract<ContentBlock, { kind: "cartes" }>["cartes"][number];
+
+// ==================== COMPOSANTS EXPORTÉS ====================
+
+/** Rend la suite des blocs d'une leçon ou d'un sprint, à plat dans la carte. */
 export function LessonBlocks({ contenu, progression }: Props) {
   return (
-    <div className="flex flex-col gap-5">
+    <>
       {contenu.map((bloc, index) => (
         <Bloc key={index} bloc={bloc} progression={progression} />
       ))}
-    </div>
+    </>
   );
 }
 
-/** Badge « Pratique », « Info » ou « Repère » d'un titre de section. */
+/** Étiquette « Pratique », « Info » ou « Repère » d'un titre de section. */
 export function Etiquette({ tag }: { tag: SectionTag }) {
   return (
-    <span className={`${BADGE} ${ETIQUETTE_CLASSE[tag]} align-middle`}>
-      {d.chantier.etiquettes[tag]}
-    </span>
+    <span className={`step-tag ${ETIQUETTE_CLASSE[tag]}`}>{d.chantier.etiquettes[tag]}</span>
   );
 }
+
+// ==================== BLOCS ====================
 
 /** Rend une liste, ses éléments pouvant porter une sous-liste. */
 function Liste({ items, ordonnee }: { items: ListItem[]; ordonnee?: boolean }) {
-  const classes = `max-w-prose flex flex-col gap-1 pl-5 ${ordonnee ? "list-decimal" : "list-disc"}`;
   const contenu = items.map((item, i) =>
     typeof item === "string" ? (
       <li key={i}>
@@ -93,7 +99,7 @@ function Liste({ items, ordonnee }: { items: ListItem[]; ordonnee?: boolean }) {
     ) : (
       <li key={i}>
         <InlineText texte={item.texte} />
-        <ul className="mt-1 flex list-[circle] flex-col gap-1 pl-5">
+        <ul>
           {item.sous.map((s, j) => (
             <li key={j}>
               <InlineText texte={s} />
@@ -103,7 +109,7 @@ function Liste({ items, ordonnee }: { items: ListItem[]; ordonnee?: boolean }) {
       </li>
     ),
   );
-  return ordonnee ? <ol className={classes}>{contenu}</ol> : <ul className={classes}>{contenu}</ul>;
+  return ordonnee ? <ol>{contenu}</ol> : <ul>{contenu}</ul>;
 }
 
 /** Rend un bloc selon son type. */
@@ -111,25 +117,18 @@ function Bloc({ bloc, progression }: { bloc: ContentBlock; progression?: Progres
   switch (bloc.kind) {
     case "titre":
       return (
-        <h2
-          className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-serif text-h3
-            font-semibold text-encre"
-        >
-          {bloc.numero && (
-            <span className="font-sans text-small font-semibold text-ocre-text">
-              {bloc.numero}
-            </span>
-          )}
+        <h3 className="section">
+          {bloc.numero && <span className="n">{bloc.numero}</span>}
           <span>
             <InlineText texte={bloc.texte} />
           </span>
           {bloc.etiquette && <Etiquette tag={bloc.etiquette} />}
-        </h2>
+        </h3>
       );
 
     case "paragraphe":
       return (
-        <p className={bloc.discret ? "max-w-prose text-small text-ink-muted" : "max-w-prose"}>
+        <p className={bloc.discret ? "discret" : undefined}>
           <InlineText texte={bloc.texte} />
         </p>
       );
@@ -140,53 +139,27 @@ function Bloc({ bloc, progression }: { bloc: ContentBlock; progression?: Progres
     case "tableau":
       return <Tableau bloc={bloc} />;
 
-    case "encadre": {
-      const intitule = bloc.titre ?? TON_TITRE[bloc.ton];
-      return (
-        <aside className={`max-w-prose border-l-4 bg-sand px-4 py-3 ${TON_BORDURE[bloc.ton]}`}>
-          {intitule && (
-            <p className="mb-1 text-caption font-semibold uppercase text-ink-muted">{intitule}</p>
-          )}
-          <p>
-            <InlineText texte={bloc.texte} />
-          </p>
-          {bloc.points && (
-            <div className="mt-2">
-              <Liste items={bloc.points} />
-            </div>
-          )}
-        </aside>
-      );
-    }
+    case "encadre":
+      return <Encadre bloc={bloc} />;
 
     case "code":
       return (
-        <pre className="overflow-x-auto rounded-lg bg-encre px-4 py-3 text-small text-on-encre">
+        <pre className="codebox">
           <code>{bloc.texte}</code>
         </pre>
       );
 
     case "notion":
       return (
-        <details className="group max-w-prose rounded-lg border border-line bg-surface">
-          <summary
-            className="flex min-h-11 cursor-pointer items-center gap-3 px-4 py-2 font-semibold
-              text-encre"
-          >
-            <span className={`${BADGE} bg-encre-soft text-encre`}>
-              {bloc.etiquette ?? d.chantier.notion}
-            </span>
-            <span className="flex-1">
+        <details className="glossary">
+          <summary>
+            <span className="ico" aria-hidden="true" />
+            <span>
               <InlineText texte={bloc.titre} />
             </span>
-            <span
-              aria-hidden="true"
-              className="text-ink-muted transition-transform group-open:rotate-90"
-            >
-              ›
-            </span>
+            <span className="tag">{bloc.etiquette ?? d.chantier.notion}</span>
           </summary>
-          <div className="border-t border-line px-4 py-3">
+          <div className="body">
             <LessonBlocks contenu={bloc.contenu} />
           </div>
         </details>
@@ -194,18 +167,15 @@ function Bloc({ bloc, progression }: { bloc: ContentBlock; progression?: Progres
 
     case "references":
       return (
-        <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-small">
-          <span className="text-caption uppercase text-ink-muted">{d.chantier.references}</span>
-          {bloc.liens.map((lien) => (
-            <a
-              key={lien.url}
-              href={lien.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-encre underline underline-offset-2 hover:text-encre-strong"
-            >
-              {lien.texte}
-            </a>
+        <p className="msref">
+          <span className="ms">{d.chantier.references}</span>
+          {bloc.liens.map((lien, i) => (
+            <span key={lien.url}>
+              {i > 0 && " · "}
+              <a href={lien.url} target="_blank" rel="noopener noreferrer">
+                {lien.texte}
+              </a>
+            </span>
           ))}
         </p>
       );
@@ -220,26 +190,7 @@ function Bloc({ bloc, progression }: { bloc: ContentBlock; progression?: Progres
       );
 
     case "cartes":
-      return (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {bloc.cartes.map((carte, i) => (
-            <section
-              key={i}
-              className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-4"
-            >
-              <h3 className="font-semibold text-encre">
-                <InlineText texte={carte.titre} />
-              </h3>
-              {carte.texte && (
-                <p className="text-small text-ink-muted">
-                  <InlineText texte={carte.texte} />
-                </p>
-              )}
-              {carte.points.length > 0 && <Liste items={carte.points} />}
-            </section>
-          ))}
-        </div>
-      );
+      return <Cartes cartes={bloc.cartes} />;
 
     case "schema":
       return <SchemaDiagram bloc={bloc} />;
@@ -252,20 +203,78 @@ function Bloc({ bloc, progression }: { bloc: ContentBlock; progression?: Progres
   }
 }
 
+/** Encadré : intitulé en gras dans la première phrase, puis points éventuels. */
+function Encadre({ bloc }: { bloc: Extract<ContentBlock, { kind: "encadre" }> }) {
+  const intitule = bloc.titre ?? TON_TITRE[bloc.ton];
+  return (
+    <aside className={TON_CLASSE[bloc.ton]}>
+      <p>
+        {intitule && <b>{intitule} : </b>}
+        <InlineText texte={bloc.texte} />
+      </p>
+      {bloc.points && <Liste items={bloc.points} />}
+    </aside>
+  );
+}
+
+/**
+ * Cartes côte à côte : deux options comparées (.decide) ou un ensemble de pages (.board).
+ * @param cartes - Cartes du bloc
+ */
+function Cartes({ cartes }: { cartes: Carte[] }) {
+  if (cartes.length === 2) {
+    return (
+      <div className="decide">
+        {cartes.map((carte, i) => (
+          <div key={i} className={i === 0 ? "box a" : "box b"}>
+            <h4>
+              <InlineText texte={carte.titre} />
+            </h4>
+            <ContenuCarte carte={carte} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div className="board">
+      {cartes.map((carte, i) => (
+        <div key={i} className="page">
+          <h4 className="ptitle">
+            <span className={`sw teinte-${i % 3}`} aria-hidden="true" />
+            <InlineText texte={carte.titre} />
+          </h4>
+          <ContenuCarte carte={carte} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Texte et points d'une carte. */
+function ContenuCarte({ carte }: { carte: Carte }) {
+  return (
+    <>
+      {carte.texte && (
+        <p>
+          <InlineText texte={carte.texte} />
+        </p>
+      )}
+      {carte.points.length > 0 && <Liste items={carte.points} />}
+    </>
+  );
+}
+
 /** Tableau à en-tête, avec sa légende éventuelle au-dessus. */
 function Tableau({ bloc }: { bloc: Extract<ContentBlock, { kind: "tableau" }> }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-small">
-        {bloc.legende && (
-          <caption className="pb-2 text-left text-caption font-semibold uppercase text-ocre-text">
-            {bloc.legende}
-          </caption>
-        )}
+    <div className="tblwrap">
+      <table className="views">
+        {bloc.legende && <caption className="axis-title">{bloc.legende}</caption>}
         <thead>
-          <tr className="border-b border-line text-left">
+          <tr>
             {bloc.entetes.map((entete, i) => (
-              <th key={i} scope="col" className="py-2 pr-4 font-semibold text-encre">
+              <th key={i} scope="col">
                 <InlineText texte={entete} />
               </th>
             ))}
@@ -273,9 +282,9 @@ function Tableau({ bloc }: { bloc: Extract<ContentBlock, { kind: "tableau" }> })
         </thead>
         <tbody>
           {bloc.lignes.map((ligne, i) => (
-            <tr key={i} className="border-b border-line align-top">
+            <tr key={i}>
               {ligne.map((cellule, j) => (
-                <td key={j} className="py-2 pr-4">
+                <td key={j}>
                   <InlineText texte={cellule} />
                 </td>
               ))}
