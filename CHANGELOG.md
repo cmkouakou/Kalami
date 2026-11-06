@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## [v0.19.0] - 2026-11-05 — Kalami Données : 9 nouveaux résumés de leçons
+### Ajouté
+- Module « Choisir un framework de modèle » complet : modèle d’importation, modèle
+  DirectQuery, modèle composite, choisir un framework.
+- Module « Nettoyer, transformer et charger » complet : introduction, mise en forme,
+  simplifier la structure, types de colonnes, combiner des tables.
+- Résumés rédigés à partir des pages officielles Microsoft Learn, paraphrasés en français
+  (`src/lib/powerbi/lessons/`). 13 leçons sur 25 sont désormais disponibles.
+- Test d’intégrité des résumés (`tests/unit/powerbi-lessons.test.ts`).
+
 ## [v0.18.0] - 2026-11-05 — Kalami Données : chantier BRVM Power BI
 ### Ajouté
 - Section « Le chantier » (`/powerbi/chantier`) : les 7 sprints du guide d'origine
