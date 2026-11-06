@@ -5,7 +5,7 @@
  *  Description: Gabarit de l'espace de préparation PL-300 : en-tête et pied de page
  *               propres, pour qu'un lien vers /powerbi mène directement au parcours.
  *               Espace privé : il n'est pas indexé par les moteurs de recherche, et
- *               chaque page appelle requireUser.
+ *               chaque page appelle requirePowerbiAccess (administrateurs).
  *               v1.1 (v0.21.0) : charte du guide powerbi4you (classe .p4y, polices
  *               Fraunces / IBM Plex, feuille powerbi.css).
  *  Auteur     : Claude Marcel

@@ -14,7 +14,7 @@
 
 "use server";
 
-import { getCurrentUser } from "@/lib/auth/dal";
+import { getCurrentProfile, getCurrentUser } from "@/lib/auth/dal";
 import { createClient } from "@/lib/supabase/server";
 
 import { TOUTES_LES_CASES } from "./sprints";
@@ -34,6 +34,9 @@ export async function basculerCase(id: string, coche: boolean): Promise<{ ok: bo
   }
   const user = await getCurrentUser();
   if (!user) return { ok: false };
+  // Kalami Données est réservé aux administrateurs (v0.21.1)
+  const profile = await getCurrentProfile();
+  if (!profile?.is_admin) return { ok: false };
 
   const supabase = await createClient();
   if (coche) {

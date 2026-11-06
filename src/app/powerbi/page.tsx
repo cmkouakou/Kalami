@@ -22,7 +22,7 @@ import { Suspense } from "react";
 import { Sommaire, Topbar } from "@/components/powerbi/guide-shell";
 import { interpolate } from "@/i18n";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
-import { requireUser } from "@/lib/auth/dal";
+import { requirePowerbiAccess } from "@/lib/auth/dal";
 import { POWERBI_HOME } from "@/lib/auth/routes";
 import { aUnResume } from "@/lib/powerbi/lessons";
 import { getAvancement, MODULES, type Module } from "@/lib/powerbi/modules";
@@ -39,7 +39,7 @@ export default function PowerbiHomePage() {
 
 /** Contenu privé : lu dans une zone Suspense (cookies de session). */
 async function PowerbiHome() {
-  await requireUser(POWERBI_HOME);
+  await requirePowerbiAccess(POWERBI_HOME);
   const { pretes, total } = getAvancement();
 
   return (

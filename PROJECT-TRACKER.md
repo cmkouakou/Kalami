@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.21.0 (design powerbi4you dans /powerbi) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.21.1 (/powerbi réservé à l’admin) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -87,7 +87,8 @@ Version actuelle : v0.21.0 (design powerbi4you dans /powerbi) · Stratégie v0.1
 | #81 | 2026-11-05 | v0.19.0 : 9 résumés de leçons PL-300 (modules « Framework de modèle » et « Nettoyer et transformer » complets), test d’intégrité des résumés | ~120 000 | ~0.72 $ |
 | #82 | 2026-11-05 | v0.20.0 : 12 derniers résumés PL-300 (modules « Fabric » et « Obtenir les données »), liens Microsoft Learn corrigés | ~110 000 | ~0.66 $ |
 | #83 | 2026-11-05 | v0.21.0 : design du guide powerbi4you appliqué à tout l’espace /powerbi (feuille de style, cadre commun, 5 pages, blocs et maquettes) | ~250 000 | ~1.50 $ |
-| **TOTAL** | | | **~19 980 000** (hors #71) | **~119.88 $** |
+| #84 | 2026-11-05 | v0.21.1 : /powerbi réservé aux administrateurs (garde dans la DAL, action des cases protégée) | ~30 000 | ~0.18 $ |
+| **TOTAL** | | | **~20 010 000** (hors #71) | **~120.06 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

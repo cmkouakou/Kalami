@@ -27,7 +27,7 @@ import { Footfoot, Sommaire, Topbar } from "@/components/powerbi/guide-shell";
 import { LessonBlocks } from "@/components/powerbi/lesson-blocks";
 import { interpolate } from "@/i18n";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
-import { requireUser } from "@/lib/auth/dal";
+import { requirePowerbiAccess } from "@/lib/auth/dal";
 import { POWERBI_HOME } from "@/lib/auth/routes";
 import { getResume } from "@/lib/powerbi/lessons";
 import { getLesson, getToutesLesLecons, getVoisines } from "@/lib/powerbi/modules";
@@ -58,7 +58,7 @@ export default function LeconPage({ params }: { params: Params }) {
 
 /** Contenu privé de la leçon : lu dans une zone Suspense (cookies de session). */
 async function Lecon({ params }: { params: Params }) {
-  await requireUser(POWERBI_HOME);
+  await requirePowerbiAccess(POWERBI_HOME);
 
   const { module: moduleSlug, lecon: lessonSlug } = await params;
   const trouve = getLesson(moduleSlug, lessonSlug);

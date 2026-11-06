@@ -21,7 +21,7 @@ import { LegendeChantier, Sommaire, Topbar } from "@/components/powerbi/guide-sh
 import { InlineText } from "@/components/powerbi/inline-text";
 import { interpolate } from "@/i18n";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
-import { requireUser } from "@/lib/auth/dal";
+import { requirePowerbiAccess } from "@/lib/auth/dal";
 import { CHANTIER_HOME } from "@/lib/auth/routes";
 import { getProgressionChantier } from "@/lib/powerbi/guide/progress";
 import { getAvancementSprint, SPRINTS } from "@/lib/powerbi/guide/sprints";
@@ -43,7 +43,7 @@ export default function ChantierPage() {
 
 /** Contenu privé : lu dans une zone Suspense (cookies de session). */
 async function Chantier() {
-  await requireUser(CHANTIER_HOME);
+  await requirePowerbiAccess(CHANTIER_HOME);
   const { coches } = await getProgressionChantier();
   const cochees = new Set(coches);
   const avancements = SPRINTS.map((s) => getAvancementSprint(s, cochees));

@@ -25,7 +25,7 @@ import { InlineText } from "@/components/powerbi/inline-text";
 import { LessonBlocks } from "@/components/powerbi/lesson-blocks";
 import { interpolate } from "@/i18n";
 import { getPowerbiDictionary } from "@/i18n/powerbi";
-import { requireUser } from "@/lib/auth/dal";
+import { requirePowerbiAccess } from "@/lib/auth/dal";
 import { CHANTIER_HOME } from "@/lib/auth/routes";
 import { texteBrut } from "@/lib/powerbi/inline";
 import { getProgressionChantier } from "@/lib/powerbi/guide/progress";
@@ -66,7 +66,7 @@ export default function SprintPage({ params }: { params: Params }) {
 /** Contenu privé du sprint : lu dans une zone Suspense (cookies de session). */
 async function SprintContenu({ params }: { params: Params }) {
   const { sprint: slug } = await params;
-  await requireUser(`${CHANTIER_HOME}/${slug}`);
+  await requirePowerbiAccess(`${CHANTIER_HOME}/${slug}`);
 
   const sprint = getSprint(slug);
   if (!sprint) notFound();

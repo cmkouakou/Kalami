@@ -6,7 +6,9 @@
  *               serveur privée passe par ces fonctions : c'est ici que l'autorisation est
  *               réellement vérifiée (le proxy ne fait qu'une vérification optimiste).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *               v1.3 (v0.21.1) : garde requirePowerbiAccess (Kalami Données réservé
+ *               aux administrateurs).
+ *  Version    : 1.3
  *  Date       : 2026-10-06
  *  Dépendances: lib/supabase/server.ts
  * =============================================================
@@ -15,7 +17,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 
 import { authPath } from "@/lib/auth/routes";
@@ -84,6 +86,21 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
 export async function requireUser(nextPath = "/compte"): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user) redirect(authPath("connexion", nextPath));
+  return user;
+}
+
+/**
+ * Exige l'accès à Kalami Données, réservé aux administrateurs.
+ * - non connecté       → /connexion, retour à la page demandée
+ * - pas administrateur → page introuvable (l'espace n'est pas révélé)
+ * La double authentification n'est pas exigée : l'espace ne contient que des notes de
+ * révision et la progression du lecteur.
+ * @param nextPath - Page où revenir après connexion
+ */
+export async function requirePowerbiAccess(nextPath: string): Promise<CurrentUser> {
+  const user = await requireUser(nextPath);
+  const profile = await getCurrentProfile();
+  if (!profile?.is_admin) notFound();
   return user;
 }
 

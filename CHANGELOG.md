@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.21.1] - 2026-11-05 — Kalami Données réservé à l’administrateur
+### Modifié
+- L’espace /powerbi n’est plus ouvert à tout compte connecté : seuls les administrateurs y
+  accèdent (garde `requirePowerbiAccess` dans `src/lib/auth/dal.ts`). Un autre compte obtient
+  une page introuvable ; l’action des cases à cocher refuse aussi l’écriture.
+
 ## [v0.21.0] - 2026-11-05 — Kalami Données : design du guide powerbi4you
 ### Ajouté
 - Feuille de style dédiée à l’espace /powerbi (`src/app/powerbi/powerbi.css`), reprise du
