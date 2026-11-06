@@ -7,8 +7,8 @@
  *               Stratégie et filet de sécurité pour un code de connexion arrivé sur
  *               l'accueil.
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
- *  Date       : 2026-10-25
+ *  Version    : 1.7
+ *  Date       : 2026-11-05
  * =============================================================
  */
 
@@ -47,6 +47,9 @@ export const STRATEGY_HOME = "/strategie";
 
 /** Accueil de Kalami Données (préparation PL-300). */
 export const POWERBI_HOME = "/powerbi";
+
+/** Chantier BRVM Power BI : les sprints pratiques de Kalami Données. */
+export const CHANTIER_HOME = `${POWERBI_HOME}/chantier`;
 
 /** Pages de connexion, présentes sur le site et dans Kalami Stratégie. */
 const AUTH_PAGES = [

@@ -6,8 +6,9 @@
  *               lui-même, connexion et déconnexion ramènent à /powerbi. Une pastille
  *               rappelle que la section est privée pendant sa construction, et le pied
  *               de page porte la mention d'absence d'affiliation avec Microsoft.
+ *               v1.1 (v0.18.0) : liens vers le parcours et le chantier.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-05
  *  Dépendances: lib/auth/dal.ts, lib/auth/actions.ts, lib/auth/routes.ts, i18n
  * =============================================================
@@ -25,6 +26,8 @@ import { signOut } from "@/lib/auth/actions";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { authPath, POWERBI_HOME } from "@/lib/auth/routes";
 import { APP_NAME } from "@/lib/config";
+
+import { PowerbiNav } from "./powerbi-nav";
 
 const t = getDictionary();
 const d = getPowerbiDictionary();
@@ -51,6 +54,7 @@ export function PowerbiHeader() {
         <span className={BADGE} title={d.prive.explication}>
           {d.prive.badge}
         </span>
+        <PowerbiNav />
         <div className="ml-auto">
           {/* Session lue en flux : l'en-tête reste statique et instantané */}
           <Suspense fallback={<PowerbiSignInLink />}>

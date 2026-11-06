@@ -1,5 +1,23 @@
 # Journal des modifications
 
+## [v0.18.0] - 2026-11-05 — Kalami Données : chantier BRVM Power BI
+### Ajouté
+- Section « Le chantier » (`/powerbi/chantier`) : les 7 sprints du guide d'origine
+  « Chantier BRVM Power BI » (`powerbi4you`), repris sans ajout de contenu
+  (`src/lib/powerbi/guide/`, `src/app/powerbi/chantier/`).
+- Cases de fin de sprint enregistrées sur le compte, avec avancement par sprint et anneau
+  de progression ; table `powerbi_guide_progress` protégée par RLS
+  (`supabase/migrations/20261121120000_powerbi_guide_progress.sql`, à appliquer).
+- Nouveaux blocs : notions dépliables, références, cartes, cases à cocher, schéma de
+  modèle et maquettes Power Query / fusion ; balisage en ligne sûr, sans HTML injecté
+  (`src/lib/powerbi/inline.ts`, `src/components/powerbi/`).
+- Navigation « Le parcours / Le chantier » dans l'en-tête de l'espace.
+- Tests du chantier (`tests/unit/powerbi-guide.test.ts`).
+
+### Corrigé
+- Schéma en étoile : `v_fundamentals` n'est plus relié au calendrier, conformément au
+  texte du sprint 4. La capture d'écran du guide d'origine n'est pas reprise.
+
 ## [v0.17.1] - 2026-11-05 — Kalami Données : pré-affichage et navigation
 ### Corrigé
 - Accueil et pages de leçon de `/powerbi` : le contenu privé est lu dans une zone

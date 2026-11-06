@@ -21,6 +21,7 @@ const powerbiFr = {
   nav: {
     home: "Le parcours",
     workshop: "Le chantier",
+    principale: "Sections de Kalami Données",
     signIn: "Se connecter",
     signOut: "Se déconnecter",
     signedInAs: "{name}",
@@ -55,6 +56,45 @@ const powerbiFr = {
     info: "À retenir",
     examen: "À l'examen",
     memo: "Pour retenir",
+  },
+
+  chantier: {
+    surtitre: "BRVM Analyser · schéma reporting → Power BI Desktop",
+    titre: "Chantier BRVM Power BI",
+    intro:
+      "Guide d'entraînement, sprint par sprint : de la connexion déjà en place jusqu'à un " +
+      "dashboard complet — nettoyage, transformation, modélisation, présentation.",
+    legendeTitre: "Repères de lecture",
+    etiquettes: { pratique: "Pratique", info: "Info", repere: "Repère" },
+    legende: {
+      pratique: "à faire dans Power BI, maintenant",
+      info: "contexte / explication, rien à cliquer",
+      repere: "checklist de fin de sprint",
+    },
+    sprintsTitre: "Les sprints",
+    sprint: "Sprint {n}",
+    avancement: "{n} / {total} sprints terminés",
+    cases: "{n} / {total} étapes cochées",
+    termine: "Terminé",
+    ouvrir: "Ouvrir",
+    retour: "Retour au chantier",
+    precedent: "Sprint précédent",
+    suivant: "Sprint suivant",
+    navigation: "Navigation entre les sprints",
+    notion: "Notion",
+    references: "Microsoft Learn",
+    erreur: "La case n'a pas pu être enregistrée. Réessaie dans un instant.",
+    horsLigne:
+      "La progression ne peut pas être enregistrée pour le moment : les cases restent " +
+      "consultables, mais ne sont pas mémorisées.",
+  },
+
+  maquette: {
+    requetes: "Requêtes",
+    etapes: "Étapes appliquées",
+    fusionTitre: "Fusionner des requêtes",
+    cle: "colonne clé",
+    jointure: "Type de jointure",
   },
 
   prive: {
