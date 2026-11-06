@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.21.3] - 2026-11-05 — Accès à la formation depuis l’administration
+### Ajouté
+- Groupe « Formation » dans le menu de l’administration : liens vers le parcours PL-300
+  (/powerbi) et le chantier BRVM Power BI (/powerbi/chantier).
+
 ## [v0.21.2] - 2026-11-05 — Kalami Données : passages en couleur du guide
 ### Ajouté
 - Pastilles « dimension » (sarcelle) et « fait » (ocre) dans les tableaux des vues, comme

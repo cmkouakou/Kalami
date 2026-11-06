@@ -26,4 +26,9 @@ describe("activeHref", () => {
   it("ne confond pas deux modules au début semblable", () => {
     expect(activeHref("/admin/livres-archives")).toBeNull();
   });
+
+  it("distingue le parcours PL-300 du chantier BRVM (groupe Formation)", () => {
+    expect(activeHref("/powerbi")).toBe("/powerbi");
+    expect(activeHref("/powerbi/chantier/sprint-2")).toBe("/powerbi/chantier");
+  });
 });

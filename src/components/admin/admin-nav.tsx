@@ -6,8 +6,8 @@
  *               mise en évidence, pastilles « à traiter ». Colonne latérale sur grand
  *               écran, menu repliable sur téléphone.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1 (Lecture et audience, v0.16.1)
- *  Date       : 2026-10-28
+ *  Version    : 1.2 (groupe Formation vers Kalami Données, v0.21.3)
+ *  Date       : 2026-11-05
  *  Dépendances: i18n, components/ui/icons.tsx
  * =============================================================
  */
@@ -20,6 +20,7 @@ import { useState } from "react";
 
 import { IconList, IconX } from "@/components/ui/icons";
 import { getDictionary, interpolate } from "@/i18n";
+import { CHANTIER_HOME, POWERBI_HOME } from "@/lib/auth/routes";
 
 const t = getDictionary();
 const n = t.admin.nav;
@@ -68,6 +69,13 @@ const GROUPS: NavGroup[] = [
       { href: "/admin/strategie", label: n.strategyOverview },
       { href: "/admin/strategie/etapes", label: n.strategySteps },
       { href: "/admin/strategie/coach", label: n.strategyCoach },
+    ],
+  },
+  {
+    title: n.groups.training,
+    links: [
+      { href: POWERBI_HOME, label: n.powerbiCourse },
+      { href: CHANTIER_HOME, label: n.powerbiProject },
     ],
   },
   {

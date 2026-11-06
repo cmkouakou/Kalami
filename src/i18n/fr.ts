@@ -5,8 +5,8 @@
  *  Description: Textes de l'interface en français (langue par défaut).
  *               « {appName} » est remplacé par APP_NAME au moment de l'affichage.
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
- *  Date       : 2026-10-29
+ *  Version    : 1.8
+ *  Date       : 2026-11-05
  * =============================================================
  */
 
@@ -732,6 +732,8 @@ const fr = {
       strategyOverview: "Vue d'ensemble",
       strategySteps: "Étapes et guides",
       strategyCoach: "Coach IA",
+      powerbiCourse: "Parcours PL-300",
+      powerbiProject: "Chantier BRVM Power BI",
       menu: "Menu de l'administration",
       toDo: "{count} à traiter",
       groups: {
@@ -739,6 +741,7 @@ const fr = {
         catalog: "Catalogue",
         sales: "Ventes",
         strategy: "Kalami Stratégie",
+        training: "Formation",
         legal: "Juridique et sécurité",
       },
     },
