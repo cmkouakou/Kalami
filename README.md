@@ -6,6 +6,9 @@ ouvrages classés par catégorie ; les lecteurs découvrent gratuitement le somm
 paient par carte bancaire ou Mobile Money, puis lisent dans une liseuse moderne protégée.
 Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
 
+👉 **Présentation non technique** du livre *La stratégie d'entreprise* et de Kalami Stratégie
+(démarche, coach IA, pistes de promotion) : [docs/PRESENTATION.md](docs/PRESENTATION.md)
+
 ## 🚀 Fonctionnalités (v1, en cours — voir [docs/SPRINTS.md](docs/SPRINTS.md))
 - Catalogue, fiches livres, pages auteurs, recherche
 - Extrait gratuit et verrouillage côté serveur
