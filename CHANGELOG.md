@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.22.2] - 2026-11-10 — Étude PlacaliKro : polices de la charte
+### Modifié
+- `/etudes/placalikro.html` retrouve le rendu d’origine : Literata (titres, citations) et
+  Source Sans 3 (texte) auto-hébergées dans `public/etudes/fonts/` (licence OFL), servies
+  par le site lui-même, donc permises par la CSP.
+
 ## [v0.22.1] - 2026-11-10 — Étude de démonstration PlacaliKro en ligne
 ### Ajouté
 - Page statique `/etudes/placalikro.html` : l’étude stratégique de démonstration PlacaliKro
