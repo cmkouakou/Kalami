@@ -6,9 +6,10 @@
  *               lien magique, réinitialisation de mot de passe et Google.
  *               - « code »              → échange PKCE (flux par défaut de @supabase/ssr)
  *               - « token_hash » + type → vérification OTP (modèles de courriel personnalisés)
+ *               Échec PKCE (lien ouvert dans un autre navigateur) → message dédié.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-11
+ *  Version    : 1.2
+ *  Date       : 2026-11-10
  *  Dépendances: lib/supabase/server.ts, lib/auth/routes.ts
  * =============================================================
  */
@@ -16,7 +17,13 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { authPath, isStrategyPath, safeNextPath, STRATEGY_HOME } from "@/lib/auth/routes";
+import {
+  authPath,
+  callbackError,
+  isStrategyPath,
+  safeNextPath,
+  STRATEGY_HOME,
+} from "@/lib/auth/routes";
 import { createClient } from "@/lib/supabase/server";
 
 /** Vrai si le chemin est une page de nouveau mot de passe (site ou Kalami Stratégie). */
@@ -46,10 +53,12 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient();
   let ok = false;
+  let errorCode: string | undefined;
 
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     ok = !error;
+    errorCode = error?.code;
   } else if (tokenHash && type && OTP_TYPES.includes(type)) {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
     ok = !error;
@@ -59,7 +68,7 @@ export async function GET(request: NextRequest) {
 
   if (!ok) {
     const login = authPath("connexion", isStrategyPath(next) ? STRATEGY_HOME : null);
-    return NextResponse.redirect(`${origin}${login}${login.includes("?") ? "&" : "?"}erreur=lien`);
+    return NextResponse.redirect(`${origin}${login}${login.includes("?") ? "&" : "?"}erreur=${callbackError(errorCode)}`);
   }
 
   return NextResponse.redirect(`${origin}${next}`);

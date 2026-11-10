@@ -4,6 +4,7 @@
  * Description: Tests des chemins protégés, de la validation des redirections, des pages
  *              de connexion de Kalami Stratégie et du renvoi
  *              d'un code de connexion égaré vers /auth/callback.
+ *              Classement des échecs de lien de courriel (autre navigateur).
  * Auteur     : Claude Marcel
  * Date       : 2026-10-09
  */
@@ -12,6 +13,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   authPath,
+  callbackError,
   isProtectedPath,
   isStrategyPath,
   safeNextPath,
@@ -121,5 +123,16 @@ describe("authPath", () => {
     );
     expect(authPath("connexion")).toBe("/connexion");
     expect(authPath("mot-de-passe-oublie", "")).toBe("/mot-de-passe-oublie");
+  });
+});
+
+describe("callbackError", () => {
+  it("signale un lien ouvert dans un autre navigateur (code verifier PKCE absent)", () => {
+    expect(callbackError("pkce_code_verifier_not_found")).toBe("autre-navigateur");
+  });
+
+  it("garde le message générique pour un lien expiré ou inconnu", () => {
+    expect(callbackError("otp_expired")).toBe("lien");
+    expect(callbackError(undefined)).toBe("lien");
   });
 });

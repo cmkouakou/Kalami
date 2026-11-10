@@ -7,8 +7,8 @@
  *               Google proposé en premier sur les deux pages. Mêmes formulaires pour le
  *               site et Kalami Stratégie : la page de retour choisit les liens.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-26
+ *  Version    : 1.4
+ *  Date       : 2026-11-10
  *  Dépendances: lib/auth/actions.ts, lib/auth/routes.ts, components/ui/form.tsx
  * =============================================================
  */
@@ -38,6 +38,7 @@ export type AuthSearchParams = Promise<{ suivant?: string; erreur?: string }>;
 /** Traduit le paramètre « erreur » (posé par /auth/callback) en message. */
 function urlError(code: string | undefined): string | undefined {
   if (code === "lien") return t.auth.errors.linkExpired;
+  if (code === "autre-navigateur") return t.auth.errors.otherBrowser;
   if (code === "oauth") return t.auth.errors.generic;
   return undefined;
 }

@@ -6,9 +6,10 @@
  *               la page quittée, sinon à l'accueil), pages de connexion propres à Kalami
  *               Stratégie et filet de sécurité pour un code de connexion arrivé sur
  *               l'accueil.
+ *               Classement des échecs de lien de courriel (autre navigateur).
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
- *  Date       : 2026-11-05
+ *  Version    : 1.8
+ *  Date       : 2026-11-10
  * =============================================================
  */
 
@@ -101,4 +102,20 @@ export function strayAuthCallback(url: URL): URL | null {
   const target = new URL(url);
   target.pathname = "/auth/callback";
   return target;
+}
+
+// ==================== ERREURS DU RETOUR D'AUTHENTIFICATION ====================
+
+/** Valeur du paramètre « erreur » posé par /auth/callback sur la page de connexion. */
+export type CallbackError = "lien" | "autre-navigateur";
+
+/**
+ * Classe l'échec d'un lien de courriel. Sans le « code verifier » PKCE (lien ouvert dans un
+ * autre navigateur ou dans l'application de courriel), Supabase a souvent déjà confirmé
+ * l'adresse : la personne doit simplement se connecter, ce que le message doit dire.
+ * @param errorCode - Code d'erreur Supabase Auth (ex. « pkce_code_verifier_not_found »)
+ * @returns « autre-navigateur » si le lien vient d'un autre navigateur, sinon « lien »
+ */
+export function callbackError(errorCode: string | undefined): CallbackError {
+  return errorCode === "pkce_code_verifier_not_found" ? "autre-navigateur" : "lien";
 }

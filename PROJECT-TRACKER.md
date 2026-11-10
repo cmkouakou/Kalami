@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.22.3 (étude PlacaliKro en ligne, rendu corrigé) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.22.4 (lien de confirmation ouvert dans un autre navigateur) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -95,7 +95,8 @@ Version actuelle : v0.22.3 (étude PlacaliKro en ligne, rendu corrigé) · Strat
 | #89 | 2026-11-10 | v0.22.1 : étude de démonstration PlacaliKro publiée en page statique (/etudes/placalikro.html, noindex) pour les investisseurs | ~40 000 | ~0.24 $ |
 | #90 | 2026-11-10 | v0.22.2 : polices Literata et Source Sans 3 auto-hébergées dans l’étude PlacaliKro | ~20 000 | ~0.12 $ |
 | #91 | 2026-11-10 | v0.22.3 : correctif — CSS de l’étude PlacaliKro affiché en texte (vérifié dans Chrome) | ~30 000 | ~0.18 $ |
-| **TOTAL** | | | **~20 290 000** (hors #71) | **~121.74 $** |
+| #92 | 2026-11-10 | v0.22.4 : correctif — lien de courriel ouvert dans un autre navigateur (PKCE) : message dédié au lieu de « lien invalide » | ~40 000 | ~0.24 $ |
+| **TOTAL** | | | **~20 330 000** (hors #71) | **~121.98 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

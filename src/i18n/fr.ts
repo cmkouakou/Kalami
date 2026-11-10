@@ -421,6 +421,11 @@ const fr = {
       invalidEmail: "Adresse courriel invalide.",
       rateLimited: "Trop de tentatives. Réessayez dans quelques minutes.",
       linkExpired: "Ce lien est invalide ou a expiré. Demandez-en un nouveau.",
+      otherBrowser:
+        "Ce lien a été ouvert dans un autre navigateur que celui de la demande. " +
+        "Si vous veniez de créer votre compte, votre adresse est sans doute confirmée : " +
+        "connectez-vous avec votre mot de passe. Pour un nouveau mot de passe, refaites " +
+        "la demande et ouvrez le lien dans le même navigateur.",
       ageRequired: "Confirmez avoir 14 ans ou plus, ou l'accord d'un parent ou tuteur.",
       generic: "Une erreur est survenue. Réessayez.",
     },

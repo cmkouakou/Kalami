@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## [v0.22.4] - 2026-11-10 — Lien de confirmation ouvert dans un autre navigateur
+### Corrigé
+- Un lien de confirmation d’inscription ou de réinitialisation ouvert dans un autre navigateur
+  que celui de la demande (ex. application Gmail) affichait « lien invalide », alors que
+  Supabase avait déjà confirmé l’adresse : la personne croyait son inscription ratée.
+  `/auth/callback` reconnaît désormais l’absence du « code verifier » PKCE
+  (`pkce_code_verifier_not_found`) et renvoie vers la connexion avec `erreur=autre-navigateur` :
+  le message invite à se connecter avec son mot de passe, ou à refaire la demande de
+  réinitialisation dans le même navigateur. Helper `callbackError` (lib/auth/routes.ts) testé.
+
 ## [v0.22.3] - 2026-11-10 — Étude PlacaliKro : rendu corrigé
 ### Corrigé
 - `/etudes/placalikro.html` affichait une partie de sa feuille de style en texte en haut de
