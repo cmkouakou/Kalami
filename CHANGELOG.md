@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.22.0] - 2026-11-09 — Page « Découvrir » du livre et de Kalami Stratégie
+### Ajouté
+- Page publique et indexée `/decouvrir` : présentation illustrée du livre *La stratégie
+  d’entreprise* et de Kalami Stratégie (démarche en quatre temps, neuf étapes, coach IA,
+  cas Ajinomoto, publics), avec liens vers le livre, l’extrait, l’application et le cas.
+- Schémas dessinés (SVG aux couleurs de la charte, trois thèmes) : démarche, enchaînement
+  des étapes, boucle de travail avec le coach (`components/decouvrir/diagrammes.tsx`).
+- Captures des pages publiques prises sans session (`public/decouvrir/*.webp`).
+- `/decouvrir` ajoutée au plan du site (test SEO).
+
+### Retiré
+- `docs/PRESENTATION.md` et son lien dans le README : la présentation vit désormais sur
+  le site.
+
 ## [v0.21.4] - 2026-11-05 — Kalami Données : navigation plus réactive
 ### Corrigé
 - Les liens « précédent / prochain » et le sommaire semblaient ne pas répondre : la page

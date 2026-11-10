@@ -6,8 +6,8 @@
  *               des robots (robots.txt). Fonctions pures, lues par app/sitemap.ts et
  *               app/robots.ts.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-28
+ *  Version    : 1.3
+ *  Date       : 2026-11-09
  *  Dépendances: lib/catalog/types.ts, lib/legal/kinds.ts
  * =============================================================
  */
@@ -54,7 +54,7 @@ export type SitemapSource = {
 // ==================== FONCTIONS ====================
 
 /**
- * Entrées du plan du site : accueil, Kalami Stratégie, catégories ayant au moins un livre
+ * Entrées du plan du site : accueil, Kalami Stratégie, page Découvrir, catégories ayant au moins un livre
  * publié (une catégorie vide n'est pas proposée à Google), livres publiés,
  * auteurs ayant au moins un livre publié, textes légaux.
  * @param appUrl - URL publique sans « / » final
@@ -65,6 +65,7 @@ export function buildSitemap(appUrl: string, source: SitemapSource): MetadataRou
   const entries: MetadataRoute.Sitemap = [
     { url: appUrl, changeFrequency: "daily", priority: 1 },
     { url: `${appUrl}/strategie`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${appUrl}/decouvrir`, changeFrequency: "monthly", priority: 0.7 },
   ];
   for (const category of source.categories) {
     if (category.published_count === 0) continue;

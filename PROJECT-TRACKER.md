@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.21.4 (navigation /powerbi plus réactive) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.22.0 (page publique /decouvrir) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -91,7 +91,8 @@ Version actuelle : v0.21.4 (navigation /powerbi plus réactive) · Stratégie v0
 | #85 | 2026-11-05 | v0.21.2 : passages en couleur du guide (pastilles dimension / fait, colonnes mono, accents du code, fin du chantier) | ~60 000 | ~0.36 $ |
 | #86 | 2026-11-05 | v0.21.3 : groupe « Formation » dans le menu admin (PL-300, chantier BRVM) | ~15 000 | ~0.09 $ |
 | #87 | 2026-11-05 | v0.21.4 : écran d’attente et signal sur les liens précédent / suivant de /powerbi | ~25 000 | ~0.15 $ |
-| **TOTAL** | | | **~20 110 000** (hors #71) | **~120.66 $** |
+| #88 | 2026-11-09 | v0.22.0 : présentation du livre et de Kalami Stratégie (Claude Doc, puis page /decouvrir illustrée : captures, schémas SVG, plan du site) | ~180 000 | ~1.08 $ |
+| **TOTAL** | | | **~20 290 000** (hors #71) | **~121.74 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

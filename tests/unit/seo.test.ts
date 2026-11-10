@@ -4,8 +4,8 @@
  * Description: Tests du référencement : plan du site, règles des robots et données
  *              structurées « Book » (JSON-LD).
  * Auteur     : Claude Marcel
- * Version    : 1.2
- * Date       : 2026-10-28
+ * Version    : 1.3
+ * Date       : 2026-11-09
  */
 
 import { describe, expect, it } from "vitest";
@@ -38,6 +38,7 @@ describe("buildSitemap", () => {
   it("liste l'accueil, les catégories, les livres et les textes légaux", () => {
     expect(urls).toContain(APP);
     expect(urls).toContain(`${APP}/categories/roman`);
+    expect(urls).toContain(`${APP}/decouvrir`);
     expect(urls).toContain(`${APP}/livres/livre-a`);
     expect(urls).toContain(`${APP}/livres/livre-b`);
     expect(urls).toContain(`${APP}/confidentialite`);
