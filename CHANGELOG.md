@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.22.3] - 2026-11-10 — Étude PlacaliKro : rendu corrigé
+### Corrigé
+- `/etudes/placalikro.html` affichait une partie de sa feuille de style en texte en haut de
+  la page (bloc CSS recopié dans le corps lors de la conversion de l’artefact). Doublon
+  retiré ; le corps est identique à l’étude d’origine, mention en tête comprise.
+
 ## [v0.22.2] - 2026-11-10 — Étude PlacaliKro : polices de la charte
 ### Modifié
 - `/etudes/placalikro.html` retrouve le rendu d’origine : Literata (titres, citations) et
