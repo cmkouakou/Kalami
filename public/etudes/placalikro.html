@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Étude stratégique Kalami du restaurant PlacaliKro (Abidjan), réalisée à partir d'une vidéo publique de sa fondatrice.">
+  <title>Étude PlacaliKro — Kalami Stratégie</title>
+  <link rel="icon" href="/brand/kalami-app-icon.svg" type="image/svg+xml">
+<!--
+=============================================================
+  Fichier    : public/etudes/placalikro.html
+  Projet     : Kalami Stratégie — étude de démonstration
+  Description: Étude stratégique complète de PlacaliKro (profil, 8 étapes, plan)
+  Auteur     : Claude Marcel
+  Version    : 1.2 (page publique kalami-livres.com/etudes, polices locales, noindex)
+  Date       : 2026-11-10
+  Dépendances: (aucune — polices système)
+=============================================================
+-->
+<style>
+  /* Mise en page : document long, colonne de lecture + sommaire des étapes collant */
+  /* ==================== VARIABLES GLOBALES (charte Kalami) ==================== */
+  :root {
+    --paper: #faf6ef;
+    --surface: #ffffff;
+    --sand: #efe6d6;
+    --line: #e2d8c6;
+    --ink: #2a2520;
+    --ink-muted: #6b6156;
+    --encre: #1e4d4a;
+    --encre-strong: #163a38;
+    --on-encre: #faf6ef;
+    --encre-soft: #dce9e6;
+    --ocre: #b8622f;
+    --ocre-text: #a3542a;
+    --success: #2e6b47;
+    --warning: #8a5a00;
+    --danger: #a1291f;
+    --ok-soft: #e1efe5;
+    --warn-soft: #f6ead0;
+    --bad-soft: #f5dfdc;
+    --display: "Literata", Georgia, "Times New Roman", serif;
+    --body: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #171c1b;
+      --surface: #1f2624;
+      --sand: #2a3330;
+      --line: #313b38;
+      --ink: #ede6da;
+      --ink-muted: #a9a196;
+      --encre: #7fb8b0;
+      --encre-strong: #a3d0c9;
+      --on-encre: #10201e;
+      --encre-soft: #22403c;
+      --ocre: #e08a55;
+      --ocre-text: #e08a55;
+      --success: #86c9a0;
+      --warning: #e6b85c;
+      --danger: #f0958c;
+      --ok-soft: #1f3528;
+      --warn-soft: #3a3020;
+      --bad-soft: #3d2522;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #171c1b;
+    --surface: #1f2624;
+    --sand: #2a3330;
+    --line: #313b38;
+    --ink: #ede6da;
+    --ink-muted: #a9a196;
+    --encre: #7fb8b0;
+    --encre-strong: #a3d0c9;
+    --on-encre: #10201e;
+    --encre-soft: #22403c;
+    --ocre: #e08a55;
+    --ocre-text: #e08a55;
+    --success: #86c9a0;
+    --warning: #e6b85c;
+    --danger: #f0958c;
+    --ok-soft: #1f3528;
+    --warn-soft: #3a3020;
+    --bad-soft: #3d2522;
+    color-scheme: dark;
+  }
+
+  /* ==================== RESET & BASE ==================== */
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+  img {
+    max-width: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--display);
+    line-height: 1.25;
+    text-wrap: balance;
+    margin: 0;
+  }
+  p {
+    margin: 0;
+  }
+  a {
+    color: var(--encre);
+  }
+  a:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--ocre);
+    outline-offset: 2px;
+  }
+  .wrap {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* ==================== EN-TÊTE ==================== */
+  .masthead {
+    background: var(--encre-strong);
+    color: var(--on-encre);
+  }
+  .masthead .wrap {
+    padding-block: 2.5rem 2.25rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .brandline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .brandline strong {
+    letter-spacing: 0.14em;
+  }
+  .masthead h1 {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 700;
+  }
+  .masthead .lede {
+    max-width: 44rem;
+    font-size: 1.125rem;
+    opacity: 0.92;
+  }
+  .question {
+    max-width: 44rem;
+    border-left: 3px solid var(--ocre);
+    padding-left: 1rem;
+    font-family: var(--display);
+    font-size: 1.1875rem;
+    font-style: italic;
+  }
+  .avertissement {
+    max-width: 44rem;
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .chip {
+    display: inline-block;
+    font-size: 0.8125rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+
+  /* ==================== STRUCTURE ==================== */
+  .layout {
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-block: 2.5rem 4rem;
+  }
+  .toc {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 1rem);
+    align-self: start;
+    font-size: 0.9375rem;
+  }
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .toc a {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    padding: 0.3rem 0.4rem;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .toc a:hover {
+    background: var(--sand);
+  }
+  .toc .n {
+    color: var(--ocre-text);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .toc-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.5rem;
+  }
+  main {
+    min-width: 0;
+    display: grid;
+    gap: 3.5rem;
+  }
+  section {
+    display: grid;
+    gap: 1.25rem;
+    scroll-margin-top: 1rem;
+  }
+  .step-head {
+    display: grid;
+    gap: 0.35rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.75rem;
+  }
+  .eyebrow {
+    font-size: 0.8125rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ocre-text);
+    font-weight: 700;
+  }
+  .step-head h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+  .tool {
+    color: var(--ink-muted);
+    font-size: 0.9375rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+  .prose {
+    max-width: 44rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+  .muted {
+    color: var(--ink-muted);
+  }
+  .small {
+    font-size: 0.875rem;
+  }
+
+  /* ==================== ÉLÉMENTS RÉUTILISABLES ==================== */
+  .table-box {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9375rem;
+  }
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+  }
+  th {
+    background: var(--sand);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  tr:last-child td {
+    border-bottom: 0;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .t-o {
+    background: var(--ok-soft);
+    color: var(--success);
+  }
+  .t-m {
+    background: var(--bad-soft);
+    color: var(--danger);
+  }
+  .t-w {
+    background: var(--warn-soft);
+    color: var(--warning);
+  }
+  .t-n {
+    background: var(--encre-soft);
+    color: var(--encre);
+  }
+  .src {
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .callout {
+    background: var(--encre-soft);
+    border-radius: 10px;
+    padding: 1rem 1.15rem;
+    display: grid;
+    gap: 0.4rem;
+    max-width: 50rem;
+  }
+  .callout strong {
+    color: var(--encre);
+  }
+  .coach {
+    border: 1px dashed var(--ocre);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+    max-width: 50rem;
+    font-size: 0.9375rem;
+  }
+  .coach .who {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--ocre-text);
+  }
+
+  /* ==================== VERBATIM ==================== */
+  .quotes {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .quote {
+    display: grid;
+    grid-template-columns: 4.25rem minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .quote time {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+  }
+  .quote .said {
+    font-family: var(--display);
+    font-style: italic;
+  }
+  .quote .means {
+    font-size: 0.9375rem;
+  }
+  .quote .lbl {
+    display: block;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-style: normal;
+    font-family: var(--body);
+    margin-bottom: 0.15rem;
+  }
+
+  /* ==================== DIAGNOSTIC ==================== */
+  .diag {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .diag-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .diag-row > div {
+    padding: 0.8rem 1rem;
+    display: grid;
+    gap: 0.25rem;
+    align-content: start;
+  }
+  .diag-row > div + div {
+    border-left: 1px solid var(--line);
+  }
+  .diag-row .k {
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-weight: 700;
+  }
+  .diag-row .sol {
+    background: var(--encre-soft);
+  }
+
+  /* ==================== MATRICES 2×2 ==================== */
+  .matrix {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .cell {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+  }
+  .cell h4 {
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .cell ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.9375rem;
+  }
+  .cell.s {
+    border-top: 3px solid var(--success);
+  }
+  .cell.w {
+    border-top: 3px solid var(--danger);
+  }
+  .cell.o {
+    border-top: 3px solid var(--encre);
+  }
+  .cell.t {
+    border-top: 3px solid var(--warning);
+  }
+  .axis {
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .lbl-orig {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--ocre-text);
+    margin-left: 0.25rem;
+    white-space: nowrap;
+  }
+
+  /* ==================== ENJEUX & CAP ==================== */
+  .stakes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .stake {
+    background: var(--encre-strong);
+    color: var(--on-encre);
+    border-radius: 10px;
+    padding: 1.1rem 1.15rem;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+  .stake .num {
+    font-family: var(--display);
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--ocre);
+  }
+  .stake h3 {
+    font-size: 1.0625rem;
+  }
+  .stake p {
+    font-size: 0.9375rem;
+    opacity: 0.9;
+  }
+  .vision {
+    font-family: var(--display);
+    font-size: clamp(1.25rem, 2.6vw, 1.625rem);
+    line-height: 1.35;
+    max-width: 46rem;
+  }
+  .statement {
+    font-family: var(--display);
+    font-size: 1.1875rem;
+    line-height: 1.45;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--ocre);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    max-width: 50rem;
+  }
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .phase {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 1rem;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+  .phase .when {
+    font-size: 0.8125rem;
+    color: var(--ocre-text);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .phase h3 {
+    font-size: 1.125rem;
+  }
+  .phase p {
+    font-size: 0.9375rem;
+  }
+  .no-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.4rem;
+    max-width: 50rem;
+  }
+
+  /* ==================== GANTT ==================== */
+  .gantt {
+    min-width: 46rem;
+    display: grid;
+    grid-template-columns: 15rem repeat(18, minmax(0, 1fr));
+    font-size: 0.8125rem;
+    row-gap: 0.35rem;
+    padding: 0.9rem;
+  }
+  .gantt .h {
+    color: var(--ink-muted);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.25rem;
+  }
+  .gantt .name {
+    padding-right: 0.6rem;
+    grid-column: 1;
+  }
+  .bar {
+    border-radius: 4px;
+    height: 1.15rem;
+    align-self: center;
+  }
+  .b1 {
+    background: var(--danger);
+  }
+  .b2 {
+    background: var(--encre);
+  }
+  .b3 {
+    background: var(--ocre);
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .legend span::before {
+    content: "";
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 3px;
+    margin-right: 0.35rem;
+    vertical-align: -0.1rem;
+    background: var(--c);
+  }
+
+  /* ==================== PLAN & PIED ==================== */
+  .plan {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .plan ol {
+    margin: 0;
+    padding-left: 1.4rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .plan li::marker {
+    font-family: var(--display);
+    font-weight: 700;
+    color: var(--ocre-text);
+  }
+  .plan li h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.2rem;
+  }
+  .trace {
+    font-size: 0.75rem;
+    color: var(--ocre-text);
+    font-weight: 700;
+  }
+  .cta {
+    background: var(--encre-strong);
+    color: var(--on-encre);
+    border-radius: 12px;
+    padding: 1.75rem 1.5rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .cta h2 {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+  .cta a {
+    color: var(--on-encre);
+    font-weight: 700;
+  }
+  .foot {
+    border-top: 1px solid var(--line);
+    padding-top: 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  /* ==================== RESPONSIVE — TABLETTE ==================== */
+  @media (max-width: 768px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+    .toc {
+      position: static;
+    }
+    .toc ol {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stakes, .phases {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .quote {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
+    }
+  }
+
+  /* ==================== RESPONSIVE — MOBILE ==================== */
+  @media (max-width: 480px) {
+    .matrix, .diag-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .diag-row > div + div {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .toc ol {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+</head>
+<body>
+  /* ==================== EN-TÊTE ==================== */
+  .masthead {
+    background: var(--encre-strong);
+    color: var(--on-encre);
+  }
+  .masthead .wrap {
+    padding-block: 2.5rem 2.25rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .brandline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .brandline strong {
+    letter-spacing: 0.14em;
+  }
+  .masthead h1 {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 700;
+  }
+  .masthead .lede {
+    max-width: 44rem;
+    font-size: 1.125rem;
+    opacity: 0.92;
+  }
+  .question {
+    max-width: 44rem;
+    border-left: 3px solid var(--ocre);
+    padding-left: 1rem;
+    font-family: var(--display);
+    font-size: 1.1875rem;
+    font-style: italic;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .chip {
+    display: inline-block;
+    font-size: 0.8125rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+
+  /* ==================== STRUCTURE ==================== */
+  .layout {
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-block: 2.5rem 4rem;
+  }
+  .toc {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 1rem);
+    align-self: start;
+    font-size: 0.9375rem;
+  }
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .toc a {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    padding: 0.3rem 0.4rem;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .toc a:hover {
+    background: var(--sand);
+  }
+  .toc .n {
+    color: var(--ocre-text);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .toc-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.5rem;
+  }
+  main {
+    min-width: 0;
+    display: grid;
+    gap: 3.5rem;
+  }
+  section {
+    display: grid;
+    gap: 1.25rem;
+    scroll-margin-top: 1rem;
+  }
+  .step-head {
+    display: grid;
+    gap: 0.35rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.75rem;
+  }
+  .eyebrow {
+    font-size: 0.8125rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ocre-text);
+    font-weight: 700;
+  }
+  .step-head h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+  .tool {
+    color: var(--ink-muted);
+    font-size: 0.9375rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+  .prose {
+    max-width: 44rem;
+    display: grid;
+    gap: 0.85rem;
+  }
+  .muted {
+    color: var(--ink-muted);
+  }
+  .small {
+    font-size: 0.875rem;
+  }
+
+  /* ==================== ÉLÉMENTS RÉUTILISABLES ==================== */
+  .table-box {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9375rem;
+  }
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+  }
+  th {
+    background: var(--sand);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  tr:last-child td {
+    border-bottom: 0;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .t-o {
+    background: var(--ok-soft);
+    color: var(--success);
+  }
+  .t-m {
+    background: var(--bad-soft);
+    color: var(--danger);
+  }
+  .t-w {
+    background: var(--warn-soft);
+    color: var(--warning);
+  }
+  .t-n {
+    background: var(--encre-soft);
+    color: var(--encre);
+  }
+  .src {
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .callout {
+    background: var(--encre-soft);
+    border-radius: 10px;
+    padding: 1rem 1.15rem;
+    display: grid;
+    gap: 0.4rem;
+    max-width: 50rem;
+  }
+  .callout strong {
+    color: var(--encre);
+  }
+  .coach {
+    border: 1px dashed var(--ocre);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+    max-width: 50rem;
+    font-size: 0.9375rem;
+  }
+  .coach .who {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--ocre-text);
+  }
+
+  /* ==================== VERBATIM ==================== */
+  .quotes {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .quote {
+    display: grid;
+    grid-template-columns: 4.25rem minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .quote time {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+  }
+  .quote .said {
+    font-family: var(--display);
+    font-style: italic;
+  }
+  .quote .means {
+    font-size: 0.9375rem;
+  }
+  .quote .lbl {
+    display: block;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-style: normal;
+    font-family: var(--body);
+    margin-bottom: 0.15rem;
+  }
+
+  /* ==================== DIAGNOSTIC ==================== */
+  .diag {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .diag-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .diag-row > div {
+    padding: 0.8rem 1rem;
+    display: grid;
+    gap: 0.25rem;
+    align-content: start;
+  }
+  .diag-row > div + div {
+    border-left: 1px solid var(--line);
+  }
+  .diag-row .k {
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-weight: 700;
+  }
+  .diag-row .sol {
+    background: var(--encre-soft);
+  }
+
+  /* ==================== MATRICES 2×2 ==================== */
+  .matrix {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .cell {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+  }
+  .cell h4 {
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .cell ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.9375rem;
+  }
+  .cell.s {
+    border-top: 3px solid var(--success);
+  }
+  .cell.w {
+    border-top: 3px solid var(--danger);
+  }
+  .cell.o {
+    border-top: 3px solid var(--encre);
+  }
+  .cell.t {
+    border-top: 3px solid var(--warning);
+  }
+  .axis {
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .lbl-orig {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--ocre-text);
+    margin-left: 0.25rem;
+    white-space: nowrap;
+  }
+
+  /* ==================== ENJEUX & CAP ==================== */
+  .stakes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .stake {
+    background: var(--encre-strong);
+    color: var(--on-encre);
+    border-radius: 10px;
+    padding: 1.1rem 1.15rem;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+  .stake .num {
+    font-family: var(--display);
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--ocre);
+  }
+  .stake h3 {
+    font-size: 1.0625rem;
+  }
+  .stake p {
+    font-size: 0.9375rem;
+    opacity: 0.9;
+  }
+  .vision {
+    font-family: var(--display);
+    font-size: clamp(1.25rem, 2.6vw, 1.625rem);
+    line-height: 1.35;
+    max-width: 46rem;
+  }
+  .statement {
+    font-family: var(--display);
+    font-size: 1.1875rem;
+    line-height: 1.45;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--ocre);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    max-width: 50rem;
+  }
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .phase {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 1rem;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+  .phase .when {
+    font-size: 0.8125rem;
+    color: var(--ocre-text);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .phase h3 {
+    font-size: 1.125rem;
+  }
+  .phase p {
+    font-size: 0.9375rem;
+  }
+  .no-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.4rem;
+    max-width: 50rem;
+  }
+
+  /* ==================== GANTT ==================== */
+  .gantt {
+    min-width: 46rem;
+    display: grid;
+    grid-template-columns: 15rem repeat(18, minmax(0, 1fr));
+    font-size: 0.8125rem;
+    row-gap: 0.35rem;
+    padding: 0.9rem;
+  }
+  .gantt .h {
+    color: var(--ink-muted);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.25rem;
+  }
+  .gantt .name {
+    padding-right: 0.6rem;
+    grid-column: 1;
+  }
+  .bar {
+    border-radius: 4px;
+    height: 1.15rem;
+    align-self: center;
+  }
+  .b1 {
+    background: var(--danger);
+  }
+  .b2 {
+    background: var(--encre);
+  }
+  .b3 {
+    background: var(--ocre);
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+  }
+  .legend span::before {
+    content: "";
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 3px;
+    margin-right: 0.35rem;
+    vertical-align: -0.1rem;
+    background: var(--c);
+  }
+
+  /* ==================== PLAN & PIED ==================== */
+  .plan {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .plan ol {
+    margin: 0;
+    padding-left: 1.4rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .plan li::marker {
+    font-family: var(--display);
+    font-weight: 700;
+    color: var(--ocre-text);
+  }
+  .plan li h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.2rem;
+  }
+  .trace {
+    font-size: 0.75rem;
+    color: var(--ocre-text);
+    font-weight: 700;
+  }
+  .cta {
+    background: var(--encre-strong);
+    color: var(--on-encre);
+    border-radius: 12px;
+    padding: 1.75rem 1.5rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .cta h2 {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+  .cta a {
+    color: var(--on-encre);
+    font-weight: 700;
+  }
+  .foot {
+    border-top: 1px solid var(--line);
+    padding-top: 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  /* ==================== RESPONSIVE — TABLETTE ==================== */
+  @media (max-width: 768px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+    .toc {
+      position: static;
+    }
+    .toc ol {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stakes, .phases {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .quote {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.5rem;
+    }
+  }
+
+  /* ==================== RESPONSIVE — MOBILE ==================== */
+  @media (max-width: 480px) {
+    .matrix, .diag-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .diag-row > div + div {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .toc ol {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<!-- ==================== EN-TÊTE ==================== -->
+<header class="masthead">
+  <div class="wrap">
+    <div class="brandline">
+      <strong>Kalami Stratégie</strong>
+      <span>Étude de démonstration · novembre 2026</span>
+    </div>
+    <h1>PlacaliKro, ou comment grandir sans se perdre</h1>
+    <p class="lede">Analyse stratégique de PlacaliKro chez La Donia, une enseigne de placali fait
+      maison avec trois restaurants à Abidjan (Yopougon, Koumassi, Angré Château). Elle part
+      d'une vidéo de 5 minutes dans laquelle sa fondatrice raconte ses difficultés, puis est
+      complétée par une recherche publique. La fondatrice y décrit les problèmes, leurs causes
+      et même les solutions. Kalami les met en ordre.</p>
+    <p class="question">« Comment faire croître PlacaliKro sans perdre le contrôle de la
+      qualité, de l'argent… et de sa propre santé ? »</p>
+    <div class="meta-row">
+      <span class="chip">Restauration traditionnelle</span>
+      <span class="chip">Côte d'Ivoire</span>
+      <span class="chip">Profil + 8 étapes + plan</span>
+      <span class="chip">Méthode : La stratégie d'entreprise, 2e éd.</span>
+    </div>
+    <p class="avertissement">Étude de démonstration réalisée à partir de sources
+      publiques, sans lien avec l'entreprise PlacaliKro ni commande de sa part.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <!-- ==================== SOMMAIRE ==================== -->
+  <nav class="toc" aria-label="Étapes de l'étude">
+    <p class="toc-title">L'étude</p>
+    <ol>
+      <li><a href="#ecoute"><span class="n">·</span>Ce qu'elle dit</a></li>
+      <li><a href="#terrain"><span class="n">·</span>Le terrain</a></li>
+      <li><a href="#diagnostic"><span class="n">·</span>Diagnostic</a></li>
+      <li><a href="#profil"><span class="n">P</span>Profil</a></li>
+      <li><a href="#e1"><span class="n">1</span>Environnement externe</a></li>
+      <li><a href="#e2"><span class="n">2</span>Concurrence</a></li>
+      <li><a href="#e3"><span class="n">3</span>Interne</a></li>
+      <li><a href="#e4"><span class="n">4</span>Parties prenantes</a></li>
+      <li><a href="#e5"><span class="n">5</span>Synthèse</a></li>
+      <li><a href="#e6"><span class="n">6</span>Cap</a></li>
+      <li><a href="#e7"><span class="n">7</span>Choix</a></li>
+      <li><a href="#e8"><span class="n">8</span>Action</a></li>
+      <li><a href="#plan"><span class="n">9</span>Plan stratégique</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <!-- ==================== ÉCOUTE : VERBATIM ==================== -->
+    <section id="ecoute">
+      <div class="step-head">
+        <span class="eyebrow">Point de départ</span>
+        <h2>Ce qu'elle dit, ce qu'elle veut dire</h2>
+        <p class="tool">Transcription de la vidéo, remise en français standard. Le français ivoirien
+          garde sa saveur ; nous en extrayons les faits.</p>
+      </div>
+      <div class="quotes">
+        <div class="quote">
+          <time>0:38</time>
+          <p class="said"><span class="lbl">Elle dit</span>« J'avais mon seul magasin qui
+            fonctionnait correctement… J'ai commencé à faire 1, 2, 3, 4. C'est là que ça a
+            commencé à chuter. C'est comme si je m'étais creusé mon propre trou. »</p>
+          <p class="means"><span class="lbl">Ce que Kalami retient</span>Son premier commerce
+            marchait avec un seul point de vente. Passer à quatre l'a fait reculer.</p>
+        </div>
+        <div class="quote">
+          <time>0:50</time>
+          <p class="said"><span class="lbl">Elle dit</span>« D'autres vont remarquer le business :
+            elle s'implante partout, ça veut dire qu'il y a l'argent dedans. Ils vont venir. »</p>
+          <p class="means"><span class="lbl">Ce que Kalami retient</span>Son expansion a servi
+            de publicité aux imitateurs. Les barrières à l'entrée sont faibles.</p>
+        </div>
+        <div class="quote">
+          <time>1:25</time>
+          <p class="said"><span class="lbl">Elle dit</span>« Ils vont vendre, et puis ils te disent
+            que ça ne marche pas. Tes produits sont encore là. Pourtant, à la fin du mois, tu dois
+            payer les loyers… et les payer eux-mêmes. »</p>
+          <p class="means"><span class="lbl">Ce que Kalami retient</span>Aucune visibilité sur
+            les ventes réelles, et des charges fixes qui tombent quoi qu'il arrive.</p>
+        </div>
+        <div class="quote">
+          <time>2:07</time>
+          <p class="said"><span class="lbl">Elle dit</span>« Mon restaurant à Angré, PlacaliKro,
+            ça marchait bien. À l'époque, j'étais la seule à proposer ce menu fait maison, avec
+            la sauce graine, la sauce djoumblé… Aujourd'hui, c'est partout. »</p>
+          <p class="means"><span class="lbl">Ce que Kalami retient</span>Elle a été pionnière.
+            Son concept a été copié et l'avantage du premier arrivé s'érode.</p>
+        </div>
+        <div class="quote">
+          <time>2:57</time>
+          <p class="said"><span class="lbl">Elle dit</span>« Tu ne peux pas être dans tous les
+            restaurants au même moment. Dès que tu as tourné le dos, c'est gâté. Aujourd'hui,
+            j'ai peur d'aller dans mes propres restaurants. Je suis épuisée. »</p>
+          <p class="means"><span class="lbl">Ce que Kalami retient</span>L'entreprise ne tient
+            que par la présence de la fondatrice, et la fondatrice s'use.</p>
+        </div>
+        <div class="quote">
+          <time>3:26</time>
+          <p class="said"><span class="lbl">Elle dit</span>« Il n'y avait pas d'escargots. Une
+            femme est venue de la brousse avec 20 sacs. J'ai payé : ça allait manquer, devenir
+            cher. Il fallait juste nettoyer et mettre au frigo… Tout a pourri. On a sauvé peut-être
+            5 sacs. J'ai perdu un million là-dedans. »</p>
+          <p class="means"><span class="lbl">Ce que Kalami retient</span>Pendant sa tournée de
+            dégustation à Yamoussoukro, un bon réflexe d'achat a été ruiné par une consigne non
+            exécutée : environ 1 000 000 FCFA de perte. Loin de sa base, la logistique n'était
+            pas préparée.</p>
+        </div>
+        <div class="quote">
+          <time>4:36</time>
+          <p class="said"><span class="lbl">Elle dit</span>« À moins que tu fasses des franchises
+            ou que tu vendes ta marque : quelqu'un qui a payé ta marque, il sait que c'est son
+            argent. Mais si tu comptes sur l'employé pour t'enrichir… concentre-toi sur ton
+            seul coin. »</p>
+          <p class="means"><span class="lbl">Ce que Kalami retient</span>Elle formule elle-même
+            la solution : aligner les intérêts (franchise) et se recentrer.</p>
+        </div>
+      </div>
+      <p class="src">Points clarifiés depuis la vidéo : Yopougon est l'une des trois
+        succursales, et Yamoussoukro était une étape de tournée, pas un restaurant. Reste à
+        confirmer avec elle : le nom exact de son premier commerce (« la Maison des chiens »
+        ?).</p>
+    </section>
+
+    <!-- ==================== RECHERCHE : CE QUE DIT LE TERRAIN ==================== -->
+    <section id="terrain">
+      <div class="step-head">
+        <span class="eyebrow">Recherche publique · novembre 2026</span>
+        <h2>Ce que dit le terrain</h2>
+        <p class="tool">Annuaires, presse et réseaux sociaux, complétés par une personne qui
+          connaît le marché d'Abidjan. Les faits non publiés en ligne sont signalés.</p>
+      </div>
+      <div class="diag">
+        <div class="diag-row">
+          <div><span class="k">Trois restaurants</span>Yopougon, Koumassi et, le plus récent,
+            Angré Château (Cocody). Certains annuaires les donnent ouverts 24 h sur 24.</div>
+          <div><span class="k">Une marque très suivie</span>Environ 508 000 abonnés sur TikTok
+            (8,6 millions de mentions « j'aime ») et 163 000 sur Facebook. La fondatrice est
+            aussi artiste.</div>
+          <div class="sol"><span class="k">Ce que Kalami en tire</span>La marque est plus
+            connue que l'organisation n'est solide : l'écart à combler est interne.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Des tournées de dégustation</span>« Placalikro chez vous » :
+            Yopougon, Cocody-Abatta puis Koumassi (complexe Sidy Diallo) en 2025. Depuis un an,
+            une semaine de cuisine dans les villes de l'intérieur : Bouaké (un succès),
+            Yamoussoukro, puis Daloa.</div>
+          <div><span class="k">Des vols dénoncés en vidéo</span>Elle a publié plusieurs vidéos
+            TikTok dénonçant des vols en caisse et des détournements de provisions.</div>
+          <div class="sol"><span class="k">Ce que Kalami en tire</span>Les tournées sont un
+            banc d'essai des villes sans loyer ; les vols confirment que le contrôle de caisse
+            est l'urgence n° 1.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Des restaurants soignés</span>Beaux cadres et décoration :
+            d'importants investissements, donc des charges à amortir sur chaque site.</div>
+          <div><span class="k">Un rival structuré</span>Le Placali Abouré, fondé par Véronique
+            Vonan (Vove Group) : Zone 4, Riviera Bonoumin, Bingerville ; plats expédiés en
+            France et ailleurs, application de commande, prix national d'excellence 2024,
+            projet de produits transformés (poudre de placali, sauce graine concentrée).</div>
+          <div class="sol"><span class="k">Ce que Kalami en tire</span>Deux marques se
+            disputent le placali « haut de gamme », au-dessus de centaines de vendeuses
+            réputées, souvent informelles, établies depuis des décennies.</div>
+        </div>
+      </div>
+      <p class="src">Sources : <a href="https://baab.ci/etablissements_baab/placalikro-chez-la-donia-yopougon/" target="_blank" rel="noopener">Baab (Yopougon</a>,
+        <a href="https://baab.ci/etablissements_baab/placalikro-chez-la-donia-koumassi/" target="_blank" rel="noopener">Koumassi</a>,
+        <a href="https://baab.ci/etablissements_baab/placalikro-chez-la-donia-angre/" target="_blank" rel="noopener">Angré)</a> ·
+        <a href="https://www.sikaplaces.com/restaurants/placalikro-chez-la-donia-angre-chateau-cocody-abidjan/67995" target="_blank" rel="noopener">Sika Places</a> ·
+        <a href="https://www.tiktok.com/@placalikrochezladonia" target="_blank" rel="noopener">TikTok @placalikrochezladonia</a> ·
+        <a href="https://www.facebook.com/p/Placalikro-chez-La-Donia-100084356859853/" target="_blank" rel="noopener">Facebook</a> ·
+        <a href="https://www.pressecotedivoire.fr/23348-promotion-de-la-gastronomie-ivoirienne-lartiste-la-donia-delocalise-le-placalikro-chez-vous" target="_blank" rel="noopener">Presse Côte d'Ivoire (« Placalikro chez vous »)</a> ·
+        <a href="https://www.sikaplaces.com/enseignes/placali-aboure" target="_blank" rel="noopener">Sika Places (Placali Abouré)</a> ·
+        <a href="https://yop.l-frii.com/cote-divoire-elle-devient-millionnaire-a-partir-de-29700f-voici-le-business-quelle-developpe/" target="_blank" rel="noopener">Yop L-Frii</a> ·
+        <a href="https://news.abidjan.net/articles/748745/cote-divoire-la-7e-edition-du-forum-international-du-leadership-feminin-lancee-autour-du-theme-batisseuses-deconomies" target="_blank" rel="noopener">Abidjan.net (FILF 2026)</a> ·
+        <a href="https://digitalmag.ci/placali-aboure-une-application-mobile-de-commande-en-ligne-du-placali-ivoirien/" target="_blank" rel="noopener">Digital Mag CI</a>.
+        Non trouvés en ligne, rapportés par une personne qui connaît le marché : les étapes
+        de Bouaké, Yamoussoukro et Daloa, les vidéos sur les vols, le coût de la décoration.
+        Chiffres d'abonnés relevés en novembre 2026 ; les adresses varient selon les
+        annuaires.</p>
+    </section>
+
+    <!-- ==================== DIAGNOSTIC ==================== -->
+    <section id="diagnostic">
+      <div class="step-head">
+        <span class="eyebrow">Lecture Kalami</span>
+        <h2>Problèmes, causes et solutions qu'elle donne sans le savoir</h2>
+      </div>
+      <div class="diag">
+        <div class="diag-row">
+          <div><span class="k">Problème</span>Chaque nouveau point de vente fait baisser le
+            tout, y compris le site d'origine.</div>
+          <div><span class="k">Cause profonde</span>Croissance par multiplication de succursales,
+            sans système (normes, contrôle, encadrement) pour remplacer la fondatrice.</div>
+          <div class="sol"><span class="k">Sa solution implicite</span>« Concentre-toi sur ton
+            seul coin. » → se recentrer avant de grandir.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Problème</span>« Ils te disent que ça ne marche pas » alors que
+            les stocks restent.</div>
+          <div><span class="k">Cause profonde</span>Pas de caisse ni d'inventaire fiables :
+            impossible de distinguer une mauvaise vente d'une fuite d'argent.</div>
+          <div class="sol"><span class="k">Sa solution implicite</span>« Il faut t'assurer… »
+            → mesurer pour savoir, sans être sur place.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Problème</span>Vols en caisse et provisions détournées, qu'elle
+            finit par dénoncer publiquement sur TikTok.</div>
+          <div><span class="k">Cause profonde</span>Un contrôle qui repose sur sa présence et
+            sur la dénonciation après coup, au lieu d'un système qui empêche et détecte.</div>
+          <div class="sol"><span class="k">Ce que Kalami propose</span>Une caisse qui trace
+            tout, un inventaire du soir, puis des règles écrites et signées. Dénoncer en
+            public peut aussi faire fuir les bons candidats.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Problème</span>Des restaurants très soignés qui coûtent cher.</div>
+          <div><span class="k">Cause profonde</span>Le cadre est un vrai atout de la marque,
+            mais chaque site porte en plus un investissement à amortir. Fermer un site devient
+            douloureux.</div>
+          <div class="sol"><span class="k">Ce que Kalami propose</span>Faire porter le
+            prochain décor par un partenaire sous licence, selon un cahier de style
+            PlacaliKro.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Problème</span>Escargots pourris : environ 1 million FCFA
+            perdu.</div>
+          <div><span class="k">Cause profonde</span>Achat en volume sans procédure écrite de
+            réception et de stockage, et sans responsable désigné.</div>
+          <div class="sol"><span class="k">Sa solution implicite</span>« Il fallait juste
+            nettoyer et mettre au frigo. » → une procédure simple, assignée et vérifiée.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Problème</span>Le concept est copié partout.</div>
+          <div><span class="k">Cause profonde</span>Recettes faciles à imiter, marque peu
+            protégée, et une expansion qui a montré aux autres « qu'il y a l'argent dedans ».</div>
+          <div class="sol"><span class="k">Sa solution implicite</span>« Vendre ta marque. »
+            → faire de la marque l'actif, pas les murs.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Problème</span>Personnel qui « ne prend pas soin de tes
+            affaires ».</div>
+          <div><span class="k">Cause profonde</span>Les employés n'ont aucun intérêt au résultat :
+            ce n'est pas « leur argent ».</div>
+          <div class="sol"><span class="k">Sa solution implicite</span>« Il sait que c'est son
+            argent. » → intéresser le gérant ou passer à la franchise.</div>
+        </div>
+        <div class="diag-row">
+          <div><span class="k">Problème</span>« J'ai peur d'aller dans mes propres restaurants.
+            Seigneur, montre-moi un autre business. »</div>
+          <div><span class="k">Cause profonde</span>Charge mentale totale : elle est à la fois
+            cheffe, contrôleuse, acheteuse et pompière.</div>
+          <div class="sol"><span class="k">Sa solution implicite</span>Elle ne veut pas changer
+            de métier, elle veut cesser d'être indispensable.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PROFIL ==================== -->
+    <section id="profil">
+      <div class="step-head">
+        <span class="eyebrow">Profil de l'entreprise</span>
+        <h2>PlacaliKro en une fiche</h2>
+      </div>
+      <div class="table-box">
+        <table>
+          <tbody>
+            <tr><th scope="row">Activité</th><td>Restaurant de cuisine ivoirienne maison :
+              placali, attiéké et sauces traditionnelles (graine, djoumblé…), plats d'escargots,
+              jus ; espace bar.</td></tr>
+            <tr><th scope="row">Implantation</th><td>Trois restaurants à Abidjan : Yopougon,
+              Koumassi et Angré Château (Cocody), le plus récent. Activité quotidienne à
+              Abidjan.</td></tr>
+            <tr><th scope="row">Événementiel</th><td>« Placalikro chez vous » dans les communes
+              d'Abidjan (2025), puis tournées d'une semaine à l'intérieur : Bouaké, Yamoussoukro,
+              Daloa.</td></tr>
+            <tr><th scope="row">Antécédent</th><td>Premier commerce passé d'un à quatre magasins,
+              puis en déclin : une expérience fondatrice.</td></tr>
+            <tr><th scope="row">Positionnement</th><td>Pionnière du placali « fait maison » dans
+              un cadre soigné et décoré ; fondatrice artiste et très suivie (environ 508 000
+              abonnés TikTok, 163 000 sur Facebook).</td></tr>
+            <tr><th scope="row">Concurrence</th><td>Le Placali Abouré, l'autre grande marque, plus
+              structurée ; des centaines de vendeuses réputées, souvent informelles.</td></tr>
+            <tr><th scope="row">Organisation</th><td>Fondatrice au centre de tout (achats,
+              qualité, contrôle) ; équipes par site mêlant anciens et nouveaux employés.</td></tr>
+            <tr><th scope="row">Chiffres</th><td>Non communiqués. Seul fait chiffré : environ
+              1 000 000 FCFA de perte sur un lot d'escargots.</td></tr>
+            <tr><th scope="row">Question stratégique</th><td>Comment croître sans perdre le
+              contrôle ni s'épuiser ?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== ÉTAPE 1 : PESTEL ==================== -->
+    <section id="e1">
+      <div class="step-head">
+        <span class="eyebrow">Étape 1 · Module 2</span>
+        <h2>Environnement externe</h2>
+        <p class="tool">PESTEL : des tendances, pas des constats. O = opportunité, M = menace.</p>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr><th>Dimension</th><th>Tendance</th><th>Effet sur PlacaliKro</th><th>O/M</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Économique</td>
+              <td>Inflation générale faible (1,2 % sur un an en août 2026), mais l'alimentation
+                reste le poste qui tire les prix ; la viande fraîche a pris 9,55 % en janvier
+                2026.
+                <div class="src">Sources : <a href="https://afrique.le360.ma/economie/cote-divoire-le-taux-dinflation-setablit-a-12-en-aout-2026_KK6SK2LQRJDAJEUW6XBUUPJRKE/" target="_blank" rel="noopener">Le360 Afrique, sept. 2026</a> ·
+                <a href="https://allafrica.com/stories/202602160015.html" target="_blank" rel="noopener">AllAfrica, fév. 2026</a></div></td>
+              <td>Pouvoir d'achat globalement stable ; pression sur le coût des matières
+                (viandes, escargots).</td>
+              <td><span class="tag t-w">O / M</span></td>
+            </tr>
+            <tr>
+              <td>Économique</td>
+              <td>Disponibilité saisonnière et irrégulière de certains produits de brousse
+                (escargots).</td>
+              <td>Pénuries et flambées de prix ; tentation d'acheter en gros sans capacité de
+                stockage.</td>
+              <td><span class="tag t-m">M</span></td>
+            </tr>
+            <tr>
+              <td>Social</td>
+              <td>Appétit urbain croissant pour la cuisine traditionnelle « comme à la maison »,
+                servie dans un cadre propre.</td>
+              <td>Marché porteur pour son concept… et pour ses imitateurs.</td>
+              <td><span class="tag t-w">O / M</span></td>
+            </tr>
+            <tr>
+              <td>Social</td>
+              <td>Secteur très peu structuré : beaucoup d'acteurs, peu de main-d'œuvre formée
+                aux standards.
+                <div class="src">Source : <a href="https://www.seneplus.com/node/106257" target="_blank" rel="noopener">SenePlus / RTI, « Le marché de la bouffe en Côte d'Ivoire »</a></div></td>
+              <td>Recruter et fidéliser du personnel fiable devient un facteur clé.</td>
+              <td><span class="tag t-m">M</span></td>
+            </tr>
+            <tr>
+              <td>Social</td>
+              <td>Les villes de l'intérieur répondent aux marques d'Abidjan qui viennent à
+                elles : la tournée de Bouaké a été un succès.<div class="src">Rapporté, non
+                publié en ligne.</div></td>
+              <td>Des marchés à prendre sans ouvrir de restaurant en propre.</td>
+              <td><span class="tag t-o">O</span></td>
+            </tr>
+            <tr>
+              <td>Social</td>
+              <td>La diaspora achète la cuisine ivoirienne à distance : un concurrent dit
+                expédier 100 plats de placali par semaine en France.
+                <div class="src">Source : <a href="https://yop.l-frii.com/cote-divoire-elle-devient-millionnaire-a-partir-de-29700f-voici-le-business-quelle-developpe/" target="_blank" rel="noopener">Yop L-Frii</a> (déclaration de la fondatrice du Placali Abouré)</div></td>
+              <td>Débouché possible plus tard, une fois les produits standardisés.</td>
+              <td><span class="tag t-o">O</span></td>
+            </tr>
+            <tr>
+              <td>Technologique</td>
+              <td>Paiement mobile et applications de caisse simples sur téléphone de plus en
+                plus répandus.<div class="src">Hypothèse à vérifier : taux d'adoption dans la
+                restauration.</div></td>
+              <td>Permet de suivre les ventes de chaque site à distance.</td>
+              <td><span class="tag t-o">O</span></td>
+            </tr>
+            <tr>
+              <td>Technologique</td>
+              <td>Réseaux sociaux vidéo comme premier canal de notoriété des restaurants.</td>
+              <td>Sa propre audience est un levier de marque peu coûteux.</td>
+              <td><span class="tag t-o">O</span></td>
+            </tr>
+            <tr>
+              <td>Légal</td>
+              <td>Pas encore d'acte uniforme OHADA propre à la franchise ; les contrats relèvent
+                du droit commercial général.
+                <div class="src">Source : <a href="https://www.ohada.com/actualite/6133/pour-un-droit-uniforme-de-la-franchise.html" target="_blank" rel="noopener">OHADA, « Pour un droit uniforme de la franchise »</a></div></td>
+              <td>Franchiser est possible, mais le contrat doit être bien rédigé (avocat).</td>
+              <td><span class="tag t-w">O / M</span></td>
+            </tr>
+            <tr>
+              <td>Légal</td>
+              <td>Protection des marques par dépôt à l'OAPI, valable dans ses États membres
+                dont la Côte d'Ivoire.</td>
+              <td>Le nom PlacaliKro peut devenir un actif protégé, et donc cessible.</td>
+              <td><span class="tag t-o">O</span></td>
+            </tr>
+            <tr>
+              <td>Environnemental</td>
+              <td>Chaîne du froid fragile (coupures, chaleur) pour les produits périssables.</td>
+              <td>Risque de pertes si la réception et le stockage ne sont pas maîtrisés.</td>
+              <td><span class="tag t-m">M</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Deux scénarios à surveiller</h3>
+      <p class="axis">Variables pivots : intensité de l'imitation (contenue ↔ généralisée) ×
+        coût des denrées (stable ↔ en hausse).</p>
+      <div class="matrix">
+        <div class="cell o"><h4>Copies contenues, coûts stables</h4>
+          <p class="small">La marque d'origine tient. On peut reprendre la croissance plus
+            tôt.</p></div>
+        <div class="cell t"><h4>Copies généralisées, coûts stables</h4>
+          <p class="small">Guerre des prix. Seules l'authenticité affirmée et la régularité
+            sauvent la marge.</p></div>
+        <div class="cell o"><h4>Copies contenues, coûts en hausse</h4>
+          <p class="small">Il faut maîtriser les achats et les pertes ; hausses de prix
+            sélectives.</p></div>
+        <div class="cell w"><h4>Copies généralisées, coûts en hausse</h4>
+          <p class="small">Scénario le plus dur : seul un site rentable et maîtrisé survit.
+            C'est le scénario de référence de ce plan.</p></div>
+      </div>
+    </section>
+
+    <!-- ==================== ÉTAPE 2 : CINQ FORCES ==================== -->
+    <section id="e2">
+      <div class="step-head">
+        <span class="eyebrow">Étape 2 · Module 3</span>
+        <h2>Environnement concurrentiel</h2>
+        <p class="tool">Cinq forces de Porter et comparaison avec les concurrents.</p>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Force</th><th>Intensité</th><th>Justification</th></tr></thead>
+          <tbody>
+            <tr><td>Rivalité entre restaurants</td><td><span class="tag t-m">Forte</span></td>
+              <td>« Aujourd'hui, c'est partout ». Deux marques en tête, PlacaliKro et Le Placali
+                Abouré (plus structuré, déjà présent à l'export), au-dessus de centaines de
+                vendeuses réputées depuis des décennies.</td></tr>
+            <tr><td>Nouveaux entrants</td><td><span class="tag t-m">Forte</span></td>
+              <td>Peu de capital requis, recettes connues, aucune protection : ses ouvertures
+                ont attiré de nouveaux venus.</td></tr>
+            <tr><td>Produits de substitution</td><td><span class="tag t-w">Moyenne</span></td>
+              <td>Maquis, vendeuses de rue, cuisine à domicile : moins chers, mais sans le
+                cadre ni la régularité.</td></tr>
+            <tr><td>Pouvoir des clients</td><td><span class="tag t-w">Moyenne</span></td>
+              <td>Changer de restaurant ne coûte rien ; la fidélité tient au goût et à
+                l'accueil.</td></tr>
+            <tr><td>Pouvoir des fournisseurs, main-d'œuvre comprise</td>
+              <td><span class="tag t-m">Forte</span></td>
+              <td>Produits frais à l'offre irrégulière (escargots). Surtout, le personnel fiable
+                est rare : c'est le fournisseur le plus critique de PlacaliKro.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="coach">
+        <span class="who">Avis du coach</span>
+        <p>Erreur classique évitée : la main-d'œuvre fait bien partie des fournisseurs. Ici,
+          c'est même la force qui explique le plus les difficultés.</p>
+      </div>
+      <h3>Comparaison</h3>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Critère</th><th>PlacaliKro</th><th>Le Placali Abouré</th>
+            <th>Imitateurs</th><th>Vendeuses et maquis</th></tr></thead>
+          <tbody>
+            <tr><td>Authenticité perçue</td><td><span class="tag t-o">Forte</span> (pionnière)</td>
+              <td><span class="tag t-o">Forte</span> (primée)</td>
+              <td><span class="tag t-w">Variable</span></td><td><span class="tag t-o">Forte</span> (anciennes)</td></tr>
+            <tr><td>Cadre et propreté</td><td><span class="tag t-o">Très soigné</span></td>
+              <td><span class="tag t-o">Soigné</span></td>
+              <td><span class="tag t-w">Variable</span></td><td><span class="tag t-m">Simple</span></td></tr>
+            <tr><td>Organisation et contrôle</td><td><span class="tag t-m">Faible</span></td>
+              <td><span class="tag t-o">Plus structurée</span></td>
+              <td><span class="tag t-w">Variable</span></td><td><span class="tag t-w">Artisanale</span></td></tr>
+            <tr><td>Prix</td><td><span class="tag t-w">Plus élevé</span> (hypothèse)</td>
+              <td><span class="tag t-w">Plus élevé</span> (hypothèse)</td>
+              <td><span class="tag t-w">Proche</span></td><td><span class="tag t-o">Bas</span></td></tr>
+            <tr><td>Notoriété de la marque</td><td><span class="tag t-o">Très forte</span> (≈ 508 000 sur TikTok)</td>
+              <td><span class="tag t-o">Forte</span> (prix, presse)</td>
+              <td><span class="tag t-m">Faible</span></td><td><span class="tag t-m">Locale</span></td></tr>
+            <tr><td>Présence hors d'Abidjan</td><td><span class="tag t-w">Tournées</span> (Bouaké, Yamoussoukro, Daloa)</td>
+              <td><span class="tag t-w">Export</span> (plats expédiés)</td>
+              <td><span class="tag t-m">Non</span></td><td><span class="tag t-m">Non</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="coach">
+        <span class="who">Lecture Kalami</span>
+        <p>Face au Placali Abouré, PlacaliKro ne gagnera pas sur l'organisation à court terme.
+          Son terrain propre est ailleurs : la proximité de sa fondatrice avec le public, les
+          communes populaires (Yopougon, Koumassi) et les villes de l'intérieur déjà visitées.
+          La course qui compte : qui installera le premier une adresse durable à Bouaké.</p>
+      </div>
+    </section>
+
+    <!-- ==================== ÉTAPE 3 : INTERNE ==================== -->
+    <section id="e3">
+      <div class="step-head">
+        <span class="eyebrow">Étape 3 · Module 4</span>
+        <h2>Environnement interne</h2>
+        <p class="tool">Chaîne de valeur (modèle « services ») et test VRIO.</p>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Activité</th><th>Évaluation</th><th>Constat</th></tr></thead>
+          <tbody>
+            <tr><td>Achats et approvisionnement</td><td><span class="tag t-m">Faible</span></td>
+              <td>Bon flair (acheter avant la pénurie), aucune procédure de réception.</td></tr>
+            <tr><td>Cuisine et recettes</td><td><span class="tag t-o">Point fort</span></td>
+              <td>Savoir-faire maison reconnu, mais il est dans la tête de la fondatrice.</td></tr>
+            <tr><td>Service en salle</td><td><span class="tag t-w">À renforcer</span></td>
+              <td>Bon quand elle est présente, irrégulier sinon.</td></tr>
+            <tr><td>Marketing et notoriété</td><td><span class="tag t-o">Point fort</span></td>
+              <td>Pionnière, visage de la marque, très forte audience, tournées de
+                dégustation qui créent l'événement.</td></tr>
+            <tr><td>Logistique des tournées</td><td><span class="tag t-m">Faible</span></td>
+              <td>Succès commercial, mais l'incident des escargots à Yamoussoukro montre une
+                logistique improvisée hors d'Abidjan.</td></tr>
+            <tr><td>Encaissement et contrôle</td><td><span class="tag t-m">Faible</span></td>
+              <td>Elle ne sait pas ce qui se vend vraiment dans chaque site ; vols et
+                détournements constatés.</td></tr>
+            <tr><td>Ressources humaines</td><td><span class="tag t-m">Faible</span></td>
+              <td>Recrutement à l'instinct, ni formation écrite ni intéressement.</td></tr>
+            <tr><td>Gestion et infrastructure</td><td><span class="tag t-m">Faible</span></td>
+              <td>Pas de tableau de bord ; les loyers, salaires et investissements de décor sont
+                connus, les recettes ne le sont pas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>VRIO</h3>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Ressource</th><th>Valeur</th><th>Rareté</th><th>Inimitabilité</th>
+            <th>Organisation</th><th>Résultat</th></tr></thead>
+          <tbody>
+            <tr><td>Recettes maison et savoir-faire</td><td>Oui</td><td>Partiel</td>
+              <td>Partiel</td><td>Non</td><td><span class="tag t-w">Avantage inexploité</span></td></tr>
+            <tr><td>Notoriété personnelle et audience</td><td>Oui</td><td>Oui</td><td>Oui</td>
+              <td>Partiel</td><td><span class="tag t-o">Avantage à organiser</span></td></tr>
+            <tr><td>Marque « PlacaliKro »</td><td>Oui</td><td>Oui</td><td>Partiel</td>
+              <td>Non</td><td><span class="tag t-w">Avantage à protéger</span></td></tr>
+            <tr><td>Savoir-faire des tournées (événement, accueil des villes)</td><td>Oui</td>
+              <td>Oui</td><td>Partiel</td><td>Partiel</td>
+              <td><span class="tag t-o">Avantage à organiser</span></td></tr>
+            <tr><td>Trois emplacements à Abidjan</td><td>Oui</td><td>Partiel</td><td>Non</td>
+              <td>Partiel</td><td><span class="tag t-n">Parité</span></td></tr>
+            <tr><td>Statut de pionnière</td><td>Oui</td><td>Non</td><td>Non</td><td>—</td>
+              <td><span class="tag t-n">Parité (érodé)</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="coach">
+        <span class="who">Avis du coach</span>
+        <p>Test « Organisation » : les recettes ont de la valeur, mais rien n'est en place pour
+          les reproduire sans la fondatrice. Tant qu'elles ne sont pas écrites et enseignées,
+          ce n'est pas un avantage durable.</p>
+      </div>
+    </section>
+
+    <!-- ==================== ÉTAPE 4 : PARTIES PRENANTES ==================== -->
+    <section id="e4">
+      <div class="step-head">
+        <span class="eyebrow">Étape 4 · Module 6</span>
+        <h2>Parties prenantes</h2>
+        <p class="tool">Matrice pouvoir-intérêt et approche retenue.</p>
+      </div>
+      <p class="axis">↑ Pouvoir fort · → Intérêt fort</p>
+      <div class="matrix">
+        <div class="cell t"><h4>Satisfaire <span class="axis">pouvoir fort · intérêt modéré</span></h4>
+          <ul>
+            <li><strong>Clients</strong> : goût constant, accueil, propreté.</li>
+            <li><strong>Bailleurs</strong> : loyers fixes, préavis à négocier si fermeture.</li>
+          </ul></div>
+        <div class="cell s"><h4>Impliquer <span class="axis">pouvoir fort · intérêt fort</span></h4>
+          <ul>
+            <li><strong>La fondatrice</strong> : décisionnaire et ressource rare ; son énergie
+              est à protéger.</li>
+            <li><strong>Gérants de site</strong> : pouvoir de fait sur la caisse et la qualité ;
+              à intéresser au résultat.</li>
+          </ul></div>
+        <div class="cell o"><h4>Surveiller <span class="axis">pouvoir faible · intérêt modéré</span></h4>
+          <ul>
+            <li><strong>Le Placali Abouré</strong> : rival structuré, à suivre (ouvertures,
+              franchise, export).</li>
+            <li><strong>Fournisseurs informels</strong> : prix et qualité irréguliers.</li>
+            <li><strong>Imitateurs</strong> : observent chaque mouvement.</li>
+          </ul></div>
+        <div class="cell o"><h4>Informer <span class="axis">pouvoir faible · intérêt fort</span></h4>
+          <ul>
+            <li><strong>Abonnés et communauté</strong> : ambassadeurs de « l'original ».</li>
+            <li><strong>Publics de Bouaké, Yamoussoukro, Daloa</strong> : déjà conquis par les
+              tournées, ils attendent une adresse durable.</li>
+            <li><strong>Futurs franchisés</strong> : à préparer dès maintenant.</li>
+            <li><strong>Employés</strong> : formation, règles claires, perspectives.</li>
+          </ul></div>
+      </div>
+    </section>
+
+    <!-- ==================== ÉTAPE 5 : SYNTHÈSE ==================== -->
+    <section id="e5">
+      <div class="step-head">
+        <span class="eyebrow">Étape 5 · Module 5</span>
+        <h2>Synthèse : SWOT, TOWS et enjeux</h2>
+        <p class="tool">Chaque élément porte son étape d'origine (É1 à É4).</p>
+      </div>
+      <div class="matrix">
+        <div class="cell s"><h4>Forces</h4><ul>
+          <li>Recettes maison reconnues <span class="lbl-orig">É3</span></li>
+          <li>Notoriété très forte (≈ 508 000 abonnés TikTok) <span class="lbl-orig">É3</span></li>
+          <li>Pionnière, image de « l'original » <span class="lbl-orig">É2</span></li>
+          <li>Tournées qui ont déjà conquis Bouaké <span class="lbl-orig">É3</span></li>
+          <li>Cadre soigné, déjà investi <span class="lbl-orig">É3</span></li>
+        </ul></div>
+        <div class="cell w"><h4>Faiblesses</h4><ul>
+          <li>Aucun contrôle des ventes ; vols constatés <span class="lbl-orig">É3</span></li>
+          <li>Savoir-faire non écrit <span class="lbl-orig">É3</span></li>
+          <li>Achats et logistique de tournée sans procédure <span class="lbl-orig">É3</span></li>
+          <li>Charges fixes lourdes (3 sites, décor) <span class="lbl-orig">É3</span></li>
+          <li>Fondatrice épuisée, seule à tout porter <span class="lbl-orig">É4</span></li>
+        </ul></div>
+        <div class="cell o"><h4>Opportunités</h4><ul>
+          <li>Villes de l'intérieur réceptives <span class="lbl-orig">É1</span></li>
+          <li>Outils de caisse et paiement mobile <span class="lbl-orig">É1</span></li>
+          <li>Marque protégeable à l'OAPI <span class="lbl-orig">É1</span></li>
+          <li>Demande de la diaspora (plus tard) <span class="lbl-orig">É1</span></li>
+        </ul></div>
+        <div class="cell t"><h4>Menaces</h4><ul>
+          <li>Le Placali Abouré, plus structuré, peut s'installer le premier à l'intérieur
+            <span class="lbl-orig">É2</span></li>
+          <li>Imitation généralisée du concept <span class="lbl-orig">É2</span></li>
+          <li>Personnel fiable rare <span class="lbl-orig">É2</span></li>
+          <li>Hausse du coût des viandes et produits frais <span class="lbl-orig">É1</span></li>
+          <li>Chaîne du froid fragile <span class="lbl-orig">É1</span></li>
+        </ul></div>
+      </div>
+      <h3>TOWS : les pistes croisées</h3>
+      <div class="matrix">
+        <div class="cell s"><h4>FO · attaquer</h4><ul>
+          <li>Faire de sa notoriété la preuve de « l'original » : contenu régulier sur les
+            coulisses du fait maison.</li>
+          <li>Déposer la marque pour pouvoir la céder en licence.</li>
+          <li>Transformer chaque tournée en recherche de partenaire local : Bouaké en
+            premier.</li>
+        </ul></div>
+        <div class="cell o"><h4>fO · corriger</h4><ul>
+          <li>Caisse sur téléphone et paiement mobile dans chaque site : voir les ventes sans
+            se déplacer.</li>
+          <li>Écrire les recettes pour qu'elles survivent à son absence.</li>
+        </ul></div>
+        <div class="cell t"><h4>FM · défendre</h4><ul>
+          <li>Se battre sur la régularité et le cadre, pas sur le prix.</li>
+          <li>Utiliser le flair d'achat, mais avec un plafond et une procédure.</li>
+          <li>Prendre de vitesse Le Placali Abouré dans les villes déjà visitées.</li>
+        </ul></div>
+        <div class="cell w"><h4>fM · se protéger</h4><ul>
+          <li>Fermer ou regrouper les points qui ne couvrent pas leurs charges.</li>
+          <li>Ne plus ouvrir en propre tant que le système n'existe pas.</li>
+        </ul></div>
+      </div>
+      <h3>Les trois enjeux</h3>
+      <div class="stakes">
+        <div class="stake"><span class="num">1</span>
+          <h3>Reprendre le contrôle</h3>
+          <p>Savoir chaque soir ce que chaque site a vendu, dépensé et perdu, sans y
+            être.</p></div>
+        <div class="stake"><span class="num">2</span>
+          <h3>Rester l'original</h3>
+          <p>Protéger et faire valoir l'authenticité de PlacaliKro face aux copies.</p></div>
+        <div class="stake"><span class="num">3</span>
+          <h3>Grandir sans s'épuiser</h3>
+          <p>Trouver un modèle de croissance où d'autres investissent et portent le
+            quotidien, en partant des villes que les tournées ont déjà conquises.</p></div>
+      </div>
+    </section>
+
+    <!-- ==================== ÉTAPE 6 : CAP ==================== -->
+    <section id="e6">
+      <div class="step-head">
+        <span class="eyebrow">Étape 6 · Module 7</span>
+        <h2>Le cap</h2>
+        <p class="tool">Vision, mission, valeurs et objectifs SMART.</p>
+      </div>
+      <div class="prose">
+        <span class="eyebrow">Vision</span>
+        <p class="vision">Que partout en Côte d'Ivoire, on reconnaisse le vrai placali fait maison
+          à son goût, toujours le même, et qu'on dise : « c'est PlacaliKro ».</p>
+        <p class="small muted">Test du remplacement du nom réussi : la phrase ne peut s'appliquer à
+          aucun autre restaurant.</p>
+        <span class="eyebrow">Mission</span>
+        <p>Servir chaque jour un placali, un attiéké et des sauces traditionnelles préparés comme
+          à la maison, avec le même goût quelle que soit la main en cuisine.</p>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Valeur</th><th>Geste concret</th></tr></thead>
+          <tbody>
+            <tr><td>Fait maison</td><td>Sauces préparées le jour même selon une fiche
+              recette.</td></tr>
+            <tr><td>Rigueur</td><td>Caisse et stock arrêtés chaque soir, rapport envoyé avant
+              22 h.</td></tr>
+            <tr><td>Confiance vérifiée</td><td>Tout écart de caisse de plus de 2 % est expliqué
+              le lendemain.</td></tr>
+            <tr><td>Respect</td><td>Les employés connaissent leurs règles, leurs primes et leur
+              évolution.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Objectifs SMART</h3>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Objectif</th><th>Échéance</th></tr></thead>
+          <tbody>
+            <tr><td>100 % des ventes de chaque site enregistrées en caisse ou en paiement mobile,
+              avec un rapport journalier.</td><td>31 mars 2027</td></tr>
+            <tr><td>Pertes de stock ramenées sous 3 % des achats du mois.</td>
+              <td>30 juin 2027</td></tr>
+            <tr><td>Chaque site conservé couvre son loyer et ses salaires trois mois de suite ;
+              sinon, il est fermé ou regroupé.</td><td>30 juin 2027</td></tr>
+            <tr><td>Manuel d'exploitation et 20 fiches recettes validés.</td>
+              <td>30 juin 2027</td></tr>
+            <tr><td>Marque PlacaliKro déposée à l'OAPI.</td><td>31 mai 2027</td></tr>
+            <tr><td>La fondatrice dispose de deux jours par semaine sans exploitation.</td>
+              <td>À partir d'avril 2027</td></tr>
+            <tr><td>Un premier contrat de licence ou de franchise signé.</td>
+              <td>31 décembre 2027</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="src">Les seuils (2 %, 3 %, 20 fiches) sont des propositions à calibrer avec les
+        chiffres réels de PlacaliKro.</p>
+    </section>
+
+    <!-- ==================== ÉTAPE 7 : CHOIX ==================== -->
+    <section id="e7">
+      <div class="step-head">
+        <span class="eyebrow">Étape 7 · Module 8</span>
+        <h2>Les choix</h2>
+        <p class="tool">Stratégie générique, matrice d'Ansoff, évaluation
+          pertinence-acceptabilité-faisabilité.</p>
+      </div>
+      <div class="prose">
+        <p><strong>Stratégie générique :</strong> différenciation ciblée. PlacaliKro ne gagnera
+          pas sur le prix face aux maquis ; il gagne sur l'authenticité, la régularité et le
+          cadre.</p>
+        <p><strong>Ansoff :</strong> d'abord la <em>pénétration du marché</em> (rendre rentables
+          les sites d'Abidjan que l'on garde), ensuite le <em>développement de marché</em>
+          (villes de l'intérieur) par des partenaires plutôt qu'en propre. Les tournées servent
+          de test : on ne signe que là où une tournée a rempli la salle.</p>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Option</th><th>Pertinence</th><th>Acceptabilité</th><th>Faisabilité</th>
+            <th>Décision</th></tr></thead>
+          <tbody>
+            <tr><td>A. Continuer à ouvrir des succursales</td><td><span class="tag t-m">Faible</span></td>
+              <td><span class="tag t-m">Faible</span></td><td><span class="tag t-m">Faible</span></td>
+              <td><span class="tag t-m">Rejetée</span></td></tr>
+            <tr><td>B. Se recentrer sur les sites rentables d'Abidjan, fermer ou regrouper les
+              autres</td>
+              <td><span class="tag t-o">Forte</span></td><td><span class="tag t-w">Moyenne</span></td>
+              <td><span class="tag t-o">Forte</span></td><td><span class="tag t-o">Retenue · phase 1</span></td></tr>
+            <tr><td>C. Codifier le savoir-faire (recettes, manuel, contrôle)</td>
+              <td><span class="tag t-o">Forte</span></td><td><span class="tag t-o">Forte</span></td>
+              <td><span class="tag t-o">Forte</span></td><td><span class="tag t-o">Retenue · phase 2</span></td></tr>
+            <tr><td>D. Licence ou franchise de la marque, d'abord dans une ville de tournée
+              (Bouaké)</td><td><span class="tag t-o">Forte</span></td>
+              <td><span class="tag t-o">Forte</span></td><td><span class="tag t-w">Moyenne</span></td>
+              <td><span class="tag t-o">Retenue · phase 3</span></td></tr>
+            <tr><td>E. Cuisine centrale qui prépare les sauces pour tous les sites</td>
+              <td><span class="tag t-w">Moyenne</span></td><td><span class="tag t-o">Forte</span></td>
+              <td><span class="tag t-w">Moyenne</span></td><td><span class="tag t-w">À étudier</span></td></tr>
+            <tr><td>F. Produits emballés et export vers la diaspora</td>
+              <td><span class="tag t-w">Moyenne</span></td><td><span class="tag t-w">Moyenne</span></td>
+              <td><span class="tag t-m">Faible</span></td><td><span class="tag t-w">Plus tard</span></td></tr>
+            <tr><td>G. Changer d'activité</td><td><span class="tag t-m">Faible</span></td>
+              <td><span class="tag t-w">Moyenne</span></td><td><span class="tag t-w">Moyenne</span></td>
+              <td><span class="tag t-m">Rejetée</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>La stratégie retenue</h3>
+      <p class="statement">PlacaliKro garde à Abidjan les seuls restaurants qui couvrent leurs
+        charges et en fait la référence du placali fait maison. Il écrit son savoir-faire pour
+        qu'il ne dépende plus de la présence de sa fondatrice. Puis il grandit en cédant sa
+        marque à des partenaires qui investissent leur propre argent, en commençant par les
+        villes que ses tournées ont déjà conquises.</p>
+      <div class="phases">
+        <div class="phase"><span class="when">0 à 3 mois</span><h3>Consolider</h3>
+          <p>Voir les chiffres, fermer ce qui saigne, arrêter les pertes.</p></div>
+        <div class="phase"><span class="when">3 à 9 mois</span><h3>Codifier</h3>
+          <p>Recettes, manuel, gérant intéressé, marque déposée.</p></div>
+        <div class="phase"><span class="when">9 à 18 mois</span><h3>Concéder</h3>
+          <p>Une tournée de recrutement à Bouaké, puis un premier partenaire sous licence,
+            piloté par le manuel.</p></div>
+      </div>
+      <h3>Ce que nous ne ferons pas</h3>
+      <ul class="no-list">
+        <li>Ouvrir un nouveau restaurant en propre avant 18 mois.</li>
+        <li>Acheter en gros un produit périssable sans capacité de stockage vérifiée et sans
+          responsable désigné.</li>
+        <li>Confier un site à un gérant sans période d'essai, manuel et contrôle de caisse.</li>
+        <li>Baisser les prix pour suivre les imitateurs.</li>
+        <li>Partir en tournée sans fiche logistique (achats, froid, responsable sur
+          place).</li>
+        <li>Dénoncer un employé en vidéo avant que le contrôle interne ait parlé.</li>
+        <li>Abandonner PlacaliKro pour « un autre business » par fatigue.</li>
+      </ul>
+    </section>
+
+    <!-- ==================== ÉTAPE 8 : ACTION ==================== -->
+    <section id="e8">
+      <div class="step-head">
+        <span class="eyebrow">Étape 8 · Module 9</span>
+        <h2>Passer à l'action</h2>
+        <p class="tool">Feuille de route sur 18 mois et tableau de bord équilibré.</p>
+      </div>
+      <div class="legend">
+        <span style="--c: var(--danger)">Consolider</span>
+        <span style="--c: var(--encre)">Codifier</span>
+        <span style="--c: var(--ocre)">Concéder</span>
+      </div>
+      <div class="table-box">
+        <div class="gantt" role="img" aria-label="Feuille de route sur 18 mois, de janvier 2027 à juin 2028">
+          <span class="name"></span>
+          <span class="h">J</span><span class="h">F</span><span class="h">M</span><span class="h">A</span>
+          <span class="h">M</span><span class="h">J</span><span class="h">J</span><span class="h">A</span>
+          <span class="h">S</span><span class="h">O</span><span class="h">N</span><span class="h">D</span>
+          <span class="h">J</span><span class="h">F</span><span class="h">M</span><span class="h">A</span>
+          <span class="h">M</span><span class="h">J</span>
+
+          <span class="name">C1 · Bilan site par site</span>
+          <span class="bar b1" style="grid-column: 2 / span 1"></span>
+          <span class="name">C2 · Caisse et inventaire quotidien</span>
+          <span class="bar b1" style="grid-column: 2 / span 3"></span>
+          <span class="name">C3 · Procédure achats et froid</span>
+          <span class="bar b1" style="grid-column: 2 / span 2"></span>
+          <span class="name">C4 · Fermer ou regrouper</span>
+          <span class="bar b1" style="grid-column: 3 / span 4"></span>
+          <span class="name">C5 · Fiches recettes et manuel</span>
+          <span class="bar b2" style="grid-column: 3 / span 5"></span>
+          <span class="name">C6 · Gérant intéressé et formation</span>
+          <span class="bar b2" style="grid-column: 4 / span 6"></span>
+          <span class="name">C7 · Dépôt de marque OAPI</span>
+          <span class="bar b2" style="grid-column: 3 / span 3"></span>
+          <span class="name">C8 · Contenu « l'original »</span>
+          <span class="bar b2" style="grid-column: 2 / span 18"></span>
+          <span class="name">C9 · Tournée Bouaké et contrat</span>
+          <span class="bar b3" style="grid-column: 9 / span 4"></span>
+          <span class="name">C10 · Pilote sous licence à Bouaké</span>
+          <span class="bar b3" style="grid-column: 13 / span 7"></span>
+        </div>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Chantier</th><th>Responsable</th><th>Livrable</th></tr></thead>
+          <tbody>
+            <tr><td>C1 · Bilan site par site</td><td>Fondatrice + comptable</td>
+              <td>Pour chaque site : ventes, loyer, salaires, marge. Verdict : garder, regrouper,
+                fermer.</td></tr>
+            <tr><td>C2 · Caisse et inventaire</td><td>Fondatrice</td><td>Application de caisse sur
+              téléphone, paiement mobile, rapport du soir.</td></tr>
+            <tr><td>C3 · Achats et froid</td><td>Responsable cuisine</td><td>Fiche de réception
+              (nettoyer, peser, congeler, signer), plafond d'achat sans accord ; fiche
+              logistique de tournée (froid sur place, responsable désigné).</td></tr>
+            <tr><td>C4 · Fermer ou regrouper</td><td>Fondatrice</td><td>Parmi Yopougon, Koumassi
+              et Angré Château, sites déficitaires fermés ou regroupés selon le bilan C1 ;
+              meilleurs employés gardés.</td></tr>
+            <tr><td>C5 · Recettes et manuel</td><td>Fondatrice + cheffe</td><td>20 fiches
+              recettes avec grammages ; manuel d'ouverture, de fermeture et d'hygiène.</td></tr>
+            <tr><td>C6 · Gérant intéressé</td><td>Fondatrice</td><td>Prime mensuelle liée à la
+              marge et aux écarts de caisse ; essai de 3 mois.</td></tr>
+            <tr><td>C7 · Marque</td><td>Conseil en propriété industrielle</td><td>Dépôt OAPI du
+              nom et du logo.</td></tr>
+            <tr><td>C8 · Contenu</td><td>Fondatrice</td><td>Une vidéo par semaine sur les
+              coulisses du fait maison.</td></tr>
+            <tr><td>C9-C10 · Licence pilote</td><td>Fondatrice + avocat</td><td>Nouvelle tournée à
+              Bouaké pour rencontrer des candidats ; contrat type (droit d'entrée, redevance,
+              cahier de style du décor, visites d'audit) ; premier partenaire.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Tableau de bord équilibré</h3>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>Perspective</th><th>Indicateur</th><th>Cible</th><th>Fréquence</th></tr></thead>
+          <tbody>
+            <tr><td>Finances</td><td>Marge par site après loyer et salaires</td><td>Positive
+              3 mois de suite</td><td>Mensuelle</td></tr>
+            <tr><td>Finances</td><td>Écart de caisse (ventes déclarées vs théoriques)</td>
+              <td>Moins de 2 %</td><td>Quotidienne</td></tr>
+            <tr><td>Clients</td><td>Note moyenne et avis en ligne</td><td>4,5 sur 5 ou plus</td>
+              <td>Mensuelle</td></tr>
+            <tr><td>Clients</td><td>Part de clients qui reviennent</td><td>À mesurer, puis en
+              hausse</td><td>Trimestrielle</td></tr>
+            <tr><td>Processus</td><td>Pertes de stock / achats</td><td>Moins de 3 %</td>
+              <td>Hebdomadaire</td></tr>
+            <tr><td>Processus</td><td>Plats conformes à la fiche recette (contrôle surprise)</td>
+              <td>90 % ou plus</td><td>Mensuelle</td></tr>
+            <tr><td>Apprentissage</td><td>Employés formés au manuel</td><td>100 %</td>
+              <td>Trimestrielle</td></tr>
+            <tr><td>Apprentissage</td><td>Jours sans exploitation de la fondatrice</td>
+              <td>2 par semaine</td><td>Hebdomadaire</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== PLAN STRATÉGIQUE ==================== -->
+    <section id="plan">
+      <div class="step-head">
+        <span class="eyebrow">Étape 9 · Module 10</span>
+        <h2>Le plan stratégique de PlacaliKro</h2>
+        <p class="tool">Huit sections, chacune reliée à l'étape d'où elle vient.</p>
+      </div>
+      <div class="plan">
+        <ol>
+          <li><h3>Où en sommes-nous</h3>
+            <p>Une marque pionnière, très suivie et copiée partout, étirée sur trois restaurants
+              à Abidjan que la fondatrice ne peut plus contrôler. Les tournées remplissent les
+              salles à l'intérieur ; Le Placali Abouré, plus structuré, avance. Les charges sont
+              certaines, les recettes ne le sont pas.</p>
+            <span class="trace">É1 · É2 · É3</span></li>
+          <li><h3>Nos enjeux</h3>
+            <p>Reprendre le contrôle, rester l'original, grandir sans s'épuiser.</p>
+            <span class="trace">É5</span></li>
+          <li><h3>Notre cap</h3>
+            <p>Être reconnu partout comme le vrai placali fait maison, au goût toujours
+              identique.</p>
+            <span class="trace">É6</span></li>
+          <li><h3>Notre stratégie et ce que nous ne ferons pas</h3>
+            <p>Consolider, codifier, concéder. Pas de nouvelle succursale en propre, pas de
+              guerre des prix, pas d'achat périssable sans procédure.</p>
+            <span class="trace">É7</span></li>
+          <li><h3>Nos chantiers</h3>
+            <p>Dix chantiers sur 18 mois, de la caisse quotidienne au premier partenaire sous
+              licence à Bouaké.</p>
+            <span class="trace">É8</span></li>
+          <li><h3>Nos objectifs et indicateurs</h3>
+            <p>Écart de caisse sous 2 %, pertes sous 3 %, sites rentables, manuel prêt, marque
+              déposée, deux jours de repos par semaine, un contrat signé fin 2027.</p>
+            <span class="trace">É6 · É8</span></li>
+          <li><h3>Nos risques</h3>
+            <div class="table-box">
+              <table>
+                <thead><tr><th>Risque</th><th>Signal d'alerte</th><th>Réponse prévue</th></tr></thead>
+                <tbody>
+                  <tr><td>Gérant indélicat</td><td>Écart de caisse de plus de 2 % deux jours de
+                    suite</td><td>Contrôle sur place et inventaire complet sous 48 h.</td></tr>
+                  <tr><td>Fermeture vue comme un échec</td><td>Commentaires négatifs en
+                    ligne</td><td>Le dire franchement : « on revient à l'original ».</td></tr>
+                  <tr><td>Partenaire qui abîme la marque</td><td>Note client sous 4 sur 5</td>
+                    <td>Audit, plan de correction, clause de retrait de licence.</td></tr>
+                  <tr><td>Le Placali Abouré s'installe le premier à Bouaké</td><td>Annonce
+                    d'ouverture ou de franchise dans une ville de tournée</td><td>Avancer la
+                    tournée de recrutement ; viser Yamoussoukro ou Daloa si Bouaké est pris.</td></tr>
+                  <tr><td>Rechute d'épuisement</td><td>Jours de repos sautés deux semaines de
+                    suite</td><td>Déléguer un chantier et décaler la phase 3.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <span class="trace">É1 · É2 · É4 · É7</span></li>
+          <li><h3>Notre suivi</h3>
+            <p>Rapport du soir chaque jour ; revue du tableau de bord le premier lundi du mois ;
+              bilan du plan tous les trois mois, avec le passage d'une phase à l'autre seulement
+              si les objectifs de la phase en cours sont atteints.</p>
+            <span class="trace">É8</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ==================== APPEL À L'ACTION ==================== -->
+    <section class="cta" aria-labelledby="cta-titre">
+      <h2 id="cta-titre">Vous vous reconnaissez dans cette histoire ?</h2>
+      <p>La fondatrice de PlacaliKro avait déjà les réponses : elle les a dites en cinq minutes.
+        Il manquait une méthode pour les mettre en ordre et en faire un plan daté, chiffré et
+        suivi. C'est le rôle de Kalami Stratégie : un coach qui vous guide étape par étape,
+        de votre diagnostic à votre plan.</p>
+      <p><a href="https://kalami-livres.com/strategie" target="_blank" rel="noopener">Commencer mon
+        étude sur kalami-livres.com/strategie</a></p>
+    </section>
+
+    <!-- ==================== PIED DE PAGE ==================== -->
+    <footer class="foot">
+      <p>Étude de démonstration réalisée par Kalami Stratégie à partir d'une vidéo publique de la
+        fondatrice de PlacaliKro, complétée par une recherche publique (novembre 2026). Elle
+        n'a pas été commandée par l'entreprise. Les chiffres internes n'étant pas connus, les
+        cibles sont des hypothèses à valider avec elle.</p>
+      <p>Méthode : <em>La stratégie d'entreprise : analyse et mise en œuvre par l'exemple</em>,
+        Claude Marcel Kouakou, 2e édition.</p>
+    </footer>
+  </main>
+</div>
+
+</body>
+</html>

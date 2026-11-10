@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## [v0.22.1] - 2026-11-10 — Étude de démonstration PlacaliKro en ligne
+### Ajouté
+- Page statique `/etudes/placalikro.html` : l’étude stratégique de démonstration PlacaliKro
+  (profil, 8 étapes, plan), à partager par lien (investisseurs). Non indexée (`noindex`),
+  absente du menu et du plan du site.
+- Mention en tête de page : étude réalisée à partir de sources publiques, sans lien avec
+  l’entreprise ni commande de sa part.
+
+### Modifié
+- Polices Google retirées (bloquées par la CSP du site) : polices système de secours.
+
 ## [v0.22.0] - 2026-11-09 — Page « Découvrir » du livre et de Kalami Stratégie
 ### Ajouté
 - Page publique et indexée `/decouvrir` : présentation illustrée du livre *La stratégie
