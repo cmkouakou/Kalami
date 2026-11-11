@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## [v0.22.8] - 2026-11-10 — La chaîne de requêtes de DirectQuery
+### Ajouté
+- Nouveau bloc de contenu `chaine` : des maillons alignés et reliés par des flèches
+  nommées. Là où `flux` montre plusieurs sources qui convergent vers un modèle, celui-ci
+  montre un trajet — le rapport interroge le modèle, qui interroge la source
+  (`src/lib/powerbi/content.ts`, `src/components/powerbi/guide-visuals.tsx`).
+- Leçon « Quand développer un modèle DirectQuery » : le schéma de la documentation
+  Microsoft ouvre désormais la section des raisons de le choisir, et dit en une image ce
+  que la liste énumère — le modèle ne stocke rien, il relaie.
+
 ## [v0.22.7] - 2026-11-10 — Le chantier reçoit les retombées de la leçon
 ### Ajouté
 - Chantier, sprint 7.6 « Alléger le modèle avant de livrer » : les huit techniques de

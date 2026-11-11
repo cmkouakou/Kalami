@@ -15,6 +15,7 @@
 import {
   examen,
   liste,
+  chaine,
   memo,
   note,
   p,
@@ -53,6 +54,16 @@ const contenu: LessonContent = [
       "Dès qu'il y en a plusieurs, le framework s'appelle **composite**.",
   ),
 
+  chaine(
+    [
+      { nom: "Rapport" },
+      { nom: "Modèle DirectQuery", modele: true },
+      { nom: "Base de données" },
+    ],
+    ["requêtes", "requêtes"],
+    "Le modèle ne stocke rien : il relaie. Chaque interaction du rapport déclenche une " +
+      "requête réelle vers la base.",
+  ),
   titre("Quatre raisons de choisir DirectQuery"),
   tableau(
     ["Besoin", "Pourquoi DirectQuery répond"],

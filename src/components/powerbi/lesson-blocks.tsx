@@ -30,6 +30,7 @@ import type {
 
 import { GuideChecklist } from "./guide-checklist";
 import {
+  ChaineDiagram,
   EtoileDiagram,
   FluxDiagram,
   MergeMock,
@@ -209,6 +210,9 @@ function Bloc({ bloc, progression }: { bloc: ContentBlock; progression?: Progres
 
     case "flux":
       return <FluxDiagram bloc={bloc} />;
+
+    case "chaine":
+      return <ChaineDiagram bloc={bloc} />;
 
     case "maquette-power-query":
       return <PowerQueryMock bloc={bloc} />;

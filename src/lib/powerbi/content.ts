@@ -148,6 +148,20 @@ export type FluxBlock = {
 };
 
 /**
+ * Chaîne de requêtes : des maillons alignés, reliés par des flèches nommées. Là où
+ * FluxBlock montre plusieurs sources qui convergent vers un modèle, celui-ci montre un
+ * trajet — le rapport interroge le modèle, qui interroge la source. Le maillon marqué
+ * `modele` est figuré par une étoile dans son cercle.
+ */
+export type ChaineBlock = {
+  kind: "chaine";
+  maillons: { nom: string; modele?: boolean }[];
+  /** Libellés des flèches ; il en faut un de moins que de maillons. */
+  fleches: string[];
+  legende?: string;
+};
+
+/**
  * Maquette de l'éditeur Power Query, pour se repérer avant d'ouvrir le logiciel.
  * Chaque zone est facultative : une maquette peut ne montrer que les étapes.
  */
@@ -189,6 +203,7 @@ export type ContentBlock =
   | SchemaBlock
   | EtoileBlock
   | FluxBlock
+  | ChaineBlock
   | PowerQueryMockBlock
   | MergeMockBlock;
 
@@ -234,6 +249,13 @@ export const flux = (
   mode: string,
   options: { cible?: FluxBlock["cible"]; legende?: string } = {},
 ): FluxBlock => ({ kind: "flux", sources, mode, ...options });
+
+/** Chaîne de requêtes : maillons alignés, flèches nommées entre eux. */
+export const chaine = (
+  maillons: ChaineBlock["maillons"],
+  fleches: string[],
+  legende?: string,
+): ChaineBlock => ({ kind: "chaine", maillons, fleches, legende });
 
 /** Encadré d'information. */
 export const note = (texte: string, titreEncadre?: string): NoteBlock => ({

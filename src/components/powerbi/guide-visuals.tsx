@@ -18,6 +18,7 @@
 
 import { getPowerbiDictionary } from "@/i18n/powerbi";
 import type {
+  ChaineBlock,
   EtoileBlock,
   FluxBlock,
   MergeMockBlock,
@@ -397,6 +398,126 @@ export function FluxDiagram({ bloc }: { bloc: FluxBlock }) {
           <text x={cxModele} y={cy + 68} fontSize={11} textAnchor="middle" className="lien-texte">
             {bloc.cible.note}
           </text>
+        )}
+      </svg>
+      {bloc.legende && <figcaption>{bloc.legende}</figcaption>}
+    </figure>
+  );
+}
+
+// ==================== CHAÎNE DE REQUÊTES ====================
+
+/** Géométrie de la chaîne, en unités du viewBox. */
+const CH_LARGEUR = 560;
+const CH_BOITE_L = 116;
+const CH_BOITE_H = 44;
+const CH_MODELE_R = 52;
+const CH_FLECHE = 64;
+const CH_MARGE = 8;
+
+/**
+ * Chaîne de requêtes : rapport → modèle → source, chaque flèche portant ce qui circule.
+ * Le maillon marqué `modele` prend la forme d'une étoile dans son cercle, comme dans la
+ * documentation Microsoft : c'est le même objet que dans les autres schémas du cours,
+ * vu cette fois au milieu d'un trajet plutôt qu'au bout.
+ */
+export function ChaineDiagram({ bloc }: { bloc: ChaineBlock }) {
+  const largeurs = bloc.maillons.map((m) => (m.modele ? CH_MODELE_R * 2 : CH_BOITE_L));
+  const total = largeurs.reduce((a, b) => a + b, 0) + CH_FLECHE * (bloc.maillons.length - 1);
+  const hauteur = CH_MODELE_R * 2 + CH_MARGE * 2 + 22;
+  const cy = CH_MARGE + CH_MODELE_R;
+
+  // Abscisse du centre de chaque maillon, chaîne centrée dans le viewBox.
+  // Somme des maillons précédents plutôt qu'un curseur mutable : la fonction de rendu
+  // reste pure, ce qu'exige la règle react-hooks/immutability.
+  const debut = (CH_LARGEUR - total) / 2;
+  const centres = largeurs.map(
+    (l, i) =>
+      debut +
+      largeurs.slice(0, i).reduce((somme, precedente) => somme + precedente + CH_FLECHE, 0) +
+      l / 2,
+  );
+
+  return (
+    <figure className="schema-wrap chaine-wrap">
+      <svg
+        viewBox={`0 0 ${CH_LARGEUR} ${hauteur}`}
+        role="img"
+        aria-label={
+          bloc.legende ??
+          bloc.maillons.map((m) => m.nom).join(` ${bloc.fleches[0] ?? "vers"} `)
+        }
+      >
+        <defs>
+          <marker
+            id="ch-pointe"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="7"
+            markerHeight="7"
+            orient="auto-start-reverse"
+          >
+            <path d="M 0 1 L 9 5 L 0 9 z" className="pointe" />
+          </marker>
+        </defs>
+
+        {bloc.fleches.map((libelle, i) => {
+          const x1 = centres[i] + largeurs[i] / 2 + 6;
+          const x2 = centres[i + 1] - largeurs[i + 1] / 2 - 6;
+          return (
+            <g key={`fl-${i}`}>
+              <line
+                x1={x1}
+                y1={cy}
+                x2={x2}
+                y2={cy}
+                className="fleche"
+                strokeWidth={1.5}
+                markerEnd="url(#ch-pointe)"
+              />
+              <text
+                x={(x1 + x2) / 2}
+                y={cy - 9}
+                fontSize={10.5}
+                textAnchor="middle"
+                className="lien-texte"
+              >
+                {libelle}
+              </text>
+            </g>
+          );
+        })}
+
+        {bloc.maillons.map((maillon, i) =>
+          maillon.modele ? (
+            <g key={`m-${i}`}>
+              <circle cx={centres[i]} cy={cy} r={CH_MODELE_R} className="cercle-modele" />
+              <polygon points={pointsEtoile(centres[i], cy, 30)} className="astre" />
+              <text
+                x={centres[i]}
+                y={cy + CH_MODELE_R + 16}
+                fontSize={11}
+                textAnchor="middle"
+                className="lien-texte"
+              >
+                {maillon.nom}
+              </text>
+            </g>
+          ) : (
+            <g key={`m-${i}`} className="source">
+              <rect
+                x={centres[i] - CH_BOITE_L / 2}
+                y={cy - CH_BOITE_H / 2}
+                width={CH_BOITE_L}
+                height={CH_BOITE_H}
+                rx={6}
+              />
+              <text x={centres[i]} y={cy + 4} fontSize={11.5} textAnchor="middle">
+                {maillon.nom}
+              </text>
+            </g>
+          ),
         )}
       </svg>
       {bloc.legende && <figcaption>{bloc.legende}</figcaption>}
