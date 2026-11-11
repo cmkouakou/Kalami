@@ -564,6 +564,68 @@ export const sprint1: Sprint = {
     {
       kind: "encadre",
       ton: "attention",
+      texte: "**Ce que DirectQuery ferait à ton application.** La raison donnée plus haut — " +
+        "le pooler n'est pas dimensionné pour ça — n'est que la moitié du problème. La " +
+        "documentation Microsoft est plus directe : les requêtes analytiques d'un modèle " +
+        "DirectQuery **peuvent ralentir toutes les charges de la base, y compris les " +
+        "opérations OLTP**. Chez toi, l'OLTP, c'est `brvm-analyser.com` qui sert tes " +
+        "utilisateurs réels. Un rapport laissé ouvert avec des filtres croisés envoie des " +
+        "dizaines de requêtes par minute à cette même base.",
+      points: [
+        "Microsoft recommande de **toujours travailler avec le propriétaire de la base** " +
+          "avant de monter un modèle DirectQuery dessus — ici, ce propriétaire, c'est toi, " +
+          "donc la décision est entièrement tienne et personne ne t'avertira",
+        "Si tu veux quand même tester DirectQuery pour l'examen, fais-le sur **une vue, " +
+          "brièvement**, et ferme le rapport ensuite",
+        "Les deux parades officielles — **index** et **vues matérialisées** — s'appliqueraient " +
+          "côté Supabase, pas côté Power BI",
+      ],
+    },
+    {
+      kind: "notion",
+      titre: "Pourquoi tes vues contournent le RLS plutôt que de s'appuyer dessus",
+      etiquette: "architecture",
+      contenu: [
+        {
+          kind: "paragraphe",
+          texte: "Il existe deux façons de faire cohabiter Power BI avec une base protégée " +
+            "par une sécurité au niveau ligne, et le chantier a retenu la seconde.",
+        },
+        {
+          kind: "tableau",
+          entetes: ["Approche", "Principe", "Ce qu'elle exige"],
+          lignes: [
+            [
+              "Déléguer à la source",
+              "La base applique sa propre RLS, Power BI ne la réplique pas",
+              "DirectQuery, une base qui le prend en charge, et une **authentification unique**",
+            ],
+            [
+              "Contourner, puis filtrer en amont",
+              "Des vues qui lisent tout, mais n'exposent que ce qui doit l'être",
+              "`security_invoker = false`, un rôle en lecture seule, et une sélection stricte des colonnes",
+            ],
+          ],
+        },
+        {
+          kind: "paragraphe",
+          texte: "La première approche aurait été plus élégante : la règle de sécurité reste " +
+            "à un seul endroit. Elle était hors d'atteinte ici — elle suppose DirectQuery, " +
+            "que la section précédente écarte, et une authentification unique entre Power BI " +
+            "et Supabase, qui n'existe pas.",
+        },
+        {
+          kind: "paragraphe",
+          texte: "D'où le choix du sprint 1 : les vues `reporting.*` tournent avec les droits " +
+            "de leur propriétaire pour voir les données, et c'est **le contenu de la vue** qui " +
+            "devient la barrière — d'où l'insistance à n'y exposer aucune donnée personnelle. " +
+            "La sécurité ne disparaît pas, elle change d'endroit.",
+        },
+      ],
+    },
+    {
+      kind: "encadre",
+      ton: "attention",
       texte: "**Pourquoi \"Transform data\" et pas \"Load\" ?** Une fois chargées telles " +
         "quelles, corriger un type de colonne ou renommer un champ oblige à tout " +
         "retélécharger. Passer par Power Query d'abord permet de préparer les données une " +

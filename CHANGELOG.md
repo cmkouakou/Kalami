@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## [v0.22.9] - 2026-11-10 — Le sprint 1 reçoit les retombées de DirectQuery
+### Ajouté
+- Chantier, sprint 1.6 : un encadré sur ce qu'un modèle DirectQuery ferait réellement à la
+  base — la documentation Microsoft avertit qu'il peut ralentir toutes les charges, OLTP
+  comprises, et l'OLTP est ici l'application en production. L'encadré note aussi que le
+  propriétaire de la base à consulter, dans ce chantier, est l'auteur lui-même : personne
+  d'autre ne l'avertira.
+- Même section, en notion dépliable : pourquoi les vues `reporting.*` contournent le RLS
+  au lieu de s'appuyer dessus. Les deux approches sont comparées, et la première — laisser
+  la base appliquer sa propre sécurité — est écartée pour deux raisons nommées : elle
+  suppose DirectQuery, et une authentification unique qui n'existe pas avec Supabase.
+
 ## [v0.22.8] - 2026-11-10 — La chaîne de requêtes de DirectQuery
 ### Ajouté
 - Nouveau bloc de contenu `chaine` : des maillons alignés et reliés par des flèches
