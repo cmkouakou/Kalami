@@ -19,6 +19,7 @@
 import { getPowerbiDictionary } from "@/i18n/powerbi";
 import type {
   EtoileBlock,
+  FluxBlock,
   MergeMockBlock,
   PowerQueryMockBlock,
   SchemaBlock,
@@ -284,6 +285,119 @@ export function EtoileDiagram({ bloc }: { bloc: EtoileBlock }) {
             </text>
           )}
         </g>
+      </svg>
+      {bloc.legende && <figcaption>{bloc.legende}</figcaption>}
+    </figure>
+  );
+}
+
+// ==================== FLUX D'ALIMENTATION ====================
+
+/** Géométrie du flux, en unités du viewBox. */
+const FL_LARGEUR = 560;
+const FL_SOURCE_L = 132;
+const FL_SOURCE_H = 40;
+const FL_ECART = 16;
+const FL_MARGE = 10;
+const FL_FLECHE_D = 150;
+const FL_FLECHE_F = 288;
+/** Rayon du cercle qui tient le modèle. */
+const FL_RAYON = 98;
+
+/** Points d'une étoile à cinq branches centrée en (cx, cy). */
+function pointsEtoile(cx: number, cy: number, r: number): string {
+  const pts: string[] = [];
+  for (let i = 0; i < 10; i += 1) {
+    const rayon = i % 2 === 0 ? r : r * 0.4;
+    const a = -Math.PI / 2 + (i * Math.PI) / 5;
+    pts.push(`${(cx + rayon * Math.cos(a)).toFixed(1)},${(cy + rayon * Math.sin(a)).toFixed(1)}`);
+  }
+  return pts.join(" ");
+}
+
+/**
+ * Flux d'alimentation : les sources à gauche, le mode de connexion sur chaque flèche, et
+ * le modèle à droite sous la forme d'une étoile dans son cercle. Les sources gardent leur
+ * nom en toutes lettres plutôt qu'un logo : le propos est le mode de connexion, pas la
+ * marque, et le texte reste lisible par un lecteur d'écran.
+ */
+export function FluxDiagram({ bloc }: { bloc: FluxBlock }) {
+  const n = bloc.sources.length;
+  const hauteurSources = n * FL_SOURCE_H + (n - 1) * FL_ECART;
+  const hauteur = FL_MARGE * 2 + Math.max(hauteurSources, FL_RAYON * 2);
+  const cy = hauteur / 2;
+  const cxModele = FL_FLECHE_F + 24 + FL_RAYON;
+  const y0 = (hauteur - hauteurSources) / 2;
+
+  return (
+    <figure className="schema-wrap flux-wrap">
+      <svg
+        viewBox={`0 0 ${FL_LARGEUR} ${hauteur.toFixed(0)}`}
+        role="img"
+        aria-label={
+          bloc.legende ??
+          `${bloc.sources.map((src) => src.nom).join(", ")} alimentent le modèle en mode ${bloc.mode}`
+        }
+      >
+        <defs>
+          <marker
+            id="fl-pointe"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="7"
+            markerHeight="7"
+            orient="auto-start-reverse"
+          >
+            <path d="M 0 1 L 9 5 L 0 9 z" className="pointe" />
+          </marker>
+        </defs>
+
+        {bloc.sources.map((src, i) => {
+          const y = y0 + i * (FL_SOURCE_H + FL_ECART);
+          const milieu = y + FL_SOURCE_H / 2;
+          return (
+            <g key={i}>
+              <g className="source">
+                <rect x={FL_MARGE} y={y} width={FL_SOURCE_L} height={FL_SOURCE_H} rx={6} />
+                <text
+                  x={FL_MARGE + FL_SOURCE_L / 2}
+                  y={milieu + 4}
+                  fontSize={11.5}
+                  textAnchor="middle"
+                >
+                  {src.nom}
+                </text>
+              </g>
+              <line
+                x1={FL_FLECHE_D}
+                y1={milieu}
+                x2={FL_FLECHE_F}
+                y2={milieu}
+                className="fleche"
+                strokeWidth={1.5}
+                markerEnd="url(#fl-pointe)"
+              />
+              <text
+                x={(FL_FLECHE_D + FL_FLECHE_F) / 2}
+                y={milieu - 7}
+                fontSize={10.5}
+                textAnchor="middle"
+                className="lien-texte"
+              >
+                {src.mode ?? bloc.mode}
+              </text>
+            </g>
+          );
+        })}
+
+        <circle cx={cxModele} cy={cy} r={FL_RAYON} className="cercle-modele" />
+        <polygon points={pointsEtoile(cxModele, cy - (bloc.cible?.note ? 8 : 0), 46)} className="astre" />
+        {bloc.cible?.note && (
+          <text x={cxModele} y={cy + 68} fontSize={11} textAnchor="middle" className="lien-texte">
+            {bloc.cible.note}
+          </text>
+        )}
       </svg>
       {bloc.legende && <figcaption>{bloc.legende}</figcaption>}
     </figure>

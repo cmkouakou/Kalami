@@ -17,6 +17,7 @@ import {
   examen,
   liste,
   memo,
+  flux,
   note,
   p,
   tableau,
@@ -47,6 +48,21 @@ const contenu: LessonContent = [
     "Prend en charge les **tables calculées**.",
     "Offre les **meilleures performances de requête** : les données en cache sont optimisées " +
       "pour filtrer, grouper et résumer, et le modèle est entièrement en mémoire.",
+  ),
+  flux(
+    [
+      { nom: "Base relationnelle" },
+      { nom: "Classeur Excel" },
+      { nom: "Flux de réseau social" },
+      { nom: "Flux de données Power BI" },
+    ],
+    "Import",
+    {
+      cible: { note: "un seul modèle en mémoire" },
+      legende:
+        "Des sources de natures très différentes, un seul mode de connexion, un seul modèle : " +
+        "c'est ce que l'importation permet et que les deux autres frameworks restreignent.",
+    },
   ),
   note(
     "Flexibilité de conception maximale et vitesse : c'est pour cela que la leçon « Choisir un " +

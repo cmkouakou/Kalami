@@ -1,5 +1,21 @@
 # Journal des modifications
 
+## [v0.22.6] - 2026-11-10 — Le flux d'alimentation d'un modèle
+### Ajouté
+- Nouveau bloc de contenu `flux` : des sources hétérogènes à gauche, le mode de connexion
+  porté par chaque flèche, et le modèle à droite sous la forme d'une étoile dans son
+  cercle. Chaque source peut porter son propre mode, ce qui permettra d'illustrer le
+  modèle composite sans nouveau bloc (`src/lib/powerbi/content.ts`,
+  `src/components/powerbi/guide-visuals.tsx`).
+- Leçon « Quand développer un modèle d'importation » : le schéma de la documentation
+  Microsoft illustre désormais la section des avantages — quatre natures de sources, un
+  seul mode, un seul modèle en mémoire.
+
+### Modifié
+- Les sources du schéma gardent leur nom en toutes lettres plutôt qu'un logo : le propos
+  est le mode de connexion, pas la marque, et le texte reste lisible par un lecteur
+  d'écran et net à toutes les tailles.
+
 ## [v0.22.5] - 2026-11-10 — Schéma en étoile illustré
 ### Ajouté
 - Nouveau bloc de contenu `etoile` : une table de faits au centre, ses dimensions aux

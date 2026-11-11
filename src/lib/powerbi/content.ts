@@ -131,6 +131,23 @@ export type EtoileBlock = {
 };
 
 /**
+ * Flux d'alimentation : des sources hétérogènes à gauche, le modèle à droite, et le mode
+ * de connexion porté par chaque flèche. Sert à montrer d'un coup d'œil ce qu'un framework
+ * accepte en entrée — toutes sources pour l'importation, une seule famille pour
+ * DirectQuery, un mélange pour le composite.
+ */
+export type FluxBlock = {
+  kind: "flux";
+  /** Sources, de haut en bas. `mode` s'inscrit sur la flèche (défaut : `mode`global). */
+  sources: { nom: string; mode?: string }[];
+  /** Mode porté par les flèches qui n'en précisent pas. */
+  mode: string;
+  /** Le modèle, représenté par une étoile dans son cercle. */
+  cible?: { note?: string };
+  legende?: string;
+};
+
+/**
  * Maquette de l'éditeur Power Query, pour se repérer avant d'ouvrir le logiciel.
  * Chaque zone est facultative : une maquette peut ne montrer que les étapes.
  */
@@ -171,6 +188,7 @@ export type ContentBlock =
   | CardsBlock
   | SchemaBlock
   | EtoileBlock
+  | FluxBlock
   | PowerQueryMockBlock
   | MergeMockBlock;
 
@@ -209,6 +227,13 @@ export const etoile = (
   branches: EtoileBlock["branches"],
   legende?: string,
 ): EtoileBlock => ({ kind: "etoile", centre, branches, legende });
+
+/** Flux d'alimentation : sources à gauche, modèle à droite, mode sur les flèches. */
+export const flux = (
+  sources: FluxBlock["sources"],
+  mode: string,
+  options: { cible?: FluxBlock["cible"]; legende?: string } = {},
+): FluxBlock => ({ kind: "flux", sources, mode, ...options });
 
 /** Encadré d'information. */
 export const note = (texte: string, titreEncadre?: string): NoteBlock => ({
