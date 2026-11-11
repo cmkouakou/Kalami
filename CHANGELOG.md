@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.23.0] - 2026-11-10 — Le modèle composite, en une image
+### Ajouté
+- Leçon « Quand développer un modèle composite » : le schéma de la documentation
+  Microsoft ouvre la leçon et montre ce que le texte définit — un cercle partagé en deux
+  groupes de sources, alimenté à gauche, relayant à droite.
+
+### Modifié
+- Le bloc `flux` accepte désormais un cercle partagé (`cible.groupes`) et un nœud en aval
+  (`aval`). Plutôt qu'un troisième bloc, le schéma du composite réunit ceux de
+  l'importation et de DirectQuery : c'est exactement ce qu'est un modèle composite, et le
+  code le dit aussi (`src/lib/powerbi/content.ts`,
+  `src/components/powerbi/guide-visuals.tsx`).
+- La fabrique `flux` dérive ses options du type plutôt que de les répéter : un champ
+  ajouté au bloc est désormais accepté sans retoucher la signature.
+
 ## [v0.22.9] - 2026-11-10 — Le sprint 1 reçoit les retombées de DirectQuery
 ### Ajouté
 - Chantier, sprint 1.6 : un encadré sur ce qu'un modèle DirectQuery ferait réellement à la

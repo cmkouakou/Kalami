@@ -1317,6 +1317,17 @@
     stroke-linejoin: round;
   }
 
+  /* Modèle composite : la moitié droite du cercle est le groupe DirectQuery */
+  .p4y .flux-wrap .demi-groupe {
+    fill: var(--teal-soft);
+    stroke: none;
+  }
+
+  .p4y .flux-wrap .separation {
+    stroke: var(--border-strong);
+    stroke-width: 1;
+  }
+
   .p4y .flux-wrap figcaption {
     margin-top: 8px;
     text-align: center;

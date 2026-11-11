@@ -330,10 +330,15 @@ export function FluxDiagram({ bloc }: { bloc: FluxBlock }) {
   const cxModele = FL_FLECHE_F + 24 + FL_RAYON;
   const y0 = (hauteur - hauteurSources) / 2;
 
+  // Un nœud en aval allonge le dessin vers la droite ; sans lui, le cercle le termine
+  const xAvalD = cxModele + FL_RAYON + 10;
+  const xAvalF = xAvalD + 72;
+  const largeur = bloc.aval ? xAvalF + 16 + FL_SOURCE_L + FL_MARGE : FL_LARGEUR;
+
   return (
     <figure className="schema-wrap flux-wrap">
       <svg
-        viewBox={`0 0 ${FL_LARGEUR} ${hauteur.toFixed(0)}`}
+        viewBox={`0 0 ${largeur.toFixed(0)} ${hauteur.toFixed(0)}`}
         role="img"
         aria-label={
           bloc.legende ??
@@ -392,12 +397,84 @@ export function FluxDiagram({ bloc }: { bloc: FluxBlock }) {
           );
         })}
 
+        {/* Moitié droite teintée : le second groupe de sources d'un modèle composite */}
+        {bloc.cible?.groupes && (
+          <path
+            d={`M ${cxModele} ${cy - FL_RAYON} A ${FL_RAYON} ${FL_RAYON} 0 0 1 ${cxModele} ${cy + FL_RAYON} Z`}
+            className="demi-groupe"
+          />
+        )}
         <circle cx={cxModele} cy={cy} r={FL_RAYON} className="cercle-modele" />
-        <polygon points={pointsEtoile(cxModele, cy - (bloc.cible?.note ? 8 : 0), 46)} className="astre" />
+        {bloc.cible?.groupes && (
+          <line
+            x1={cxModele}
+            y1={cy - FL_RAYON}
+            x2={cxModele}
+            y2={cy + FL_RAYON}
+            className="separation"
+          />
+        )}
+        <polygon
+          points={pointsEtoile(cxModele, cy + (bloc.cible?.groupes ? 14 : 0) - (bloc.cible?.note ? 8 : 0), 46)}
+          className="astre"
+        />
+        {bloc.cible?.groupes?.map((libelle, i) => (
+          <text
+            key={`grp-${i}`}
+            x={cxModele + (i === 0 ? -FL_RAYON / 2 : FL_RAYON / 2)}
+            y={cy - FL_RAYON + 30}
+            fontSize={10.5}
+            textAnchor="middle"
+            className="lien-texte"
+          >
+            {libelle}
+          </text>
+        ))}
         {bloc.cible?.note && (
           <text x={cxModele} y={cy + 68} fontSize={11} textAnchor="middle" className="lien-texte">
             {bloc.cible.note}
           </text>
+        )}
+
+        {/* Les tables qui ne stockent rien relaient vers leur source */}
+        {bloc.aval && (
+          <g>
+            <line
+              x1={xAvalD}
+              y1={cy}
+              x2={xAvalF}
+              y2={cy}
+              className="fleche"
+              strokeWidth={1.5}
+              markerEnd="url(#fl-pointe)"
+            />
+            <text
+              x={(xAvalD + xAvalF) / 2}
+              y={cy - 7}
+              fontSize={10.5}
+              textAnchor="middle"
+              className="lien-texte"
+            >
+              {bloc.aval.etiquette}
+            </text>
+            <g className="source">
+              <rect
+                x={xAvalF + 16}
+                y={cy - FL_SOURCE_H / 2}
+                width={FL_SOURCE_L}
+                height={FL_SOURCE_H}
+                rx={6}
+              />
+              <text
+                x={xAvalF + 16 + FL_SOURCE_L / 2}
+                y={cy + 4}
+                fontSize={11.5}
+                textAnchor="middle"
+              >
+                {bloc.aval.nom}
+              </text>
+            </g>
+          </g>
         )}
       </svg>
       {bloc.legende && <figcaption>{bloc.legende}</figcaption>}

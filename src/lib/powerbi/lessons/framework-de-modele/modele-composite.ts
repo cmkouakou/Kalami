@@ -14,6 +14,7 @@
 
 import {
   examen,
+  flux,
   liste,
   memo,
   note,
@@ -29,6 +30,23 @@ const contenu: LessonContent = [
     "Un modèle composite comprend **plus d'un groupe de sources** — en général un groupe " +
       "Import et un groupe DirectQuery. Certaines tables sont en cache, d'autres sont " +
       "interrogées en direct à la source.",
+  ),
+  flux(
+    [
+      { nom: "Base relationnelle" },
+      { nom: "Classeur Excel" },
+      { nom: "Flux de réseau social" },
+      { nom: "Flux de données Power BI" },
+    ],
+    "Import",
+    {
+      cible: { groupes: ["Groupe Import", "Groupe DirectQuery"] },
+      aval: { nom: "Base de données", etiquette: "requêtes" },
+      legende:
+        "Le cercle est partagé : les tables de gauche stockent leurs données, celles de " +
+        "droite relaient vers la source. C'est ce partage, et lui seul, qui fait un modèle " +
+        "composite.",
+    },
   ),
   note(
     "Les avantages et les limites d'Import et de DirectQuery s'appliquent, en règle générale, " +

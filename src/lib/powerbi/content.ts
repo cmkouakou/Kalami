@@ -142,8 +142,17 @@ export type FluxBlock = {
   sources: { nom: string; mode?: string }[];
   /** Mode porté par les flèches qui n'en précisent pas. */
   mode: string;
-  /** Le modèle, représenté par une étoile dans son cercle. */
-  cible?: { note?: string };
+  /**
+   * Le modèle, représenté par une étoile dans son cercle. `groupes` partage ce cercle en
+   * deux et nomme chaque moitié : c'est ainsi qu'on voit un modèle composite, qui par
+   * définition tient plus d'un groupe de sources.
+   */
+  cible?: { note?: string; groupes?: [string, string] };
+  /**
+   * Nœud en aval du modèle, pour les tables qui ne stockent rien et relaient vers leur
+   * source. Sa présence transforme le schéma en trajet : sources → modèle → base.
+   */
+  aval?: { nom: string; etiquette: string };
   legende?: string;
 };
 
@@ -247,7 +256,7 @@ export const etoile = (
 export const flux = (
   sources: FluxBlock["sources"],
   mode: string,
-  options: { cible?: FluxBlock["cible"]; legende?: string } = {},
+  options: Omit<FluxBlock, "kind" | "sources" | "mode"> = {},
 ): FluxBlock => ({ kind: "flux", sources, mode, ...options });
 
 /** Chaîne de requêtes : maillons alignés, flèches nommées entre eux. */
