@@ -165,7 +165,70 @@ export const sprint7: Sprint = {
         "part le temps*. Vérifie le folding en premier : une étape lente qui ne folde pas est " +
         "souvent une étape mal placée, pas une étape intrinsèquement coûteuse.",
     },
-    { kind: "titre", texte: "Publier", numero: "7.6", etiquette: "pratique" },
+    {
+      kind: "titre",
+      texte: "Alléger le modèle avant de livrer",
+      numero: "7.6",
+      etiquette: "repere",
+    },
+    {
+      kind: "paragraphe",
+      texte: "Microsoft publie huit techniques de réduction des données pour les modèles " +
+        "d'importation. Le tableau ci-dessous les reprend toutes, avec ce que tu en as déjà " +
+        "fait : cinq sont cochées sans que tu aies eu à les apprendre, parce que le travail " +
+        "en amont dans les vues `reporting.*` les a appliquées naturellement.",
+    },
+    {
+      kind: "tableau",
+      entetes: ["Technique", "Chez toi", "Où"],
+      lignes: [
+        ["Supprimer les colonnes inutiles", "Fait", "Vues `reporting.*`, sprint 1"],
+        ["Supprimer les lignes inutiles", "Fait", "Filtres dans les vues, sprint 1"],
+        ["Élever le grain des tables de faits", "Inutile", "17 779 lignes : le détail reste exploitable"],
+        ["Optimiser les types, préférer le numérique", "À vérifier", "Sprint 2, sur `v_quotes_history`"],
+        ["Colonnes Power Query plutôt que calculées", "Fait", "Sprint 3"],
+        ["Désactiver le chargement des requêtes", "Fait", "Requêtes bac à sable, sprint 3"],
+        ["Désactiver la date/heure automatique", "Fait", "Sprint 4, en marquant `v_dim_date`"],
+        ["Stockage DirectQuery pour certaines tables", "Hors sujet", "Volume trop faible pour en tirer un gain"],
+      ],
+      colonnesMono: [],
+    },
+    {
+      kind: "encadre",
+      ton: "precision",
+      texte: "**Ce que ce tableau dit vraiment.** Les cinq « fait » ne viennent pas de " +
+        "Power BI : ils viennent du travail SQL en amont. C'est la règle d'or du module " +
+        "précédent — traiter le maximum dans la source native — et elle a pour effet " +
+        "secondaire de cocher la moitié d'une liste d'optimisation officielle.",
+    },
+    {
+      kind: "notion",
+      titre: "L'actualisation incrémentielle, pour plus tard",
+      etiquette: "architecture",
+      contenu: [
+        {
+          kind: "paragraphe",
+          texte: "Par défaut, actualiser une table **supprime toutes ses données et les " +
+            "recharge**. Sur une grande table de faits, c'est une charge lourde pour la source " +
+            "comme pour Power BI.",
+        },
+        {
+          kind: "paragraphe",
+          texte: "L'**actualisation incrémentielle** découpe la table en partitions par " +
+            "période et ne recharge que celles qui ont changé. Les actualisations deviennent " +
+            "plus rapides, plus fiables, et moins coûteuses des deux côtés.",
+        },
+        {
+          kind: "paragraphe",
+          texte: "À ton volume, ça n'apporte rien aujourd'hui : quelques dizaines de milliers " +
+            "de lignes se rechargent en quelques secondes. Ça deviendra pertinent si " +
+            "`v_quotes_history` atteint les centaines de milliers de lignes — autrement dit " +
+            "après quelques années de cotations. À garder en tête comme culture " +
+            "d'architecture, pas comme action.",
+        },
+      ],
+    },
+    { kind: "titre", texte: "Publier", numero: "7.7", etiquette: "pratique" },
     {
       kind: "liste",
       items: [
@@ -183,9 +246,24 @@ export const sprint7: Sprint = {
         "segments et interactions que dans Power BI Desktop.",
     },
     {
+      kind: "encadre",
+      ton: "attention",
+      texte: "**Ce que la licence gratuite plafonne.** Mon espace de travail tourne sur une " +
+        "**capacité partagée**, qui impose deux limites : **1 Go par dataset** et **8 " +
+        "actualisations planifiées par jour**. Aucune ne te gêne ici — ton modèle compressé " +
+        "pèse quelques mégaoctets, et les cotations BRVM tombent une fois par séance. Mais le " +
+        "savoir avant de publier évite de chercher longtemps le jour où une actualisation " +
+        "échoue sans explication.",
+      points: [
+        "Le 1 Go porte sur la **taille compressée du modèle**, pas sur le volume lu dans Supabase",
+        "Au-delà de la limite, l'actualisation **échoue** — elle ne se dégrade pas, elle s'arrête",
+        "Une capacité dédiée (Premium) monte à 10 Go et 48 actualisations par jour",
+      ],
+    },
+    {
       kind: "titre",
       texte: "Checklist finale — les 7 sprints",
-      numero: "7.7",
+      numero: "7.8",
       etiquette: "repere",
     },
     {
@@ -220,7 +298,7 @@ export const sprint7: Sprint = {
     {
       kind: "titre",
       texte: "Pour aller plus loin",
-      numero: "7.8",
+      numero: "7.9",
       etiquette: "info",
     },
     {

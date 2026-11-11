@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.22.7] - 2026-11-10 — Le chantier reçoit les retombées de la leçon
+### Ajouté
+- Chantier, sprint 7.6 « Alléger le modèle avant de livrer » : les huit techniques de
+  réduction des données publiées par Microsoft, confrontées à ce que le chantier a déjà
+  fait — cinq sont acquises, non par Power BI mais par le travail SQL en amont.
+- Même section, en notion dépliable : l'actualisation incrémentielle, présentée comme une
+  culture d'architecture plutôt qu'une action, le volume du modèle ne la justifiant pas.
+- Sprint 7.7 « Publier » : les limites de la capacité partagée — 1 Go par dataset sur la
+  taille compressée, 8 actualisations planifiées par jour — et ce qu'elles impliquent.
+
+### Modifié
+- Sprints 7.6 à 7.8 renumérotés en 7.7 à 7.9 pour loger la nouvelle section avant la
+  publication, l'allègement du modèle venant logiquement avant la livraison.
+
 ## [v0.22.6] - 2026-11-10 — Le flux d'alimentation d'un modèle
 ### Ajouté
 - Nouveau bloc de contenu `flux` : des sources hétérogènes à gauche, le mode de connexion
