@@ -116,6 +116,21 @@ export type SchemaBlock = {
 };
 
 /**
+ * Schéma en étoile : une table de faits au centre, ses dimensions aux branches.
+ * Complète SchemaBlock, qui montre le modèle comme la vue Modèle de Power BI (colonnes
+ * gauche/droite) ; celui-ci montre la *forme* du modèle, comme les diagrammes de la
+ * documentation Microsoft, pour faire voir pourquoi on parle d'étoile.
+ */
+export type EtoileBlock = {
+  kind: "etoile";
+  /** Table de faits, au centre. */
+  centre: { nom: string; note?: string };
+  /** Tables de dimensions, réparties autour. La clé s'affiche le long de la branche. */
+  branches: { nom: string; cle?: string }[];
+  legende?: string;
+};
+
+/**
  * Maquette de l'éditeur Power Query, pour se repérer avant d'ouvrir le logiciel.
  * Chaque zone est facultative : une maquette peut ne montrer que les étapes.
  */
@@ -155,6 +170,7 @@ export type ContentBlock =
   | ChecklistBlock
   | CardsBlock
   | SchemaBlock
+  | EtoileBlock
   | PowerQueryMockBlock
   | MergeMockBlock;
 
@@ -186,6 +202,13 @@ export const tableau = (entetes: string[], lignes: string[][]): TableBlock => ({
   entetes,
   lignes,
 });
+
+/** Schéma en étoile : une table de faits au centre, ses dimensions aux branches. */
+export const etoile = (
+  centre: EtoileBlock["centre"],
+  branches: EtoileBlock["branches"],
+  legende?: string,
+): EtoileBlock => ({ kind: "etoile", centre, branches, legende });
 
 /** Encadré d'information. */
 export const note = (texte: string, titreEncadre?: string): NoteBlock => ({

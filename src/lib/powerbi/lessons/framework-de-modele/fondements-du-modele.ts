@@ -11,7 +11,16 @@
  * =============================================================
  */
 
-import { examen, memo, note, p, tableau, titre, type LessonContent } from "@/lib/powerbi/content";
+import {
+  etoile,
+  examen,
+  memo,
+  note,
+  p,
+  tableau,
+  titre,
+  type LessonContent,
+} from "@/lib/powerbi/content";
 
 const contenu: LessonContent = [
   titre("L'idée centrale"),
@@ -117,12 +126,32 @@ const contenu: LessonContent = [
     "Une table de faits contient des colonnes de clés de dimension et des colonnes de mesures " +
       "numériques. Elle occupe le centre de l'étoile ; les dimensions en forment les branches.",
   ),
+  etoile(
+    { nom: "FactResellerSales", note: "table de faits" },
+    [
+      { nom: "DimDate", cle: "OrderDateKey" },
+      { nom: "DimProduct", cle: "ProductKey" },
+      { nom: "DimReseller", cle: "ResellerKey" },
+      { nom: "DimEmployee", cle: "EmployeeKey" },
+      { nom: "DimSalesTerritory", cle: "SalesTerritoryKey" },
+    ],
+    "L'exemple de la documentation Microsoft : une table de faits entourée de cinq dimensions.",
+  ),
   note(
     "Dans une requête analytique, les colonnes de dimension filtrent ou groupent, et les " +
       "colonnes de faits sont résumées. Cette seule phrase explique toute la conception : le " +
       "schéma en étoile n'est pas esthétique, il épouse le fonctionnement des requêtes.",
   ),
   memo("Les dimensions décrivent, les faits mesurent. Selon quoi ? Combien ?"),
+  {
+    kind: "references",
+    liens: [
+      {
+        texte: "Découvrez le schéma en étoile et son importance pour Power BI",
+        url: "https://learn.microsoft.com/fr-fr/power-bi/guidance/star-schema",
+      },
+    ],
+  },
 
   titre("6. Mode de stockage des tables"),
   p(

@@ -17,7 +17,12 @@
  */
 
 import { getPowerbiDictionary } from "@/i18n/powerbi";
-import type { MergeMockBlock, PowerQueryMockBlock, SchemaBlock } from "@/lib/powerbi/content";
+import type {
+  EtoileBlock,
+  MergeMockBlock,
+  PowerQueryMockBlock,
+  SchemaBlock,
+} from "@/lib/powerbi/content";
 
 const d = getPowerbiDictionary();
 
@@ -133,6 +138,155 @@ function Boite({ x, y, nom, dim }: { x: number; y: number; nom: string; dim?: bo
         {nom}
       </text>
     </g>
+  );
+}
+
+// ==================== SCHÉMA EN ÉTOILE ====================
+
+/** Géométrie de l'étoile, en unités du viewBox. */
+const ET_LARGEUR = 560;
+const ET_CENTRE_L = 184;
+const ET_CENTRE_H = 46;
+const ET_BRANCHE_L = 152;
+const ET_BRANCHE_H = 38;
+const ET_RX = 182;
+const ET_RY = 96;
+const ET_MARGE = 10;
+/** Demi-largeur d'un rayon, au centre puis à la branche : c'est ce qui l'effile. */
+const ET_RAYON_CENTRE = 26;
+const ET_RAYON_BOUT = 7;
+
+/**
+ * Schéma en étoile : la table de faits au centre, ses dimensions aux branches, et des
+ * rayons effilés qui dessinent l'étoile — la forme dont le modèle tire son nom.
+ *
+ * Là où SchemaDiagram reproduit la vue Modèle de Power BI (dimensions à gauche, faits à
+ * droite), celui-ci montre la *forme* du modèle, comme les diagrammes de la documentation
+ * Microsoft. Les branches sont réparties sur une ellipse : à deux, elles se placent de
+ * part et d'autre du centre ; au-delà, elles tournent en partant du haut.
+ */
+export function EtoileDiagram({ bloc }: { bloc: EtoileBlock }) {
+  const n = bloc.branches.length;
+  const cx = ET_LARGEUR / 2;
+
+  // À deux branches, l'horizontale se lit mieux que la verticale
+  const angle = (i: number) =>
+    n === 2 ? Math.PI + i * Math.PI : -Math.PI / 2 + (i * 2 * Math.PI) / n;
+
+  const positions = bloc.branches.map((_, i) => ({
+    x: cx + ET_RX * Math.cos(angle(i)),
+    dy: ET_RY * Math.sin(angle(i)),
+  }));
+
+  // Hauteur déduite des branches réellement posées, pour ne pas laisser de vide
+  const amplitude = Math.max(ET_CENTRE_H / 2, ...positions.map((p) => Math.abs(p.dy) + ET_BRANCHE_H / 2));
+  const cy = ET_MARGE + amplitude;
+  const hauteur = (ET_MARGE + amplitude) * 2;
+
+  return (
+    <figure className="schema-wrap etoile-wrap">
+      <svg
+        viewBox={`0 0 ${ET_LARGEUR} ${hauteur}`}
+        role="img"
+        aria-label={
+          bloc.legende ??
+          `Schéma en étoile : ${bloc.centre.nom} au centre, relié à ${bloc.branches
+            .map((b) => b.nom)
+            .join(", ")}`
+        }
+      >
+        {/* Rayons d'abord : les boîtes se posent par-dessus */}
+        {positions.map((pos, i) => {
+          const bx = pos.x;
+          const by = cy + pos.dy;
+          const dx = bx - cx;
+          const dyr = by - cy;
+          const long = Math.hypot(dx, dyr) || 1;
+          // Perpendiculaire unitaire au rayon
+          const px = -dyr / long;
+          const py = dx / long;
+          const points = [
+            [cx + px * ET_RAYON_CENTRE, cy + py * ET_RAYON_CENTRE],
+            [bx + px * ET_RAYON_BOUT, by + py * ET_RAYON_BOUT],
+            [bx - px * ET_RAYON_BOUT, by - py * ET_RAYON_BOUT],
+            [cx - px * ET_RAYON_CENTRE, cy - py * ET_RAYON_CENTRE],
+          ];
+          return (
+            <polygon
+              key={`rayon-${i}`}
+              className="rayon"
+              points={points.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ")}
+            />
+          );
+        })}
+
+        {/* Clé de chaque relation, posée au tiers du rayon côté dimension */}
+        {positions.map((pos, i) => {
+          const cle = bloc.branches[i].cle;
+          if (!cle) return null;
+          const bx = pos.x;
+          const by = cy + pos.dy;
+          return (
+            <text
+              key={`cle-${i}`}
+              x={cx + (bx - cx) * 0.56}
+              y={cy + (by - cy) * 0.56 - 6}
+              fontSize={10.5}
+              textAnchor="middle"
+              className="lien-texte"
+            >
+              {cle}
+            </text>
+          );
+        })}
+
+        {/* Dimensions */}
+        {positions.map((pos, i) => (
+          <g key={`dim-${i}`} className="dim">
+            <rect
+              x={pos.x - ET_BRANCHE_L / 2}
+              y={cy + pos.dy - ET_BRANCHE_H / 2}
+              width={ET_BRANCHE_L}
+              height={ET_BRANCHE_H}
+              rx={6}
+            />
+            <text
+              x={pos.x}
+              y={cy + pos.dy + 4}
+              fontSize={12}
+              textAnchor="middle"
+            >
+              {bloc.branches[i].nom}
+            </text>
+          </g>
+        ))}
+
+        {/* Table de faits, au centre */}
+        <g className="fait">
+          <rect
+            x={cx - ET_CENTRE_L / 2}
+            y={cy - ET_CENTRE_H / 2}
+            width={ET_CENTRE_L}
+            height={ET_CENTRE_H}
+            rx={6}
+          />
+          <text
+            x={cx}
+            y={bloc.centre.note ? cy - 1 : cy + 4}
+            fontSize={12.5}
+            textAnchor="middle"
+          >
+            {bloc.centre.nom}
+          </text>
+          {bloc.centre.note && (
+            <text x={cx} y={cy + 13} fontSize={10} textAnchor="middle" className="centre-note">
+              {bloc.centre.note}
+            </text>
+          )}
+        </g>
+      </svg>
+      {bloc.legende && <figcaption>{bloc.legende}</figcaption>}
+    </figure>
   );
 }
 

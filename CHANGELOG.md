@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.22.5] - 2026-11-10 — Schéma en étoile illustré
+### Ajouté
+- Nouveau bloc de contenu `etoile` : une table de faits au centre, ses dimensions aux
+  branches, et des rayons effilés qui dessinent la forme dont le modèle tire son nom. Il
+  complète `schema`, qui reproduit la vue Modèle de Power BI ; celui-ci montre la *forme*
+  du modèle, comme les diagrammes de la documentation Microsoft
+  (`src/lib/powerbi/content.ts`, `src/components/powerbi/guide-visuals.tsx`).
+- Leçon « Les fondements du modèle Power BI » : l'étoile de l'exemple Microsoft
+  (FactResellerSales et ses cinq dimensions) illustre désormais la section 5, et la page
+  d'approfondissement « Découvrez le schéma en étoile » est citée en référence.
+- Chantier, sprint 4.7 : les deux étoiles du modèle BRVM — axe marché autour de
+  `v_quotes_history`, axe revenus autour de `v_abonnements` — montrent `v_dim_date`
+  partagée entre les deux, ce qui rend visible la différence entre étoile et galaxie.
+
 ## [v0.22.4] - 2026-11-10 — Lien de confirmation ouvert dans un autre navigateur
 ### Corrigé
 - Un lien de confirmation d’inscription ou de réinitialisation ouvert dans un autre navigateur

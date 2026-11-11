@@ -1251,6 +1251,34 @@
     fill: var(--accent-ink);
   }
 
+  /* ---- Schéma en étoile ---- */
+
+  .p4y .etoile-wrap svg {
+    max-width: 580px;
+    margin-inline: auto;
+  }
+
+  /* Rayons de l'étoile : la forme qui donne son nom au modèle */
+  .p4y .etoile-wrap .rayon {
+    fill: var(--accent-soft);
+    stroke: var(--accent);
+    stroke-width: 0.75;
+    stroke-linejoin: round;
+  }
+
+  .p4y .etoile-wrap .centre-note {
+    fill: var(--accent-ink);
+    opacity: 0.75;
+    font-family: var(--p4y-texte), system-ui, sans-serif;
+  }
+
+  .p4y .etoile-wrap figcaption {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 0.86rem;
+    color: var(--ink-faint);
+  }
+
   .p4y .schema-wrap figcaption {
     margin-top: 6px;
     font-size: 11.5px;

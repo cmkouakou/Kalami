@@ -211,6 +211,37 @@ export const sprint4: Sprint = {
         "de tables de faits.",
     },
     {
+      kind: "etoile",
+      centre: { nom: "v_quotes_history", note: "17 779 lignes" },
+      branches: [
+        { nom: "v_dim_date", cle: "session_date" },
+        { nom: "v_stocks", cle: "ticker" },
+      ],
+      legende:
+        "Première étoile — axe marché. Deux dimensions suffisent : une étoile se juge à sa " +
+        "forme, pas au nombre de ses branches.",
+    },
+    {
+      kind: "etoile",
+      centre: { nom: "v_abonnements", note: "revenus" },
+      branches: [
+        { nom: "v_dim_date", cle: "date_debut" },
+        { nom: "v_user_profiles", cle: "pseudo_user_key" },
+      ],
+      legende:
+        "Deuxième étoile — axe revenus. `v_dim_date` apparaît dans les deux : c'est cette " +
+        "dimension partagée qui fait la galaxie.",
+    },
+    {
+      kind: "encadre",
+      ton: "info",
+      texte: "Ce que ces deux schémas montrent, et que la vue Modèle masque : chaque table de " +
+        "faits a **sa propre étoile**, et les dimensions communes sont le point de contact " +
+        "entre elles. `v_dim_date` touche les quatre tables de faits, `v_stocks` en touche " +
+        "deux, `v_user_profiles` deux. Aucune table de faits n'est reliée à une autre — c'est " +
+        "la règle, et c'est elle qui garantit que les filtres se propagent proprement.",
+    },
+    {
       kind: "titre",
       texte: "Marquer v_dim_date comme table de dates",
       numero: "4.8",

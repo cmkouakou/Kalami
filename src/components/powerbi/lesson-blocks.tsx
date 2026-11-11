@@ -29,7 +29,7 @@ import type {
 } from "@/lib/powerbi/content";
 
 import { GuideChecklist } from "./guide-checklist";
-import { MergeMock, PowerQueryMock, SchemaDiagram } from "./guide-visuals";
+import { EtoileDiagram, MergeMock, PowerQueryMock, SchemaDiagram } from "./guide-visuals";
 import { InlineText } from "./inline-text";
 
 const d = getPowerbiDictionary();
@@ -197,6 +197,9 @@ function Bloc({ bloc, progression }: { bloc: ContentBlock; progression?: Progres
 
     case "schema":
       return <SchemaDiagram bloc={bloc} />;
+
+    case "etoile":
+      return <EtoileDiagram bloc={bloc} />;
 
     case "maquette-power-query":
       return <PowerQueryMock bloc={bloc} />;
