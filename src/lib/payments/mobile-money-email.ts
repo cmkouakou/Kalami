@@ -5,9 +5,10 @@
  *  Description: Courriels du Mobile Money (Sprint 6, v0.11.0) : alerte aux administrateurs
  *               à chaque déclaration, puis confirmation ou refus (avec le motif) à
  *               l'acheteur. Corps en HTML échappé et en texte brut.
+ *               v0.25.0 : le bouton de l'alerte mène à « Paiements Mobile Money ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-16
  *  Dépendances: lib/config.ts, lib/pdf/render.ts (échappement), lib/currency.ts
  * =============================================================
  */
@@ -82,7 +83,7 @@ export function buildDeclarationAlert(input: DeclarationAlertInput): EmailMessag
     input.to,
     interpolate(em.adminSubject, values),
     [interpolate(em.adminBody, values), interpolate(em.adminDetails, values)],
-    { label: em.adminCta, url: `${APP_URL}/admin/commandes?statut=to_review` },
+    { label: em.adminCta, url: `${APP_URL}/admin/paiements-mobile-money` },
   );
 }
 

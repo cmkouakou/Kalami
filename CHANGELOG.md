@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.25.0] - 2026-11-16 — Paiements Mobile Money
+### Ajouté
+- Page **Paiements Mobile Money** (`/admin/paiements-mobile-money`, Ventes et paiements) :
+  onglets À valider, Validés, Refusés et Non déclarés, avec leur nombre ; validation et
+  refus directement depuis l'onglet « À valider ».
+- Veille dans toute l'administration : rafraîchissement chaque minute quand l'onglet est
+  visible, nombre à valider dans le titre du navigateur, encadré fixe « N paiements à
+  valider », notification du navigateur à chaque nouvelle déclaration (à autoriser une fois
+  depuis la page des paiements).
+### Modifié
+- La pastille des paiements à valider passe de Commandes à Paiements Mobile Money ; le
+  bouton du courriel d'alerte et la tuile du tableau de bord y mènent aussi.
+- Blocs « détails » et « valider / refuser » extraits dans `mobile-money-order.tsx`,
+  partagés avec la page Commandes.
+
 ## [v0.24.0] - 2026-11-16 — Administration réorganisée, Fonctionnalités, membres connectés
 ### Ajouté
 - Page **Fonctionnalités** (`/admin/fonctionnalites`, groupe Réglages) : un interrupteur

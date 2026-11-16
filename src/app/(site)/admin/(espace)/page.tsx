@@ -62,7 +62,7 @@ async function Dashboard() {
     {
       label: d.mmToReview,
       value: todo.mobileMoneyToReview,
-      href: "/admin/commandes?statut=to_review",
+      href: "/admin/paiements-mobile-money",
     },
   ];
   const catalogTiles: Tile[] = [

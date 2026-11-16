@@ -6,11 +6,12 @@
  *               latérale, repliable sur téléphone) et pastilles « à traiter ».
  *               Aucun contrôle d'accès ici (un layout ne se ré-exécute pas à chaque
  *               navigation) : chaque page appelle requireAdmin() elle-même. Les pastilles
- *               ne sont lues que pour un administrateur aal2 (RLS en plus).
+ *               ne sont lues que pour un administrateur aal2 (RLS en plus). v0.25.0 :
+ *               veille des paiements Mobile Money (rafraîchissement, titre, notification).
  *  Auteur     : Claude Marcel
- *  Version    : 2.0 (menu regroupé, v0.16.0)
- *  Date       : 2026-10-28
- *  Dépendances: components/admin/admin-nav.tsx, lib/admin, lib/auth/dal.ts
+ *  Version    : 2.1
+ *  Date       : 2026-11-16
+ *  Dépendances: components/admin/admin-nav.tsx, components/admin/payment-watcher.tsx, lib/admin, lib/auth/dal.ts
  * =============================================================
  */
 
@@ -18,6 +19,7 @@ import type { Metadata } from "next";
 import { type ReactNode, Suspense } from "react";
 
 import { AdminNav, type AdminNavBadges } from "@/components/admin/admin-nav";
+import { PaymentWatcher } from "@/components/admin/payment-watcher";
 import { getDictionary } from "@/i18n";
 import { getDashboardCounts } from "@/lib/admin/catalog-queries";
 import { getDashboardTodo } from "@/lib/admin/dashboard-queries";
@@ -49,7 +51,13 @@ async function NavWithBadges() {
   const [user, profile] = await Promise.all([getCurrentUser(), getCurrentProfile()]);
   if (!user || !profile?.is_admin || user.aal !== "aal2") return <AdminNav />;
 
-  return <AdminNav badges={await readBadges()} />;
+  const badges = await readBadges();
+  return (
+    <>
+      <AdminNav badges={badges} />
+      <PaymentWatcher pending={badges.mobileMoney ?? 0} />
+    </>
+  );
 }
 
 /** Compteurs « à traiter » ; vides si une lecture échoue (l'administration reste utilisable). */

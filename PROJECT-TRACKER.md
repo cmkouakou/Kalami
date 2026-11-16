@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.24.0 (administration réorganisée, Fonctionnalités, membres connectés) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.25.0 (paiements Mobile Money : onglets et veille) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -97,7 +97,8 @@ Version actuelle : v0.24.0 (administration réorganisée, Fonctionnalités, memb
 | #91 | 2026-11-10 | v0.22.3 : correctif — CSS de l’étude PlacaliKro affiché en texte (vérifié dans Chrome) | ~30 000 | ~0.18 $ |
 | #92 | 2026-11-10 | v0.22.4 : correctif — lien de courriel ouvert dans un autre navigateur (PKCE) : message dédié au lieu de « lien invalide » | ~40 000 | ~0.24 $ |
 | #93 | 2026-11-16 | v0.24.0 : menu admin repliable, page Fonctionnalités (masquer lots/forfaits), suivi des membres connectés, Audience en onglets, fiche membre | ~260 000 | ~1.56 $ |
-| **TOTAL** | | | **~20 590 000** (hors #71) | **~123.54 $** |
+| #94 | 2026-11-16 | v0.25.0 : page Paiements Mobile Money (à valider, validés, refusés), veille de l'admin (rafraîchissement, titre, encadré, notification) | ~60 000 | ~0.36 $ |
+| **TOTAL** | | | **~20 650 000** (hors #71) | **~123.90 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

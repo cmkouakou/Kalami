@@ -728,6 +728,7 @@ const fr = {
       orders: "Commandes",
       promos: "Codes promo",
       mobileMoney: "Numéros Mobile Money",
+      mmPayments: "Paiements Mobile Money",
       revenue: "Revenus",
       payouts: "Versements",
       workshop: "Atelier des auteurs",
@@ -1144,6 +1145,49 @@ const fr = {
         "qu'elle affiche pour « Kalami ». L'ancienne entrée cessera de fonctionner : " +
         "supprimez-la ensuite de l'application.",
       replaceLink: "Remplacer l'application d'authentification",
+    },
+    mmPayments: {
+      title: "Paiements Mobile Money",
+      intro:
+        "Tous les paiements Mobile Money, du plus récent au plus ancien. Vérifiez le numéro " +
+        "de transaction et le montant sur le relevé de l'opérateur avant de valider : " +
+        "l'accès s'ouvre aussitôt et l'acheteur reçoit un courriel. La page se met à jour " +
+        "toute seule chaque minute.",
+      tabsLabel: "État des paiements",
+      tabs: {
+        to_review: "À valider",
+        paid: "Validés",
+        failed: "Refusés",
+        undeclared: "Non déclarés",
+      },
+      tabIntros: {
+        to_review: "Paiements déclarés par l'acheteur, en attente de votre vérification.",
+        paid: "Paiements validés : l'accès est ouvert.",
+        failed: "Paiements refusés, avec le motif envoyé à l'acheteur.",
+        undeclared:
+          "Commandes Mobile Money ouvertes dont l'acheteur n'a pas encore saisi le numéro " +
+          "de transaction. Rien à faire de votre côté.",
+      },
+      none: {
+        to_review: "Aucun paiement à valider.",
+        paid: "Aucun paiement validé.",
+        failed: "Aucun paiement refusé.",
+        undeclared: "Aucune commande en attente de déclaration.",
+      },
+      createdOn: "commandé le {date}",
+      paidOn: "validé le {date}",
+      watcher: {
+        bannerOne: "1 paiement Mobile Money à valider",
+        bannerMany: "{count} paiements Mobile Money à valider",
+        open: "Voir les paiements",
+        notifyTitle: "Kalami — paiement Mobile Money",
+        notifyBody: "{count} paiement(s) à valider",
+        enable: "Recevoir une notification sur cet appareil",
+        on: "Notifications activées sur cet appareil (tant qu'une page de l'admin est ouverte).",
+        denied:
+          "Notifications bloquées par le navigateur : autorisez-les dans les réglages du site.",
+        unsupported: "Ce navigateur ne propose pas de notifications.",
+      },
     },
     orders: {
       title: "Commandes",

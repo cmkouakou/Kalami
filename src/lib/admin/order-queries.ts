@@ -6,10 +6,11 @@
  *               boutique avec l'adresse de l'acheteur, filtrées par statut, et offres d'étude
  *               de Kalami Stratégie (prix). Les fonctions SQL et la RLS exigent le rôle
  *               administrateur (aal2). v0.11.0 : champs Mobile Money et filtre « à valider »
- *               (paiements déclarés en attente de vérification).
+ *               (paiements déclarés en attente de vérification). v0.25.0 : paiements Mobile
+ *               Money par onglet.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-19
+ *  Version    : 1.2
+ *  Date       : 2026-11-16
  *  Dépendances: lib/supabase/server.ts, lib/payments/queries.ts,
  *               migrations 20261105120000_strategy_orders.sql, 20261108120000_mobile_money.sql
  * =============================================================
@@ -17,6 +18,7 @@
 
 import "server-only";
 
+import { groupByMmTab, type MmTab } from "@/lib/admin/mobile-money-tabs";
 import type { Currency } from "@/lib/catalog/types";
 import type { OrderStatus } from "@/lib/payments/queries";
 import type { StudyOfferCode } from "@/lib/payments/checkout-request";
@@ -107,4 +109,15 @@ export async function listStudyOffersForAdmin(): Promise<AdminStudyOffer[]> {
     priceCad: row.price_cad === null ? null : Number(row.price_cad),
     active: row.active,
   }));
+}
+
+/**
+ * Commandes Mobile Money réparties par onglet (v0.25.0) : en attente, payées et refusées,
+ * 200 plus récentes de chaque statut.
+ */
+export async function listMobileMoneyPayments(): Promise<Record<MmTab, AdminOrderRow[]>> {
+  const lists = await Promise.all(
+    (["pending", "paid", "failed"] as const).map((status) => listOrdersForAdmin(status)),
+  );
+  return groupByMmTab(lists.flat());
 }

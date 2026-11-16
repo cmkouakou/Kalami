@@ -147,7 +147,7 @@ describe("courriels Mobile Money", () => {
     expect(mail.text).toContain("TX12345");
     expect(mail.html).toContain("&lt;études&gt;");
     expect(mail.html).not.toContain("<études>");
-    expect(mail.html).toContain("/admin/commandes?statut=to_review");
+    expect(mail.html).toContain("/admin/paiements-mobile-money");
   });
 
   it("confirme la validation ou explique le refus avec le motif", () => {

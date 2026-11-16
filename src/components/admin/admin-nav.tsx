@@ -7,8 +7,9 @@
  *               Ventes et paiements, Formation, Réglages). Le groupe de la page courante
  *               s'ouvre seul ; un groupe replié montre le total de ses pastilles.
  *               Colonne latérale sur grand écran, menu repliable sur téléphone.
+ *               v0.25.0 : lien « Paiements Mobile Money » (pastille des paiements à valider).
  *  Auteur     : Claude Marcel
- *  Version    : 2.0 (groupes repliables, v0.24.0)
+ *  Version    : 2.1
  *  Date       : 2026-11-16
  *  Dépendances: i18n, components/ui/icons.tsx
  * =============================================================
@@ -71,7 +72,8 @@ export const GROUPS: NavGroup[] = [
     id: "ventes",
     title: n.groups.sales,
     links: [
-      { href: "/admin/commandes", label: n.orders, badge: "mobileMoney" },
+      { href: "/admin/paiements-mobile-money", label: n.mmPayments, badge: "mobileMoney" },
+      { href: "/admin/commandes", label: n.orders },
       { href: "/admin/mobile-money", label: n.mobileMoney },
       { href: "/admin/codes-promo", label: n.promos },
       { href: "/admin/revenus", label: n.revenue },

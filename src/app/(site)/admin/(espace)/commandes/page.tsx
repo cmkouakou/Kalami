@@ -9,11 +9,12 @@
  *               détails de la transaction déclarée, boutons « Valider » et « Refuser ».
  *               v0.14.0 : cas d'entraînement (prix, vente, corrigé « tout de suite »,
  *               accès accordé ou retiré par courriel). v0.14.3 : liste des comptes qui
- *               ont accès à un cas, avec retrait en un clic.
+ *               ont accès à un cas, avec retrait en un clic. v0.25.0 : blocs Mobile Money
+ *               partagés avec la page « Paiements Mobile Money ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-24
- *  Dépendances: lib/admin/order-actions.ts, lib/admin/order-queries.ts, lib/currency.ts,
+ *  Version    : 1.4
+ *  Date       : 2026-11-16
+ *  Dépendances: components/admin/mobile-money-order.tsx, lib/admin/order-actions.ts, lib/admin/order-queries.ts, lib/currency.ts,
  *               lib/payments/mobile-money.ts, lib/admin/case-actions.ts,
  *               lib/strategy/cases/queries.ts
  * =============================================================
@@ -24,15 +25,11 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { ActionForm } from "@/components/admin/action-form";
-import { Field, SelectField, TextArea } from "@/components/ui/form";
+import { Field, SelectField } from "@/components/ui/form";
 import { BADGE, CARD, PILL, PILL_ACTIVE } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
-import {
-  refundOrder,
-  rejectMobileMoney,
-  saveStrategyOffer,
-  validateMobileMoney,
-} from "@/lib/admin/order-actions";
+import { MobileMoneyDetails, MobileMoneyReview } from "@/components/admin/mobile-money-order";
+import { refundOrder, saveStrategyOffer } from "@/lib/admin/order-actions";
 import {
   type AdminOrderRow,
   type AdminStudyOffer,
@@ -45,7 +42,6 @@ import {
 import { savePracticeCase, setPracticeCaseAccess } from "@/lib/admin/case-actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
-import { isMobileMoneyOperator, MM_OPERATOR_NAMES } from "@/lib/payments/mobile-money";
 import {
   type AdminCaseAccess,
   type AdminPracticeCase,
@@ -348,72 +344,6 @@ function StatusFilter({ current }: { current: OrderFilter | null }) {
         ))}
       </ul>
     </nav>
-  );
-}
-
-/** Détails d'une commande Mobile Money : numéro, référence, transaction ou motif du refus. */
-function MobileMoneyDetails({ order }: { order: AdminOrderRow }) {
-  const operator = isMobileMoneyOperator(order.mm_operator)
-    ? MM_OPERATOR_NAMES[order.mm_operator]
-    : "—";
-  const country = order.mm_country ?? "";
-  const countryName = (t.mobileMoney.countries as Record<string, string>)[country] ?? country;
-  return (
-    <div className="flex flex-col gap-1 break-all text-small">
-      <p>
-        {interpolate(o.mm, {
-          operator,
-          country: countryName,
-          reference: order.mm_reference ?? "—",
-        })}
-      </p>
-      <p className="text-ink-muted">
-        {order.mm_declared_at
-          ? interpolate(o.mmTransaction, {
-              transaction: order.mm_transaction_id ?? "—",
-              payer: order.mm_payer_number ?? "—",
-              date: DATE_TIME_FORMAT.format(new Date(order.mm_declared_at)),
-            })
-          : o.mmNotDeclared}
-      </p>
-      {order.status === "failed" && order.mm_rejection_reason && (
-        <p className="text-danger">
-          {interpolate(o.mmRejected, { reason: order.mm_rejection_reason })}
-        </p>
-      )}
-    </div>
-  );
-}
-
-/** Valider (case de confirmation) ou refuser (motif) un paiement Mobile Money déclaré. */
-function MobileMoneyReview({ order }: { order: AdminOrderRow }) {
-  return (
-    <div className="flex flex-col gap-3 text-small sm:flex-row sm:items-start sm:gap-8">
-      <ActionForm action={validateMobileMoney} submitLabel={o.validate}>
-        <input type="hidden" name="orderId" value={order.id} />
-        <label className="flex min-h-11 items-center gap-3">
-          <input type="checkbox" name="confirm" required className="size-5" />
-          {o.validateConfirm}
-        </label>
-      </ActionForm>
-      <details>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-danger">
-          {o.reject}
-        </summary>
-        <ActionForm action={rejectMobileMoney} submitLabel={o.reject}>
-          <input type="hidden" name="orderId" value={order.id} />
-          <TextArea
-            id={`motif-${order.id}`}
-            name="reason"
-            label={o.rejectReason}
-            minLength={3}
-            maxLength={300}
-            rows={3}
-            required
-          />
-        </ActionForm>
-      </details>
-    </div>
   );
 }
 
