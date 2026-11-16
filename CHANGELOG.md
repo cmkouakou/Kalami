@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.25.2] - 2026-11-16 — Liens de courriel valables dans tout navigateur
+### Corrigé
+- Les liens des courriels d'authentification (confirmation, mot de passe, connexion,
+  changement d'adresse, invitation) utilisent `token_hash`, vérifié par `/auth/callback`
+  (`verifyOtp`), au lieu du lien PKCE de Supabase qui exigeait le navigateur de la demande.
+  Un lien ouvert sur un autre ordinateur ou dans la messagerie du téléphone fonctionne.
+  Modèles `supabase/templates/` à recopier dans le tableau de bord.
+
 ## [v0.25.1] - 2026-11-16 — Inscription : confirmation visible, courriels en français
 ### Corrigé
 - Après « Créer mon compte », le formulaire (vidé par React) restait affiché avec un petit
