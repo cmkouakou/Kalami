@@ -30,7 +30,14 @@ import {
 import { createClient } from "@/lib/supabase/server";
 
 /** État renvoyé aux formulaires. */
-export type FormState = { error?: string; message?: string } | undefined;
+export type FormState =
+  | {
+      error?: string;
+      message?: string;
+      /** Adresse à laquelle le lien de confirmation a été envoyé (inscription) */
+      sentTo?: string;
+    }
+  | undefined;
 
 const t = getDictionary();
 const MIN_PASSWORD_LENGTH = 8;
@@ -196,7 +203,7 @@ export async function signUp(_: FormState, formData: FormData): Promise<FormStat
   // Confirmation par courriel désactivée : la session est déjà ouverte
   if (data.session) redirect(next);
 
-  return { message: t.auth.signUp.checkEmail };
+  return { message: t.auth.signUp.checkEmail, sentTo: email };
 }
 
 // ==================== MOT DE PASSE ====================

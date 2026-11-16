@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## [v0.25.1] - 2026-11-16 — Inscription : confirmation visible, courriels en français
+### Corrigé
+- Après « Créer mon compte », le formulaire (vidé par React) restait affiché avec un petit
+  message en bas : la page semblait figée. Il laisse maintenant la place à un écran
+  « Vérifiez votre boîte de réception » (adresse utilisée, indésirables, lien de connexion),
+  qui reçoit le focus.
+### Ajouté
+- Modèles des courriels d'authentification en français, au style de Kalami
+  (`supabase/templates/` : confirmation, mot de passe, lien de connexion, changement
+  d'adresse, invitation, code), branchés dans `config.toml` pour le local. En production, à
+  recopier dans Supabase avec un SMTP Resend (expéditeur @kalami-livres.com).
+
 ## [v0.25.0] - 2026-11-16 — Paiements Mobile Money
 ### Ajouté
 - Page **Paiements Mobile Money** (`/admin/paiements-mobile-money`, Ventes et paiements) :

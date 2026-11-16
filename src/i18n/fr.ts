@@ -398,6 +398,14 @@ const fr = {
       ageConfirm: "J'ai 14 ans ou plus, ou l'accord d'un parent ou tuteur.",
       checkEmail:
         "Presque terminé ! Ouvrez le courriel de confirmation que nous venons d'envoyer.",
+      confirm: {
+        title: "Vérifiez votre boîte de réception",
+        sentTo: "Votre compte est créé. Nous avons envoyé un lien de confirmation à",
+        click: "Cliquez sur ce lien pour activer votre compte, puis connectez-vous.",
+        spam: "Rien reçu ? Regardez dans les courriels indésirables ou promotions.",
+        wait: "Le courriel peut mettre jusqu'à {minutes} minutes à arriver.",
+        signIn: "Aller à la connexion",
+      },
     },
     forgot: {
       title: "Mot de passe oublié",

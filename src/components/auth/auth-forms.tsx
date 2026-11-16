@@ -6,9 +6,11 @@
  *               actions serveur via useActionState) : onglets Connexion / Créer un compte,
  *               Google proposé en premier sur les deux pages. Mêmes formulaires pour le
  *               site et Kalami Stratégie : la page de retour choisit les liens.
+ *               v0.25.1 : après l'inscription, le formulaire laisse la place à un écran
+ *               « Vérifiez votre boîte de réception » (adresse, indésirables, connexion).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-11-10
+ *  Version    : 1.5
+ *  Date       : 2026-11-16
  *  Dépendances: lib/auth/actions.ts, lib/auth/routes.ts, components/ui/form.tsx
  * =============================================================
  */
@@ -16,10 +18,10 @@
 "use client";
 
 import Link from "next/link";
-import { use, useActionState } from "react";
+import { use, useActionState, useEffect, useRef } from "react";
 
 import { Field, FormMessage, SubmitButton } from "@/components/ui/form";
-import { getDictionary } from "@/i18n";
+import { getDictionary, interpolate } from "@/i18n";
 import {
   requestPasswordReset,
   signInWithGoogle,
@@ -203,6 +205,7 @@ export function SignUpForm({ searchParams, defaultNext = "" }: AuthFormProps) {
   const { suivant = defaultNext, erreur } = use(searchParams);
   const [state, action] = useActionState(signUp, undefined);
 
+  if (state?.sentTo) return <CheckEmail email={state.sentTo} suivant={suivant} />;
   return (
     <div className="flex flex-col gap-6">
       <AuthTabs active="signUp" suivant={suivant} />
@@ -229,6 +232,47 @@ export function SignUpForm({ searchParams, defaultNext = "" }: AuthFormProps) {
         <FormMessage {...state} />
         <SubmitButton>{t.auth.signUp.submit}</SubmitButton>
       </form>
+    </div>
+  );
+}
+
+/**
+ * Écran affiché après l'inscription : le compte attend la confirmation par courriel.
+ * Le titre reçoit le focus pour que la nouvelle étape soit annoncée et visible.
+ * @param email - Adresse à laquelle le lien a été envoyé
+ * @param suivant - Page de retour, conservée pour le lien de connexion
+ */
+function CheckEmail({ email, suivant }: { email: string; suivant: string }) {
+  const title = useRef<HTMLHeadingElement>(null);
+  const c = t.auth.signUp.confirm;
+
+  useEffect(() => {
+    title.current?.focus();
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  return (
+    <div
+      role="status"
+      className="flex flex-col gap-4 rounded-lg border border-success/40 bg-success/10 p-6"
+    >
+      <h2 ref={title} tabIndex={-1} className="font-serif text-2xl font-semibold outline-none">
+        {c.title}
+      </h2>
+      <p>
+        {c.sentTo} <strong className="break-all">{email}</strong>
+      </p>
+      <p>{c.click}</p>
+      <ul className="list-disc pl-5 text-small text-ink-muted">
+        <li>{c.spam}</li>
+        <li>{interpolate(c.wait, { minutes: "5" })}</li>
+      </ul>
+      <Link
+        href={authPath("connexion", suivant)}
+        className="inline-flex min-h-11 w-fit items-center font-semibold text-encre underline"
+      >
+        {c.signIn}
+      </Link>
     </div>
   );
 }
