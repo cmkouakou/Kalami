@@ -1,5 +1,31 @@
 # Journal des modifications
 
+## [v0.24.0] - 2026-11-16 — Administration réorganisée, Fonctionnalités, membres connectés
+### Ajouté
+- Page **Fonctionnalités** (`/admin/fonctionnalites`, groupe Réglages) : un interrupteur
+  « En vente / Masquée » par offre — étude seule, lots de 10 et 30 études, forfaits du coach
+  IA, cas d’entraînement, forfaits de l’Atelier. Les prix restent enregistrés ; une offre
+  masquée disparaît des pages publiques et du paiement (filtres `active` existants).
+  Fonction SQL `admin_set_feature` (administrateur aal2, journal `admin.feature`).
+- Suivi des **membres connectés** : table `member_activity` (compte, jour, page, vues,
+  provenance de la première visite, pays), remplie par `/api/visite` via
+  `record_member_visit` (administrateurs exclus), purgée après 12 mois avec le reste.
+  Fonctions de lecture `admin_member_list`, `admin_member_pages`, `admin_member_identity`.
+- Lecture et audience en **onglets** : Vue d’ensemble, Membres connectés (courriel,
+  inscription, dernière visite, jours actifs, pages vues, page la plus vue, provenance, pays,
+  achats ; filtres venus / inscrits / tous), Pages et provenance, Lecture.
+- Fiche membre (`/admin/audience/lecteurs/[id]`) : identité, dernière connexion, provenance,
+  pages consultées jour par jour ; fonctionne aussi pour un membre qui n’a rien lu.
+### Modifié
+- Menu de l’administration en **groupes repliables** : Livres et auteurs, Kalami Stratégie,
+  Ventes et paiements, Formation, Réglages. Le groupe de la page courante s’ouvre seul ; un
+  groupe replié affiche le total de ses pastilles « à traiter ». Tableau de bord et Audience
+  restent en tête. Nouveaux liens directs : Forfaits du coach, Fonctionnalités.
+- Prix de l’étude seule aligné sur le livre (5 000 FCFA et équivalents EUR/CAD), saisi par
+  l’administrateur dans Commandes.
+### Migration
+- `20261122120000_member_activity_features.sql` — à appliquer **avant** le déploiement.
+
 ## [v0.23.0] - 2026-11-10 — Le modèle composite, en une image
 ### Ajouté
 - Leçon « Quand développer un modèle composite » : le schéma de la documentation

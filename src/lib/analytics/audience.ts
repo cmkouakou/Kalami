@@ -4,10 +4,11 @@
  *  Projet     : Kalami
  *  Description: Règles du tableau de bord « Lecture et audience » (v0.16.1) : périodes
  *               proposées, statut d'un lecteur (actif, en pause, abandonné, terminé),
- *               jours écoulés et durées lisibles.
+ *               jours écoulés et durées lisibles. v0.24.0 : onglets de la page et
+ *               filtres des membres connectés.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-28
+ *  Version    : 1.1
+ *  Date       : 2026-11-16
  *  Dépendances: (aucune)
  * =============================================================
  */
@@ -29,6 +30,17 @@ export const ABANDONED_DAYS = 30;
 const FINISHED_PROGRESS = 0.98;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Onglets de la page « Lecture et audience » (le premier est l'onglet par défaut). */
+export const AUDIENCE_TABS = ["overview", "members", "pages", "reading"] as const;
+export type AudienceTab = (typeof AUDIENCE_TABS)[number];
+
+/** Filtres de la liste des membres : vus sur la période, nouveaux inscrits, tous. */
+export const MEMBER_FILTERS = ["active", "new", "all"] as const;
+export type MemberFilter = (typeof MEMBER_FILTERS)[number];
+
+/** Champs d'un membre utiles au filtrage. */
+type MemberDates = { signed_up_at: string; views: number };
 
 // ==================== FONCTIONS ====================
 
@@ -81,4 +93,36 @@ export function formatDuration(seconds: number): string {
   const minutes = Math.round(seconds / 60);
   if (minutes < 60) return `${minutes} min`;
   return `${Math.floor(minutes / 60)} h ${String(minutes % 60).padStart(2, "0")}`;
+}
+
+/**
+ * Onglet demandé dans l'adresse, ou la vue d'ensemble.
+ * @param raw - Paramètre « onglet »
+ */
+export function parseTab(raw: unknown): AudienceTab {
+  return AUDIENCE_TABS.find((tab) => tab === raw) ?? "overview";
+}
+
+/**
+ * Filtre des membres demandé dans l'adresse, ou « vus sur la période ».
+ * @param raw - Paramètre « membres »
+ */
+export function parseMemberFilter(raw: unknown): MemberFilter {
+  return MEMBER_FILTERS.find((filter) => filter === raw) ?? "active";
+}
+
+/**
+ * Membres retenus par un filtre.
+ * @param members - Membres avec leurs pages vues sur la période
+ * @param filter  - Filtre choisi
+ * @param since   - Premier jour de la période (AAAA-MM-JJ)
+ */
+export function filterMembers<T extends MemberDates>(
+  members: T[],
+  filter: MemberFilter,
+  since: string,
+): T[] {
+  if (filter === "all") return members;
+  if (filter === "new") return members.filter((row) => row.signed_up_at.slice(0, 10) >= since);
+  return members.filter((row) => row.views > 0);
 }

@@ -2,12 +2,14 @@
  * =============================================================
  *  Fichier    : admin-nav.tsx
  *  Projet     : Kalami
- *  Description: Menu de l'administration : modules regroupés par thème, page courante
- *               mise en évidence, pastilles « à traiter ». Colonne latérale sur grand
- *               écran, menu repliable sur téléphone.
+ *  Description: Menu de l'administration : liens directs (tableau de bord, audience),
+ *               puis groupes repliables par thème (Livres et auteurs, Kalami Stratégie,
+ *               Ventes et paiements, Formation, Réglages). Le groupe de la page courante
+ *               s'ouvre seul ; un groupe replié montre le total de ses pastilles.
+ *               Colonne latérale sur grand écran, menu repliable sur téléphone.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2 (groupe Formation vers Kalami Données, v0.21.3)
- *  Date       : 2026-11-05
+ *  Version    : 2.0 (groupes repliables, v0.24.0)
+ *  Date       : 2026-11-16
  *  Dépendances: i18n, components/ui/icons.tsx
  * =============================================================
  */
@@ -18,7 +20,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import { IconList, IconX } from "@/components/ui/icons";
+import { IconChevronRight, IconList, IconX } from "@/components/ui/icons";
 import { getDictionary, interpolate } from "@/i18n";
 import { CHANTIER_HOME, POWERBI_HOME } from "@/lib/auth/routes";
 
@@ -31,19 +33,20 @@ const n = t.admin.nav;
 export type AdminNavBadges = { submissions?: number; mobileMoney?: number; payouts?: number };
 
 type NavLink = { href: string; label: string; badge?: keyof AdminNavBadges };
-type NavGroup = { title: string; links: NavLink[] };
+type NavGroup = { id: string; title: string; links: NavLink[] };
 
 // ==================== MODULES ====================
 
-const GROUPS: NavGroup[] = [
+/** Liens toujours visibles, en tête du menu. */
+const TOP_LINKS: NavLink[] = [
+  { href: "/admin", label: n.dashboard },
+  { href: "/admin/audience", label: n.audience },
+];
+
+/** Groupes repliables. */
+export const GROUPS: NavGroup[] = [
   {
-    title: n.groups.overview,
-    links: [
-      { href: "/admin", label: n.dashboard },
-      { href: "/admin/audience", label: n.audience },
-    ],
-  },
-  {
+    id: "livres",
     title: n.groups.catalog,
     links: [
       { href: "/admin/livres", label: n.books },
@@ -51,9 +54,21 @@ const GROUPS: NavGroup[] = [
       { href: "/admin/auteurs", label: n.authors },
       { href: "/admin/categories", label: n.categories },
       { href: "/admin/atelier", label: n.workshop },
+      { href: "/admin/contrat", label: n.contract },
     ],
   },
   {
+    id: "strategie",
+    title: n.groups.strategy,
+    links: [
+      { href: "/admin/strategie", label: n.strategyOverview },
+      { href: "/admin/strategie/etapes", label: n.strategySteps },
+      { href: "/admin/strategie/coach", label: n.strategyCoach },
+      { href: "/admin/strategie/coach/forfaits", label: n.strategyPacks },
+    ],
+  },
+  {
+    id: "ventes",
     title: n.groups.sales,
     links: [
       { href: "/admin/commandes", label: n.orders, badge: "mobileMoney" },
@@ -64,14 +79,7 @@ const GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: n.groups.strategy,
-    links: [
-      { href: "/admin/strategie", label: n.strategyOverview },
-      { href: "/admin/strategie/etapes", label: n.strategySteps },
-      { href: "/admin/strategie/coach", label: n.strategyCoach },
-    ],
-  },
-  {
+    id: "formation",
     title: n.groups.training,
     links: [
       { href: POWERBI_HOME, label: n.powerbiCourse },
@@ -79,16 +87,19 @@ const GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: n.groups.legal,
+    id: "reglages",
+    title: n.groups.settings,
     links: [
-      { href: "/admin/contrat", label: n.contract },
+      { href: "/admin/fonctionnalites", label: n.features },
       { href: "/admin/textes-legaux", label: n.legal },
       { href: "/admin/journal", label: n.audit },
     ],
   },
 ];
 
-const ALL_HREFS = GROUPS.flatMap((group) => group.links.map((link) => link.href));
+const ALL_HREFS = [...TOP_LINKS, ...GROUPS.flatMap((group) => group.links)].map(
+  (link) => link.href,
+);
 
 // ==================== FONCTIONS UTILITAIRES ====================
 
@@ -109,20 +120,45 @@ export function activeHref(pathname: string): string | null {
   return best;
 }
 
+/**
+ * Groupe qui contient le module actif.
+ * @param active - Adresse du module actif, ou null
+ * @returns Identifiant du groupe, ou null (tableau de bord, audience, page inconnue)
+ */
+export function groupOf(active: string | null): string | null {
+  if (!active) return null;
+  return GROUPS.find((group) => group.links.some((link) => link.href === active))?.id ?? null;
+}
+
 // ==================== COMPOSANT ====================
 
 /** Menu de l'administration ; les pastilles sont absentes tant qu'elles se chargent. */
 export function AdminNav({ badges = {} }: { badges?: AdminNavBadges }) {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-  const [lastPath, setLastPath] = useState(pathname);
   const active = activeHref(pathname);
+  const activeGroup = groupOf(active);
+  const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState<Set<string>>(
+    () => new Set(activeGroup ? [activeGroup] : []),
+  );
+  const [lastPath, setLastPath] = useState(pathname);
 
-  // Referme le menu du téléphone après chaque navigation
+  // Après chaque navigation : referme le menu du téléphone, ouvre le groupe de la page
   if (pathname !== lastPath) {
     setLastPath(pathname);
     setOpen(false);
+    if (activeGroup && !expanded.has(activeGroup)) {
+      setExpanded(new Set([...expanded, activeGroup]));
+    }
   }
+
+  /** Ouvre ou referme un groupe. */
+  const toggle = (id: string) => {
+    const next = new Set(expanded);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setExpanded(next);
+  };
 
   return (
     <nav aria-label={t.admin.title} className="lg:sticky lg:top-6 lg:self-start">
@@ -137,24 +173,81 @@ export function AdminNav({ badges = {} }: { badges?: AdminNavBadges }) {
         {open ? <IconX aria-hidden="true" /> : <IconList aria-hidden="true" />}
         {n.menu}
       </button>
-      <div id="menu-admin" className={`${open ? "flex" : "hidden"} mt-3 flex-col gap-5 lg:mt-0 lg:flex`}>
+      <div
+        id="menu-admin"
+        className={`${open ? "flex" : "hidden"} mt-3 flex-col gap-2 lg:mt-0 lg:flex`}
+      >
+        <ul className="flex flex-col">
+          {TOP_LINKS.map((link) => (
+            <li key={link.href}>
+              <NavItem link={link} active={link.href === active} badges={badges} />
+            </li>
+          ))}
+        </ul>
         {GROUPS.map((group) => (
-          <div key={group.title} className="flex flex-col gap-1">
-            <p className="px-3 text-caption text-ink-muted uppercase">{group.title}</p>
-            <ul className="flex flex-col">
-              {group.links.map((link) => (
-                <li key={link.href}>
-                  <NavItem link={link} active={link.href === active} badges={badges} />
-                </li>
-              ))}
-            </ul>
-          </div>
+          <NavSection
+            key={group.id}
+            group={group}
+            active={active}
+            badges={badges}
+            expanded={expanded.has(group.id)}
+            onToggle={() => toggle(group.id)}
+          />
         ))}
-        <Link href="/" className="px-3 text-sm text-encre underline">
+        <Link href="/" className="mt-2 px-3 text-sm text-encre underline">
           {n.site}
         </Link>
       </div>
     </nav>
+  );
+}
+
+/** Groupe repliable : en-tête cliquable (total des pastilles si replié), puis ses liens. */
+function NavSection({
+  group,
+  active,
+  badges,
+  expanded,
+  onToggle,
+}: {
+  group: NavGroup;
+  active: string | null;
+  badges: AdminNavBadges;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  const listId = `menu-admin-${group.id}`;
+  const total = group.links.reduce(
+    (sum, link) => sum + (link.badge ? (badges[link.badge] ?? 0) : 0),
+    0,
+  );
+  return (
+    <div className="flex flex-col border-t border-line pt-2">
+      <button
+        type="button"
+        aria-expanded={expanded}
+        aria-controls={listId}
+        onClick={onToggle}
+        className="flex min-h-11 items-center justify-between gap-2 rounded-md px-3 text-left
+          text-caption font-semibold text-ink-muted uppercase hover:bg-sand"
+      >
+        <span className="flex items-center gap-2">
+          <IconChevronRight
+            aria-hidden="true"
+            className={`size-4 transition-transform ${expanded ? "rotate-90" : ""}`}
+          />
+          {group.title}
+        </span>
+        {!expanded && total > 0 && <Badge count={total} />}
+      </button>
+      <ul id={listId} hidden={!expanded} className="flex flex-col">
+        {group.links.map((link) => (
+          <li key={link.href}>
+            <NavItem link={link} active={link.href === active} badges={badges} />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -178,12 +271,17 @@ function NavItem({
       }`}
     >
       {link.label}
-      {count > 0 && (
-        <span className="rounded-full bg-encre px-2 text-caption font-semibold text-on-encre">
-          <span aria-hidden="true">{count}</span>
-          <span className="sr-only">{interpolate(n.toDo, { count: String(count) })}</span>
-        </span>
-      )}
+      {count > 0 && <Badge count={count} />}
     </Link>
+  );
+}
+
+/** Pastille « N à traiter ». */
+function Badge({ count }: { count: number }) {
+  return (
+    <span className="rounded-full bg-encre px-2 text-caption font-semibold text-on-encre">
+      <span aria-hidden="true">{count}</span>
+      <span className="sr-only">{interpolate(n.toDo, { count: String(count) })}</span>
+    </span>
   );
 }

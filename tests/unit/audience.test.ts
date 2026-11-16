@@ -2,18 +2,22 @@
  * Fichier    : audience.test.ts
  * Projet     : Kalami
  * Description: Tests des statistiques de lecture et de visite (v0.16.1) : chemins comptés,
- *              site d'origine, robots, provenance, période, statut d'un lecteur, durées.
+ *              site d'origine, robots, provenance, période, statut d'un lecteur, durées ;
+ *              onglets et filtres des membres connectés (v0.24.0).
  * Auteur     : Claude Marcel
- * Version    : 1.0
- * Date       : 2026-10-28
+ * Version    : 1.1
+ * Date       : 2026-11-16
  */
 
 import { describe, expect, it } from "vitest";
 
 import {
   daysSince,
+  filterMembers,
   formatDuration,
+  parseMemberFilter,
   parsePeriod,
+  parseTab,
   periodStart,
   readerStatus,
 } from "@/lib/analytics/audience";
@@ -114,5 +118,36 @@ describe("période et statut", () => {
     expect(formatDuration(42)).toBe("42 s");
     expect(formatDuration(12 * 60)).toBe("12 min");
     expect(formatDuration(3 * 3600 + 5 * 60)).toBe("3 h 05");
+  });
+});
+
+describe("onglets et membres connectés", () => {
+  const members = [
+    { id: "ancien-actif", signed_up_at: "2026-01-10T09:00:00Z", views: 4 },
+    { id: "nouveau-actif", signed_up_at: "2026-11-10T09:00:00Z", views: 2 },
+    { id: "nouveau-absent", signed_up_at: "2026-11-12T09:00:00Z", views: 0 },
+    { id: "ancien-absent", signed_up_at: "2026-02-01T09:00:00Z", views: 0 },
+  ];
+  const ids = (rows: typeof members) => rows.map((row) => row.id);
+
+  it("lit l'onglet et le filtre demandés, sinon les valeurs par défaut", () => {
+    expect(parseTab("members")).toBe("members");
+    expect(parseTab("inconnu")).toBe("overview");
+    expect(parseTab(undefined)).toBe("overview");
+    expect(parseMemberFilter("new")).toBe("new");
+    expect(parseMemberFilter(["all"])).toBe("active");
+  });
+
+  it("filtre les membres venus, inscrits sur la période, ou tous", () => {
+    const since = "2026-11-01";
+    expect(ids(filterMembers(members, "active", since))).toEqual([
+      "ancien-actif",
+      "nouveau-actif",
+    ]);
+    expect(ids(filterMembers(members, "new", since))).toEqual([
+      "nouveau-actif",
+      "nouveau-absent",
+    ]);
+    expect(filterMembers(members, "all", since)).toHaveLength(4);
   });
 });

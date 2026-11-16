@@ -3,11 +3,12 @@
  *  Fichier    : visit-tracker.tsx
  *  Projet     : Kalami
  *  Description: Statistiques de visite de Kalami (v0.16.1) : signale chaque page vue à
- *               /api/visite. Anonyme, sans témoin ni stockage dans le navigateur ; rien
+ *               /api/visite. Sans témoin ni stockage dans le navigateur ; anonyme pour les
+ *               visiteurs, rattachée au compte pour les membres connectés (v0.24.0). Rien
  *               n'est envoyé si le visiteur demande à ne pas être suivi (GPC, Do Not Track).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-28
+ *  Version    : 1.1
+ *  Date       : 2026-11-16
  *  Dépendances: app/api/visite/route.ts
  * =============================================================
  */

@@ -5,10 +5,11 @@
  *  Description: Lectures du tableau de bord « Lecture et audience » (v0.16.1) : synthèse
  *               des visites et de la lecture sur une période, liste des lecteurs avec leur
  *               parcours, activité jour par jour d'un lecteur. Fonctions SQL réservées à
- *               l'administrateur (is_admin) et RLS.
+ *               l'administrateur (is_admin) et RLS. v1.1 (v0.24.0) : membres connectés
+ *               (courriel, inscription, pages vues, provenance) et pages d'un membre.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-28
+ *  Version    : 1.1
+ *  Date       : 2026-11-16
  *  Dépendances: lib/supabase/server.ts
  * =============================================================
  */
@@ -62,6 +63,43 @@ export type ReaderDay = {
   country: string | null;
 };
 
+/** Un membre inscrit et son activité sur la période. */
+export type MemberRow = {
+  user_id: string;
+  email: string;
+  display_name: string | null;
+  signed_up_at: string;
+  last_sign_in_at: string | null;
+  last_seen_at: string | null;
+  active_days: number;
+  views: number;
+  pages: number;
+  first_referrer: string | null;
+  country: string | null;
+  top_path: string | null;
+  paid_orders: number;
+};
+
+/** Une page vue par un membre un jour donné. */
+export type MemberPage = {
+  day: string;
+  path: string;
+  views: number;
+  referrer: string;
+  country: string;
+  first_seen_at: string;
+  last_seen_at: string;
+};
+
+/** Identité d'un membre (fiche). */
+export type MemberIdentity = {
+  user_id: string;
+  email: string;
+  display_name: string | null;
+  signed_up_at: string;
+  last_sign_in_at: string | null;
+};
+
 // ==================== LECTURES ====================
 
 /**
@@ -106,4 +144,43 @@ export async function listReaderDays(userId: string): Promise<ReaderDay[]> {
     .limit(400);
   if (error) throw new Error(`Lecture de l'activité impossible : ${error.message}`);
   return (data ?? []) as ReaderDay[];
+}
+
+/**
+ * Membres inscrits et leur activité depuis une date (les plus récemment vus d'abord).
+ * @param since - Premier jour inclus (AAAA-MM-JJ, UTC)
+ */
+export async function listMembers(since: string): Promise<MemberRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_member_list", { p_since: since });
+  if (error) throw new Error(`Lecture des membres impossible : ${error.message}`);
+  return ((data ?? []) as MemberRow[]).map((row) => ({
+    ...row,
+    active_days: Number(row.active_days),
+    views: Number(row.views),
+    pages: Number(row.pages),
+    paid_orders: Number(row.paid_orders),
+  }));
+}
+
+/**
+ * Pages vues par un membre (12 derniers mois, plus récentes d'abord).
+ * @param userId - Identifiant du membre
+ */
+export async function listMemberPages(userId: string): Promise<MemberPage[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_member_pages", { p_user_id: userId });
+  if (error) throw new Error(`Lecture des pages du membre impossible : ${error.message}`);
+  return ((data ?? []) as MemberPage[]).map((row) => ({ ...row, views: Number(row.views) }));
+}
+
+/**
+ * Identité d'un membre, ou null s'il n'existe pas.
+ * @param userId - Identifiant du membre
+ */
+export async function getMemberIdentity(userId: string): Promise<MemberIdentity | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_member_identity", { p_user_id: userId });
+  if (error) throw new Error(`Lecture du membre impossible : ${error.message}`);
+  return ((data ?? []) as MemberIdentity[])[0] ?? null;
 }
