@@ -6,6 +6,7 @@
   <title>Vous êtes invité sur Kalami</title>
 </head>
 <body style="margin:0;padding:0;background:#faf6ef;font-family:Georgia,'Times New Roman',serif;color:#2a2520;">
+  <div style="display:none;max-height:0;overflow:hidden;">Accepter l'invitation</div>
   <!-- Modèle d'authentification Kalami : à coller dans Supabase > Authentication > Emails -->
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf6ef;">
     <tr>
@@ -17,11 +18,16 @@
               <p style="margin:0 0 24px;font-size:22px;font-weight:bold;color:#1e4d4a;">Kalami</p>
               <h1 style="margin:0 0 16px;font-size:24px;">Invitation à Kalami</h1>
               <p style="margin:0 0 12px;font-size:16px;line-height:1.5;">Vous êtes invité à créer votre compte sur Kalami.</p>
-              <p style="margin:28px 0;">
-          <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=invite"
-            style="display:inline-block;background:#1e4d4a;color:#ffffff;text-decoration:none;
-            font-weight:bold;padding:14px 24px;border-radius:6px;">Accepter l'invitation</a>
-        </p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+          style="margin:32px 0;">
+          <tr>
+            <td align="center">
+              <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=invite"
+                style="display:inline-block;background:#1e4d4a;color:#ffffff;text-decoration:none;
+                font-size:18px;font-weight:bold;padding:18px 36px;border-radius:8px;">Accepter l'invitation →</a>
+            </td>
+          </tr>
+        </table>
         <p style="margin:0 0 16px;font-size:13px;color:#6b6259;">
           Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
           <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=invite" style="color:#1e4d4a;word-break:break-all;">{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=invite</a>

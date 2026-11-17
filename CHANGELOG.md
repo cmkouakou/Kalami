@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.25.3] - 2026-11-16 — Bouton bien visible dans les courriels
+### Modifié
+- Courriels d'authentification : gros bouton centré (« Confirmer mon adresse → »…) et
+  texte d'aperçu ; les 6 modèles sont installés dans Supabase (SMTP Resend actif).
+
 ## [v0.25.2] - 2026-11-16 — Liens de courriel valables dans tout navigateur
 ### Corrigé
 - Les liens des courriels d'authentification (confirmation, mot de passe, connexion,
