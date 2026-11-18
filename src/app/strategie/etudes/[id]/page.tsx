@@ -10,11 +10,13 @@
  *               Étude de classe (S10a) : nom de la classe et date de remise indicative.
  *               Lien vers la page du coach : forfait et consommation (v0.11.1).
  *               Étude d'un cas d'entraînement : lien vers le dossier et le corrigé (v0.14.1).
+ *               Étude d'un dossier Entrepreneur au Combat : badge et dossier transmis (v0.26.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-10-23
+ *  Version    : 1.6
+ *  Date       : 2026-11-17
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
- *               lib/strategy/class-queries.ts, components/strategy
+ *               lib/strategy/class-queries.ts, lib/strategy/eac-queries.ts,
+ *               components/strategy
  * =============================================================
  */
 
@@ -23,6 +25,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { EacPanel } from "@/components/strategy/eac-panel";
 import { PresenceBar, StepPeers } from "@/components/strategy/presence/presence-bar";
 import { PresenceProvider } from "@/components/strategy/presence/presence-context";
 import { StepCard } from "@/components/strategy/step-card";
@@ -32,6 +35,7 @@ import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getStudyClass } from "@/lib/strategy/class-queries";
 import { isLate, todayIso } from "@/lib/strategy/classes";
+import { getEacLink } from "@/lib/strategy/eac-queries";
 import { missingProfileFields } from "@/lib/strategy/profile";
 import { getStudy, statusesOf } from "@/lib/strategy/queries";
 import {
@@ -70,9 +74,10 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
   const missingFields = missingProfileFields(study.strategic_question, study.profile);
   const fieldLabels = s.profile.fields as Record<string, string>;
   const question = study.strategic_question.trim();
-  const [members, studyClass] = await Promise.all([
+  const [members, studyClass, eacLink] = await Promise.all([
     getStudyMembers(study.id),
     getStudyClass(study.id),
+    getEacLink(study.id),
   ]);
   const names = new Map(members.map((member) => [member.user_id, memberLabel(member)]));
   const selfName = names.get(user.id) ?? "";
@@ -92,6 +97,7 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="font-serif text-h1 font-semibold">{study.company_name}</h1>
             <span className={BADGE}>{s.studies.roles[study.role]}</span>
+            {eacLink && <span className={BADGE}>{s.eac.badge}</span>}
             {studyClass && (
               <span className={BADGE}>
                 {interpolate(s.classes.study.badge, { name: studyClass.name })}
@@ -141,6 +147,8 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
             </Link>
           </p>
         )}
+
+        {eacLink && <EacPanel link={eacLink} />}
 
         <PresenceBar />
 

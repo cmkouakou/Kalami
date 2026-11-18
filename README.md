@@ -19,6 +19,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
   catalogue déjà visité hors ligne
 - **Kalami Stratégie** (`/strategie`) : assistant d'analyse stratégique en 9 étapes, mêmes
   comptes, parcours et crédits propres — voir [docs/SPRINTS-strategie.md](docs/SPRINTS-strategie.md)
+- Liaison avec **Entrepreneur au Combat** (v0.26.0) : l'équipe EAC ouvre une étude préremplie,
+  sans crédit, par `POST /api/eac/etudes` (`EAC_API_SECRET`, `EAC_OWNER_ID`)
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)

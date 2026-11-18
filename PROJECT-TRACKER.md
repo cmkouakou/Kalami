@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.25.4 (Mobile Money en premier choix, avis au client) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.26.0 (liaison Entrepreneur au Combat, aller) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -100,7 +100,8 @@ Version actuelle : v0.25.4 (Mobile Money en premier choix, avis au client) · St
 | #94 | 2026-11-16 | v0.25.0 : page Paiements Mobile Money (à valider, validés, refusés), veille de l'admin (rafraîchissement, titre, encadré, notification) | ~60 000 | ~0.36 $ |
 | #95 | 2026-11-16 | v0.25.1 : écran « Vérifiez votre boîte » après inscription, modèles de courriels Supabase en français | ~30 000 | ~0.18 $ |
 | #96 | 2026-11-18 | v0.25.4 : Mobile Money en premier en FCFA, carte abandonnée masquée dans « Mes achats », page de commande mise à jour seule, avis de décision dans l'application | ~120 000 | ~0.72 $ |
-| **TOTAL** | | | **~20 800 000** (hors #71) | **~124.80 $** |
+| #97 | 2026-11-17 | v0.26.0 : liaison Entrepreneur au Combat (API d'ouverture d'étude, compte EAC, invitations, panneau du dossier, contexte du coach) | ~120 000 | ~0.72 $ |
+| **TOTAL** | | | **~20 920 000** (hors #71) | **~125.52 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -264,4 +265,7 @@ Version actuelle : v0.25.4 (Mobile Money en premier choix, avis au client) · St
 - [ ] S10b — cas Ajinomoto, Infosystem et corrigé — v0.14.0 données/vente/admin (migration appliquée, intégration 6/6) ; v0.14.1 pages écrites (à essayer en ligne) ; v0.14.3 cas résolu + liste des accès (migrations appliquées) ; v0.14.5 cas résolu supprimé au retrait de l'accès ; prix saisis le 2026-10-25 (2 500 FCFA · 4 € · 5 $ CA) ; Infosystem REPORTÉ (2026-10-25 : le livre sert lui-même de corrigé, à reprendre plus tard)
   - [ ] Paiement Stripe du cas Ajinomoto : achat test déjà fait ; remboursement lancé depuis Stripe le 2026-10-25 ; reste à vérifier l'effet (accès retiré, cas résolu supprimé, exercice gardé)
 - [x] S12 — débit des exports du plan limité à 20 par heure et par compte (v0.13.0)
+- [x] v0.26.0 — liaison Entrepreneur au Combat (aller) : API, étude sans crédit, invitations, panneau, coach ; unitaires OK, typecheck et lint OK
+- [ ] v0.26.0 — appliquer la migration `20261123120000_strategy_eac_link.sql`, créer le compte « Entrepreneur au Combat » et définir EAC_API_SECRET / EAC_OWNER_ID dans Vercel
+- [ ] v0.26.1 — retour du plan : bouton « Envoyer à Entrepreneur au Combat », route des fichiers du plan
 - [x] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse (publié, vérifié le 2026-10-28)

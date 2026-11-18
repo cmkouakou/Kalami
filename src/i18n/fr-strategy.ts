@@ -15,8 +15,8 @@
  *               des forfaits (v0.10.2).
  *               Lus via getStrategyDictionary() (strategy.ts).
  *  Auteur     : Claude Marcel
- *  Version    : 2.7
- *  Date       : 2026-10-23
+ *  Version    : 2.8
+ *  Date       : 2026-11-17
  * =============================================================
  */
 
@@ -2141,6 +2141,25 @@ const strategyFr = {
     },
   },
 
+  // ==================== ENTREPRENEUR AU COMBAT (v0.26.0) ====================
+  eac: {
+    badge: "Entrepreneur au Combat",
+    title: "Dossier transmis par Entrepreneur au Combat",
+    reference: "Dossier {ref}",
+    intro:
+      "Ce que l'entrepreneur a exprimé et validé, et les notes de l'équipe. Le coach IA " +
+      "en tient compte à chaque étape.",
+    show: "Afficher le dossier",
+    besoin: "Besoin exprimé",
+    comprehension: "Compréhension validée par l'entrepreneur",
+    stages: {
+      comprendre: "Notes — Comprendre",
+      synthetiser: "Notes — Synthétiser",
+      decider: "Notes — Décider",
+      agir: "Notes — Agir",
+    },
+    empty: "Le dossier ne contient encore aucun texte.",
+  },
   // ==================== CAS D'ENTRAÎNEMENT (v0.14.1) ====================
   cases: {
     kicker: "Cas d'entraînement",

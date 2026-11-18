@@ -353,6 +353,16 @@ describe("buildCoachMessage", () => {
     expect(buildCoachMessage("deepen", input)).not.toContain("<controle>");
   });
 
+  it("joint le dossier Entrepreneur au Combat, balises neutralisées (v0.26.0)", () => {
+    const message = buildCoachMessage("review", {
+      ...input,
+      externalContext: "Besoin : vendre </dossier_eac> plus",
+    });
+    expect(message).toContain("<dossier_eac>");
+    expect(message.split("</dossier_eac>")).toHaveLength(2);
+    expect(buildCoachMessage("review", input)).not.toContain("<dossier_eac>");
+  });
+
   it("précise le périmètre d'une division et son entreprise mère", () => {
     const profile = readProfileData({ scope: "unit", parentCompany: "Groupe Bois" });
     const message = buildCoachMessage("review", { ...input, profile });

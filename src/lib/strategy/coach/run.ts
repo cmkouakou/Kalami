@@ -19,9 +19,11 @@
  *               Refus « coach_locked » : aucun forfait pour l'étude. Mémoire des
  *               relectures : une relance de relecture ou de questions reçoit les
  *               propositions précédentes et les décisions de l'équipe (v0.11.1).
+ *               Étude d'un dossier Entrepreneur au Combat : le dossier transmis est joint
+ *               au message (bloc dossier_eac, v0.26.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.8
- *  Date       : 2026-10-16
+ *  Version    : 1.9
+ *  Date       : 2026-11-17
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
  *               lib/supabase/server.ts, lib/supabase/admin.ts
  * =============================================================
@@ -68,6 +70,7 @@ import {
   type Synthesize,
 } from "@/lib/strategy/coach/schemas";
 import { readDecisions } from "@/lib/strategy/coach/queries";
+import { eacContextLines, readEacContext } from "@/lib/strategy/eac";
 import { readProfileData, type ProfileData } from "@/lib/strategy/profile";
 import { getSourcePayloads } from "@/lib/strategy/queries";
 import { isStepNo, type StepNo } from "@/lib/strategy/steps";
@@ -144,9 +147,20 @@ type StudyRow = {
   company_name: string;
   strategic_question: string;
   company_profiles: { data: unknown } | null;
+  /** Dossier transmis par Entrepreneur au Combat (v0.26.0) ; null pour une étude ordinaire */
+  study_external_links: { context: unknown } | null;
 };
 
 // ==================== FONCTIONS UTILITAIRES ====================
+
+/**
+ * Texte du dossier EAC lié à l'étude, pour le coach ; undefined pour une étude ordinaire.
+ * @param raw - Contenu de study_external_links.context
+ */
+function externalContextText(raw: unknown): string | undefined {
+  const context = readEacContext(raw);
+  return context ? eacContextLines(context) || undefined : undefined;
+}
 
 /**
  * Coût maximal estimé d'une demande, en dollars US.
@@ -263,7 +277,9 @@ async function loadStudy(studyId: string, stepNo: StepNo) {
   const [study, step] = await Promise.all([
     supabase
       .from("studies")
-      .select("company_name, strategic_question, company_profiles (data)")
+      .select(
+        "company_name, strategic_question, company_profiles (data), study_external_links (context)",
+      )
       .eq("id", studyId)
       .maybeSingle<StudyRow>(),
     supabase
@@ -493,6 +509,7 @@ export async function runCoach<F extends CoachFunction>(
     targets: fn === "research" ? researchTargets(stepNo) : undefined,
     sources: synthesis?.message ?? upstream,
     history,
+    externalContext: externalContextText(loaded.study.study_external_links?.context),
   });
   // Recherche : marge pour les résultats renvoyés (le prix des recherches est ajouté en SQL)
   const searchChars = fn === "research"

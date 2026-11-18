@@ -18,8 +18,8 @@
  *               précédentes (relecture, questions) avec la décision de l'équipe.
  *               Refus qui renvoient vers la page du forfait (needsPack).
  *  Auteur     : Claude Marcel
- *  Version    : 1.9
- *  Date       : 2026-10-16
+ *  Version    : 2.0
+ *  Date       : 2026-11-17
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts
  * =============================================================
  */
@@ -99,6 +99,8 @@ export type ReviewContextInput = {
   sources?: readonly SourceStepContent[];
   /** Propositions de la demande précédente et décisions (relecture, questions). */
   history?: readonly CoachHistoryItem[];
+  /** Dossier transmis par Entrepreneur au Combat (v0.26.0), déjà mis en texte. */
+  externalContext?: string;
 };
 
 /** Fonctions dont la relance reçoit l'historique des propositions. */
@@ -122,7 +124,7 @@ export function rulesForStep(rules: readonly CoachRule[], stepNo: StepNo): Coach
 /** Balises des blocs de données du message (toutes fonctions confondues). */
 const TAG_NAMES = [
   "profil", "gabarit", "question", "regles", "controle", "cibles", "document", "etapes",
-  "sources", "section", "brouillon", "historique",
+  "sources", "section", "brouillon", "historique", "dossier_eac",
 ] as const;
 
 /** Neutralise les balises de fermeture qu'une saisie pourrait contenir. */
@@ -257,6 +259,9 @@ export function buildCoachMessage(fn: CoachFunction, input: ReviewContextInput):
   const sources = input.sources && input.sources.length > 0
     ? ["<etapes>", escapeTags(sourceLines(input.sources)), "</etapes>", ""]
     : [];
+  const external = input.externalContext
+    ? ["<dossier_eac>", escapeTags(input.externalContext), "</dossier_eac>", ""]
+    : [];
   const withHistory = HISTORY_FUNCTIONS.includes(fn) && input.history !== undefined
     && input.history.length > 0;
   const history = withHistory
@@ -275,6 +280,7 @@ export function buildCoachMessage(fn: CoachFunction, input: ReviewContextInput):
     escapeTags(input.strategicQuestion || "non renseignée"),
     "</question>",
     "",
+    ...external,
     ...sources,
     "<gabarit>",
     payload,

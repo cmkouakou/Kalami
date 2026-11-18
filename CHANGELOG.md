@@ -1,5 +1,22 @@
 # Journal des modifications
 
+## [v0.26.0] - 2026-11-17 — Liaison avec Entrepreneur au Combat (aller)
+### Ajouté
+- API serveur à serveur `POST /api/eac/etudes` (clé partagée `EAC_API_SECRET`, en-tête
+  Bearer comparé en temps constant) : l'équipe d'Entrepreneur au Combat ouvre l'étude
+  Kalami d'un dossier. L'étude appartient au compte « Entrepreneur au Combat »
+  (`EAC_OWNER_ID`), ne consomme aucun crédit, reçoit un budget de coach IA
+  (`EAC_COACH_BUDGET_USD`, 6 $ par défaut) et est préremplie : nom, question stratégique,
+  profil (secteur, pays, villes, canaux, concurrents, année, chiffre d'affaires).
+- L'apprenant et le mentor du dossier sont ajoutés comme contributeurs (reconnus par
+  courriel) ; sans compte Kalami, ils reçoivent l'invitation habituelle de 14 jours.
+  Un nouvel envoi du même dossier retrouve l'étude et ne rafraîchit que le contexte.
+- Migration `20261123120000_strategy_eac_link.sql` : table `study_external_links` (lecture
+  par les membres, écriture par la seule fonction `strategy_eac_open_study`, service_role).
+- Carte de l'étude : badge « Entrepreneur au Combat » et panneau repliable « Dossier transmis »
+  (besoin exprimé, compréhension validée par l'entrepreneur, notes de l'équipe des 4 étapes).
+- Coach IA : le dossier transmis est joint à chaque demande (bloc `dossier_eac`, balises
+  neutralisées).
 ## [v0.25.4] - 2026-11-18 — Mobile Money en premier, avis au client
 ### Modifié
 - Bouton d'achat en FCFA : « Payer par Mobile Money — prix » devient le choix principal ;
