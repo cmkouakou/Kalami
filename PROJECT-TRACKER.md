@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.25.3 (bouton bien visible dans les courriels) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.25.4 (Mobile Money en premier choix, avis au client) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -99,7 +99,8 @@ Version actuelle : v0.25.3 (bouton bien visible dans les courriels) · Stratégi
 | #93 | 2026-11-16 | v0.24.0 : menu admin repliable, page Fonctionnalités (masquer lots/forfaits), suivi des membres connectés, Audience en onglets, fiche membre | ~260 000 | ~1.56 $ |
 | #94 | 2026-11-16 | v0.25.0 : page Paiements Mobile Money (à valider, validés, refusés), veille de l'admin (rafraîchissement, titre, encadré, notification) | ~60 000 | ~0.36 $ |
 | #95 | 2026-11-16 | v0.25.1 : écran « Vérifiez votre boîte » après inscription, modèles de courriels Supabase en français | ~30 000 | ~0.18 $ |
-| **TOTAL** | | | **~20 680 000** (hors #71) | **~124.08 $** |
+| #96 | 2026-11-18 | v0.25.4 : Mobile Money en premier en FCFA, carte abandonnée masquée dans « Mes achats », page de commande mise à jour seule, avis de décision dans l'application | ~120 000 | ~0.72 $ |
+| **TOTAL** | | | **~20 800 000** (hors #71) | **~124.80 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

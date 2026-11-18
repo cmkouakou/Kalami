@@ -6,9 +6,10 @@
  *               le bouton d'achat quand la devise est le FCFA. Charge les numéros marchands
  *               ouverts, fait choisir l'opérateur et le pays, crée la commande puis envoie
  *               l'acheteur sur sa page (montant, numéro, référence, déclaration).
+ *               v1.2 (v0.25.4) : bouton principal quand il est le premier choix.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-28
+ *  Version    : 1.2
+ *  Date       : 2026-11-18
  *  Dépendances: api/paiement/mobile-money, lib/currency.ts
  * =============================================================
  */
@@ -40,13 +41,15 @@ type MobileMoneyChoiceProps = {
   disabled: boolean;
   /** Message lisible d'une erreur d'achat commune (devise, promo, limite…) */
   errorMessage: (code: unknown) => string;
+  /** Premier moyen de paiement proposé : bouton principal */
+  primary?: boolean;
 };
 
 type Step = "closed" | "loading" | "choose";
 
 /** Choix de l'opérateur Mobile Money et création de la commande. */
 export function MobileMoneyChoice(props: MobileMoneyChoiceProps) {
-  const { item, groupName, amountMinor, promoCode, disabled, errorMessage } = props;
+  const { item, groupName, amountMinor, promoCode, disabled, errorMessage, primary } = props;
   const router = useRouter();
   const [step, setStep] = useState<Step>("closed");
   const [options, setOptions] = useState<MobileMoneyOption[]>([]);
@@ -123,9 +126,11 @@ export function MobileMoneyChoice(props: MobileMoneyChoiceProps) {
           type="button"
           onClick={open}
           disabled={disabled}
-          className={`${BUTTON_SECONDARY} w-full`}
+          className={`${primary ? BUTTON_PRIMARY : BUTTON_SECONDARY} w-full`}
         >
-          {mm.choose}
+          {primary
+            ? interpolate(mm.chooseWithPrice, { price: formatPrice(amountMinor, "XOF") })
+            : mm.choose}
         </button>
       )}
       {step === "loading" && (

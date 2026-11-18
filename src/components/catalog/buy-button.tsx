@@ -7,11 +7,12 @@
  *               redirection vers la page de paiement Stripe. Les erreurs sont affichées sous
  *               le bouton, en clair. Code promo facultatif (v0.10.3) : prix réduit affiché,
  *               montant final recalculé par la base. En FCFA, le Mobile Money est proposé
- *               en second choix (v0.11.0). v1.4 : case de renonciation au droit de
- *               rétractation obligatoire avant tout paiement.
+ *               (v0.11.0). v1.4 : case de renonciation au droit de rétractation obligatoire
+ *               avant tout paiement. v1.5 (v0.25.4) : en FCFA, le Mobile Money passe en
+ *               premier choix et la carte devient « Payer par carte », en second.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-28
+ *  Version    : 1.5
+ *  Date       : 2026-11-18
  *  Dépendances: api/paiement/checkout, lib/currency.ts, promo-code-field.tsx,
  *               mobile-money-choice.tsx
  * =============================================================
@@ -22,7 +23,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { BUTTON_PRIMARY } from "@/components/ui/styles";
+import { BUTTON_PRIMARY, BUTTON_SECONDARY } from "@/components/ui/styles";
 import { getDictionary, interpolate } from "@/i18n";
 import type { Currency, Price } from "@/lib/catalog/types";
 import { formatPrice } from "@/lib/currency";
@@ -71,6 +72,9 @@ export function BuyButton(props: BuyButtonProps) {
   // Prix réduit dans la devise choisie (null : code absent ou sans effet dans cette devise)
   const reduced = promo ? discountedAmount(price, promo) : null;
   const promoUsable = promo !== null && reduced !== null;
+  // En FCFA, le Mobile Money est le paiement principal ; la carte passe en second
+  const mobileFirst = price.currency === "XOF";
+  const shownAmount = promoUsable ? reduced : price.amount_minor;
 
   /**
    * Crée la commande et ouvre la page de paiement Stripe.
@@ -149,17 +153,28 @@ export function BuyButton(props: BuyButtonProps) {
           ).
         </span>
       </label>
+      {mobileFirst && (
+        <MobileMoneyChoice
+          item={item}
+          groupName={groupName}
+          amountMinor={shownAmount}
+          promoCode={promoUsable ? promo.code : null}
+          disabled={pending || !waiver}
+          errorMessage={errorMessage}
+          primary
+        />
+      )}
       <button
         type="button"
         onClick={startCheckout}
         disabled={pending || !waiver}
         aria-busy={pending}
-        className={`${BUTTON_PRIMARY} w-full`}
+        className={`${mobileFirst ? BUTTON_SECONDARY : BUTTON_PRIMARY} w-full`}
       >
         {pending
           ? t.catalog.purchase.redirecting
-          : interpolate(t.catalog.purchase.buyIn, {
-              price: formatPrice(promoUsable ? reduced : price.amount_minor, price.currency),
+          : interpolate(mobileFirst ? t.catalog.purchase.payByCard : t.catalog.purchase.buyIn, {
+              price: formatPrice(shownAmount, price.currency),
             })}
       </button>
       {promoUsable && (
@@ -171,16 +186,6 @@ export function BuyButton(props: BuyButtonProps) {
         <p role="status" className="text-small text-ink-muted">
           {t.catalog.purchase.promoNotInCurrency}
         </p>
-      )}
-      {price.currency === "XOF" && (
-        <MobileMoneyChoice
-          item={item}
-          groupName={groupName}
-          amountMinor={promoUsable ? reduced : price.amount_minor}
-          promoCode={promoUsable ? promo.code : null}
-          disabled={pending || !waiver}
-          errorMessage={errorMessage}
-        />
       )}
       <PromoCodeField
         item={item}

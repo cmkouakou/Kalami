@@ -6,17 +6,18 @@
  *               l'application (pas ceux de la librairie), pour qu'un lien vers /strategie
  *               mène directement à l'outil. Manifeste propre : installée, l'application
  *               démarre sur /strategie. Aucun contrôle d'accès ici : chaque page privée
- *               appelle requireUser.
+ *               appelle requireUser. Avis Mobile Money sous l'en-tête (v0.25.4).
  *  Auteur     : Claude Marcel
- *  Version    : 2.1
- *  Date       : 2026-10-16
+ *  Version    : 2.2
+ *  Date       : 2026-11-18
  *  Dépendances: components/strategy/strategy-chrome.tsx, lib/pwa/manifest.ts, i18n
  * =============================================================
  */
 
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import { type ReactNode, Suspense } from "react";
 
+import { MobileMoneyNotice } from "@/components/account/mobile-money-notice";
 import { StrategyFooter, StrategyHeader } from "@/components/strategy/strategy-chrome";
 import { STRATEGY_MANIFEST_PATH } from "@/lib/pwa/manifest";
 import { getStrategyDictionary } from "@/i18n/strategy";
@@ -35,6 +36,10 @@ export default function StrategyLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <StrategyHeader />
+      {/* Avis d'une décision Mobile Money (lu en flux, rien pendant le rendu) */}
+      <Suspense fallback={null}>
+        <MobileMoneyNotice />
+      </Suspense>
       {/* Cible du lien « Aller au contenu » (gabarit racine) */}
       <div
         id="contenu"

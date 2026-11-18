@@ -6,9 +6,12 @@
  *               date, lien vers ce que l'achat débloque (livre, Kalami Stratégie, coach),
  *               reçu Stripe ; les commandes remboursées restent visibles. Une commande
  *               Mobile Money montre son étape et mène à sa page (paiement, déclaration).
+ *               v0.25.4 : une commande par carte non terminée est masquée si le même
+ *               article est payé ou si sa session a expiré ; la page se met à jour seule
+ *               tant qu'un paiement Mobile Money est en vérification.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-10-25
+ *  Version    : 1.4
+ *  Date       : 2026-11-18
  *  Dépendances: lib/payments/queries.ts, lib/payments/mobile-money.ts, lib/currency.ts
  * =============================================================
  */
@@ -17,10 +20,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { RefreshWhileWaiting } from "@/components/account/refresh-while-waiting";
 import { getDictionary, interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { formatPrice } from "@/lib/currency";
 import { mobileMoneyStage, type MobileMoneyStage } from "@/lib/payments/mobile-money";
+import { isPendingCard, visibleOrders } from "@/lib/payments/order-display";
 import {
   getMyOrders,
   type OrderItemLink,
@@ -61,6 +66,7 @@ function statusText(order: OrderSummary): string {
   if (order.status === "paid" && order.paid_at) {
     return interpolate(tp.paidOn, { date: DATE_LONG_FORMAT.format(new Date(order.paid_at)) });
   }
+  if (isPendingCard(order)) return tp.cardPending;
   const stage = mobileMoneyStage(order);
   return (stage && MM_STATUS[stage]) ?? tp.pending;
 }
@@ -106,7 +112,8 @@ function OrderRow({ order }: { order: OrderSummary }) {
 /** Liste privée (lit la session : rendu à la demande). */
 async function PurchasesContent() {
   await requireUser("/compte/achats");
-  const orders = await getMyOrders();
+  const orders = visibleOrders(await getMyOrders());
+  const waiting = orders.some((order) => mobileMoneyStage(order) === "to_review");
 
   if (orders.length === 0) {
     return (
@@ -119,11 +126,14 @@ async function PurchasesContent() {
     );
   }
   return (
-    <ul className="flex flex-col gap-4">
-      {orders.map((order) => (
-        <OrderRow key={order.id} order={order} />
-      ))}
-    </ul>
+    <div className="flex flex-col gap-4">
+      {waiting && <RefreshWhileWaiting message={t.mobileMoney.order.autoRefresh} />}
+      <ul className="flex flex-col gap-4">
+        {orders.map((order) => (
+          <OrderRow key={order.id} order={order} />
+        ))}
+      </ul>
+    </div>
   );
 }
 

@@ -6,10 +6,10 @@
  *               siennes) pour la page « Mes achats » et la page de retour du paiement ;
  *               lien vers ce que l'achat débloque (livre, Kalami Stratégie, coach, cas
  *               d'entraînement depuis la v0.14.0, atelier de l'auteur depuis la v0.15.0) ;
- *               champs Mobile Money (v0.11.0).
+ *               champs Mobile Money (v0.11.0) ; dernière décision Mobile Money (v0.25.4).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-10-25
+ *  Version    : 1.5
+ *  Date       : 2026-11-18
  *  Dépendances: lib/supabase/server.ts, migration 20261104120000_orders.sql
  * =============================================================
  */
@@ -96,6 +96,31 @@ export async function getMyOrder(orderId: string): Promise<OrderSummary | null> 
     .select(ORDER_COLUMNS)
     .eq("id", orderId)
     .maybeSingle<OrderSummary>();
+  return data ?? null;
+}
+
+/** Délai pendant lequel l'acheteur est prévenu d'une décision Mobile Money (14 jours). */
+const MM_NOTICE_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
+
+/**
+ * Dernière décision de l'administration sur un paiement Mobile Money de l'acheteur
+ * connecté (validé ou refusé depuis moins de 14 jours), pour l'avis dans l'application.
+ * Sans session, la politique d'accès ne renvoie rien.
+ * @returns Commande décidée la plus récente, ou null
+ */
+export async function getLatestMobileMoneyDecision(): Promise<OrderSummary | null> {
+  const supabase = await createClient();
+  const since = new Date(Date.now() - MM_NOTICE_WINDOW_MS).toISOString();
+  const { data, error } = await supabase
+    .from("orders")
+    .select(ORDER_COLUMNS)
+    .eq("provider", "mobile_money")
+    .in("status", ["paid", "failed"])
+    .gte("mm_reviewed_at", since)
+    .order("mm_reviewed_at", { ascending: false })
+    .limit(1)
+    .maybeSingle<OrderSummary>();
+  if (error) return null;
   return data ?? null;
 }
 

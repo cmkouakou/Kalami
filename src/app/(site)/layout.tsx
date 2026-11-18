@@ -4,10 +4,10 @@
  *  Projet     : Kalami
  *  Description: Gabarit de la plateforme de lecture : en-tête (logo, recherche, devise,
  *               compte) et pied de page sombre (avec « Installer l'application »).
- *               Kalami Stratégie a son propre gabarit.
+ *               Kalami Stratégie a son propre gabarit. Avis Mobile Money (v0.25.4).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-10-16
+ *  Version    : 1.2
+ *  Date       : 2026-11-18
  *  Dépendances: i18n, components/catalog, components/layout, components/ui
  * =============================================================
  */
@@ -15,6 +15,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { MobileMoneyNotice } from "@/components/account/mobile-money-notice";
 import { CurrencySelector } from "@/components/catalog/currency-selector";
 import { Logo } from "@/components/layout/logo";
 import { LegalLinks } from "@/components/legal/legal-links";
@@ -33,6 +34,10 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <SiteHeader />
+      {/* Avis d'une décision Mobile Money (lu en flux, rien pendant le rendu) */}
+      <Suspense fallback={null}>
+        <MobileMoneyNotice />
+      </Suspense>
       {/* Cible du lien « Aller au contenu » (gabarit racine) */}
       <div id="contenu" tabIndex={-1} className="flex-1">
         {children}

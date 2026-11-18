@@ -6,9 +6,10 @@
  *               marchand, référence et échéance, formulaire de déclaration de la
  *               transaction, puis suivi (en vérification, validée, refusée avec le motif,
  *               expirée). Une commande par carte renvoie vers la page de retour Stripe.
+ *               v0.25.4 : pendant la vérification, la page se met à jour toute seule.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-18
  *  Dépendances: lib/payments/queries.ts, lib/payments/mobile-money.ts,
  *               lib/payments/mobile-money-actions.ts, components/admin/action-form.tsx
  * =============================================================
@@ -19,6 +20,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import { RefreshWhileWaiting } from "@/components/account/refresh-while-waiting";
 import { ActionForm } from "@/components/admin/action-form";
 import { Field } from "@/components/ui/form";
 import { BUTTON_PRIMARY, CARD } from "@/components/ui/styles";
@@ -119,12 +121,15 @@ function PayStep({ order }: { order: OrderSummary }) {
 function StatusStep({ order, stage }: { order: OrderSummary; stage: string }) {
   if (stage === "to_review") {
     return (
-      <p className="text-body">
-        {interpolate(mo.toReview, {
-          date: formatDate(order.mm_declared_at),
-          transaction: order.mm_transaction_id ?? "—",
-        })}
-      </p>
+      <div className="flex flex-col gap-2">
+        <p className="text-body">
+          {interpolate(mo.toReview, {
+            date: formatDate(order.mm_declared_at),
+            transaction: order.mm_transaction_id ?? "—",
+          })}
+        </p>
+        <RefreshWhileWaiting message={mo.autoRefresh} />
+      </div>
     );
   }
   if (stage === "paid") {

@@ -84,6 +84,7 @@ const fr = {
     purchase: {
       payIn: "Payer en",
       buyIn: "Acheter — {price}",
+      payByCard: "Payer par carte — {price}",
       redirecting: "Ouverture du paiement sécurisé…",
       signInToBuy: "Se connecter pour acheter",
       owned: "Ce livre fait partie de votre bibliothèque.",
@@ -453,6 +454,7 @@ const fr = {
       browse: "Parcourir le catalogue",
       paidOn: "Payé le {date}",
       pending: "Paiement en cours de confirmation",
+      cardPending: "Paiement par carte non terminé (annulé automatiquement après 1 h)",
       refundedOn: "Remboursé le {date}",
       receipt: "Reçu",
       read: "Lire",
@@ -1561,6 +1563,7 @@ const fr = {
   },
   mobileMoney: {
     choose: "Payer par Mobile Money",
+    chooseWithPrice: "Payer par Mobile Money — {price}",
     chooseHelp: "Choisissez votre opérateur et votre pays.",
     loading: "Chargement des numéros…",
     none: "Le Mobile Money n'est pas disponible pour le moment.",
@@ -1623,6 +1626,14 @@ const fr = {
         "La commande {reference} a expiré sans paiement déclaré. Vous pouvez refaire un achat.",
       notFound: "Commande introuvable.",
       back: "Retour à mes achats",
+      autoRefresh: "Cette page se met à jour toute seule dès que le paiement est vérifié.",
+    },
+    notice: {
+      paid: "Votre paiement Mobile Money est confirmé : « {label} » est disponible.",
+      paidCta: "Ouvrir maintenant",
+      rejected: "Votre paiement Mobile Money pour « {label} » n'a pas été validé.",
+      rejectedCta: "Voir le motif",
+      close: "Fermer l'avis",
     },
     email: {
       greeting: "Bonjour,",

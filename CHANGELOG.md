@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.25.4] - 2026-11-18 — Mobile Money en premier, avis au client
+### Modifié
+- Bouton d'achat en FCFA : « Payer par Mobile Money — prix » devient le choix principal ;
+  la carte passe en second (« Payer par carte — prix »). Autres devises inchangées.
+- « Mes achats » : une commande par carte non terminée disparaît si le même article est
+  payé (par exemple par Mobile Money) ou si sa session Stripe a expiré (1 h) ; sinon elle
+  s'affiche « Paiement par carte non terminé ».
+### Ajouté
+- Page de commande Mobile Money et « Mes achats » : mise à jour automatique toutes les
+  30 s (onglet visible) pendant la vérification du paiement.
+- Avis dans l'application (librairie et Kalami Stratégie) quand l'administration valide
+  ou refuse un paiement Mobile Money : « Ouvrir maintenant » ou « Voir le motif ». Montré
+  une seule fois (témoin `kalami_mm_vu`), pendant 14 jours. Aucune migration.
+
 ## [v0.25.3] - 2026-11-16 — Bouton bien visible dans les courriels
 ### Modifié
 - Courriels d'authentification : gros bouton centré (« Confirmer mon adresse → »…) et
