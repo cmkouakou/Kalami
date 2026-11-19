@@ -17,6 +17,7 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_COACH_BUDGET_USD,
   eacContextLines,
+  eacDeleteStudySchema,
   eacOpenStudySchema,
   eacReturnSettings,
   eacSettings,
@@ -65,6 +66,14 @@ describe("eacOpenStudySchema", () => {
     expect(eacOpenStudySchema.safeParse(body({ members: [{ email: "x" }] })).success).toBe(false);
     const many = Array.from({ length: 11 }, (_, i) => ({ email: `p${i}@example.com` }));
     expect(eacOpenStudySchema.safeParse(body({ members: many })).success).toBe(false);
+  });
+});
+
+describe("eacDeleteStudySchema (v0.27.0)", () => {
+  it("accepte un identifiant de dossier et refuse le reste", () => {
+    expect(eacDeleteStudySchema.safeParse({ dossierId: DOSSIER_ID }).success).toBe(true);
+    expect(eacDeleteStudySchema.safeParse({ dossierId: "12" }).success).toBe(false);
+    expect(eacDeleteStudySchema.safeParse({}).success).toBe(false);
   });
 });
 

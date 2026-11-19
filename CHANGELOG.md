@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## [v0.27.0] - 2026-11-19 — Liaison avec Entrepreneur au Combat (suppression d'étude)
+### Ajouté
+- `DELETE /api/eac/etudes` (clé `EAC_API_SECRET`, corps `{ dossierId }`) : efface l'étude
+  liée à un dossier EAC, uniquement si elle appartient au compte `EAC_OWNER_ID`. Le travail,
+  les membres, les invitations et le journal partent par cascade ; les pièces jointes sont
+  retirées du stockage. Sans étude liée : `{ deleted: false }` (appel répétable).
+- Schéma `eacDeleteStudySchema`.
+
+### Tests
+- `eacDeleteStudySchema` : identifiant valide, invalide ou absent.
+
 ## [v0.26.1] - 2026-11-18 — Liaison avec Entrepreneur au Combat (retour du plan)
 ### Ajouté
 - Bouton « Envoyer à Entrepreneur au Combat » dans le panneau du dossier EAC de l'étude

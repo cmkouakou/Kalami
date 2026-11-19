@@ -7,10 +7,12 @@
  *               possédée par le compte « Entrepreneur au Combat ». L'équipe du dossier est
  *               ajoutée ; les personnes sans compte reçoivent l'invitation habituelle.
  *               Protégée par la clé partagée EAC_API_SECRET (en-tête Bearer).
+ *               v0.27.0 : DELETE efface l'étude d'un dossier (demande d'un admin EAC).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-17
- *  Dépendances: lib/strategy/eac.ts, lib/strategy/team-email.ts, lib/supabase/admin.ts
+ *  Version    : 1.1
+ *  Date       : 2026-11-19
+ *  Dépendances: lib/strategy/eac.ts, lib/strategy/team-email.ts, lib/strategy/attachments.ts,
+ *               lib/supabase/admin.ts
  * =============================================================
  */
 
@@ -18,7 +20,13 @@ import { APP_URL } from "@/lib/config";
 import { errorResponse, PRIVATE_HEADERS } from "@/lib/content/responses";
 import { sendEmail } from "@/lib/email/send";
 import { constantTimeEqual } from "@/lib/security/cron";
-import { eacOpenStudySchema, eacSettings, profileFromEac } from "@/lib/strategy/eac";
+import { ATTACHMENTS_BUCKET } from "@/lib/strategy/attachments";
+import {
+  eacDeleteStudySchema,
+  eacOpenStudySchema,
+  eacSettings,
+  profileFromEac,
+} from "@/lib/strategy/eac";
 import { buildInvitationEmail, invitationUrl, newInvitationToken } from "@/lib/strategy/team-email";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -52,16 +60,25 @@ async function deliverInvitations(
 }
 
 /**
+ * Vérifie la clé partagée.
+ * @param request - Requête reçue
+ * @returns Réglages de la liaison, ou null si la requête est refusée
+ */
+function authorize(request: Request) {
+  const settings = eacSettings();
+  const auth = request.headers.get("authorization") ?? "";
+  if (!settings || !constantTimeEqual(auth, `Bearer ${settings.secret}`)) return null;
+  return settings;
+}
+
+/**
  * POST /api/eac/etudes — corps JSON décrit par eacOpenStudySchema
  * @returns 200 { studyId, created, url, added, invitations } ; 400 corps invalide ;
  *          401 clé absente ou fausse (ou liaison non configurée) ; 500 erreur de la base
  */
 export async function POST(request: Request) {
-  const settings = eacSettings();
-  const auth = request.headers.get("authorization") ?? "";
-  if (!settings || !constantTimeEqual(auth, `Bearer ${settings.secret}`)) {
-    return errorResponse(401);
-  }
+  const settings = authorize(request);
+  if (!settings) return errorResponse(401);
 
   let body: unknown;
   try {
@@ -99,4 +116,68 @@ export async function POST(request: Request) {
     added: result.added,
     invitations,
   }, { headers: PRIVATE_HEADERS });
+}
+
+/** Réponse d'erreur de la base (500). */
+function databaseError() {
+  return Response.json({ error: "Erreur de la base" }, { status: 500, headers: PRIVATE_HEADERS });
+}
+
+/**
+ * DELETE /api/eac/etudes — corps JSON { dossierId }. Efface l'étude liée au dossier (travail,
+ * membres, invitations et journal partent par cascade), puis ses pièces jointes. Seule une
+ * étude du compte « Entrepreneur au Combat » peut être effacée ; sans étude liée, rien n'est
+ * fait (appel répétable).
+ * @returns 200 { deleted } ; 400 corps invalide ; 401 clé refusée ; 500 erreur de la base
+ */
+export async function DELETE(request: Request) {
+  const settings = authorize(request);
+  if (!settings) return errorResponse(401);
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return errorResponse(400);
+  }
+  const parsed = eacDeleteStudySchema.safeParse(body);
+  if (!parsed.success) return errorResponse(400);
+
+  const supabase = createAdminClient();
+  const { data: link, error: linkError } = await supabase
+    .from("study_external_links")
+    .select("study_id")
+    .eq("source", "eac")
+    .eq("external_id", parsed.data.dossierId)
+    .maybeSingle<{ study_id: string }>();
+  if (linkError) {
+    console.error("[eac] lecture de l'étude à effacer :", linkError.message);
+    return databaseError();
+  }
+  if (!link) return Response.json({ deleted: false }, { headers: PRIVATE_HEADERS });
+
+  // Chemins des pièces jointes lus avant l'effacement (le stockage n'a pas de cascade)
+  const { data: files } = await supabase
+    .from("study_attachments")
+    .select("storage_path")
+    .eq("study_id", link.study_id);
+
+  const { data: deleted, error } = await supabase
+    .from("studies")
+    .delete()
+    .eq("id", link.study_id)
+    .eq("owner_id", settings.ownerId)
+    .select("id");
+  if (error) {
+    console.error("[eac] effacement d'étude refusé :", error.message);
+    return databaseError();
+  }
+  if (!deleted?.length) return Response.json({ deleted: false }, { headers: PRIVATE_HEADERS });
+
+  const paths = (files ?? []).map((f) => f.storage_path as string);
+  if (paths.length) {
+    const { error: storageError } = await supabase.storage.from(ATTACHMENTS_BUCKET).remove(paths);
+    if (storageError) console.error("[eac] pièces jointes non effacées :", storageError.message);
+  }
+  return Response.json({ deleted: true }, { headers: PRIVATE_HEADERS });
 }

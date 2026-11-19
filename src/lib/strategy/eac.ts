@@ -85,6 +85,11 @@ export const eacOpenStudySchema = z.object({
 
 export type EacOpenStudy = z.infer<typeof eacOpenStudySchema>;
 
+/** Corps de la requête DELETE /api/eac/etudes (v0.27.0) : dossier dont l'étude est effacée. */
+export const eacDeleteStudySchema = z.object({
+  dossierId: z.string().refine(isUuid, "dossierId invalide"),
+});
+
 // ==================== CONVERSION ====================
 
 /**
