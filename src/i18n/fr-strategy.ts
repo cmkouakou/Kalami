@@ -2159,6 +2159,19 @@ const strategyFr = {
       agir: "Notes — Agir",
     },
     empty: "Le dossier ne contient encore aucun texte.",
+    // Retour du plan vers EAC (v0.26.1)
+    send: {
+      intro:
+        "Une fois le plan stratégique prêt, envoyez-le au dossier : le mentor le relit et le " +
+        "publie à l'entrepreneur, en PDF et en Word.",
+      button: "Envoyer à Entrepreneur au Combat",
+      resend: "Envoyer la version à jour",
+      sending: "Envoi en cours…",
+      sentOn: "Dernier envoi : {date}",
+      done: "Plan envoyé (version {version}). Le mentor peut maintenant le publier.",
+      rateLimited: "Trop d'envois rapprochés. Réessayez dans quelques minutes.",
+      failed: "L'envoi a échoué. Réessayez plus tard.",
+    },
   },
   // ==================== CAS D'ENTRAÎNEMENT (v0.14.1) ====================
   cases: {

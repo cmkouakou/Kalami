@@ -10,10 +10,11 @@
  *               Étude de classe (S10a) : nom de la classe et date de remise indicative.
  *               Lien vers la page du coach : forfait et consommation (v0.11.1).
  *               Étude d'un cas d'entraînement : lien vers le dossier et le corrigé (v0.14.1).
- *               Étude d'un dossier Entrepreneur au Combat : badge et dossier transmis (v0.26.0).
+ *               Étude d'un dossier Entrepreneur au Combat : badge et dossier transmis (v0.26.0),
+ *               envoi du plan au dossier (v0.26.1).
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
- *  Date       : 2026-11-17
+ *  Version    : 1.7
+ *  Date       : 2026-11-18
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
  *               lib/strategy/class-queries.ts, lib/strategy/eac-queries.ts,
  *               components/strategy
@@ -35,6 +36,7 @@ import { interpolate } from "@/i18n";
 import { requireUser } from "@/lib/auth/dal";
 import { getStudyClass } from "@/lib/strategy/class-queries";
 import { isLate, todayIso } from "@/lib/strategy/classes";
+import { eacReturnSettings } from "@/lib/strategy/eac";
 import { getEacLink } from "@/lib/strategy/eac-queries";
 import { missingProfileFields } from "@/lib/strategy/profile";
 import { getStudy, statusesOf } from "@/lib/strategy/queries";
@@ -82,6 +84,11 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
   const names = new Map(members.map((member) => [member.user_id, memberLabel(member)]));
   const selfName = names.get(user.id) ?? "";
   const planOpen = missingPrerequisites(PLAN_STEP, statuses, study.profileComplete).length === 0;
+  // Envoi du plan à EAC : propriétaire ou contributeur, plan ouvert, liaison configurée
+  const canSendToEac =
+    (study.role === "owner" || study.role === "contributor") &&
+    planOpen &&
+    eacReturnSettings() !== null;
 
   return (
     <PresenceProvider
@@ -148,7 +155,13 @@ async function StudyMap({ params }: { params: Promise<{ id: string }> }) {
           </p>
         )}
 
-        {eacLink && <EacPanel link={eacLink} />}
+        {eacLink && (
+          <EacPanel
+            link={eacLink}
+            studyId={study.id}
+            canSend={canSendToEac}
+          />
+        )}
 
         <PresenceBar />
 

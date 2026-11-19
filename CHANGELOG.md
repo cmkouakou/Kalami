@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.26.1] - 2026-11-18 — Liaison avec Entrepreneur au Combat (retour du plan)
+### Ajouté
+- Bouton « Envoyer à Entrepreneur au Combat » dans le panneau du dossier EAC de l'étude
+  (propriétaire et contributeurs, une fois le plan ouvert) : le plan stratégique est produit
+  en PDF et en DOCX, puis transmis au dossier EAC, où le mentor le relit et le publie à
+  l'entrepreneur. Chaque envoi crée une nouvelle version côté EAC.
+- Route `POST /api/strategie/etudes/[id]/eac` (même origine, même débit que l'export du
+  plan) et client serveur à serveur `lib/strategy/eac-return.ts` (formulaire multipart,
+  clé `EAC_API_SECRET` en en-tête Bearer, délai de 30 s).
+- Variable `EAC_API_URL` (adresse du site EAC, https) : sans elle, le bouton est masqué.
+- Date du dernier envoi affichée sous le bouton (`study_external_links.sent_back_at`).
+
+### Tests
+- `eacReturnSettings` : adresse absente, invalide ou non https, adresse de réception.
+
 ## [v0.26.0] - 2026-11-17 — Liaison avec Entrepreneur au Combat (aller)
 ### Ajouté
 - API serveur à serveur `POST /api/eac/etudes` (clé partagée `EAC_API_SECRET`, en-tête

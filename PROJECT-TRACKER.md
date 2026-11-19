@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.26.0 (liaison Entrepreneur au Combat, aller) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.26.1 (liaison Entrepreneur au Combat, aller et retour) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -101,7 +101,8 @@ Version actuelle : v0.26.0 (liaison Entrepreneur au Combat, aller) · Stratégie
 | #95 | 2026-11-16 | v0.25.1 : écran « Vérifiez votre boîte » après inscription, modèles de courriels Supabase en français | ~30 000 | ~0.18 $ |
 | #96 | 2026-11-18 | v0.25.4 : Mobile Money en premier en FCFA, carte abandonnée masquée dans « Mes achats », page de commande mise à jour seule, avis de décision dans l'application | ~120 000 | ~0.72 $ |
 | #97 | 2026-11-17 | v0.26.0 : liaison Entrepreneur au Combat (API d'ouverture d'étude, compte EAC, invitations, panneau du dossier, contexte du coach) | ~120 000 | ~0.72 $ |
-| **TOTAL** | | | **~20 920 000** (hors #71) | **~125.52 $** |
+| #98 | 2026-11-18 | v0.26.1 : retour du plan vers EAC (route d'envoi, client serveur à serveur, bouton dans le panneau du dossier, date du dernier envoi) | ~90 000 | ~0.54 $ |
+| **TOTAL** | | | **~21 010 000** (hors #71) | **~126.06 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -267,5 +268,6 @@ Version actuelle : v0.26.0 (liaison Entrepreneur au Combat, aller) · Stratégie
 - [x] S12 — débit des exports du plan limité à 20 par heure et par compte (v0.13.0)
 - [x] v0.26.0 — liaison Entrepreneur au Combat (aller) : API, étude sans crédit, invitations, panneau, coach ; unitaires OK, typecheck et lint OK
 - [ ] v0.26.0 — appliquer la migration `20261123120000_strategy_eac_link.sql`, créer le compte « Entrepreneur au Combat » et définir EAC_API_SECRET / EAC_OWNER_ID dans Vercel
-- [ ] v0.26.1 — retour du plan : bouton « Envoyer à Entrepreneur au Combat », route des fichiers du plan
+- [x] v0.26.1 — retour du plan : bouton « Envoyer à Entrepreneur au Combat », route `POST /api/strategie/etudes/[id]/eac` ; unitaires, typecheck, lint et build OK
+- [ ] v0.26.1 — définir EAC_API_URL=https://entrepreneuraucombat.com dans Vercel (après le déploiement d'EAC v0.10.0)
 - [x] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse (publié, vérifié le 2026-10-28)

@@ -168,6 +168,32 @@ export function eacSettings(env: Record<string, string | undefined> = process.en
   return { secret, ownerId, coachBudgetUsd };
 }
 
+/** Réglages du retour du plan vers EAC (v0.26.1) : adresse d'EAC et même clé partagée. */
+export type EacReturnSettings = { endpoint: string; secret: string };
+
+/**
+ * Lit l'adresse de retour (EAC_API_URL) ; null si elle manque, n'est pas en https (sauf
+ * localhost) ou si la clé est absente : le bouton d'envoi est alors masqué.
+ * @param env - Variables d'environnement (par défaut : process.env)
+ * @returns Adresse complète de l'API de réception et clé
+ */
+export function eacReturnSettings(
+  env: Record<string, string | undefined> = process.env,
+): EacReturnSettings | null {
+  const secret = env.EAC_API_SECRET?.trim() ?? "";
+  const raw = env.EAC_API_URL?.trim() ?? "";
+  if (secret.length < 32 || !raw) return null;
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    return null;
+  }
+  const local = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  if (url.protocol !== "https:" && !(local && url.protocol === "http:")) return null;
+  return { endpoint: `${url.origin}/api/kalami/strategie`, secret };
+}
+
 /**
  * Bloc de texte du contexte EAC pour le coach IA (données, pas des instructions).
  * @param context - Contexte relu

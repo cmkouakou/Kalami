@@ -18,6 +18,7 @@ import {
   DEFAULT_COACH_BUDGET_USD,
   eacContextLines,
   eacOpenStudySchema,
+  eacReturnSettings,
   eacSettings,
   isContextEmpty,
   profileFromEac,
@@ -151,5 +152,35 @@ describe("eacSettings", () => {
       .toBe(DEFAULT_COACH_BUDGET_USD);
     expect(eacSettings({ ...base, EAC_COACH_BUDGET_USD: "abc" })?.coachBudgetUsd)
       .toBe(DEFAULT_COACH_BUDGET_USD);
+  });
+});
+
+describe("eacReturnSettings (v0.26.1)", () => {
+  it("masque l'envoi sans adresse, sans clé ou avec une adresse invalide", () => {
+    expect(eacReturnSettings({})).toBeNull();
+    expect(eacReturnSettings({ EAC_API_SECRET: SECRET })).toBeNull();
+    expect(eacReturnSettings({ EAC_API_URL: "https://eac.test" })).toBeNull();
+    expect(eacReturnSettings({ EAC_API_SECRET: SECRET, EAC_API_URL: "pas une url" })).toBeNull();
+    expect(eacReturnSettings({ EAC_API_SECRET: SECRET, EAC_API_URL: "http://eac.test" }))
+      .toBeNull();
+  });
+
+  it("construit l'adresse de réception à partir de l'origine", () => {
+    const settings = eacReturnSettings({
+      EAC_API_SECRET: SECRET,
+      EAC_API_URL: " https://entrepreneuraucombat.com/ ",
+    });
+    expect(settings).toEqual({
+      endpoint: "https://entrepreneuraucombat.com/api/kalami/strategie",
+      secret: SECRET,
+    });
+  });
+
+  it("accepte http en local pour les essais", () => {
+    const settings = eacReturnSettings({
+      EAC_API_SECRET: SECRET,
+      EAC_API_URL: "http://localhost:3001",
+    });
+    expect(settings?.endpoint).toBe("http://localhost:3001/api/kalami/strategie");
   });
 });
