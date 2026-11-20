@@ -7,8 +7,10 @@
  *               quand la préférer, le goulot humain, le chemin d'Infosystem (former,
  *               structurer, documenter). Sources : livre, module 8 (§ 8.4). Texte,
  *               exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (Simons, Orange Money, Ubisoft Montréal, CME de la CIE).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -21,6 +23,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -93,6 +96,70 @@ export const M11_L01: ContenuLecon = [
     "Planifier la croissance sur les ventes plutôt que sur l'équipe. Gagner des clients " +
       "que l'on ne peut pas servir dégrade le service, épuise les plus anciens et " +
       "provoque les départs qui freineront la suite.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "La croissance interne n'est pas réservée aux petites entreprises. Voici deux " +
+      "situations, chacune illustrée au Québec et en Côte d'Ivoire : ouvrir de " +
+      "nouveaux marchés par ses propres moyens, puis lever le goulot humain en formant " +
+      "soi-même ses gens. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Grandir par ses propres magasins et ses propres services : Simons ; Orange Money",
+    p(
+      "**Québec.** La Maison Simons, entreprise familiale de la ville de Québec, a " +
+        "longtemps vendu seulement au Québec. Pour s'étendre au reste du Canada, elle " +
+        "n'a racheté aucun détaillant : elle a ouvert son propre magasin au West " +
+        "Edmonton Mall, le 31 octobre 2012, son premier hors du Québec. Les nouveaux " +
+        "magasins ont suivi un à un. C'est lent et coûteux, mais l'enseigne, le " +
+        "style et la culture de la maison restent intacts. Sources : [communiqué de " +
+        "Simons, octobre 2012](https://newswire.ca/news-releases/simons-to-open-at-" +
+        "west-edmonton-mall-on-october-31-2012-511057331.html) ; [L'Encyclopédie " +
+        "canadienne](https://thecanadianencyclopedia.ca/en/article/la-maison-simons).",
+    ),
+    p(
+      "**Côte d'Ivoire.** Le 6 décembre 2008, Orange Côte d'Ivoire a lancé **Orange " +
+        "Money**, le paiement et le transfert d'argent par téléphone. La Côte d'Ivoire " +
+        "était le premier pays du groupe Orange à recevoir ce service. L'opérateur n'a " +
+        "pas acheté de société de paiement : il a développé un nouveau service pour ses " +
+        "propres abonnés. Une nuance utile : la loi exige une banque pour émettre la " +
+        "monnaie électronique, et c'est la BICICI (groupe BNP Paribas) qui a tenu ce " +
+        "rôle. Une croissance interne peut s'appuyer sur un partenaire là où la règle " +
+        "l'impose. Sources : [communiqué de BNP Paribas]" +
+        "(https://group.bnpparibas/communique-de-presse/orange-lance-partenariat-bnp-" +
+        "paribas-orange-money-cote-ivoire-premier-service-paiement-transfert-argent-" +
+        "telephone-mobile-afrique-ouest) ; [Abidjan.net, 2009]" +
+        "(https://news.abidjan.net/articles/336319/orange-money-transactions-et-" +
+        "operations-courantes-de-type-bancaire).",
+    ),
+  ),
+  notion(
+    "Former ses gens soi-même : Ubisoft Montréal ; le Centre des métiers de l'électricité",
+    p(
+      "**Québec.** Ubisoft n'a pas acheté de studio pour s'installer à Montréal : il " +
+        "en a créé un, en 1997, avec une cinquantaine de personnes, dont la moitié " +
+        "venait du siège en France pour transmettre le métier. Le studio comptait " +
+        "environ 1 600 employés en 2007, plus de 3 000 en 2013 et plus de 4 000 en " +
+        "2023. Pour grandir aussi vite sans perdre la qualité, il a dû recruter et " +
+        "former sans arrêt : le goulot était humain, pas financier. Sources : " +
+        "[Wikipédia, Ubisoft Montréal](https://en.wikipedia.org/wiki/Ubisoft_Montreal) ; " +
+        "[MobileSyrup, 2023](https://mobilesyrup.com/2023/10/17/ubisoft-vice-president-" +
+        "interview-25-years-in-canada/).",
+    ),
+    p(
+      "**Côte d'Ivoire.** Des électriciens qualifiés ne s'achètent pas sur le marché. " +
+        "La CIE a donc son propre établissement de formation, le **Centre des métiers " +
+        "de l'électricité** (CME) de Bingerville, créé en 1970. Il prépare des BTS " +
+        "(électrotechnique, maintenance industrielle) et forme aussi les agents en " +
+        "poste, ainsi que ceux d'autres compagnies de la sous-région. Le savoir-faire " +
+        "se construit de l'intérieur et reste dans la maison. Sources : [Financial " +
+        "Afrik, 3 décembre 2018](https://financialafrik.com/2018/12/03/cote-divoire-" +
+        "le-centre-des-metiers-de-lelectricite-cme-obtient-98-de-reussite-au-bts-" +
+        "electrotechnique-2018) ; [Abidjan.net, formation de 120 agents]" +
+        "(https://news.abidjan.net/articles/683194/electricite-renforcement-des-" +
+        "capacites-a-abidjan-de-120-personnes-dont-14-guineens).",
+    ),
   ),
 
   titre("Le chemin d'Infosystem"),

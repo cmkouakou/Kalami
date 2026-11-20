@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.39.4] - 2026-11-20 — Cours : exemples réels (module 11, leçon 1)
+### Ajouté
+- « Croître seul : la croissance interne » : section « Des exemples au Québec et en Côte
+  d'Ivoire », sources citées. Grandir par ses propres moyens (Simons à Edmonton, Orange
+  Money) ; former ses gens soi-même (Ubisoft Montréal, Centre des métiers de l'électricité).
+
 ## [v0.39.3] - 2026-11-20 — Cours : exemples réels (module 11, leçon 3)
 ### Ajouté
 - « Alliances, partenariats et coentreprises » : section « Des exemples au Québec et en
