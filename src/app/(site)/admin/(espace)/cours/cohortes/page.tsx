@@ -4,9 +4,10 @@
  *  Projet     : Kalami Stratégie — le cours
  *  Description: Cohortes du cours (v0.29.0) : création, liste avec le nombre
  *               d'apprenants, modification en place et suppression (les apprenants
- *               gardent leur accès, sans cohorte).
+ *               gardent leur accès, sans cohorte). v0.33.0 : lien vers le calendrier de
+ *               diffusion de chaque cohorte.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-19
  *  Dépendances: lib/cours/admin-queries.ts, lib/cours/admin-actions.ts,
  *               components/admin/action-form.tsx, components/admin/delete-button.tsx
@@ -14,6 +15,7 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { ActionForm } from "@/components/admin/action-form";
@@ -37,6 +39,11 @@ import {
 import { DATE_FORMAT } from "@/lib/format/date";
 
 const a = getCourseDictionary().admin;
+/** Pastille « Diffusion programmée » à côté du nom de la cohorte. */
+const BADGE_PROGRAMMEE =
+  "ml-2 rounded-full bg-encre-soft px-2 py-0.5 align-middle font-sans text-caption " +
+  "font-normal text-encre";
+
 const c = a.cohortes;
 
 export const metadata: Metadata = { title: c.titre };
@@ -176,7 +183,14 @@ function LigneCohorte({
   return (
     <li className={`${CARD} flex flex-col gap-3 p-5`}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-serif text-lg font-semibold">{cohorte.name}</h2>
+        <h2 className="font-serif text-lg font-semibold">
+          {cohorte.name}
+          {cohorte.schedule_enabled && (
+            <span className={BADGE_PROGRAMMEE}>
+              {c.programmee}
+            </span>
+          )}
+        </h2>
         <span className="text-small text-ink-muted">
           {interpolate(c.apprenants, { n: String(effectif) })}
         </span>
@@ -197,6 +211,12 @@ function LigneCohorte({
       {cohorte.note && (
         <p className="whitespace-pre-line text-small">{cohorte.note}</p>
       )}
+      <Link
+        href={`/admin/cours/cohortes/${cohorte.id}`}
+        className="min-h-11 self-start py-2 text-encre underline"
+      >
+        {c.calendrier}
+      </Link>
       <details>
         <summary className="min-h-11 cursor-pointer py-2 text-encre underline">
           {c.modifier}

@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.32.0 (cours de stratégie, sprint 5 : modules 5, 6 et 7) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.33.0 (cours de stratégie, sprint 5b : calendrier de diffusion par cohorte) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -107,7 +107,8 @@ Version actuelle : v0.32.0 (cours de stratégie, sprint 5 : modules 5, 6 et 7) �
 | #101 | 2026-11-19 | v0.30.0 : cours, sprint 3 (8 leçons des modules 1 et 2, 6 schémas, 32 exercices) | ~180 000 | ~1.08 $ |
 | #102 | 2026-11-20 | v0.31.0 : cours, sprint 4 (9 leçons des modules 3 et 4, 8 schémas, 36 exercices) | ~200 000 | ~1.20 $ |
 | #103 | 2026-11-20 | v0.32.0 : cours, sprint 5 (10 leçons des modules 5, 6 et 7, 5 schémas, 40 exercices) | ~210 000 | ~1.26 $ |
-| **TOTAL** | | | **~22 050 000** (hors #71) | **~132.30 $** |
+| #104 | 2026-11-20 | v0.33.0 : cours, sprint 5b (calendrier de diffusion par cohorte, lecture en avance, générateur, contrôle serveur) | ~170 000 | ~1.02 $ |
+| **TOTAL** | | | **~22 220 000** (hors #71) | **~133.32 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

@@ -68,6 +68,21 @@ const courseFr = {
     aide: "Sélectionnez un passage pour le surligner ou y ajouter une note.",
   },
 
+  // ==================== DIFFUSION PROGRAMMÉE (v0.33.0) ====================
+  diffusion: {
+    disponibleLe: "Disponible le {date}",
+    lectureAvance: "Lecture en avance",
+    fermeeTitre: "Cette leçon n'est pas encore ouverte",
+    fermeeTexte:
+      "Votre formateur ouvre le cours au fil des semaines. Cette leçon sera disponible " +
+      "le {date}.",
+    apercuTexte:
+      "Vous lisez cette leçon en avance. Ses exercices et le bouton « J'ai terminé » " +
+      "s'ouvriront le {date}.",
+    exerciceFerme: "Cet exercice s'ouvrira le {date}.",
+    pasEncore: "Cette leçon n'est pas encore ouverte.",
+  },
+
   encadres: {
     retenir: "À retenir",
     piege: "Piège fréquent",
@@ -195,11 +210,54 @@ const courseFr = {
       enregistrer: "Enregistrer",
       creee: "Cohorte créée.",
       enregistree: "Cohorte enregistrée.",
+      calendrier: "Calendrier de diffusion",
+      programmee: "Diffusion programmée",
       supprimer: "Supprimer",
       supprimee: "Cohorte supprimée. Ses apprenants gardent leur accès, sans cohorte.",
       apprenants: "{n} apprenant(s)",
       aucune: "Aucune cohorte pour l'instant.",
       periode: "Du {debut} au {fin}",
+    },
+
+    calendrier: {
+      titre: "Calendrier de diffusion",
+      retour: "Cohortes",
+      introuvable: "Cohorte introuvable.",
+      intro:
+        "Ouvrez le cours au fil des semaines, comme en classe. Chaque module reçoit une " +
+        "date ; une leçon peut avoir la sienne, qui remplace celle du module. Sans date, le " +
+        "contenu est ouvert. Les dates ouvrent à minuit dans le fuseau choisi.",
+      activer: "Activer la diffusion programmée pour cette cohorte",
+      aideActiver:
+        "Désactivée, les apprenants de la cohorte voient tout le cours ; les dates sont " +
+        "conservées.",
+      lectureAvance: "Lecture en avance de la prochaine leçon",
+      aideLectureAvance:
+        "La prochaine leçon se lit avant sa date ; ses exercices restent fermés jusqu'à " +
+        "l'ouverture.",
+      fuseau: "Fuseau horaire",
+      fuseaux: {
+        "Africa/Abidjan": "Abidjan (GMT)",
+        "America/Toronto": "Montréal (heure de l'Est)",
+      },
+      generateur: "Générer un calendrier",
+      aideGenerateur:
+        "Remplit les dates ci-dessous (sans enregistrer) ; ajustez-les ensuite à la main.",
+      depart: "Date de départ",
+      intervalle: "Jours entre deux ouvertures",
+      par: "Ouvrir",
+      parModule: "un module à la fois",
+      parLecon: "une leçon à la fois",
+      generer: "Remplir les dates",
+      effacer: "Effacer toutes les dates",
+      module: "Module {n} — {titre}",
+      dateModule: "Ouverture du module {n}",
+      dateLecon: "Leçon {n} : {titre}",
+      heriteDe: "Comme le module",
+      lecons: "Dates des leçons (facultatives)",
+      enregistrer: "Enregistrer le calendrier",
+      enregistre: "Calendrier enregistré.",
+      etat: "{n} date(s) fixée(s)",
     },
 
     suivi: {
@@ -270,6 +328,8 @@ const courseFr = {
       too_many_emails: "200 courriels au plus par envoi.",
       no_book: "Aucun livre n'est associé au cours : choisissez-le dans « Prix et vente ».",
       access_not_found: "Accès introuvable. Rechargez la page.",
+      invalid_timezone: "Fuseau horaire invalide.",
+      invalid_schedule: "Une date du calendrier est invalide (format AAAA-MM-JJ).",
       generique: "L'opération a échoué. Réessayez.",
     },
   },

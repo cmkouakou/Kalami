@@ -4,7 +4,8 @@
  *  Projet     : Kalami Stratégie — le cours
  *  Description: Actions serveur de l'administration du cours (v0.29.0) : réglages de
  *               vente, cohortes (création, modification, suppression), accès accordés
- *               par liste de courriels, changement de cohorte et retrait d'un accès.
+ *               par liste de courriels, changement de cohorte et retrait d'un accès ;
+ *               calendrier de diffusion d'une cohorte (v0.33.0).
  *               Les fonctions SQL vérifient le rôle administrateur (aal2) et écrivent
  *               le journal d'audit.
  *  Auteur     : Claude Marcel
@@ -25,6 +26,7 @@ import type { FormState } from "@/lib/auth/actions";
 import { requireAdmin } from "@/lib/auth/dal";
 import {
   lireAccord,
+  lireCalendrierSaisi,
   lireCohorte,
   lireReglages,
 } from "@/lib/cours/admin-validation";
@@ -109,6 +111,22 @@ export async function supprimerCohorte(id: string): Promise<FormState> {
   if (error) return { error: erreur(error.message) };
   refresh();
   return { message: a.cohortes.supprimee };
+}
+
+/** Enregistre le calendrier de diffusion d'une cohorte (remplace les dates précédentes). */
+export async function enregistrerCalendrier(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const lu = lireCalendrierSaisi(formData);
+  if (!lu.ok) return { error: erreur(lu.erreur) };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_course_save_schedule", lu.valeur);
+  if (error) return { error: erreur(error.message) };
+  refresh();
+  return { message: a.calendrier.enregistre };
 }
 
 // ==================== ACCÈS ====================

@@ -3,16 +3,24 @@
  *  Fichier    : admin-validation.ts (cours)
  *  Projet     : Kalami Stratégie — le cours
  *  Description: Lecture et contrôle des formulaires de l'administration du cours
- *               (v0.29.0) : réglages de vente, cohorte, accès accordés. La base refait
- *               les mêmes contrôles ; ceux-ci donnent un message clair avant l'envoi.
+ *               (v0.29.0) : réglages de vente, cohorte, accès accordés ; calendrier de
+ *               diffusion (v0.33.0). La base refait les mêmes contrôles ; ceux-ci donnent
+ *               un message clair avant l'envoi.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-19
- *  Dépendances: lib/admin/validation.ts, lib/cours/suivi.ts
+ *  Dépendances: lib/admin/validation.ts, lib/cours/suivi.ts, lib/cours/calendrier.ts
  * =============================================================
  */
 
 import { isUuid } from "@/lib/admin/validation";
+import {
+  estFuseau,
+  estJour,
+  PREFIXE_DATE,
+  type Fuseau,
+} from "@/lib/cours/calendrier";
+import { MODULES } from "@/lib/cours/modules";
 import { lireCourriels, MAX_COURRIELS } from "@/lib/cours/suivi";
 
 // ==================== TYPES ====================
@@ -45,6 +53,20 @@ export type AccordSaisi = {
   /** Fragments non reconnus comme courriels, signalés à l'administrateur. */
   invalides: string[];
 };
+
+export type CalendrierSaisi = {
+  p_cohort_id: string;
+  p_enabled: boolean;
+  p_read_ahead: boolean;
+  p_timezone: Fuseau;
+  /** Date AAAA-MM-JJ par module ou leçon (les champs vides sont omis). */
+  p_items: Record<string, string>;
+};
+
+/** Modules et leçons du programme (seuls identifiants acceptés dans le calendrier). */
+const ELEMENTS = new Set(
+  MODULES.flatMap((m) => [m.id, ...m.lecons.map((l) => l.id)]),
+);
 
 // ==================== OUTILS ====================
 
@@ -153,6 +175,41 @@ export function lireCohorte(fd: FormData): Resultat<CohorteSaisie> {
       p_starts_on: debut,
       p_ends_on: fin,
       p_note: note || null,
+    },
+  };
+}
+
+// ==================== CALENDRIER DE DIFFUSION ====================
+
+/**
+ * Calendrier d'une cohorte : cases « activer » et « lecture en avance », fuseau, et une
+ * date facultative par module ou leçon (champs « date:<identifiant> »).
+ * @param fd - Données du formulaire
+ */
+export function lireCalendrierSaisi(fd: FormData): Resultat<CalendrierSaisi> {
+  const id = texte(fd, "id");
+  if (!isUuid(id)) return { ok: false, erreur: "cohort_not_found" };
+  const fuseau = texte(fd, "timezone");
+  if (!estFuseau(fuseau)) return { ok: false, erreur: "invalid_timezone" };
+  const dates: Record<string, string> = {};
+  for (const [nom, valeur] of fd.entries()) {
+    if (!nom.startsWith(PREFIXE_DATE) || typeof valeur !== "string") continue;
+    const element = nom.slice(PREFIXE_DATE.length);
+    const jour = valeur.trim();
+    if (jour === "") continue;
+    if (!ELEMENTS.has(element) || !estJour(jour)) {
+      return { ok: false, erreur: "invalid_schedule" };
+    }
+    dates[element] = jour;
+  }
+  return {
+    ok: true,
+    valeur: {
+      p_cohort_id: id,
+      p_enabled: fd.get("enabled") === "on",
+      p_read_ahead: fd.get("read_ahead") === "on",
+      p_timezone: fuseau,
+      p_items: dates,
     },
   };
 }

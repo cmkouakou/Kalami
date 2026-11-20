@@ -6,8 +6,10 @@
  *               l'apprenant connecté sa progression (leçons terminées, pourcentage,
  *               temps de formation), le lien « Reprendre » et l'état de chaque leçon.
  *               Le programme est public ; la partie personnelle est chargée à part.
+ *               v0.33.0 : diffusion programmée (leçons à venir verrouillées, avec leur
+ *               date ; prochaine leçon en lecture en avance).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1 (v0.29.0 : achat du cours, avis de paiement annulé)
+ *  Version    : 1.2 (v0.29.0 : achat du cours ; v0.33.0 : diffusion programmée)
  *  Date       : 2026-11-19
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
@@ -26,7 +28,16 @@ import {
 } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
-import { aAccesAuCours, progressionApprenant } from "@/lib/cours/acces";
+import {
+  aAccesAuCours,
+  diffusionApprenant,
+  progressionApprenant,
+} from "@/lib/cours/acces";
+import {
+  dateLisible,
+  type EtatDiffusion,
+  type Fuseau,
+} from "@/lib/cours/calendrier";
 import { estRedigee } from "@/lib/cours/lecons";
 import { LECONS, MODULES, adresseLecon, leconParId } from "@/lib/cours/modules";
 import {
@@ -50,10 +61,37 @@ export const metadata: Metadata = {
 /** État d'une leçon pour l'apprenant. */
 type Etat = "terminee" | "enCours";
 
+/** Diffusion programmée de la cohorte de l'apprenant (absente : tout est ouvert). */
+type Diffusion = { etats: Map<string, EtatDiffusion>; fuseau: Fuseau };
+
+/**
+ * Mention de diffusion d'une leçon : date d'ouverture si fermée, lecture en avance.
+ * @param d - État de la leçon et fuseau de la cohorte
+ */
+function mentionDiffusion(
+  d: EtatDiffusion | undefined,
+  fuseau: Fuseau | undefined,
+): string | null {
+  if (!d || !fuseau) return null;
+  if (d.etat === "apercu") return t.diffusion.lectureAvance;
+  if (d.etat === "fermee" && d.ouvreLe) {
+    return interpolate(t.diffusion.disponibleLe, {
+      date: dateLisible(d.ouvreLe, fuseau),
+    });
+  }
+  return null;
+}
+
 // ==================== PROGRAMME ====================
 
 /** Programme complet ; avec les états de l'apprenant quand ils sont connus. */
-function Programme({ etats }: { etats?: Map<string, Etat> }) {
+function Programme({
+  etats,
+  diffusion,
+}: {
+  etats?: Map<string, Etat>;
+  diffusion?: Diffusion;
+}) {
   return (
     <ol className="flex flex-col gap-4">
       {MODULES.map((m) => (
@@ -69,12 +107,15 @@ function Programme({ etats }: { etats?: Map<string, Etat> }) {
           <ol className="flex flex-col divide-y divide-line">
             {m.lecons.map((l) => {
               const etat = etats?.get(l.id);
+              const d = diffusion?.etats.get(l.id);
+              const mention = mentionDiffusion(d, diffusion?.fuseau);
+              const lisible = estRedigee(l.id) && d?.etat !== "fermee";
               return (
                 <li
                   key={l.id}
                   className="flex flex-wrap items-center justify-between gap-2 py-2"
                 >
-                  {estRedigee(l.id) ? (
+                  {lisible ? (
                     <Link
                       href={adresseLecon(m, l)}
                       className="text-encre underline-offset-4 hover:underline"
@@ -88,6 +129,7 @@ function Programme({ etats }: { etats?: Map<string, Etat> }) {
                   )}
                   <span className="flex items-center gap-2 text-small text-ink-muted">
                     {etat && <span className={BADGE}>{t.accueil[etat]}</span>}
+                    {mention && <span className={BADGE}>{mention}</span>}
                     {!estRedigee(l.id) && <span>{t.accueil.bientot}</span>}
                     {interpolate(t.accueil.minutes, { n: String(l.minutes) })}
                   </span>
@@ -103,23 +145,35 @@ function Programme({ etats }: { etats?: Map<string, Etat> }) {
 
 // ==================== PROGRESSION ====================
 
-/** Leçon à reprendre : première commencée non terminée, sinon première non terminée. */
-function aReprendre(lignes: LigneProgression[]) {
+/**
+ * Leçon à reprendre : première commencée non terminée, sinon première non terminée,
+ * parmi les leçons rédigées et ouvertes (ou lues en avance).
+ */
+function aReprendre(lignes: LigneProgression[], diffusion?: Diffusion) {
   const terminees = new Set(
     lignes.filter((l) => l.completed_at).map((l) => l.lesson_id),
   );
   const commencees = new Set(lignes.map((l) => l.lesson_id));
   const restantes = LECONS.filter(
-    (l) => !terminees.has(l.id) && estRedigee(l.id),
+    (l) =>
+      !terminees.has(l.id) &&
+      estRedigee(l.id) &&
+      diffusion?.etats.get(l.id)?.etat !== "fermee",
   );
   const lecon = restantes.find((l) => commencees.has(l.id)) ?? restantes[0];
   return lecon ? leconParId(lecon.id) : null;
 }
 
 /** Panneau de progression de l'apprenant. */
-function Progression({ lignes }: { lignes: LigneProgression[] }) {
+function Progression({
+  lignes,
+  diffusion,
+}: {
+  lignes: LigneProgression[];
+  diffusion?: Diffusion;
+}) {
   const s = synthese(lignes);
-  const reprise = aReprendre(lignes);
+  const reprise = aReprendre(lignes, diffusion);
   return (
     <section className={`${PANEL_SAND} flex flex-col gap-4 p-6`}>
       <h2 className="font-serif text-h2">{t.accueil.progression}</h2>
@@ -189,14 +243,20 @@ async function EspaceApprenant({
     );
   }
 
-  const lignes = await progressionApprenant();
+  const [lignes, { calendrier, etats: etatsDiffusion }] = await Promise.all([
+    progressionApprenant(),
+    diffusionApprenant(),
+  ]);
   const etats = new Map<string, Etat>(
     lignes.map((l) => [l.lesson_id, l.completed_at ? "terminee" : "enCours"]),
   );
+  const diffusion = calendrier
+    ? { etats: etatsDiffusion, fuseau: calendrier.fuseau }
+    : undefined;
   return (
     <>
-      <Progression lignes={lignes} />
-      <Programme etats={etats} />
+      <Progression lignes={lignes} diffusion={diffusion} />
+      <Programme etats={etats} diffusion={diffusion} />
     </>
   );
 }

@@ -5,10 +5,12 @@
  *  Description: Accès au cours et lectures côté serveur : droit d'accès de l'utilisateur
  *               courant, progression, meilleures notes et annotations d'une leçon.
  *               La RLS limite chaque lecture aux lignes de l'apprenant connecté.
+ *               v0.33.0 : calendrier de diffusion de la cohorte et état de chaque leçon.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-19
- *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/notation.ts
+ *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/notation.ts,
+ *               lib/cours/calendrier.ts
  * =============================================================
  */
 
@@ -17,6 +19,14 @@ import "server-only";
 import { cache } from "react";
 
 import { getCurrentUser, requireUser, type CurrentUser } from "@/lib/auth/dal";
+import {
+  etatsDiffusion,
+  lireCalendrier,
+  type Calendrier,
+  type EtatDiffusion,
+} from "@/lib/cours/calendrier";
+import { estRedigee } from "@/lib/cours/lecons";
+import { LECONS } from "@/lib/cours/modules";
 import type { LigneProgression } from "@/lib/cours/notation";
 import type { Highlight, HighlightColor } from "@/lib/reader/types";
 import { createClient } from "@/lib/supabase/server";
@@ -47,6 +57,34 @@ export async function exigerConnexionCours(
   const user = await requireUser(nextPath);
   return { user, acces: await aAccesAuCours() };
 }
+
+// ==================== DIFFUSION PROGRAMMÉE ====================
+
+/** Calendrier de la cohorte de l'apprenant connecté ; null : tout est ouvert. */
+export const calendrierApprenant = cache(async (): Promise<Calendrier | null> => {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("course_my_calendar");
+  return error ? null : lireCalendrier(data);
+});
+
+/** Calendrier et état de chaque leçon pour l'apprenant connecté, à cet instant. */
+export const diffusionApprenant = cache(
+  async (): Promise<{
+    calendrier: Calendrier | null;
+    etats: Map<string, EtatDiffusion>;
+  }> => {
+    const calendrier = await calendrierApprenant();
+    const etats = etatsDiffusion(
+      calendrier,
+      Date.now(),
+      LECONS.map((l) => l.id),
+      estRedigee,
+    );
+    return { calendrier, etats };
+  },
+);
 
 // ==================== PROGRESSION ====================
 

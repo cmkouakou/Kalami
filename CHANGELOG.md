@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## [v0.33.0] - 2026-11-20 — Cours de stratégie, sprint 5b (calendrier de diffusion)
+### Ajouté
+- Calendrier de diffusion par cohorte : une date d'ouverture par module, et au besoin
+  par leçon (elle remplace celle du module) ; ouverture à minuit dans le fuseau de la
+  cohorte (Abidjan ou Montréal). Activation cohorte par cohorte.
+- Option « lecture en avance » : la prochaine leçon à ouvrir se lit avant sa date, sans
+  exercices ni bouton « terminer ».
+- Côté apprenant : les leçons à venir apparaissent verrouillées avec « Disponible le … » ;
+  « Reprendre » ignore les leçons fermées.
+- Administration : page « Calendrier de diffusion » de chaque cohorte
+  (`/admin/cours/cohortes/[id]`) avec un générateur (date de départ, rythme, par module
+  ou par leçon) ; pastille « Diffusion programmée » dans la liste des cohortes.
+- Migration `20261126120000_course_schedule.sql` : table `course_schedule`, réglages de
+  diffusion des cohortes, `course_my_calendar`, `admin_course_save_schedule`.
+### Sécurité
+- Contrôle côté serveur : une leçon fermée ne s'affiche pas, ses exercices ne
+  s'enregistrent pas, et la base refuse le temps de lecture et la fin de leçon
+  (`lesson_locked`), même en tapant l'adresse directement.
+- Les apprenants sans cohorte et les cohortes non programmées gardent l'accès complet ;
+  sans la migration, tout reste ouvert.
+
 ## [v0.32.0] - 2026-11-20 — Cours de stratégie, sprint 5 (modules 5, 6 et 7)
 ### Ajouté
 - Module 5 « La SWOT et la TOWS » complet : leçons 5.1 (bien remplir une SWOT, encadré

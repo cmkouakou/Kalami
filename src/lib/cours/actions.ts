@@ -6,9 +6,10 @@
  *               leçon terminée, correction d'un exercice et annotations (surlignage,
  *               note). La note d'un exercice est calculée ici, d'après le corrigé du
  *               code, puis écrite avec la clé serveur : le navigateur ne peut pas
- *               s'attribuer une note.
+ *               s'attribuer une note. v0.33.0 : exercices refusés sur une leçon pas
+ *               encore ouverte (diffusion programmée).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-19
  *  Dépendances: lib/auth/dal.ts, lib/supabase/{server,admin}.ts, lib/cours/*,
  *               lib/reader/annotations.ts
@@ -23,6 +24,7 @@ import { getCurrentUser } from "@/lib/auth/dal";
 import {
   COLONNES_ANNOTATION,
   aAccesAuCours,
+  diffusionApprenant,
   versSurlignage,
   type LigneAnnotation,
 } from "@/lib/cours/acces";
@@ -80,6 +82,9 @@ export async function terminerLecon(leconId: string): Promise<Resultat> {
       p_lesson: leconId,
     });
     if (error) {
+      if (error.message === "lesson_locked") {
+        return { ok: false, error: t.diffusion.pasEncore };
+      }
       const refuse = error.code === "42501";
       return {
         ok: false,
@@ -125,6 +130,10 @@ export async function soumettreReponse(
   const correction = exercice ? corriger(exercice, reponse) : null;
   if (!exercice || !correction) return { ok: false, error: t.erreurs.invalide };
   if (!(await aAccesAuCours())) return { ok: false, error: t.erreurs.acces };
+  const { etats } = await diffusionApprenant();
+  if (etats.get(leconId)?.etat !== "ouverte") {
+    return { ok: false, error: t.diffusion.pasEncore };
+  }
 
   // Une question ouverte n'est pas notée : rien à enregistrer
   if (exercice.type === "ouvert") return { ok: true, correction };

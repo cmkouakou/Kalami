@@ -96,12 +96,41 @@ schémas. Les textes extraits des sources (`sources-extraites/`) ne sont jamais 
 | S3 | Modules 1 et 2 | oui |
 | S4 | Modules 3 et 4 | oui |
 | S5 | Modules 5, 6 et 7 | oui |
+| S5b | Calendrier de diffusion par cohorte (voir ci-dessous) — fait, v0.33.0 | non |
 | S6 | Modules 8 et 9 | oui |
 | S7 | Modules 10, 11 et 12 | oui |
 | S8 | Module 13 : cas, examen final, note finale, diplôme PDF ; page de vente, référencement | non |
 
 Avec S1 et S2, la cohorte peut commencer dès la fin de S3 : les modules suivants s'ajoutent
 sans interruption au fur et à mesure.
+
+## S5b — Calendrier de diffusion par cohorte (livré en v0.33.0)
+
+Demande de l'utilisateur, le 2026-11-20. Recevoir tout le cours d'un coup décourage les
+apprenants. Comme un professeur avec sa classe, l'administrateur ouvre les modules ou les
+leçons à des dates précises.
+
+- **Calendrier par cohorte** : chaque module reçoit une date d'ouverture. Une leçon peut
+  avoir sa propre date, qui remplace celle du module. Sans date, le contenu est ouvert.
+- **Activation par cohorte** : la diffusion programmée s'active cohorte par cohorte. Les
+  apprenants sans cohorte, et les cohortes non programmées, gardent l'accès complet. Les
+  apprenants actuels ne perdent donc rien.
+- **Lecture en avance** : option par cohorte qui ouvre la prochaine leçon en lecture
+  seulement, avant sa date. Ses exercices restent fermés jusqu'à la date d'ouverture.
+- **Côté apprenant** : le programme affiche les leçons à venir, verrouillées, avec la
+  mention « disponible le … ». Le cours ne paraît plus tout entier d'un coup.
+- **Contrôle côté serveur** : une leçon fermée ne s'affiche pas et ses exercices ne
+  s'enregistrent pas, même si on tape son adresse directement. Masquer le lien ne
+  suffit pas.
+- **Admin** : dans la fiche de la cohorte (/admin/cours), un tableau des modules et des
+  leçons avec un champ de date pour chacun. Un générateur propose un calendrier à partir
+  d'une date de départ et d'un rythme (par exemple un module par semaine), qu'on ajuste
+  ensuite à la main.
+- **Fuseau** : on stocke un instant précis (timestamptz). L'ouverture se fait à minuit
+  dans le fuseau de la cohorte, d'Abidjan ou de Montréal selon le cas.
+- **Plus tard** : envoyer un courriel aux apprenants quand une leçon s'ouvre.
+- **Migration** : une table du calendrier et des fonctions RPC d'administration, à faire
+  appliquer par l'utilisateur.
 
 ## Points de vigilance
 

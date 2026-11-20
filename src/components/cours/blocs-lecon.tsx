@@ -6,9 +6,10 @@
  *               encadrés, notions dépliables, schémas, exercices, « Appliquez-le » et
  *               fiche. Chaque passage de texte porte data-bloc (indice continu, dans
  *               l'ordre du contenu) : ancrage des surlignages et unité de la lecture à
- *               voix haute. Les exercices n'en portent pas (pas annotables).
+ *               voix haute. Les exercices n'en portent pas (pas annotables) ; en lecture
+ *               en avance (v0.33.0), ils sont remplacés par leur date d'ouverture.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-19
  *  Dépendances: lib/cours/content.ts, schemas.tsx, exercices.tsx, i18n/course.ts
  * =============================================================
@@ -181,6 +182,8 @@ function rendreAppliquez(
 type Contexte = {
   leconId: string;
   meilleures: Record<string, number>;
+  /** Message affiché à la place des exercices (lecture en avance), sinon absent. */
+  exercicesFermes?: string;
   /** Numéro du prochain exercice (1, 2, 3…), indépendant des indices de blocs. */
   exercice: () => number;
 };
@@ -236,6 +239,16 @@ function rendreBloc(
       );
     case "exercice": {
       const id = bloc.exercice.id;
+      if (ctx.exercicesFermes) {
+        return (
+          <section key={cle} className="flex flex-col gap-1 rounded-lg bg-sand p-5">
+            <h3 className="font-serif text-h3">
+              {interpolate(t.exercices.exercice, { n: String(ctx.exercice()) })}
+            </h3>
+            <p className="text-small text-ink-muted">{ctx.exercicesFermes}</p>
+          </section>
+        );
+      }
       return (
         <ExerciceCours
           key={cle}
@@ -277,17 +290,29 @@ type Props = {
   contenu: CoursBlock[];
   /** Meilleures notes par exercice (« e1 » → 80). */
   meilleures: Record<string, number>;
+  /** Lecture en avance : message remplaçant chaque exercice (v0.33.0). */
+  exercicesFermes?: string;
 };
 
 /**
  * Contenu d'une leçon. Les indices data-bloc sont attribués dans l'ordre : ne pas
  * réordonner les blocs d'une leçon publiée (les surlignages des apprenants en dépendent).
  */
-export function BlocsLecon({ leconId, contenu, meilleures }: Props) {
+export function BlocsLecon({
+  leconId,
+  contenu,
+  meilleures,
+  exercicesFermes,
+}: Props) {
   let bloc = 0;
   let exercice = 0;
   const suivant: Compteur = () => bloc++;
-  const ctx: Contexte = { leconId, meilleures, exercice: () => ++exercice };
+  const ctx: Contexte = {
+    leconId,
+    meilleures,
+    exercicesFermes,
+    exercice: () => ++exercice,
+  };
   return (
     <div className="flex flex-col gap-5 leading-relaxed">
       {contenu.map((b, i) => rendreBloc(b, suivant, ctx, `b${i}`))}

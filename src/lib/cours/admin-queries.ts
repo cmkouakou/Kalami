@@ -5,7 +5,8 @@
  *  Description: Lectures de l'administration du cours (v0.29.0) : réglages de vente,
  *               cohortes, apprenants avec leur suivi (fonction SQL admin_course_learners)
  *               et fiche d'un apprenant (progression, notes, temps par jour, lus grâce aux
- *               politiques « ou administrateur »).
+ *               politiques « ou administrateur ») ; calendrier de diffusion d'une
+ *               cohorte (v0.33.0).
  *  Auteur     : Claude Marcel
  *  Version    : 1.0
  *  Date       : 2026-11-19
@@ -23,6 +24,12 @@ import {
   type ProgressionLecon,
   type Tentative,
 } from "@/lib/cours/suivi";
+import {
+  estFuseau,
+  FUSEAUX,
+  jourDansFuseau,
+  type Fuseau,
+} from "@/lib/cours/calendrier";
 import { createClient } from "@/lib/supabase/server";
 
 // ==================== TYPES ====================
@@ -44,6 +51,8 @@ export type Cohorte = {
   ends_on: string | null;
   note: string | null;
   created_at: string;
+  /** Diffusion programmée (v0.33.0) ; absent tant que la migration n'est pas appliquée. */
+  schedule_enabled?: boolean;
 };
 
 export type LivreChoix = { id: string; title: string; status: string };
@@ -130,11 +139,67 @@ export async function listerCohortes(): Promise<Cohorte[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("course_cohorts")
-    .select("id, name, country, starts_on, ends_on, note, created_at")
+    // « * » : la liste reste lisible avant comme après la migration du calendrier
+    .select("*")
     .order("created_at", { ascending: false })
     .limit(500);
   if (error) return echec("cohortes", error, []);
   return (data ?? []) as Cohorte[];
+}
+
+/** Calendrier de diffusion d'une cohorte, dates ramenées au jour dans son fuseau. */
+export type CalendrierCohorte = {
+  cohorte: Cohorte;
+  active: boolean;
+  lectureAvance: boolean;
+  fuseau: Fuseau;
+  /** Date AAAA-MM-JJ par module ou leçon. */
+  jours: Record<string, string>;
+};
+
+/**
+ * Lit une cohorte avec ses réglages de diffusion et ses dates d'ouverture.
+ * @param id - Identifiant de la cohorte
+ * @returns null si la cohorte est introuvable (ou la lecture en échec)
+ */
+export async function lireCalendrierCohorte(
+  id: string,
+): Promise<CalendrierCohorte | null> {
+  const supabase = await createClient();
+  const [cohorte, dates] = await Promise.all([
+    supabase
+      .from("course_cohorts")
+      .select(
+        "id, name, country, starts_on, ends_on, note, created_at, " +
+          "schedule_enabled, read_ahead, timezone",
+      )
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("course_schedule")
+      .select("item_id, opens_at")
+      .eq("cohort_id", id),
+  ]);
+  if (cohorte.error) return echec("calendrier (cohorte)", cohorte.error, null);
+  if (dates.error) return echec("calendrier (dates)", dates.error, null);
+  if (!cohorte.data) return null;
+  const ligne = cohorte.data as unknown as Cohorte & {
+    schedule_enabled: boolean;
+    read_ahead: boolean;
+    timezone: string;
+  };
+  const fuseau: Fuseau = estFuseau(ligne.timezone) ? ligne.timezone : FUSEAUX[0];
+  const jours: Record<string, string> = {};
+  for (const d of (dates.data ?? []) as { item_id: string; opens_at: string }[]) {
+    jours[d.item_id] = jourDansFuseau(d.opens_at, fuseau);
+  }
+  return {
+    cohorte: ligne,
+    active: ligne.schedule_enabled,
+    lectureAvance: ligne.read_ahead,
+    fuseau,
+    jours,
+  };
 }
 
 // ==================== APPRENANTS ====================

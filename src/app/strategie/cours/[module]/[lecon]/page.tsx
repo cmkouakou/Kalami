@@ -6,8 +6,10 @@
  *               leçons du programme sont générées à la construction) ; le contenu est
  *               réservé aux inscrits et chargé à la demande : connexion exigée, accès
  *               vérifié, surlignages, meilleures notes et état « terminée » de l'apprenant.
+ *               v0.33.0 : diffusion programmée (leçon fermée : date d'ouverture ; lecture
+ *               en avance : contenu sans exercices ni bouton « terminé »).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-19
  *  Dépendances: lib/cours/*, components/cours/*, cours.css
  * =============================================================
@@ -27,10 +29,12 @@ import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import {
   annotationsLecon,
+  diffusionApprenant,
   exigerConnexionCours,
   meilleuresNotes,
   progressionApprenant,
 } from "@/lib/cours/acces";
+import { dateLisible } from "@/lib/cours/calendrier";
 import { contenuLecon } from "@/lib/cours/lecons";
 import {
   MODULES,
@@ -106,6 +110,23 @@ async function ContenuPrive({
     return <p className={`${PANEL_SAND} p-6`}>{t.lecon.bientot}</p>;
   }
 
+  // Diffusion programmée : leçon fermée (rien n'est servi) ou lue en avance
+  const { calendrier, etats } = await diffusionApprenant();
+  const diffusion = etats.get(leconId);
+  const date =
+    calendrier && diffusion?.ouvreLe
+      ? dateLisible(diffusion.ouvreLe, calendrier.fuseau)
+      : "";
+  if (diffusion?.etat === "fermee") {
+    return (
+      <section className={`${PANEL_SAND} flex flex-col gap-2 p-6`}>
+        <h2 className="font-serif text-h3">{t.diffusion.fermeeTitre}</h2>
+        <p>{interpolate(t.diffusion.fermeeTexte, { date })}</p>
+      </section>
+    );
+  }
+  const apercu = diffusion?.etat === "apercu";
+
   const [surlignages, meilleures, progression] = await Promise.all([
     annotationsLecon(leconId),
     meilleuresNotes(leconId),
@@ -117,6 +138,11 @@ async function ContenuPrive({
 
   return (
     <>
+      {apercu && (
+        <p role="note" className={`${PANEL_SAND} p-4 text-small`}>
+          {interpolate(t.diffusion.apercuTexte, { date })}
+        </p>
+      )}
       <LiseuseLecon
         leconId={leconId}
         adresse={adresse}
@@ -127,9 +153,12 @@ async function ContenuPrive({
           leconId={leconId}
           contenu={contenu}
           meilleures={meilleures}
+          exercicesFermes={
+            apercu ? interpolate(t.diffusion.exerciceFerme, { date }) : undefined
+          }
         />
       </LiseuseLecon>
-      <BoutonTerminer leconId={leconId} terminee={terminee} />
+      {!apercu && <BoutonTerminer leconId={leconId} terminee={terminee} />}
     </>
   );
 }
