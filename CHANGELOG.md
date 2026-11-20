@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.12] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 13.3)
+### Ajouté
+- « Votre propre plan dans Kalami Stratégie » : exemples sourcés, la STM du PSO 2025 au
+  PSO 2030 et les plans nationaux de développement successifs de la Côte d'Ivoire.
+
 ## [v0.39.11] - 2026-11-20 — Cours : points de comparaison (leçon 13.2)
 ### Ajouté
 - « Le cas Ajinomoto Afrique de l'Ouest » : points de comparaison sourcés avant la

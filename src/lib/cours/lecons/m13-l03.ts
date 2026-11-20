@@ -7,8 +7,10 @@
  *               l'étape 9 (assemblage, traçabilité, coach, export), relire son plan avant
  *               de le présenter, la première et la deuxième fois. Sources : livre,
  *               module 10 et conclusion. Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (STM du PSO 2025 au PSO 2030, PND successifs).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -20,6 +22,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -99,6 +102,45 @@ export const M13_L03: ContenuLecon = [
       "porteront les chantiers : elles enrichissent le diagnostic, et elles défendront " +
       "des choix auxquels elles ont participé. Les étapes 1 à 4 peuvent même être " +
       "réparties entre plusieurs personnes.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Un plan n'est jamais écrit une fois pour toutes. Les organisations qui publient " +
+      "leurs plans montrent le même rythme : on écrit, on exécute, on fait le bilan, " +
+      "puis on réécrit avec d'autres. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Québec : la STM, du plan 2025 au plan 2030",
+    p(
+      "En août 2017, la Société de transport de Montréal a présenté son Plan " +
+        "stratégique organisationnel 2025. Avant même son échéance, elle a préparé le " +
+        "suivant : en 2023, elle a invité le public à donner son avis, dans un sondage " +
+        "d'une vingtaine de minutes, sur les grandes orientations du PSO 2030. Le " +
+        "deuxième plan s'appuie sur le premier, mais il est construit avec plus de " +
+        "monde. Sources : [STM, présentation du PSO 2025]" +
+        "(https://www.newswire.ca/fr/news-releases/la-stm-presente-son-plan-" +
+        "strategique-organisationnel-2025--lexcellence-en-mobilite-642145633.html) ; " +
+        "[STM, consultation sur le PSO 2030]" +
+        "(https://stm.info/en/press/news/2023/the-stm-is-inviting-its-customers-to-" +
+        "participate-in-the-development-of-its-projects-and-service-offering-for-2030).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : les plans nationaux de développement, cinq ans après cinq ans",
+    p(
+      "La Côte d'Ivoire enchaîne les plans quinquennaux : le PND 2016-2020, puis le " +
+        "PND 2021-2025, présenté comme la continuité des deux précédents. Pour " +
+        "préparer le PND 2026-2030, le Premier ministre a réuni un séminaire " +
+        "gouvernemental en février 2025, en partant du bilan chiffré du plan en cours " +
+        "(un taux d'exécution estimé à 77,1 % à fin 2024). Le nouveau plan commence " +
+        "par la relecture de l'ancien. Sources : [Primature, discours au séminaire sur " +
+        "le PND 2026-2030](https://primature.ci/docs/1739818620250217Discours" +
+        "PMSEMINAIREGOUVERNEMENTALSURLEPND20262030.pdf) ; [Koaci, le PND 2021-2025]" +
+        "(https://www.koaci.com/article/2021/12/02/cote-divoire/economie/cote-divoire-" +
+        "le-pnd-2021-2025-projette-une-croissance-economique-moyenne-de-765-contre-59-" +
+        "sur-la-periode-2016-2020_155882.html).",
+    ),
   ),
 
   titre("La première fois, puis la deuxième"),
