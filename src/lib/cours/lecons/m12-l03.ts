@@ -8,8 +8,10 @@
  *               indicateurs de résultat et avancés, règles d'un bon tableau, l'exemple
  *               de la matrice de solvabilité. Sources : livre, module 9 ; Kaplan et
  *               Norton, 1992. Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (Plan d'action 2035 d'Hydro-Québec, PND 2021-2025).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -21,6 +23,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -115,6 +118,48 @@ export const M12_L03: ContenuLecon = [
   retenir(
     "Un bon tableau de bord mêle les deux. Les indicateurs avancés disent où agir ; les " +
       "indicateurs de résultat disent si l'action a payé.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Les grandes organisations publiques publient leurs feuilles de route et leurs " +
+      "cibles chiffrées : on peut donc voir comment un plan se traduit en indicateurs, " +
+      "puis comment on mesure son exécution. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Québec : le Plan d'action 2035 d'Hydro-Québec",
+    p(
+      "En novembre 2023, Hydro-Québec a présenté son Plan d'action 2035, une feuille de " +
+        "route sur douze ans estimée à 155 à 185 milliards de dollars. Le plan est " +
+        "découpé en chantiers, chacun avec sa cible : 8 000 à 9 000 mégawatts de " +
+        "nouvelle capacité, dont 3 800 à 4 200 MW d'hydroélectricité ; plus de " +
+        "10 000 MW d'éolien d'ici 2035 ; et, pour la clientèle, 35 % de pannes en moins " +
+        "d'ici 7 à 10 ans. Ces cibles mêlent indicateurs de résultat (pannes évitées) " +
+        "et indicateurs avancés (mégawatts mis en service), comme le veut un tableau de " +
+        "bord équilibré. Des critiques ont toutefois reproché au plan son manque de " +
+        "détails. Sources : [Hydro-Québec, Plan d'action 2035]" +
+        "(https://hydroquebec.com/about/publications-reports/action-plan-2035.html) ; " +
+        "[CBC, 2 novembre 2023](https://www.cbc.ca/news/canada/montreal/hydro-quebec-" +
+        "action-plan-announcement-1.7016221).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : le Plan national de développement 2021-2025",
+    p(
+      "Le PND 2021-2025 fixait des cibles claires : une croissance moyenne de 7,65 % " +
+        "par an, un taux d'investissement porté de 23,1 % du PIB en 2021 à 27,1 % en " +
+        "2025, et 59 000 milliards de F CFA d'investissements, dont 74 % attendus du " +
+        "privé. Le suivi est chiffré lui aussi : à fin 2024, environ 45 500 milliards " +
+        "avaient été investis, soit un taux d'exécution de 77,1 % selon la Primature. " +
+        "Une feuille de route utile dit où l'on veut aller, et un indicateur d'exécution " +
+        "dit où l'on en est. Sources : [Fraternité Matin, 7,65 % projeté]" +
+        "(https://www.fratmat.info/article/216725/economie/plan-national-de-" +
+        "developpement-765-de-taux-de-croissance-projete-sur-la-periode-2021-2025) ; " +
+        "[Primature, séminaire sur le PND 2026-2030]" +
+        "(https://primature.ci/docs/1739818620250217DiscoursPMSEMINAIREGOUVERNEMENTAL" +
+        "SURLEPND20262030.pdf) ; [FMI, 2023](https://www.imf.org/-/media/Files/" +
+        "Publications/CR/2023/English/1CIVEA2023005.ashx).",
+    ),
   ),
 
   titre("Les règles d'un bon tableau"),

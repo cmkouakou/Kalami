@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.8] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 12.3)
+### Ajouté
+- « La feuille de route et le tableau de bord équilibré » : exemples sourcés, Plan
+  d'action 2035 d'Hydro-Québec et PND 2021-2025 de la Côte d'Ivoire.
+
 ## [v0.39.7] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 12.2)
 ### Ajouté
 - « Là où les stratégies échouent » : exemples sourcés, SAAQclic (commission Gallant),
