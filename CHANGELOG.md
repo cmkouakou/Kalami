@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.7] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 12.2)
+### Ajouté
+- « Là où les stratégies échouent » : exemples sourcés, SAAQclic (commission Gallant),
+  Target Canada, Air Ivoire.
+
 ## [v0.39.6] - 2026-11-20 — Cours : liens des sources visibles, exemples (leçon 12.1)
 ### Ajouté
 - « Évaluer les options » : exemples sourcés, GNL Québec (acceptabilité), Northvolt Six

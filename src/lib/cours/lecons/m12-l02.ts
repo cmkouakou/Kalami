@@ -7,8 +7,10 @@
  *               l'urgent dans une PME, un responsable nommé par chantier, la répartition
  *               des chantiers d'Infosystem et la tension sur les seniors. Sources : livre,
  *               module 9 ; Kotter, 1995. Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (SAAQclic, Target Canada, Air Ivoire).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -19,6 +21,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -102,6 +105,60 @@ export const M12_L02: ContenuLecon = [
     "Le plan doit donc libérer leur temps : confier aux jeunes une part du travail " +
       "courant, une fois formés, et envisager l'embauche d'une personne à temps partiel " +
       "pour l'administration et le recrutement.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Les échecs les plus coûteux ne viennent pas d'une mauvaise idée, mais d'une " +
+      "exécution mal suivie. Voici trois cas documentés. La source est indiquée sous " +
+      "chaque exemple.",
+  ),
+  notion(
+    "Québec : SAAQclic, un chantier dont on cachait le vrai coût",
+    p(
+      "La SAAQ a lancé la transformation numérique de ses services, dont la plateforme " +
+        "SAAQclic. La Vérificatrice générale a estimé que ce virage pourrait coûter au " +
+        "moins 1,1 milliard de dollars d'ici 2027, soit près de 500 millions de plus " +
+        "que prévu. Le rapport de la commission Gallant, rendu public le 16 février " +
+        "2026, conclut que l'information transmise à l'État n'était pas toujours " +
+        "complète ni transparente. Leçon pour l'exécution : un chantier sans suivi " +
+        "honnête des coûts ni responsable qui rend des comptes dérive en silence. " +
+        "Sources : [gouvernement du Québec, dépôt du rapport]" +
+        "(https://www.quebec.ca/nouvelles/actualites/details/depot-du-rapport-de-la-" +
+        "commission-gallant-le-gouvernement-analysera-rapidement-les-recommandations-" +
+        "68561) ; [Noovo, 5 éléments clés du rapport]" +
+        "(https://www.noovo.info/nouvelles/politique/article/voici-5-elements-cles-du-" +
+        "rapport-gallant-sur-le-fiasco-saaqclic/).",
+    ),
+  ),
+  notion(
+    "Canada et Québec : Target, une bonne idée exécutée trop vite",
+    p(
+      "Le géant américain Target est entré au Canada en mars 2013, avec des magasins " +
+        "aussi au Québec. Moins de deux ans plus tard, en janvier 2015, il annonçait la " +
+        "fermeture de ses 133 magasins, avec environ 17 600 employés touchés. Les causes " +
+        "relevées par la presse : expansion trop rapide, calendrier serré, système de " +
+        "marchandisage défaillant, planification déficiente et mauvaise lecture des " +
+        "clients canadiens. La stratégie d'entrer au Canada n'était pas absurde ; c'est " +
+        "le passage à l'action, trop pressé, qui a échoué. Sources : [CBC]" +
+        "(https://www.cbc.ca/news/canada/manitoba/why-did-target-fail-in-canada-it-" +
+        "wasn-t-the-u-s-target-1.2901676) ; [Fortune, 15 janvier 2015]" +
+        "(https://fortune.com/2015/01/15/target-canada-fail/).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : Air Ivoire, la dette puis la crise",
+    p(
+      "Air Ivoire, la compagnie nationale, a cessé ses vols en 2011. La crise " +
+        "post-électorale a fait chuter la demande et accéléré sa chute, mais selon " +
+        "l'Oxford Business Group, la cause principale de son déclin était sa lourde " +
+        "dette. Un choc extérieur achève surtout les organisations déjà fragiles. L'État " +
+        "a ensuite repris à zéro avec une nouvelle société, Air Côte d'Ivoire, qui a " +
+        "commencé ses vols le 12 novembre 2012. Sources : [Oxford Business Group]" +
+        "(https://oxfordbusinessgroup.com/articles-interviews/cote-divoire-laviation-" +
+        "prend-son-envol) ; [Wikipédia, Air Côte d'Ivoire]" +
+        "(https://en.wikipedia.org/wiki/Air_C%C3%B4te_d%27Ivoire).",
+    ),
   ),
 
   titre("Les autres causes d'échec"),
