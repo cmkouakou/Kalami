@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## [v0.36.0] - 2026-11-20 — Cours de stratégie, sprint 8a (module 13)
+### Ajouté
+- Module 13 « Cas intégrateur » complet, le cours compte ses 52 leçons : 13.1 (le plan
+  stratégique d’Infosystem en une page, huit sections, démarche en un tableau), 13.2 (le cas
+  Ajinomoto Afrique de l’Ouest : faits, chiffres de la vente directe, mission en neuf
+  questions, épilogue repliable à lire après l’analyse, lien vers le cas de l’assistant),
+  13.3 (votre propre plan dans Kalami Stratégie : de l’étape 1 à l’export).
+- Douze exercices, dont un calcul de la part de la vente directe dans l’objectif du siège.
+
 ## [v0.35.0] - 2026-11-20 — Cours de stratégie, sprint 7 (modules 10, 11 et 12)
 ### Ajouté
 - Module 10 « L’innovation » complet : leçons 10.1 (l’intrapreneuriat), 10.2 (la diffusion

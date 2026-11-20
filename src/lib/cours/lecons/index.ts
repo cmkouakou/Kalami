@@ -5,7 +5,7 @@
  *  Description: Registre des leçons rédigées, par identifiant stable. Une leçon absente
  *               du registre est affichée « bientôt » dans le programme.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
+ *  Version    : 1.6
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts, lecons/*.ts
  * =============================================================
@@ -61,6 +61,9 @@ import { M12_L01 } from "@/lib/cours/lecons/m12-l01";
 import { M12_L02 } from "@/lib/cours/lecons/m12-l02";
 import { M12_L03 } from "@/lib/cours/lecons/m12-l03";
 import { M12_L04 } from "@/lib/cours/lecons/m12-l04";
+import { M13_L01 } from "@/lib/cours/lecons/m13-l01";
+import { M13_L02 } from "@/lib/cours/lecons/m13-l02";
+import { M13_L03 } from "@/lib/cours/lecons/m13-l03";
 
 /** Contenu des leçons rédigées. */
 const LECONS_REDIGEES: Readonly<Record<string, ContenuLecon>> = {
@@ -113,6 +116,9 @@ const LECONS_REDIGEES: Readonly<Record<string, ContenuLecon>> = {
   "m12-l02": M12_L02,
   "m12-l03": M12_L03,
   "m12-l04": M12_L04,
+  "m13-l01": M13_L01,
+  "m13-l02": M13_L02,
+  "m13-l03": M13_L03,
 };
 
 /** Contenu d'une leçon ; null si elle n'est pas encore rédigée. */
