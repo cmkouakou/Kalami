@@ -276,4 +276,5 @@ Version actuelle : v0.29.0 (cours de stratégie, sprint 2 : administration et ve
 - [x] v0.28.0 — cours, sprint 1 : programme `/strategie/cours`, page de leçon (surlignage, notes, lecture à voix haute), exercices notés côté serveur, progression et temps ; 13 tests unitaires, typecheck, lint et build OK
 - [x] v0.28.0 — migration `20261124120000_course.sql` appliquée par l'utilisateur (2026-11-19)
 - [x] v0.29.0 — cours, sprint 2 : `/admin/cours` (apprenants et accès, cohortes, suivi, fiche, export CSV, prix) et achat du cours par Stripe ou Mobile Money (livre associé inclus) ; tests unitaires, typecheck, lint et build OK
-- [ ] v0.29.0 — appliquer la migration `20261125120000_course_admin.sql`, puis fixer les prix dans `/admin/cours/prix`
+- [x] v0.29.0 — migration `20261125120000_course_admin.sql` appliquée par l'utilisateur (2026-11-19)
+- [ ] Fixer les prix et le livre associé dans `/admin/cours/prix`
