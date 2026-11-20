@@ -6,7 +6,7 @@
  *               (currentColor, --encre, --ocre, --line), donc lisibles en clair et en
  *               sombre. Chaque schéma est décrit par la légende du bloc (figcaption).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts (SchemaId)
  * =============================================================
@@ -1060,6 +1060,174 @@ function GlobalLocal() {
   );
 }
 
+/** La diffusion d'une innovation : cinq groupes d'adoptants sous une courbe en cloche. */
+function Diffusion() {
+  const groupes = [
+    ["Innovateurs", "2,5 %"],
+    ["Premiers", "adoptants 13,5 %"],
+    ["Majorité", "précoce 34 %"],
+    ["Majorité", "tardive 34 %"],
+    ["Retardataires", "16 %"],
+  ];
+  return (
+    <Cadre largeur={640} hauteur={290}>
+      <Fleche x1={40} y1={190} x2={632} y2={190} />
+      <Libelle x={628} y={176} texte="Temps" ancre="end" />
+      <path
+        d="M40,188 C140,188 220,30 330,30 C440,30 520,188 620,188"
+        fill="var(--encre-soft)"
+        stroke="var(--encre)"
+        strokeWidth={3}
+      />
+      {[186, 258, 330, 402].map((x) => (
+        <line
+          key={x}
+          x1={x}
+          y1={30}
+          x2={x}
+          y2={190}
+          stroke="var(--line)"
+          strokeDasharray="4 4"
+        />
+      ))}
+      <Libelle x={222} y={18} texte="Le fossé : convaincre les pragmatiques" />
+      {groupes.map(([nom, part], i) => (
+        <Boite
+          key={nom + part}
+          x={10 + i * 126}
+          y={210}
+          l={118}
+          h={60}
+          lignes={[nom, part]}
+          ton={i === 2 ? "encre" : i % 2 === 0 ? "ocre" : "neutre"}
+        />
+      ))}
+    </Cadre>
+  );
+}
+
+/** L'innovation de rupture : une offre « trop simple » finit par suffire au client. */
+function Rupture() {
+  return (
+    <Cadre largeur={640} hauteur={280}>
+      <Fleche x1={50} y1={240} x2={50} y2={12} />
+      <Fleche x1={50} y1={240} x2={632} y2={240} />
+      <Libelle x={26} y={125} texte="Performance" rotation={-90} />
+      <Libelle x={628} y={256} texte="Temps" ancre="end" />
+      <path d="M60,130 L620,40" fill="none" stroke="var(--encre)" strokeWidth={3} />
+      <path
+        d="M60,160 L620,110"
+        fill="none"
+        stroke="var(--ink-muted)"
+        strokeWidth={2}
+        strokeDasharray="6 5"
+      />
+      <path d="M60,230 L620,70" fill="none" stroke="var(--ocre)" strokeWidth={3} />
+      <Libelle x={140} y={104} texte="Offre des leaders : toujours plus" ancre="start" />
+      <Libelle x={600} y={130} texte="Ce que le client moyen utilise" ancre="end" />
+      <Libelle x={260} y={212} texte="Offre de rupture : simple, moins chère" ancre="start" />
+      <circle cx={460} cy={124} r={6} fill="var(--ocre)" />
+      <Libelle x={470} y={154} texte="« assez bonne » : les clients basculent" ancre="start" />
+    </Cadre>
+  );
+}
+
+/** Trois modes de croissance : plus on va vite, moins on contrôle. */
+function ModesCroissance() {
+  const modes = [
+    { lignes: ["Croissance interne", "lente, contrôle total"], ton: "encre" as const },
+    { lignes: ["Alliance", "partager sans fusionner"], ton: "ocre" as const },
+    { lignes: ["Fusion ou acquisition", "rapide, risquée"], ton: "neutre" as const },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={190}>
+      {modes.map((m, i) => (
+        <Boite
+          key={m.lignes[0]}
+          x={10 + i * 212}
+          y={10}
+          l={196}
+          h={80}
+          lignes={m.lignes}
+          ton={m.ton}
+        />
+      ))}
+      <Fleche x1={20} y1={120} x2={630} y2={120} />
+      <Libelle x={320} y={140} texte="Vitesse et risque d'intégration augmentent" />
+      <Fleche x1={630} y1={165} x2={20} y2={165} />
+      <Libelle x={320} y={182} texte="Contrôle et préservation de la culture augmentent" />
+    </Cadre>
+  );
+}
+
+/** La feuille de route d'Infosystem sur trois ans, en trois phases qui se suivent. */
+function FeuilleRoute() {
+  const mois = (m: number) => 40 + (m * 580) / 36;
+  const phases = [
+    { debut: 0, fin: 6, lignes: ["Stabiliser", "0–6 mois"], ton: "ocre" as const },
+    { debut: 6, fin: 18, lignes: ["Développer", "6–18 mois"], ton: "encre" as const },
+    {
+      debut: 18,
+      fin: 36,
+      lignes: ["Croître et transmettre", "18–36 mois"],
+      ton: "neutre" as const,
+    },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={250}>
+      {phases.map((ph, i) => (
+        <Boite
+          key={ph.lignes[0]}
+          x={mois(ph.debut)}
+          y={10 + i * 62}
+          l={mois(ph.fin) - mois(ph.debut) - 4}
+          h={54}
+          lignes={ph.lignes}
+          ton={ph.ton}
+        />
+      ))}
+      <Fleche x1={40} y1={206} x2={632} y2={206} />
+      {[0, 6, 12, 18, 24, 30, 36].map((m) => (
+        <Libelle key={m} x={mois(m)} y={224} texte={`${m}`} />
+      ))}
+      <Libelle x={330} y={242} texte="Mois depuis le lancement du plan" />
+    </Cadre>
+  );
+}
+
+/** Le tableau de bord équilibré : quatre perspectives liées par une chaîne de causes. */
+function TableauBord() {
+  const perspectives = [
+    ["Finance", "marge, revenus récurrents"],
+    ["Clients", "satisfaction, renouvellement"],
+    ["Processus internes", "délais, qualité du travail"],
+    ["Apprentissage et croissance", "formation, rétention"],
+  ];
+  return (
+    <Cadre largeur={640} hauteur={330}>
+      {perspectives.map((lignes, i) => (
+        <Boite
+          key={lignes[0]}
+          x={150}
+          y={10 + i * 80}
+          l={340}
+          h={60}
+          lignes={lignes}
+          ton={i === 3 ? "encre" : i === 0 ? "ocre" : "neutre"}
+        />
+      ))}
+      {[0, 1, 2].map((i) => (
+        <Fleche key={i} x1={320} y1={88 + i * 80} x2={320} y2={72 + i * 80} />
+      ))}
+      <Libelle x={500} y={40} texte="Indicateurs" ancre="start" />
+      <Libelle x={500} y={56} texte="de résultat" ancre="start" />
+      <Libelle x={500} y={280} texte="Indicateurs" ancre="start" />
+      <Libelle x={500} y={296} texte="avancés" ancre="start" />
+      <Libelle x={75} y={165} texte="Les causes montent" rotation={-90} />
+    </Cadre>
+  );
+}
+
 /** Correspondance identifiant → schéma. */
 const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   "choisir-renoncer": ChoisirRenoncer,
@@ -1091,6 +1259,11 @@ const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   filiere: Filiere,
   bcg: Bcg,
   "global-local": GlobalLocal,
+  diffusion: Diffusion,
+  rupture: Rupture,
+  "modes-croissance": ModesCroissance,
+  "feuille-route": FeuilleRoute,
+  "tableau-bord": TableauBord,
 };
 
 /** Schéma du cours d'après son identifiant. */

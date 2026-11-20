@@ -103,6 +103,11 @@ export const SCHEMA_IDS = [
   "filiere",
   "bcg",
   "global-local",
+  "diffusion",
+  "rupture",
+  "modes-croissance",
+  "feuille-route",
+  "tableau-bord",
 ] as const;
 
 export type SchemaId = (typeof SCHEMA_IDS)[number];

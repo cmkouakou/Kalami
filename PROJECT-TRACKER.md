@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.34.0 (cours de stratégie, sprint 6 : modules 8 et 9) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.35.0 (cours de stratégie, sprint 7 : modules 10, 11 et 12) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -109,7 +109,8 @@ Version actuelle : v0.34.0 (cours de stratégie, sprint 6 : modules 8 et 9) · S
 | #103 | 2026-11-20 | v0.32.0 : cours, sprint 5 (10 leçons des modules 5, 6 et 7, 5 schémas, 40 exercices) | ~210 000 | ~1.26 $ |
 | #104 | 2026-11-20 | v0.33.0 : cours, sprint 5b (calendrier de diffusion par cohorte, lecture en avance, générateur, contrôle serveur) | ~170 000 | ~1.02 $ |
 | #105 | 2026-11-20 | v0.34.0 : cours, sprint 6 (10 leçons des modules 8 et 9, 7 schémas, 40 exercices) | ~230 000 | ~1.38 $ |
-| **TOTAL** | | | **~22 450 000** (hors #71) | **~134.70 $** |
+| #106 | 2026-11-20 | v0.35.0 : cours, sprint 7 (11 leçons des modules 10 à 12, 5 schémas, 44 exercices) | ~260 000 | ~1.56 $ |
+| **TOTAL** | | | **~22 710 000** (hors #71) | **~136.26 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -285,4 +286,5 @@ Version actuelle : v0.34.0 (cours de stratégie, sprint 6 : modules 8 et 9) · S
 - [x] v0.30.0 — cours, sprint 3 : modules 1 et 2 rédigés (9 leçons sur 52), schémas et exercices ; tests, typecheck, lint et build OK
 - [x] v0.31.0 — cours, sprint 4 : modules 3 et 4 rédigés (18 leçons sur 52), 8 schémas, 36 exercices ; typecheck, lint et build OK
 - [x] v0.34.0 — cours, sprint 6 : modules 8 et 9 rédigés (38 leçons sur 52), 7 schémas, 40 exercices ; tests 50/50, typecheck, lint et build OK
+- [x] v0.35.0 — cours, sprint 7 : modules 10, 11 et 12 rédigés (49 leçons sur 52), 5 schémas, 44 exercices ; tests 61/61, typecheck, lint et build OK
 - [ ] Fixer les prix et le livre associé dans `/admin/cours/prix`

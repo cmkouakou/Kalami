@@ -5,7 +5,7 @@
  *  Description: Registre des leçons rédigées, par identifiant stable. Une leçon absente
  *               du registre est affichée « bientôt » dans le programme.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.5
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts, lecons/*.ts
  * =============================================================
@@ -50,6 +50,17 @@ import { M09_L02 } from "@/lib/cours/lecons/m09-l02";
 import { M09_L03 } from "@/lib/cours/lecons/m09-l03";
 import { M09_L04 } from "@/lib/cours/lecons/m09-l04";
 import { M09_L05 } from "@/lib/cours/lecons/m09-l05";
+import { M10_L01 } from "@/lib/cours/lecons/m10-l01";
+import { M10_L02 } from "@/lib/cours/lecons/m10-l02";
+import { M10_L03 } from "@/lib/cours/lecons/m10-l03";
+import { M10_L04 } from "@/lib/cours/lecons/m10-l04";
+import { M11_L01 } from "@/lib/cours/lecons/m11-l01";
+import { M11_L02 } from "@/lib/cours/lecons/m11-l02";
+import { M11_L03 } from "@/lib/cours/lecons/m11-l03";
+import { M12_L01 } from "@/lib/cours/lecons/m12-l01";
+import { M12_L02 } from "@/lib/cours/lecons/m12-l02";
+import { M12_L03 } from "@/lib/cours/lecons/m12-l03";
+import { M12_L04 } from "@/lib/cours/lecons/m12-l04";
 
 /** Contenu des leçons rédigées. */
 const LECONS_REDIGEES: Readonly<Record<string, ContenuLecon>> = {
@@ -91,6 +102,17 @@ const LECONS_REDIGEES: Readonly<Record<string, ContenuLecon>> = {
   "m09-l03": M09_L03,
   "m09-l04": M09_L04,
   "m09-l05": M09_L05,
+  "m10-l01": M10_L01,
+  "m10-l02": M10_L02,
+  "m10-l03": M10_L03,
+  "m10-l04": M10_L04,
+  "m11-l01": M11_L01,
+  "m11-l02": M11_L02,
+  "m11-l03": M11_L03,
+  "m12-l01": M12_L01,
+  "m12-l02": M12_L02,
+  "m12-l03": M12_L03,
+  "m12-l04": M12_L04,
 };
 
 /** Contenu d'une leçon ; null si elle n'est pas encore rédigée. */

@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.35.0] - 2026-11-20 — Cours de stratégie, sprint 7 (modules 10, 11 et 12)
+### Ajouté
+- Module 10 « L’innovation » complet : leçons 10.1 (l’intrapreneuriat), 10.2 (la diffusion
+  des innovations, Rogers et le fossé de Moore), 10.3 (pionnier ou suiveur), 10.4 (le
+  dilemme de l’innovateur et les ruptures).
+- Module 11 « Les modes de croissance » complet : leçons 11.1 (la croissance interne),
+  11.2 (fusions et acquisitions), 11.3 (alliances, partenariats et coentreprises).
+- Module 12 « Choisir, mettre en œuvre, suivre » complet : leçons 12.1 (pertinence,
+  acceptabilité, faisabilité, encadré AjiGoût « Une réponse pertinente à quel problème ? »),
+  12.2 (là où les stratégies échouent), 12.3 (la feuille de route et le tableau de bord
+  équilibré, encadré « Une matrice de trois couleurs »), 12.4 (le suivi).
+- Cinq schémas : diffusion, rupture, modes de croissance, feuille de route, tableau de
+  bord équilibré.
+
 ## [v0.34.0] - 2026-11-20 — Cours de stratégie, sprint 6 (modules 8 et 9)
 ### Ajouté
 - Module 8 « La stratégie concurrentielle » complet : leçons 8.1 (les domaines d'activité

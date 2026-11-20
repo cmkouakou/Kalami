@@ -98,7 +98,7 @@ schémas. Les textes extraits des sources (`sources-extraites/`) ne sont jamais 
 | S5 | Modules 5, 6 et 7 | oui |
 | S5b | Calendrier de diffusion par cohorte (voir ci-dessous) — fait, v0.33.0 | non |
 | S6 | Modules 8 et 9 — fait, v0.34.0 | oui |
-| S7 | Modules 10, 11 et 12 | oui |
+| S7 | Modules 10, 11 et 12 | oui — fait, v0.35.0 |
 | S8 | Module 13 : cas, examen final, note finale, diplôme PDF ; page de vente, référencement | non |
 
 Avec S1 et S2, la cohorte peut commencer dès la fin de S3 : les modules suivants s'ajoutent
