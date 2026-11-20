@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## [v0.41.0] - 2026-11-20 — Stratégie : le cours comme source du coach
+### Ajouté
+- Le coach de Kalami Stratégie s'appuie sur le cours au même titre que le livre : à chaque
+  demande (relecture, questions, évaluation, recherche, synthèse), il reçoit l'essentiel des
+  leçons rattachées à l'étape (fiches de fin de leçon, encadrés « À retenir », « Piège
+  fréquent » et « Définition ») et cite la leçon quand une remarque en découle.
+- Les fondements (module 1) s'ajoutent aux étapes de décision (6 à 8).
+- La rédaction du plan stratégique (étape 9) reçoit aussi le cours : fondements, mise en
+  œuvre et suivi, cas intégrateur. Le cours n'y est jamais cité comme source de la section.
+- `lib/cours/essentiel.ts` : extraction de l'essentiel par étape (de 2 à 23 K caractères,
+  mis en mémoire). Le coût estimé avant l'appel en tient compte.
+
 ## [v0.40.0] - 2026-11-20 — Cours : atelier corrigé par l'IA (leçon 1.2)
 ### Ajouté
 - Atelier « Votre décision passe-t-elle les quatre questions ? » : l'apprenant décrit une

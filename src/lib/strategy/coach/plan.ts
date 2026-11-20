@@ -9,17 +9,20 @@
  *               rejetées). La proposition n'est jamais écrite dans le plan : l'équipe choisit
  *               de remplacer la section ou de l'ignorer.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-15
- *  Dépendances: coach/client.ts, coach/context.ts, coach/run.ts, coach/plan-output.ts,
+ *               v0.41.0 : bloc cours (essentiel du cours pour le plan), source au même
+ *               titre que le livre, jamais citée dans les sources de la section.
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
+ *  Dépendances: lib/cours/essentiel.ts, coach/client.ts, coach/context.ts, coach/run.ts, coach/plan-output.ts,
  *               lib/strategy/plan-inputs.ts, lib/strategy/plan-trace.ts, lib/strategy/queries.ts
  * =============================================================
  */
 
 import "server-only";
 
+import { essentielDuPlan } from "@/lib/cours/essentiel";
 import { isCoachConfigured } from "@/lib/strategy/coach/client";
-import { escapeTags, profileLines } from "@/lib/strategy/coach/context";
+import { COURSE_ASK, escapeTags, profileLines } from "@/lib/strategy/coach/context";
 import {
   planOutputSchema,
   sanitizePlan,
@@ -141,6 +144,12 @@ function planMessage(
     "<brouillon>",
     escapeTags(draftLines(draft)),
     "</brouillon>",
+    "",
+    "<cours>",
+    escapeTags(essentielDuPlan()),
+    "</cours>",
+    "",
+    COURSE_ASK + " Ne cite pas le cours dans les sources : elles viennent du bloc sources.",
     "",
     "Rédige cette section selon le format demandé, en citant tes sources.",
   ].join("\n");

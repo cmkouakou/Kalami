@@ -21,11 +21,13 @@
  *               propositions précédentes et les décisions de l'équipe (v0.11.1).
  *               Étude d'un dossier Entrepreneur au Combat : le dossier transmis est joint
  *               au message (bloc dossier_eac, v0.26.0).
+ *               Essentiel du cours de l'auteur pour l'étape joint au message (bloc cours,
+ *               v0.41.0), source au même titre que le livre.
  *  Auteur     : Claude Marcel
- *  Version    : 1.9
- *  Date       : 2026-11-17
+ *  Version    : 2.0
+ *  Date       : 2026-11-20
  *  Dépendances: @anthropic-ai/sdk, coach/client.ts, coach/context.ts, coach/schemas.ts,
- *               lib/supabase/server.ts, lib/supabase/admin.ts
+ *               lib/supabase/server.ts, lib/supabase/admin.ts, lib/cours/essentiel.ts
  * =============================================================
  */
 
@@ -35,6 +37,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 
+import { essentielDuCours } from "@/lib/cours/essentiel";
 import { getCoachClient, isCoachConfigured } from "@/lib/strategy/coach/client";
 import {
   buildCoachMessage,
@@ -510,6 +513,7 @@ export async function runCoach<F extends CoachFunction>(
     sources: synthesis?.message ?? upstream,
     history,
     externalContext: externalContextText(loaded.study.study_external_links?.context),
+    course: essentielDuCours(stepNo),
   });
   // Recherche : marge pour les résultats renvoyés (le prix des recherches est ajouté en SQL)
   const searchChars = fn === "research"

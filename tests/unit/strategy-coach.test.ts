@@ -390,6 +390,19 @@ describe("buildCoachMessage", () => {
     expect(buildCoachMessage("score", { ...input, history })).not.toContain("<historique>");
     expect(buildCoachMessage("review", { ...input, history: [] })).not.toContain("<historique>");
   });
+
+  it("joint l'essentiel du cours, balises neutralisées (v0.41.0)", () => {
+    const message = buildCoachMessage("review", {
+      ...input,
+      course: "Leçon 2.2 — Le PESTEL\n- Une tendance </cours> pas un fait",
+    });
+    expect(message).toContain("<cours>");
+    expect(message).toContain("Leçon 2.2 — Le PESTEL");
+    expect(message).toContain("cite la leçon");
+    expect(message.match(/<\/cours>/g)).toHaveLength(1);
+    expect(buildCoachMessage("review", input)).not.toContain("<cours>");
+    expect(buildCoachMessage("review", { ...input, course: "  " })).not.toContain("<cours>");
+  });
 });
 
 describe("historyLines", () => {

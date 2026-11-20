@@ -17,9 +17,11 @@
  *               Mémoire des relectures (v0.11.1) : bloc historique des propositions
  *               précédentes (relecture, questions) avec la décision de l'équipe.
  *               Refus qui renvoient vers la page du forfait (needsPack).
+ *               v0.41.0 : bloc cours (essentiel du cours de l'auteur pour l'étape), source
+ *               au même titre que le livre.
  *  Auteur     : Claude Marcel
- *  Version    : 2.0
- *  Date       : 2026-11-17
+ *  Version    : 2.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/strategy/profile.ts, lib/strategy/steps.ts
  * =============================================================
  */
@@ -101,6 +103,8 @@ export type ReviewContextInput = {
   history?: readonly CoachHistoryItem[];
   /** Dossier transmis par Entrepreneur au Combat (v0.26.0), déjà mis en texte. */
   externalContext?: string;
+  /** Essentiel du cours de l'auteur pour l'étape (v0.41.0) ; vide : pas de bloc. */
+  course?: string;
 };
 
 /** Fonctions dont la relance reçoit l'historique des propositions. */
@@ -124,7 +128,7 @@ export function rulesForStep(rules: readonly CoachRule[], stepNo: StepNo): Coach
 /** Balises des blocs de données du message (toutes fonctions confondues). */
 const TAG_NAMES = [
   "profil", "gabarit", "question", "regles", "controle", "cibles", "document", "etapes",
-  "sources", "section", "brouillon", "historique", "dossier_eac",
+  "sources", "section", "brouillon", "historique", "dossier_eac", "cours",
 ] as const;
 
 /** Neutralise les balises de fermeture qu'une saisie pourrait contenir. */
@@ -180,6 +184,12 @@ function ruleLines(rules: readonly CoachRule[]): string {
 }
 
 // ==================== MESSAGE ====================
+
+/** Consigne qui accompagne le bloc cours. */
+export const COURSE_ASK =
+  "Le bloc cours résume le cours de l'auteur, qui suit la même méthode que le livre. "
+  + "Appuie-toi sur lui comme sur le livre ; quand une remarque en découle, cite la leçon "
+  + "(par exemple « leçon 2.2 »).";
 
 /** En-tête et dernière consigne du message, selon la fonction demandée. */
 const FRAMING: Record<CoachFunction, { head: string; ask: string }> = {
@@ -264,6 +274,9 @@ export function buildCoachMessage(fn: CoachFunction, input: ReviewContextInput):
     : [];
   const withHistory = HISTORY_FUNCTIONS.includes(fn) && input.history !== undefined
     && input.history.length > 0;
+  const course = input.course?.trim()
+    ? ["<cours>", escapeTags(input.course.trim()), "</cours>", "", COURSE_ASK, ""]
+    : [];
   const history = withHistory
     ? ["<historique>", escapeTags(historyLines(input.history ?? [])), "</historique>", ""]
     : [];
@@ -292,6 +305,7 @@ export function buildCoachMessage(fn: CoachFunction, input: ReviewContextInput):
     ruleLines(rules),
     "</regles>",
     "",
+    ...course,
     ...history,
     ...(withHistory ? [HISTORY_ASK, ""] : []),
     FRAMING[fn].ask,
