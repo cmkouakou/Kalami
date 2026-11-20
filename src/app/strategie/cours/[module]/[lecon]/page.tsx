@@ -9,8 +9,9 @@
  *               v0.33.0 : diffusion programmée (leçon fermée : date d'ouverture ; lecture
  *               en avance : contenu sans exercices ni bouton « terminé »).
  *               v0.37.0 : lien vers le quiz du module sur la dernière leçon.
+ *               v0.38.2 : lien vers « Mes annotations » dans l'en-tête.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/*, cours.css
  * =============================================================
@@ -192,12 +193,14 @@ export default async function LeconPage({
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8">
       {/* ==================== EN-TÊTE ==================== */}
       <header className="flex flex-col gap-3">
-        <Link
-          href="/strategie/cours"
-          className={`${BUTTON_TERTIARY} self-start`}
-        >
-          ← {t.lecon.retour}
-        </Link>
+        <nav className="flex flex-wrap items-center justify-between gap-2">
+          <Link href="/strategie/cours" className={BUTTON_TERTIARY}>
+            ← {t.lecon.retour}
+          </Link>
+          <Link href="/strategie/cours/annotations" className={BUTTON_TERTIARY}>
+            {t.annotations.lien}
+          </Link>
+        </nav>
         <p className="text-caption uppercase text-ink-muted">
           {interpolate(t.lecon.moduleLecon, {
             m: String(mod.numero),

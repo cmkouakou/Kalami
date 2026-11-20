@@ -32,7 +32,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
   modules 10, 11 et 12 rédigés (v0.35.0) ; module 13, cas intégrateur, rédigé : 52 leçons
   sur 52 (v0.36.0) ; un quiz de fin de module pour chacun des 13 modules, réussi à 70 / 100,
   corrigé côté serveur (v0.37.0) ; examen final, note finale pondérée, diplôme PDF avec
-  mention et page publique de vérification, admin des diplômes (v0.38.0)
+  mention et page publique de vérification, admin des diplômes (v0.38.0) ; citer et
+  partager un passage (v0.38.1) ; page « Mes annotations » (v0.38.2)
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)

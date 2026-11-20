@@ -65,6 +65,12 @@
   text-underline-offset: 3px;
 }
 
+/* Passage visé depuis « Mes annotations » : signalé un instant */
+.cours-lecon .liseuse-annotation[data-cible] {
+  outline: 2px solid var(--encre, currentColor);
+  outline-offset: 2px;
+}
+
 /* ==================== MENU ET FENÊTRES ==================== */
 
 .cours-lecon .liseuse-menu,

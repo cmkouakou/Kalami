@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.38.2] - 2026-11-20 — Cours : page « Mes annotations »
+### Ajouté
+- Page `/strategie/cours/annotations` (inscrits, non indexée) : surlignages et notes de
+  toutes les leçons, regroupés par module puis par leçon, avec recherche (passage ou note),
+  filtre de couleur et retrait, comme le panneau d'annotations de la liseuse des livres.
+- Toucher un passage ouvre sa leçon, l'amène à l'écran et le signale un instant.
+- Liens « Mes annotations » sur l'accueil du cours et dans l'en-tête de chaque leçon.
+
 ## [v0.38.1] - 2026-11-20 — Cours : citer et partager un passage
 ### Ajouté
 - Menu de sélection des leçons : « Citer » (références APA, MLA et Chicago, la leçon tenant

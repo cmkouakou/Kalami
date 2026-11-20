@@ -11,7 +11,8 @@
  *               module » sous chaque module (meilleure note, réussi ou à faire).
  *               v0.38.0 : carte « Examen final et diplôme » ; seuil des quiz réglable.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen)
+ *  Version    : 1.5 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen ;
+ *               v0.38.2 : lien vers « Mes annotations »)
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
@@ -267,16 +268,18 @@ function Progression({
         {" · "}
         {interpolate(t.accueil.temps, { duree: dureeLisible(s.secondes) })}
       </p>
-      {reprise && (
-        <Link
-          href={adresseLecon(reprise.module, reprise.lecon)}
-          className={`${BUTTON_PRIMARY} self-start`}
-        >
-          {lignes.length === 0
-            ? t.accueil.commencer
-            : interpolate(t.accueil.reprendre, { titre: reprise.lecon.titre })}
+      <div className="flex flex-wrap gap-3">
+        {reprise && (
+          <Link href={adresseLecon(reprise.module, reprise.lecon)} className={BUTTON_PRIMARY}>
+            {lignes.length === 0
+              ? t.accueil.commencer
+              : interpolate(t.accueil.reprendre, { titre: reprise.lecon.titre })}
+          </Link>
+        )}
+        <Link href="/strategie/cours/annotations" className={BUTTON_SECONDARY}>
+          {t.annotations.lien}
         </Link>
-      )}
+      </div>
     </section>
   );
 }

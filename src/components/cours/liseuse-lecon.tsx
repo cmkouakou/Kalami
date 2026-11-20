@@ -5,9 +5,11 @@
  *  Description: Conteneur client d'une leçon : barre de lecture à voix haute, zone de
  *               texte (contenu rendu par le serveur), surlignages dessinés dans les blocs,
  *               couche d'annotations, mesure du temps de formation et messages.
+ *               v1.1 (v0.38.2) : une adresse « #annotation-<id> » (venue de la page Mes
+ *               annotations) amène le passage à l'écran et le signale un instant.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: couche-annotations.tsx, use-battement.ts,
  *               components/reader/{highlight-dom,use-read-aloud}
  * =============================================================
@@ -89,6 +91,19 @@ export function LiseuseLecon({
   useEffect(() => {
     if (zoneRef.current) paintHighlights(zoneRef.current, liste);
   }, [liste]);
+
+  // Arrivée depuis « Mes annotations » : le passage visé est amené à l'écran
+  useEffect(() => {
+    const id = /^#annotation-([0-9a-f-]{36})$/.exec(window.location.hash)?.[1];
+    const zone = zoneRef.current;
+    if (!id || !zone) return;
+    const marque = zone.querySelector<HTMLElement>(`mark[data-hl="${id}"]`);
+    if (!marque) return;
+    marque.scrollIntoView({ block: "center", behavior: "smooth" });
+    marque.dataset.cible = "";
+    const minuterie = window.setTimeout(() => delete marque.dataset.cible, DUREE_AVIS);
+    return () => window.clearTimeout(minuterie);
+  }, []);
 
   // Le message s'efface seul
   useEffect(() => {

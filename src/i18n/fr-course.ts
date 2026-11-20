@@ -250,6 +250,23 @@ const courseFr = {
   },
 
   annotations: {
+    titre: "Mes annotations",
+    lien: "Mes annotations",
+    intro:
+      "Vos passages surlignés et vos notes, leçon par leçon. Touchez un passage pour le " +
+      "retrouver dans sa leçon.",
+    vide:
+      "Vous n'avez encore rien surligné. Dans une leçon, sélectionnez un passage pour le " +
+      "surligner, l'annoter, le citer ou le partager.",
+    recherche: "Chercher dans mes annotations",
+    filtre: "Filtrer par couleur",
+    toutes: "Toutes",
+    nombre: "{n} annotation(s)",
+    aucune: "Aucune annotation ne correspond.",
+    ouvrir: "Ouvrir dans la leçon",
+    retirer: "Retirer le surlignage « {extrait} »",
+    retire: "Surlignage retiré.",
+    couleurs: { jaune: "Jaune", vert: "Vert", bleu: "Bleu", rose: "Rose", orange: "Orange" },
     connexion: "Connectez-vous pour annoter.",
     erreur: "L'annotation n'a pas pu être enregistrée.",
     tropNombreuses:

@@ -7,12 +7,13 @@
  *              contenu rédigé (identifiants d'exercices, bonnes réponses, catégories).
  *              v0.38.0 : examen final, note finale, mentions, numéro et nom du diplôme.
  * Auteur     : Claude Marcel
- * Version    : 1.2 (v0.38.0 : examen et diplôme)
+ * Version    : 1.3 (v0.38.0 : examen et diplôme ; v0.38.2 : libellés des annotations)
  * Date       : 2026-11-20
  */
 
 import { describe, expect, it } from "vitest";
 
+import { getCourseDictionary } from "@/i18n/course";
 import { exercicesDe, type Exercice } from "@/lib/cours/content";
 import {
   QUESTIONS_MAX,
@@ -25,6 +26,7 @@ import {
   versionPublique,
 } from "@/lib/cours/evaluation";
 import { CAS_EXAMEN, QUESTIONS_EXAMEN } from "@/lib/cours/examen";
+import { HIGHLIGHT_COLORS } from "@/lib/reader/types";
 import { contenuLecon, estRedigee } from "@/lib/cours/lecons";
 import {
   EXERCICES_NOTES,
@@ -448,5 +450,12 @@ describe("note finale et diplôme", () => {
     expect(nomImprime("Jean 2")).toBeNull();
     expect(nomImprime("<script>")).toBeNull();
     expect(nomImprime("x".repeat(121))).toBeNull();
+  });
+});
+
+describe("mes annotations", () => {
+  it("chaque couleur de surlignage a son libellé", () => {
+    const couleurs = getCourseDictionary().annotations.couleurs;
+    for (const c of HIGHLIGHT_COLORS) expect(couleurs[c], c).toBeTruthy();
   });
 });

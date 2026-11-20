@@ -8,8 +8,9 @@
  *               v0.33.0 : calendrier de diffusion de la cohorte et état de chaque leçon.
  *               v0.37.0 : meilleure note et nombre d'essais de chaque quiz de module.
  *               v0.38.0 : réglages d'évaluation, bilan (note finale) et diplôme.
+ *               v0.38.2 : toutes les annotations de l'apprenant (page Mes annotations).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/notation.ts,
  *               lib/cours/calendrier.ts, lib/cours/evaluation.ts, lib/cours/note-finale.ts
@@ -283,6 +284,28 @@ export function versSurlignage(l: LigneAnnotation): Highlight {
     createdAt: l.created_at,
   };
 }
+
+/**
+ * Toutes les annotations de l'apprenant connecté, pour la page « Mes annotations ».
+ * Le champ chapter porte le rang de la leçon dans le cours (1 à 52), ce qui permet de
+ * trier et regrouper avec les outils de la liseuse ; les leçons inconnues sont ignorées.
+ */
+export const annotationsApprenant = cache(async (): Promise<Highlight[]> => {
+  const user = await getCurrentUser();
+  if (!user) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("course_annotations")
+    .select(`lesson_id, ${COLONNES_ANNOTATION}`)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: true })
+    .limit(2000);
+  if (error || !data) return [];
+  return (data as (LigneAnnotation & { lesson_id: string })[]).flatMap((l) => {
+    const rang = LECONS.findIndex((x) => x.id === l.lesson_id) + 1;
+    return rang > 0 ? [{ ...versSurlignage(l), chapter: rang }] : [];
+  });
+});
 
 /** Annotations de l'apprenant connecté sur une leçon, de la plus ancienne à la plus récente. */
 export async function annotationsLecon(leconId: string): Promise<Highlight[]> {
