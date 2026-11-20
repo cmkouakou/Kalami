@@ -1,5 +1,40 @@
 # Journal des modifications
 
+## [v0.29.0] - 2026-11-19 — Cours de stratégie, sprint 2 (administration et vente)
+### Ajouté
+- Migration `20261125120000_course_admin.sql` (à appliquer) :
+  - réglages de vente du cours `course_settings` (en vente, prix XOF, EUR et CAD, livre
+    associé) ;
+  - article de commande `course` et fonction `create_course_order` ;
+  - `fulfil_order` ouvre le cours et donne le livre associé ;
+  - un remboursement retire l'accès au cours ;
+  - fonctions d'administration : réglages, cohortes, accès accordés par liste de courriels,
+    changement de cohorte, retrait d'accès, liste de suivi ;
+  - toutes ces fonctions sont réservées à l'administrateur et journalisées.
+- Achat du cours par Stripe ou Mobile Money depuis `/strategie/cours` :
+  - avis quand le paiement est annulé ;
+  - « Commencer le cours » dans « Mes achats » ;
+  - codes promo de portée « tout ».
+- Administration `/admin/cours` (menu Stratégie) :
+  - **Apprenants et accès** : collage d'une liste de courriels avec cohorte, livre et
+    note, compte rendu par adresse, changement de cohorte, retrait (avec ou sans le
+    livre accordé) ;
+  - **Cohortes** : création, modification et suppression, avec le nombre d'apprenants ;
+  - **Suivi** : tableau par cohorte (achèvement, leçons, temps, dernière activité,
+    moyenne), tri par colonne, export CSV pour Excel ;
+  - fiche de chaque apprenant : modules, état et notes par leçon, temps jour par jour ;
+  - **Prix et vente** : mise en vente, prix en FCFA, euros et dollars canadiens, livre
+    associé.
+
+### Tests
+- `cours-admin.test.ts` couvre :
+  - la lecture des courriels collés ;
+  - l'achèvement et le tri ;
+  - la fiche par module ;
+  - le CSV (protection contre les formules) ;
+  - la validation des prix, des cohortes et des accès ;
+  - la demande d'achat du cours.
+
 ## [v0.28.0] - 2026-11-19 — Cours de stratégie, sprint 1 (leçons et progression)
 ### Ajouté
 - Migration `20261124120000_course.sql` : cohortes, accès au cours, progression par leçon,

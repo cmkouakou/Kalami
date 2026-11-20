@@ -5,7 +5,8 @@
  *  Description: Création d'une commande au nom de l'acheteur connecté, commune à la carte
  *               (Stripe) et au Mobile Money : la base vérifie prix, droits, code promo,
  *               remise enseignant et cadence (create_book_order, create_strategy_order,
- *               create_workshop_order depuis la v0.15.0). v1.2 : date de la renonciation
+ *               create_workshop_order depuis la v0.15.0, create_course_order depuis la
+ *               v0.29.0). v1.2 : date de la renonciation
  *               au droit de rétractation conservée sur la commande.
  *  Auteur     : Claude Marcel
  *  Version    : 1.2
@@ -74,6 +75,11 @@ async function insertOrder(body: CheckoutBody) {
         p_currency: body.currency,
         p_promo_code: promo,
       })
+      .single<OrderRow>();
+  }
+  if (body.item === "course") {
+    return supabase
+      .rpc("create_course_order", { p_currency: body.currency, p_promo_code: promo })
       .single<OrderRow>();
   }
   if (body.item === "workshop_pack") {

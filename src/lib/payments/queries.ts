@@ -129,7 +129,7 @@ export async function getLatestMobileMoneyDecision(): Promise<OrderSummary | nul
 /** Destination ouverte par un article payé. */
 export type OrderItemLink = {
   href: string;
-  kind: "read" | "strategy" | "coach" | "case" | "workshop";
+  kind: "read" | "strategy" | "coach" | "case" | "workshop" | "course";
 };
 
 /**
@@ -151,5 +151,6 @@ export function orderItemLink(item: OrderItemSummary): OrderItemLink | null {
     return { href: `/strategie/cas/${item.practice_case}`, kind: "case" };
   }
   if (item.kind === "workshop_pack") return { href: "/auteur/atelier", kind: "workshop" };
+  if (item.kind === "course") return { href: "/strategie/cours", kind: "course" };
   return null;
 }

@@ -46,6 +46,7 @@ const LINK_LABELS: Record<OrderItemLink["kind"], string> = {
   coach: tp.openCoach,
   case: tp.openCase,
   workshop: tp.openWorkshop,
+  course: tp.openCourse,
 };
 
 /** État des commandes Mobile Money pas encore payées. */

@@ -8,9 +8,10 @@
  *               s'ouvre seul ; un groupe replié montre le total de ses pastilles.
  *               Colonne latérale sur grand écran, menu repliable sur téléphone.
  *               v0.25.0 : lien « Paiements Mobile Money » (pastille des paiements à valider).
+ *               v0.29.0 : lien « Cours de stratégie » dans le groupe Kalami Stratégie.
  *  Auteur     : Claude Marcel
- *  Version    : 2.1
- *  Date       : 2026-11-16
+ *  Version    : 2.2
+ *  Date       : 2026-11-19
  *  Dépendances: i18n, components/ui/icons.tsx
  * =============================================================
  */
@@ -66,6 +67,7 @@ export const GROUPS: NavGroup[] = [
       { href: "/admin/strategie/etapes", label: n.strategySteps },
       { href: "/admin/strategie/coach", label: n.strategyCoach },
       { href: "/admin/strategie/coach/forfaits", label: n.strategyPacks },
+      { href: "/admin/cours", label: n.course },
     ],
   },
   {

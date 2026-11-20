@@ -35,7 +35,7 @@ import { createClient } from "@/lib/supabase/server";
  */
 function targetOf(
   body: Record<string, unknown>,
-): { target: "book" | "strategy" | "workshop"; bookId: string | null } | null {
+): { target: "book" | "strategy" | "workshop" | "course"; bookId: string | null } | null {
   if (body.item === "book" && isUuid(body.bookId)) {
     return { target: "book", bookId: body.bookId };
   }
@@ -43,6 +43,8 @@ function targetOf(
     return { target: "strategy", bookId: null };
   }
   if (body.item === "workshop_pack") return { target: "workshop", bookId: null };
+  // Cours (v0.29.0) : seuls les codes de portée « tout le site » s'appliquent
+  if (body.item === "course") return { target: "course", bookId: null };
   return null;
 }
 

@@ -25,7 +25,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
   au dossier, où le mentor le publie (`EAC_API_URL`)
 - **Cours de stratégie** (`/strategie/cours`, v0.28.0) : 13 modules, 52 leçons tirées du
   livre ; schémas, exercices notés côté serveur, surlignage, notes et lecture à voix haute ;
-  accès donné par l'administrateur (cohorte), progression et temps de formation suivis
+  accès acheté (Stripe ou Mobile Money, livre associé inclus) ou donné par l'administrateur ;
+  administration `/admin/cours` (v0.29.0) : apprenants, cohortes, suivi avec export CSV, prix
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)

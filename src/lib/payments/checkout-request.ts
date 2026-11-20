@@ -4,7 +4,8 @@
  *  Projet     : Kalami
  *  Description: Lecture du corps d'une demande d'achat (livre, étude ou lot d'études,
  *               forfait du coach, cas d'entraînement depuis la v0.14.0, forfait Atelier
- *               de l'auteur depuis la v0.15.0, code promo facultatif depuis la v0.10.3),
+ *               de l'auteur depuis la v0.15.0, cours de stratégie depuis la v0.29.0,
+ *               code promo facultatif depuis la v0.10.3),
  *               renonciation au droit de rétractation (v0.15.7) et adresse de retour si le
  *               paiement est abandonné.
  *               Fonctions pures : le prix et les droits sont vérifiés par la base.
@@ -33,7 +34,8 @@ export type CheckoutItem =
   | { item: "study_offer"; code: StudyOfferCode }
   | { item: "coach_pack"; packId: string; studyId: string }
   | { item: "practice_case"; code: string }
-  | { item: "workshop_pack"; packId: string };
+  | { item: "workshop_pack"; packId: string }
+  | { item: "course" };
 
 export type CheckoutBody = CheckoutItem & { currency: Currency; promoCode?: string };
 
@@ -94,6 +96,7 @@ function parseItem(body: Record<string, unknown>): CheckoutItem | null {
   if (item === "workshop_pack" && isUuid(body.packId)) {
     return { item, packId: body.packId };
   }
+  if (item === "course") return { item };
   return null;
 }
 
@@ -147,5 +150,7 @@ export function cancelPathFor(item: CheckoutItem, bookSlug: string | null): stri
       return `/strategie/cas/${item.code}?paiement=annule`;
     case "workshop_pack":
       return "/auteur/atelier?paiement=annule";
+    case "course":
+      return "/strategie/cours?paiement=annule";
   }
 }

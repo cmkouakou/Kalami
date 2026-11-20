@@ -36,6 +36,7 @@ const LINK_LABELS = {
   coach: t.account.purchases.openCoach,
   case: t.account.purchases.openCase,
   workshop: t.account.purchases.openWorkshop,
+  course: t.account.purchases.openCourse,
 } as const;
 
 /**
@@ -49,6 +50,7 @@ function paidMessage(item: OrderItemSummary): string {
   if (item.kind === "coach_pack") return interpolate(tt.paidPack, { label: item.label });
   if (item.kind === "practice_case") return interpolate(tt.paidCase, { label: item.label });
   if (item.kind === "workshop_pack") return interpolate(tt.paidWorkshop, { label: item.label });
+  if (item.kind === "course") return interpolate(tt.paidCourse, { label: item.label });
   return interpolate(tt.paid, { label: item.label });
 }
 

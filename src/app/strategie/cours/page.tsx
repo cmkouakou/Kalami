@@ -7,7 +7,7 @@
  *               temps de formation), le lien « Reprendre » et l'état de chaque leçon.
  *               Le programme est public ; la partie personnelle est chargée à part.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1 (v0.29.0 : achat du cours, avis de paiement annulé)
  *  Date       : 2026-11-19
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
@@ -161,8 +161,12 @@ function Progression({ lignes }: { lignes: LigneProgression[] }) {
 }
 
 /** Partie personnelle : connexion, accès, progression et programme annoté. */
-async function EspaceApprenant() {
-  const user = await getCurrentUser();
+async function EspaceApprenant({
+  searchParams,
+}: {
+  searchParams: PageProps<"/strategie/cours">["searchParams"];
+}) {
+  const [user, query] = await Promise.all([getCurrentUser(), searchParams]);
   if (!user) {
     return (
       <>
@@ -179,7 +183,7 @@ async function EspaceApprenant() {
   if (!(await aAccesAuCours())) {
     return (
       <>
-        <SansAcces email={user.email} />
+        <SansAcces email={user.email} paiementAnnule={query.paiement === "annule"} />
         <Programme />
       </>
     );
@@ -199,7 +203,7 @@ async function EspaceApprenant() {
 
 // ==================== PAGE ====================
 
-export default function CoursPage() {
+export default function CoursPage({ searchParams }: PageProps<"/strategie/cours">) {
   return (
     <main className="flex flex-col gap-10">
       {/* ==================== PRÉSENTATION ==================== */}
@@ -213,7 +217,7 @@ export default function CoursPage() {
 
       {/* ==================== PROGRESSION ET PROGRAMME ==================== */}
       <Suspense fallback={<Programme />}>
-        <EspaceApprenant />
+        <EspaceApprenant searchParams={searchParams} />
       </Suspense>
 
       <p className="max-w-2xl text-small text-ink-muted">{t.privacy}</p>

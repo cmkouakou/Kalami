@@ -58,6 +58,8 @@ async function describeItem(
   }
   // Forfaits Atelier : pas de produit Stripe dédié, décrits à la volée
   if (body.item === "workshop_pack") return { saleItem: null, bookSlug: null };
+  // Cours de stratégie (v0.29.0) : décrit à la volée, comme les forfaits Atelier
+  if (body.item === "course") return { saleItem: null, bookSlug: null };
   const { data } = await admin.from("coach_packs").select("name").eq("id", body.packId).single();
   return { saleItem: data ? coachPackSaleItem(data.name) : null, bookSlug: null };
 }

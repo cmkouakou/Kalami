@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.28.0 (cours de stratégie, sprint 1 : leçons, exercices, progression) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.29.0 (cours de stratégie, sprint 2 : administration et vente) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -103,7 +103,8 @@ Version actuelle : v0.28.0 (cours de stratégie, sprint 1 : leçons, exercices, 
 | #97 | 2026-11-17 | v0.26.0 : liaison Entrepreneur au Combat (API d'ouverture d'étude, compte EAC, invitations, panneau du dossier, contexte du coach) | ~120 000 | ~0.72 $ |
 | #98 | 2026-11-18 | v0.26.1 : retour du plan vers EAC (route d'envoi, client serveur à serveur, bouton dans le panneau du dossier, date du dernier envoi) | ~90 000 | ~0.54 $ |
 | #99 | 2026-11-19 | v0.28.0 : cours de stratégie, sprint 1 (migration, programme 52 leçons, leçon pilote, liseuse du cours, exercices notés, progression et temps) | ~250 000 | ~1.50 $ |
-| **TOTAL** | | | **~21 260 000** (hors #71) | **~127.56 $** |
+| #100 | 2026-11-19 | v0.29.0 : cours, sprint 2 (achat Stripe et Mobile Money avec livre, admin apprenants, cohortes, suivi, export CSV, prix) | ~200 000 | ~1.20 $ |
+| **TOTAL** | | | **~21 460 000** (hors #71) | **~128.76 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -274,4 +275,5 @@ Version actuelle : v0.28.0 (cours de stratégie, sprint 1 : leçons, exercices, 
 - [x] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse (publié, vérifié le 2026-10-28)
 - [x] v0.28.0 — cours, sprint 1 : programme `/strategie/cours`, page de leçon (surlignage, notes, lecture à voix haute), exercices notés côté serveur, progression et temps ; 13 tests unitaires, typecheck, lint et build OK
 - [x] v0.28.0 — migration `20261124120000_course.sql` appliquée par l'utilisateur (2026-11-19)
-- [ ] Cours, sprint 2 : administration (cohortes, accès, suivi par apprenant, prix Mobile Money et Stripe)
+- [x] v0.29.0 — cours, sprint 2 : `/admin/cours` (apprenants et accès, cohortes, suivi, fiche, export CSV, prix) et achat du cours par Stripe ou Mobile Money (livre associé inclus) ; tests unitaires, typecheck, lint et build OK
+- [ ] v0.29.0 — appliquer la migration `20261125120000_course_admin.sql`, puis fixer les prix dans `/admin/cours/prix`

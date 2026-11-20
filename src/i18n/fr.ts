@@ -462,6 +462,7 @@ const fr = {
       openCoach: "Ouvrir le coach",
       openCase: "Ouvrir le cas",
       openWorkshop: "Ouvrir l'atelier",
+      openCourse: "Commencer le cours",
       mmToPay: "Mobile Money : en attente de votre paiement",
       mmToReview: "Mobile Money : paiement en cours de vérification",
       mmRejected: "Mobile Money : paiement refusé",
@@ -479,6 +480,9 @@ const fr = {
           "vous attend.",
         paidWorkshop:
           "Votre paiement est confirmé : « {label} » est ajouté à votre atelier d'auteur.",
+        paidCourse:
+          "Votre paiement est confirmé : « {label} » vous est ouvert. Le livre associé, " +
+          "s'il y en a un, est dans votre bibliothèque.",
         refunded: "Cette commande a été remboursée.",
         bonus: "Une étude Kalami Stratégie vous est offerte avec ce livre.",
         bonusLink: "Commencer une étude",
@@ -749,6 +753,7 @@ const fr = {
       strategySteps: "Étapes et guides",
       strategyCoach: "Coach IA",
       strategyPacks: "Forfaits du coach",
+      course: "Cours de stratégie",
       features: "Fonctionnalités",
       powerbiCourse: "Parcours PL-300",
       powerbiProject: "Chantier BRVM Power BI",

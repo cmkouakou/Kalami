@@ -40,7 +40,12 @@ const courseFr = {
     texte:
       "Votre compte n'a pas encore accès au cours. Si vous faites partie d'une cohorte, " +
       "transmettez à votre formateur le courriel de votre compte Kalami : il vous donnera " +
-      "l'accès. L'inscription en ligne ouvrira prochainement.",
+      "l'accès.",
+    bientot: "L'inscription en ligne ouvrira prochainement.",
+    acheter:
+      "Vous pouvez aussi vous inscrire vous-même : l'accès est immédiat et complet, avec " +
+      "le livre qui accompagne le cours.",
+    annule: "Le paiement a été annulé : aucun montant n'a été prélevé.",
     compte: "Courriel de votre compte : {email}",
   },
 
@@ -106,6 +111,167 @@ const courseFr = {
     acces: "Votre compte n'a pas accès au cours.",
     connexion: "Connectez-vous pour continuer.",
     invalide: "Requête invalide.",
+  },
+
+  // ==================== ADMINISTRATION (v0.29.0) ====================
+  admin: {
+    titre: "Cours de stratégie",
+    intro:
+      "Donnez l'accès au cours à vos cohortes, suivez la progression de chaque apprenant " +
+      "et réglez la vente en ligne.",
+    retour: "Cours de stratégie",
+    nav: {
+      apprenants: "Apprenants et accès",
+      cohortes: "Cohortes",
+      suivi: "Suivi",
+      prix: "Prix et vente",
+    },
+    aide: {
+      apprenants: "Coller une liste de courriels, choisir la cohorte, retirer un accès.",
+      cohortes: "Créer et modifier les groupes (pays, dates, note).",
+      suivi: "Progression, temps de formation et notes ; export CSV.",
+      prix: "Mettre le cours en vente, fixer ses prix et le livre associé.",
+    },
+    chiffres: {
+      apprenants: "{n} apprenant(s) actif(s)",
+      cohortes: "{n} cohorte(s)",
+      enVente: "En vente en ligne",
+      horsVente: "Pas en vente en ligne",
+    },
+    source: { purchase: "Achat", admin_grant: "Accès accordé" },
+    sansCohorte: "Sans cohorte",
+    toutes: "Toutes les cohortes",
+    aucunApprenant: "Aucun apprenant pour l'instant.",
+
+    accorder: {
+      titre: "Donner l'accès",
+      courriels: "Courriels des apprenants",
+      aideCourriels:
+        "Collez les adresses séparées par des virgules, des points-virgules ou des retours " +
+        "à la ligne (200 au plus). Chaque personne doit d'abord avoir créé son compte Kalami.",
+      cohorte: "Cohorte",
+      livre: "Donner aussi le livre associé au cours",
+      note: "Note interne (facultative)",
+      envoyer: "Donner l'accès",
+      rapport: "{granted} accès donné(s), {moved} changé(s) de cohorte, {already} déjà " +
+        "inscrit(s), {no_account} sans compte, {invalid} invalide(s).",
+      statuts: {
+        granted: "Accès donné",
+        moved: "Cohorte changée",
+        already: "Déjà inscrit",
+        no_account: "Aucun compte Kalami",
+        invalid: "Adresse invalide",
+      },
+      ignores: "Fragments non reconnus : {liste}",
+    },
+
+    liste: {
+      titre: "Apprenants inscrits ({n})",
+      courriel: "Courriel",
+      cohorte: "Cohorte",
+      origine: "Origine",
+      depuis: "Accès depuis",
+      changer: "Changer",
+      cohorteChangee: "Cohorte modifiée.",
+      retirer: "Retirer l'accès",
+      confirmer: "Confirmer le retrait",
+      retirerLivre: "Retirer aussi le livre donné avec l'accès",
+      retire: "Accès retiré.",
+      achatNote:
+        "Accès acheté : le retirer ne rembourse pas la commande. Un remboursement (page " +
+        "Commandes) retire l'accès de lui-même.",
+    },
+
+    cohortes: {
+      titre: "Cohortes",
+      nouvelle: "Nouvelle cohorte",
+      nom: "Nom",
+      pays: "Pays (code à 2 lettres, ex. CI)",
+      debut: "Début",
+      fin: "Fin",
+      note: "Note",
+      creer: "Créer la cohorte",
+      modifier: "Modifier",
+      enregistrer: "Enregistrer",
+      creee: "Cohorte créée.",
+      enregistree: "Cohorte enregistrée.",
+      supprimer: "Supprimer",
+      supprimee: "Cohorte supprimée. Ses apprenants gardent leur accès, sans cohorte.",
+      apprenants: "{n} apprenant(s)",
+      aucune: "Aucune cohorte pour l'instant.",
+      periode: "Du {debut} au {fin}",
+    },
+
+    suivi: {
+      titre: "Suivi des apprenants",
+      filtre: "Cohorte",
+      filtrer: "Afficher",
+      exporter: "Exporter en CSV",
+      apprenant: "Apprenant",
+      achevement: "Achèvement",
+      lecons: "Leçons",
+      temps: "Temps",
+      derniere: "Dernière activité",
+      moyenne: "Moyenne",
+      jamais: "Jamais",
+      voir: "Fiche",
+      trierPar: "Trier par {colonne}",
+      resume: "{n} apprenant(s) · achèvement moyen {pourcentage} % · temps total {temps}",
+    },
+
+    fiche: {
+      titre: "Fiche de l'apprenant",
+      introuvable: "Cet apprenant n'a pas d'accès actif au cours.",
+      retour: "Suivi des apprenants",
+      identite: "Compte",
+      cohorte: "Cohorte : {nom}",
+      depuis: "Accès depuis le {date} ({origine})",
+      progression: "{terminees} leçon(s) terminée(s) sur {total} · {pourcentage} %",
+      temps: "Temps de formation : {duree}",
+      moyenne: "Moyenne aux exercices : {moyenne} / 100 ({n} exercice(s))",
+      sansNote: "Aucun exercice noté pour l'instant.",
+      modules: "Progression par module",
+      module: "Module {n} — {titre}",
+      moduleResume: "{terminees}/{total} · {duree}",
+      etat: { terminee: "Terminée", enCours: "En cours", aFaire: "À faire" },
+      note: "Exercice {n} : {score} / 100 ({essais} essai(s))",
+      jours: "Temps par jour (90 derniers jours)",
+      aucunJour: "Aucune activité enregistrée.",
+    },
+
+    prix: {
+      titre: "Prix et vente en ligne",
+      intro:
+        "Quand le cours est en vente, un membre sans accès peut l'acheter par carte ou " +
+        "Mobile Money depuis la page du cours. L'achat ouvre le cours et donne le livre " +
+        "associé. Seuls les codes promo valables sur tout le site s'appliquent.",
+      enVente: "Mettre le cours en vente",
+      xof: "Prix en FCFA",
+      eur: "Prix en euros",
+      cad: "Prix en dollars canadiens",
+      aideDevise: "Laissez vide pour ne pas proposer cette devise.",
+      livre: "Livre associé",
+      aucunLivre: "Aucun livre",
+      enregistrer: "Enregistrer",
+      enregistre: "Réglages enregistrés.",
+      maj: "Dernière modification : {date}",
+    },
+
+    erreursAdmin: {
+      invalid_price: "Prix invalide : saisissez un montant positif (2 décimales au plus).",
+      price_required: "Saisissez au moins un prix pour mettre le cours en vente.",
+      book_not_found: "Livre introuvable.",
+      invalid_name: "Le nom est obligatoire (120 caractères au plus).",
+      invalid_country: "Le pays s'écrit avec son code à 2 lettres (ex. CI, SN, CA).",
+      invalid_dates: "Dates invalides : la fin doit suivre le début.",
+      invalid_note: "La note est trop longue.",
+      cohort_not_found: "Cohorte introuvable. Rechargez la page.",
+      no_emails: "Aucun courriel reconnu dans la liste.",
+      too_many_emails: "200 courriels au plus par envoi.",
+      no_book: "Aucun livre n'est associé au cours : choisissez-le dans « Prix et vente ».",
+      access_not_found: "Accès introuvable. Rechargez la page.",
+      generique: "L'opération a échoué. Réessayez.",
+    },
   },
 };
 
