@@ -7,8 +7,10 @@
  *               Christensen, pourquoi les leaders ne réagissent pas, les réponses
  *               possibles, la menace et la réponse d'Infosystem. Sources : livre, module 8
  *               (§ 8.6) ; Christensen, 1997. Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (permis de taxi et projet de loi 17, taxis compteurs d'Abidjan).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -21,6 +23,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -100,6 +103,51 @@ export const M10_L04: ContenuLecon = [
       "l'offre des leaders pour leurs clients actuels est une innovation de continuité. " +
       "La rupture se reconnaît à son point de départ : moins bien, mais plus simple et " +
       "moins cher, pour des clients négligés.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Le taxi est un cas d'école : un métier installé, des permis qui valaient cher, " +
+      "et des applications de réservation qui changent les règles. Voici la même " +
+      "rupture vue à Montréal et à Abidjan. La source est indiquée sous chaque " +
+      "exemple.",
+  ),
+  notion(
+    "Québec : le permis de taxi perd sa valeur",
+    p(
+      "Selon une note de l'IRIS, l'ensemble des permis de taxi du Québec valait entre " +
+        "1,3 et 1,5 milliard de dollars en 2014, l'année où Uber est arrivé. Les " +
+        "titulaires avaient investi dans un actif protégé par la rareté ; l'application " +
+        "a contourné cette rareté. En octobre 2019, l'Assemblée nationale a adopté le " +
+        "projet de loi 17, qui a mis fin au régime des permis. Le gouvernement a " +
+        "annoncé une aide totale de 814 millions de dollars aux propriétaires et à " +
+        "l'industrie, une somme que bien des chauffeurs ont jugée insuffisante. Sources " +
+        ": [Gouvernement du Québec, adoption du projet de loi 17]" +
+        "(https://www.quebec.ca/nouvelles/actualites/details/modernisation-de-" +
+        "lindustrie-du-taxi-le-ministre-francois-bonnardel-souligne-ladoption-du-" +
+        "projet-de-loi-no-17) ; [IRIS, la réforme du taxi]" +
+        "(https://iris-recherche.qc.ca/wp-content/uploads/2021/03/FicheCAQ-6-" +
+        "taxis_web.pdf).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : les taxis compteurs face à Yango et Uber",
+    p(
+      "À Abidjan, les taxis compteurs ont fait grève début novembre 2021 contre ce " +
+        "qu'ils appelaient la concurrence déloyale de Yango et d'Uber : les chauffeurs " +
+        "de VTC ne payaient pas les mêmes taxes qu'eux. Pendant les deux jours d'arrêt, " +
+        "selon la presse, les applications ont été les grandes gagnantes et ont même " +
+        "augmenté leurs tarifs. Les VTC invoquaient un vide juridique, et le ministère " +
+        "des Transports a annoncé un examen des taxes et charges des taxis. La rupture " +
+        "a forcé le leader, et l'État, à revoir les règles du jeu. Sources : [Koaci, " +
+        "Yango, Uber et la SOTRA grands gagnants de la grève]" +
+        "(https://www.koaci.com/article/2021/11/04/cote-divoire/societe/cote-divoire-" +
+        "greve-des-taxis-compteurs-reprise-progressive-yango-uber-et-sotra-grands-" +
+        "gagnants_155156.html) ; [Koaci, les VTC se défendent]" +
+        "(https://www.koaci.com/article/2021/11/10/cote-divoire/societe/cote-divoire-" +
+        "indexees-par-les-taxis-compteurs-les-vtc-se-defendent-en-brandissant-le-vide-" +
+        "juridique-ce-qui-est-prevu-par-le-ministere-des-transports_155320.html).",
+    ),
   ),
 
   titre("La menace qui guette Infosystem"),

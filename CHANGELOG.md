@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.39.16] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 10.4)
+### Ajouté
+- « Le dilemme de l'innovateur et les ruptures » : exemples sourcés, la valeur des permis
+  de taxi et le projet de loi 17 au Québec, la grève des taxis compteurs d'Abidjan face
+  à Yango et Uber.
+
 ## [v0.39.15] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 10.3)
 ### Ajouté
 - « Pionnier ou suiveur ? » : exemples sourcés, BIXI (le pionnier qui a payé le
