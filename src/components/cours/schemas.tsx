@@ -6,7 +6,7 @@
  *               (currentColor, --encre, --ocre, --line), donc lisibles en clair et en
  *               sombre. Chaque schéma est décrit par la légende du bloc (figcaption).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts (SchemaId)
  * =============================================================
@@ -719,6 +719,171 @@ function CapacitesDynamiques() {
   );
 }
 
+/** La SWOT : interne ou externe, aide ou nuit. */
+function Swot() {
+  const cases = [
+    { lignes: ["Forces", "ce que l'on fait bien"], ton: "encre" as const },
+    { lignes: ["Faiblesses", "ce qui nous limite"], ton: "ocre" as const },
+    { lignes: ["Opportunités", "ce qui peut aider"], ton: "encre" as const },
+    { lignes: ["Menaces", "ce qui peut nuire"], ton: "ocre" as const },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={300}>
+      <Libelle x={226} y={20} texte="Aide à atteindre les objectifs" />
+      <Libelle x={498} y={20} texte="Nuit aux objectifs" />
+      {cases.map((c, i) => (
+        <Boite
+          key={c.lignes[0]}
+          x={95 + (i % 2) * 272}
+          y={40 + Math.floor(i / 2) * 124}
+          l={262}
+          h={114}
+          lignes={c.lignes}
+          ton={c.ton}
+        />
+      ))}
+      <Libelle x={34} y={97} texte="Interne" rotation={-90} />
+      <Libelle x={56} y={97} texte="on agit" rotation={-90} />
+      <Libelle x={34} y={221} texte="Externe" rotation={-90} />
+      <Libelle x={56} y={221} texte="on subit" rotation={-90} />
+    </Cadre>
+  );
+}
+
+/** La TOWS : croiser l'interne et l'externe pour faire naître des options. */
+function Tows() {
+  const cellules = [
+    { lignes: ["SO : attaquer", "forces × opportunités"], ton: "encre" as const },
+    { lignes: ["WO : se renforcer", "corriger pour saisir"], ton: "neutre" as const },
+    { lignes: ["ST : défendre", "forces contre menaces"], ton: "neutre" as const },
+    { lignes: ["WT : se protéger", "limiter l'exposition"], ton: "ocre" as const },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={320}>
+      <Boite x={190} y={10} l={215} h={56} lignes={["Forces (S)"]} />
+      <Boite x={415} y={10} l={215} h={56} lignes={["Faiblesses (W)"]} />
+      <Boite x={10} y={76} l={170} h={110} lignes={["Opportunités (O)"]} />
+      <Boite x={10} y={196} l={170} h={110} lignes={["Menaces (T)"]} />
+      {cellules.map((c, i) => (
+        <Boite
+          key={c.lignes[0]}
+          x={190 + (i % 2) * 225}
+          y={76 + Math.floor(i / 2) * 120}
+          l={215}
+          h={110}
+          lignes={c.lignes}
+          ton={c.ton}
+        />
+      ))}
+    </Cadre>
+  );
+}
+
+/** La matrice pouvoir-intérêt, avec les parties prenantes d'Infosystem. */
+function PouvoirInteret() {
+  return (
+    <Grille2x2
+      cases={[
+        ["Garder satisfaits", "éditeurs, banques, État"],
+        ["Gérer de près", "seniors, jeunes, grands clients"],
+        ["Surveiller", "filles de Justin"],
+        ["Tenir informés", "petits clients, cégeps"],
+      ]}
+      tons={["ocre", "encre", "neutre", "neutre"]}
+      axeVertical={["Pouvoir", "faible", "fort"]}
+      axeHorizontal={["Intérêt", "faible", "fort"]}
+    />
+  );
+}
+
+/** La dérive stratégique : l'environnement change en continu, la stratégie par marches. */
+function DeriveStrategique() {
+  const phases = [
+    ["Petites touches", "tout va bien"],
+    ["Dérive", "l'écart grandit"],
+    ["Flottement", "on hésite"],
+    ["Transformation", "ou disparition"],
+  ];
+  return (
+    <Cadre largeur={640} hauteur={290}>
+      <Fleche x1={40} y1={200} x2={40} y2={12} />
+      <Fleche x1={40} y1={200} x2={632} y2={200} />
+      <Libelle x={22} y={105} texte="Changement" rotation={-90} />
+      <Libelle x={628} y={186} texte="Temps" ancre="end" />
+      {[188, 336, 484].map((x) => (
+        <line
+          key={x}
+          x1={x}
+          y1={20}
+          x2={x}
+          y2={200}
+          stroke="var(--line)"
+          strokeDasharray="4 4"
+        />
+      ))}
+      <path
+        d="M45,190 C110,186 150,180 188,175 C260,165 300,155 336,140 C400,115 440,105 484,85
+           C540,62 580,45 620,25"
+        fill="none"
+        stroke="var(--encre)"
+        strokeWidth={3}
+      />
+      <path
+        d="M45,190 H90 V186 H140 V180 H188 V176 H236 V172 H286 V168 H336 V165 H380 V162
+           H430 V164 H484 V160 H505 V150 H525 V162 H545 V40 H620"
+        fill="none"
+        stroke="var(--ocre)"
+        strokeWidth={3}
+      />
+      <Libelle x={470} y={60} texte="Environnement" ancre="end" />
+      <Libelle x={400} y={182} texte="Stratégie" />
+      {phases.map(([nom, detail], i) => (
+        <Boite
+          key={nom}
+          x={44 + i * 148}
+          y={214}
+          l={140}
+          h={60}
+          lignes={[nom, detail]}
+          ton={i % 2 === 0 ? "ocre" : "neutre"}
+        />
+      ))}
+    </Cadre>
+  );
+}
+
+/** Vision, mission, valeurs, objectifs : quatre énoncés, du plus large au plus précis. */
+function QuatreEnonces() {
+  const enonces = [
+    { lignes: ["Vision", "où aller ?"], horizon: "5 à 10 ans", ton: "encre" as const },
+    { lignes: ["Mission", "pourquoi ?"], horizon: "durable", ton: "encre" as const },
+    {
+      lignes: ["Valeurs", "comment se", "comporter ?"],
+      horizon: "durables",
+      ton: "ocre" as const,
+    },
+    {
+      lignes: ["Objectifs", "comment", "mesurer ?"],
+      horizon: "1 à 3 ans",
+      ton: "ocre" as const,
+    },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={170}>
+      {enonces.map((e, i) => (
+        <g key={e.lignes[0]}>
+          <Boite x={10 + i * 158} y={10} l={140} h={90} lignes={e.lignes} ton={e.ton} />
+          <Libelle x={80 + i * 158} y={118} texte={e.horizon} />
+        </g>
+      ))}
+      {[0, 1, 2].map((i) => (
+        <Fleche key={i} x1={152 + i * 158} y1={55} x2={166 + i * 158} y2={55} />
+      ))}
+      <Libelle x={320} y={155} texte="Du cap le plus large au résultat le plus précis" />
+    </Cadre>
+  );
+}
+
 /** Correspondance identifiant → schéma. */
 const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   "choisir-renoncer": ChoisirRenoncer,
@@ -738,6 +903,11 @@ const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   "chaine-services": ChaineServices,
   vrio: Vrio,
   "capacites-dynamiques": CapacitesDynamiques,
+  swot: Swot,
+  tows: Tows,
+  "pouvoir-interet": PouvoirInteret,
+  "derive-strategique": DeriveStrategique,
+  "quatre-enonces": QuatreEnonces,
 };
 
 /** Schéma du cours d'après son identifiant. */

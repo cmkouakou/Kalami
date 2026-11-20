@@ -91,6 +91,11 @@ export const SCHEMA_IDS = [
   "chaine-services",
   "vrio",
   "capacites-dynamiques",
+  "swot",
+  "tows",
+  "pouvoir-interet",
+  "derive-strategique",
+  "quatre-enonces",
 ] as const;
 
 export type SchemaId = (typeof SCHEMA_IDS)[number];

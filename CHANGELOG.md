@@ -1,5 +1,22 @@
 # Journal des modifications
 
+## [v0.32.0] - 2026-11-20 — Cours de stratégie, sprint 5 (modules 5, 6 et 7)
+### Ajouté
+- Module 5 « La SWOT et la TOWS » complet : leçons 5.1 (bien remplir une SWOT, encadré
+  Ajinomoto « Une SWOT sans fondations »), 5.2 (de la SWOT à l'action : la matrice TOWS),
+  5.3 (formuler et prioriser les enjeux stratégiques).
+- Module 6 « Parties prenantes, culture et responsabilité » complet : leçons 6.1 (la
+  matrice pouvoir-intérêt, encadré « Les oubliés de la salle de crise »), 6.2 (le plan
+  d'engagement), 6.3 (gouvernance et RSE), 6.4 (culture organisationnelle et dérive
+  stratégique).
+- Module 7 « Vision, mission, valeurs, objectifs » complet : leçons 7.1 (l'intention
+  stratégique), 7.2 (vision et mission, encadré « Une mission trop généreuse » sur BRVM
+  Analyser), 7.3 (valeurs et objectifs SMART, encadré Hydro-Québec).
+- Cinq schémas SVG : SWOT, TOWS, matrice pouvoir-intérêt, dérive stratégique, quatre
+  énoncés.
+- 40 exercices originaux (QCM, vrai-faux, classement, réponse ouverte), avec exemples
+  ouest-africains.
+
 ## [v0.31.0] - 2026-11-20 — Cours de stratégie, sprint 4 (modules 3 et 4)
 ### Ajouté
 - Module 3 « L'industrie et la concurrence » complet : leçons 3.1 (les cinq forces et les
