@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.34.0] - 2026-11-20 — Cours de stratégie, sprint 6 (modules 8 et 9)
+### Ajouté
+- Module 8 « La stratégie concurrentielle » complet : leçons 8.1 (les domaines d'activité
+  stratégiques), 8.2 (les stratégies génériques de Porter), 8.3 (une différenciation
+  durable, encadré Ajinomoto « Une différence que le client ne voit pas »), 8.4 (l'horloge
+  stratégique), 8.5 (le modèle d'affaires et le forfait mensuel par poste d'Infosystem).
+- Module 9 « La stratégie corporative » complet : leçons 9.1 (la matrice d'Ansoff),
+  9.2 (diversification liée et non liée, trois tests de Porter), 9.3 (intégration verticale
+  et horizontale, encadré « Conditionner sur place »), 9.4 (la matrice BCG), 9.5 (croître à
+  l'international, encadré « Une région plutôt qu'un pays »).
+- Sept schémas SVG : stratégies génériques, horloge stratégique, canevas du modèle
+  d'affaires, Ansoff appliquée à Infosystem, filière, BCG, global-local.
+- 40 exercices originaux (QCM, vrai-faux, classement, réponse ouverte), avec exemples
+  ouest-africains ; chaque leçon renvoie à l'étape 7 de Kalami Stratégie.
+
 ## [v0.33.0] - 2026-11-20 — Cours de stratégie, sprint 5b (calendrier de diffusion)
 ### Ajouté
 - Calendrier de diffusion par cohorte : une date d'ouverture par module, et au besoin

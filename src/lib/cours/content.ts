@@ -96,6 +96,13 @@ export const SCHEMA_IDS = [
   "pouvoir-interet",
   "derive-strategique",
   "quatre-enonces",
+  "strategies-generiques",
+  "horloge-strategique",
+  "canevas-modele",
+  "ansoff",
+  "filiere",
+  "bcg",
+  "global-local",
 ] as const;
 
 export type SchemaId = (typeof SCHEMA_IDS)[number];

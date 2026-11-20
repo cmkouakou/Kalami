@@ -97,7 +97,7 @@ schémas. Les textes extraits des sources (`sources-extraites/`) ne sont jamais 
 | S4 | Modules 3 et 4 | oui |
 | S5 | Modules 5, 6 et 7 | oui |
 | S5b | Calendrier de diffusion par cohorte (voir ci-dessous) — fait, v0.33.0 | non |
-| S6 | Modules 8 et 9 | oui |
+| S6 | Modules 8 et 9 — fait, v0.34.0 | oui |
 | S7 | Modules 10, 11 et 12 | oui |
 | S8 | Module 13 : cas, examen final, note finale, diplôme PDF ; page de vente, référencement | non |
 

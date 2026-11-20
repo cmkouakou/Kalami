@@ -884,6 +884,182 @@ function QuatreEnonces() {
   );
 }
 
+/** Les stratégies génériques de Porter, avec la position visée par Infosystem. */
+function StrategiesGeneriques() {
+  return (
+    <Grille2x2
+      cases={[
+        ["Domination", "par les coûts"],
+        ["Différenciation"],
+        ["Focalisation", "par les coûts"],
+        ["Focalisation par la", "différenciation", "(Infosystem)"],
+      ]}
+      tons={["neutre", "neutre", "neutre", "encre"]}
+      axeVertical={["Cible", "étroite", "large"]}
+      axeHorizontal={["Avantage", "coûts plus bas", "valeur unique"]}
+    />
+  );
+}
+
+/** L'horloge stratégique : positions autour d'une offre de référence. */
+function HorlogeStrategique() {
+  const positions = [
+    { x: 80, y: 40, lignes: ["Hybride", "plus de valeur, prix bas"] },
+    { x: 265, y: 14, lignes: ["Différenciation", "plus de valeur"] },
+    { x: 450, y: 40, lignes: ["Sophistication", "valeur et prix élevés"] },
+    { x: 80, y: 140, lignes: ["Prix", "même valeur, moins cher"] },
+    { x: 80, y: 240, lignes: ["Épuration", "l'essentiel, très bas prix"] },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={340}>
+      <Fleche x1={60} y1={310} x2={60} y2={10} />
+      <Fleche x1={60} y1={310} x2={632} y2={310} />
+      <Libelle x={30} y={160} texte="Valeur perçue" rotation={-90} />
+      <Libelle x={628} y={326} texte="Prix" ancre="end" />
+      <line x1={340} y1={20} x2={340} y2={300} stroke="var(--line)" strokeDasharray="4 4" />
+      <line x1={70} y1={165} x2={620} y2={165} stroke="var(--line)" strokeDasharray="4 4" />
+      {positions.map((pos) => (
+        <Boite
+          key={pos.lignes[0]}
+          x={pos.x}
+          y={pos.y}
+          l={170}
+          h={52}
+          lignes={pos.lignes}
+          ton={pos.lignes[0] === "Différenciation" ? "encre" : "neutre"}
+        />
+      ))}
+      <Boite x={265} y={140} l={150} h={52} lignes={["Offre de", "référence"]} ton="ocre" />
+      <Boite
+        x={450}
+        y={240}
+        l={170}
+        h={52}
+        lignes={["Zone non viable", "moins de valeur, plus cher"]}
+        ton="barre"
+      />
+    </Cadre>
+  );
+}
+
+/** Le modèle d'affaires en neuf blocs (canevas d'Osterwalder et Pigneur). */
+function CanevasModele() {
+  const colonne = (i: number) => 1 + i * 130;
+  return (
+    <Cadre largeur={640} hauteur={300}>
+      <Boite x={colonne(0)} y={10} l={118} h={200} lignes={["Partenaires", "clés"]} />
+      <Boite x={colonne(1)} y={10} l={118} h={95} lignes={["Activités", "clés"]} />
+      <Boite x={colonne(1)} y={115} l={118} h={95} lignes={["Ressources", "clés"]} />
+      <Boite
+        x={colonne(2)}
+        y={10}
+        l={118}
+        h={200}
+        lignes={["Proposition", "de valeur"]}
+        ton="encre"
+      />
+      <Boite x={colonne(3)} y={10} l={118} h={95} lignes={["Relation", "client"]} />
+      <Boite x={colonne(3)} y={115} l={118} h={95} lignes={["Canaux"]} />
+      <Boite x={colonne(4)} y={10} l={118} h={200} lignes={["Segments", "de clients"]} />
+      <Boite x={1} y={220} l={314} h={70} lignes={["Structure de coûts"]} ton="ocre" />
+      <Boite x={325} y={220} l={314} h={70} lignes={["Sources de revenus"]} ton="ocre" />
+    </Cadre>
+  );
+}
+
+/** La matrice d'Ansoff appliquée à Infosystem. */
+function Ansoff() {
+  return (
+    <Grille2x2
+      cases={[
+        ["Développement de marché", "autres régions : plus tard"],
+        ["Diversification", "hors du métier : non"],
+        ["Pénétration de marché", "plus de PME : ensuite"],
+        ["Développement de produit", "sécurité, conformité, IA :", "en premier"],
+      ]}
+      tons={["neutre", "neutre", "ocre", "encre"]}
+      axeVertical={["Marchés", "actuels", "nouveaux"]}
+      axeHorizontal={["Produits", "actuels", "nouveaux"]}
+    />
+  );
+}
+
+/** La filière d'Infosystem : intégration vers l'amont, vers l'aval, horizontale. */
+function Filiere() {
+  const maillons = [
+    ["Éditeurs et", "fabricants"],
+    ["Distributeurs", "de matériel"],
+    ["Infosystem", "services gérés"],
+    ["PME", "clientes"],
+  ];
+  return (
+    <Cadre largeur={640} hauteur={250}>
+      {maillons.map((lignes, i) => (
+        <Boite
+          key={lignes[0]}
+          x={10 + i * 160}
+          y={20}
+          l={140}
+          h={60}
+          lignes={lignes}
+          ton={i === 2 ? "encre" : "neutre"}
+        />
+      ))}
+      {[0, 1, 2].map((i) => (
+        <Fleche key={i} x1={152 + i * 160} y1={50} x2={168 + i * 160} y2={50} />
+      ))}
+      <Libelle x={170} y={100} texte="← Vers l'amont : remplacer un fournisseur" />
+      <Libelle x={530} y={100} texte="Vers l'aval : vers le client →" />
+      <Fleche x1={400} y1={84} x2={400} y2={150} />
+      <Boite
+        x={330}
+        y={154}
+        l={140}
+        h={60}
+        lignes={["Autre firme", "de services gérés"]}
+        ton="ocre"
+      />
+      <Libelle x={180} y={184} texte="Horizontale : même métier," />
+      <Libelle x={180} y={200} texte="même maillon de la filière" />
+      <Libelle x={320} y={236} texte="La filière va de la matière première au client final" />
+    </Cadre>
+  );
+}
+
+/** La matrice BCG : croissance du marché et part de marché relative. */
+function Bcg() {
+  return (
+    <Grille2x2
+      cases={[
+        ["Dilemmes", "investir ou sortir"],
+        ["Vedettes", "investir pour tenir"],
+        ["Poids morts", "récolter ou céder"],
+        ["Vaches à lait", "financer les autres"],
+      ]}
+      tons={["neutre", "encre", "neutre", "ocre"]}
+      axeVertical={["Croissance du marché", "faible", "forte"]}
+      axeHorizontal={["Part de marché relative", "faible", "forte"]}
+    />
+  );
+}
+
+/** Le dilemme global-local : quatre façons d'aller à l'international. */
+function GlobalLocal() {
+  return (
+    <Grille2x2
+      cases={[
+        ["Globale", "même offre partout"],
+        ["Transnationale", "adapter et partager"],
+        ["Exportation", "tout part du siège"],
+        ["Multidomestique", "adapter pays par pays"],
+      ]}
+      tons={["ocre", "encre", "neutre", "neutre"]}
+      axeVertical={["Intégration mondiale", "faible", "forte"]}
+      axeHorizontal={["Adaptation locale", "faible", "forte"]}
+    />
+  );
+}
+
 /** Correspondance identifiant → schéma. */
 const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   "choisir-renoncer": ChoisirRenoncer,
@@ -908,6 +1084,13 @@ const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   "pouvoir-interet": PouvoirInteret,
   "derive-strategique": DeriveStrategique,
   "quatre-enonces": QuatreEnonces,
+  "strategies-generiques": StrategiesGeneriques,
+  "horloge-strategique": HorlogeStrategique,
+  "canevas-modele": CanevasModele,
+  ansoff: Ansoff,
+  filiere: Filiere,
+  bcg: Bcg,
+  "global-local": GlobalLocal,
 };
 
 /** Schéma du cours d'après son identifiant. */
