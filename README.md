@@ -34,7 +34,7 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
   corrigé côté serveur (v0.37.0) ; examen final, note finale pondérée, diplôme PDF avec
   mention et page publique de vérification, admin des diplômes (v0.38.0) ; citer et
   partager un passage (v0.38.1) ; page « Mes annotations » (v0.38.2) ; page de vente,
-  leçon 1.1 offerte et référencement (v0.39.0)
+  leçon 1.1 offerte et référencement (v0.39.0) ; leçon 1.1 lisible sans compte (v0.39.1)
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)

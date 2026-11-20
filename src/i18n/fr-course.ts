@@ -7,8 +7,9 @@
  *               messages d'erreur. Lus via getCourseDictionary() (course.ts).
  *               v0.37.0 : quiz de module. v0.38.0 : examen final et diplôme.
  *               v0.39.0 : page de vente, leçon offerte en aperçu, référencement.
+ *               v0.39.1 : leçon offerte lisible sans compte.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-11-20
  * =============================================================
  */
@@ -113,7 +114,7 @@ const courseFr = {
       "Par carte bancaire (accès immédiat) ou par Mobile Money en FCFA (validé sous 24 h).",
     bientot:
       "L'inscription en ligne ouvrira prochainement. En attendant, la leçon 1.1 est offerte.",
-    connexion: "Connectez-vous ou créez un compte gratuit pour lire la leçon offerte.",
+    connexion: "Créer un compte Kalami est gratuit ; il sert à acheter et à suivre le cours.",
     auteurTitre: "L'auteur",
     auteur:
       "Claude Marcel Kouakou, bachelier en gestion (HEC Montréal), auteur de « La " +
@@ -149,8 +150,8 @@ const courseFr = {
       {
         question: "Puis-je essayer avant de m'inscrire ?",
         reponse:
-          "Oui : la première leçon est offerte à tout membre connecté. Créer un compte " +
-          "Kalami est gratuit.",
+          "Oui : la première leçon est offerte et se lit sans compte. Pour surligner ou " +
+          "annoter, créez un compte Kalami, c'est gratuit.",
       },
     ],
   },

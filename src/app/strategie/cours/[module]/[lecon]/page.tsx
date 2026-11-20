@@ -12,8 +12,9 @@
  *               v0.38.2 : lien vers « Mes annotations » dans l'en-tête.
  *               v0.39.0 : leçon offerte (1.1) lisible par un membre non inscrit, sans
  *               exercices ni progression, avec un lien vers l'offre.
+ *               v0.39.1 : leçon offerte lisible sans compte (proposée à Google).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.5
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/*, cours.css
  * =============================================================
@@ -35,8 +36,10 @@ import {
   PANEL_SAND,
 } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
+import { getCurrentUser } from "@/lib/auth/dal";
 import { getCourseDictionary } from "@/i18n/course";
 import {
+  aAccesAuCours,
   annotationsLecon,
   diffusionApprenant,
   exigerConnexionCours,
@@ -72,7 +75,17 @@ export async function generateMetadata({
 }: PageProps<"/strategie/cours/[module]/[lecon]">): Promise<Metadata> {
   const { module: moduleSlug, lecon: leconSlug } = await params;
   const trouve = trouverLecon(moduleSlug, leconSlug);
-  return { title: trouve ? trouve.lecon.titre : t.title };
+  if (!trouve) return { title: t.title };
+  const adresse = adresseLecon(trouve.module, trouve.lecon);
+  if (trouve.lecon.id !== LECON_OFFERTE) return { title: trouve.lecon.titre };
+  // Leçon offerte : publique, donc décrite pour Google et les partages
+  const description = `${t.lecon.offerte} — ${t.title}. ${t.vente.accroche}`;
+  return {
+    title: trouve.lecon.titre,
+    description,
+    alternates: { canonical: adresse },
+    openGraph: { title: trouve.lecon.titre, description, url: adresse, type: "article" },
+  };
 }
 
 // ==================== NAVIGATION ====================
@@ -104,15 +117,18 @@ function LienVoisine({
 
 // ==================== LEÇON OFFERTE ====================
 
-/** Leçon offerte lue par un membre non inscrit : texte seul, exercices fermés. */
+/** Leçon offerte lue sans inscription (visiteur ou membre) : texte seul, exercices fermés. */
 function LeconOfferte({
   leconId,
   adresse,
   contenu,
+  connecte,
 }: {
   leconId: string;
   adresse: string;
   contenu: NonNullable<ReturnType<typeof contenuLecon>>;
+  /** Faux pour un visiteur : surligner propose alors de se connecter. */
+  connecte: boolean;
 }) {
   const appel = (
     <aside className={`${PANEL_SAND} flex flex-col gap-3 p-5`}>
@@ -127,7 +143,12 @@ function LeconOfferte({
   return (
     <>
       {appel}
-      <LiseuseLecon leconId={leconId} adresse={adresse} connecte surlignages={[]}>
+      <LiseuseLecon
+        leconId={leconId}
+        adresse={adresse}
+        connecte={connecte}
+        surlignages={[]}
+      >
         <BlocsLecon
           leconId={leconId}
           contenu={contenu}
@@ -153,16 +174,28 @@ async function ContenuPrive({
   /** Quiz du module, proposé seulement sur sa dernière leçon. */
   quiz: { adresse: string; numero: number } | null;
 }) {
-  const { user, acces } = await exigerConnexionCours(adresse);
-  const offerte = !acces && leconId === LECON_OFFERTE;
-  if (!acces && !offerte) return <SansAcces email={user.email} />;
-
   const contenu = contenuLecon(leconId);
+
+  // Leçon offerte : lisible sans compte ; les inscrits gardent la version complète
+  if (leconId === LECON_OFFERTE) {
+    const visiteur = await getCurrentUser();
+    if (!visiteur || !(await aAccesAuCours())) {
+      if (!contenu) return <p className={`${PANEL_SAND} p-6`}>{t.lecon.bientot}</p>;
+      return (
+        <LeconOfferte
+          leconId={leconId}
+          adresse={adresse}
+          contenu={contenu}
+          connecte={Boolean(visiteur)}
+        />
+      );
+    }
+  }
+
+  const { user, acces } = await exigerConnexionCours(adresse);
+  if (!acces) return <SansAcces email={user.email} />;
   if (!contenu) {
     return <p className={`${PANEL_SAND} p-6`}>{t.lecon.bientot}</p>;
-  }
-  if (offerte) {
-    return <LeconOfferte leconId={leconId} adresse={adresse} contenu={contenu} />;
   }
 
   // Diffusion programmée : leçon fermée (rien n'est servi) ou lue en avance

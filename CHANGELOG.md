@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.39.1] - 2026-11-20 — Cours : leçon 1.1 lisible sans compte
+### Modifié
+- La leçon offerte (1.1) se lit sans compte : texte complet servi aux visiteurs et à
+  Google, exercices fermés ; surligner ou annoter propose de se connecter.
+- Leçon 1.1 dans le plan du site, avec description, adresse canonique et Open Graph.
+- Textes de la page de vente (connexion, FAQ) ajustés en conséquence.
+
 ## [v0.39.0] - 2026-11-20 — Cours : page de vente et référencement (S8c)
 ### Ajouté
 - `/strategie/cours` devient la page de vente pour les visiteurs et les membres non

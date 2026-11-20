@@ -7,8 +7,9 @@
  *               app/robots.ts.
  *               v1.4 (v0.39.0) : page de vente du cours dans le plan du site ; espaces
  *               personnels du cours (annotations, examen, diplômes) fermés aux robots.
+ *               v1.5 (v0.39.1) : leçon offerte du cours dans le plan du site.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.5
  *  Date       : 2026-11-20
  *  Dépendances: lib/catalog/types.ts, lib/legal/kinds.ts
  * =============================================================
@@ -17,6 +18,7 @@
 import type { MetadataRoute } from "next";
 
 import type { CategorySummary, SitemapBook } from "@/lib/catalog/types";
+import { cheminLeconOffert } from "@/lib/cours/modules";
 import { LEGAL_KINDS, legalPath } from "@/lib/legal/kinds";
 
 // ==================== CONSTANTES ====================
@@ -59,7 +61,8 @@ export type SitemapSource = {
 // ==================== FONCTIONS ====================
 
 /**
- * Entrées du plan du site : accueil, Kalami Stratégie, son cours, page Découvrir,
+ * Entrées du plan du site : accueil, Kalami Stratégie, son cours et sa leçon offerte,
+ * page Découvrir,
  * catégories ayant au moins un livre
  * publié (une catégorie vide n'est pas proposée à Google), livres publiés,
  * auteurs ayant au moins un livre publié, textes légaux.
@@ -72,6 +75,7 @@ export function buildSitemap(appUrl: string, source: SitemapSource): MetadataRou
     { url: appUrl, changeFrequency: "daily", priority: 1 },
     { url: `${appUrl}/strategie`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${appUrl}/strategie/cours`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${appUrl}${cheminLeconOffert()}`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${appUrl}/decouvrir`, changeFrequency: "monthly", priority: 0.7 },
   ];
   for (const category of source.categories) {

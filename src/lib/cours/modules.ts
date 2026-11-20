@@ -7,8 +7,9 @@
  *               (progression, temps, annotations). Une leçon sans contenu rédigé est
  *               affichée « bientôt » : le programme complet reste visible.
  *               v1.1 (v0.39.0) : leçon offerte en aperçu et durée totale du cours.
+ *               v1.2 (v0.39.1) : adresse publique de la leçon offerte.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
  *  Dépendances: lib/strategy/steps.ts
  * =============================================================
@@ -269,4 +270,13 @@ export function voisines(id: string): {
   const i = LECONS.findIndex((l) => l.id === id);
   if (i === -1) return { avant: null, apres: null };
   return { avant: LECONS[i - 1] ?? null, apres: LECONS[i + 1] ?? null };
+}
+
+/**
+ * Adresse de la leçon offerte (publique, proposée à Google).
+ * @returns Chemin « /strategie/cours/m1/l1 », ou l'accueil du cours si elle n'existe plus
+ */
+export function cheminLeconOffert(): string {
+  const trouve = leconParId(LECON_OFFERTE);
+  return trouve ? adresseLecon(trouve.module, trouve.lecon) : "/strategie/cours";
 }

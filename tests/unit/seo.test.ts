@@ -3,9 +3,9 @@
  * Projet     : Kalami
  * Description: Tests du référencement : plan du site, règles des robots et données
  *              structurées « Book » (JSON-LD). v1.4 : page de vente du cours, « Course »
- *              et « FAQPage ».
+ *              et « FAQPage » ; v1.5 : leçon offerte.
  * Auteur     : Claude Marcel
- * Version    : 1.4
+ * Version    : 1.5
  * Date       : 2026-11-20
  */
 
@@ -137,6 +137,7 @@ describe("cours de stratégie", () => {
   it("propose la page de vente à Google et ferme les espaces personnels", () => {
     const urls = buildSitemap(APP, { books: [], categories: [] }).map((e) => e.url);
     expect(urls).toContain(`${APP}/strategie/cours`);
+    expect(urls).toContain(`${APP}/strategie/cours/m1/l1`);
     expect(DISALLOWED_PATHS).toEqual(
       expect.arrayContaining(["/strategie/cours/annotations", "/strategie/cours/examen"]),
     );
