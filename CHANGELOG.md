@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.15] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 10.3)
+### Ajouté
+- « Pionnier ou suiveur ? » : exemples sourcés, BIXI (le pionnier qui a payé le
+  défrichage, puis PBSC vendue à Lyft) et Jumia Food (arrivé tôt, fermé en 2023).
+
 ## [v0.39.14] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 10.2)
 ### Ajouté
 - « La diffusion de l'innovation » : exemples sourcés, la voiture électrique au Québec

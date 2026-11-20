@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.39.14 (cours : liens des sources visibles ; exemples leçons 10.1, 10.2, 11.1 à 13.3) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.39.15 (cours : liens des sources visibles ; exemples leçons 10.1 à 10.3, 11.1 à 13.3) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -118,8 +118,8 @@ Version actuelle : v0.39.14 (cours : liens des sources visibles ; exemples leço
 | #112 | 2026-11-20 | v0.39.0 : cours, page de vente, leçon 1.1 offerte, référencement (S8c) | ~150 000 | ~0.90 $ |
 | #113 | 2026-11-20 | v0.39.1 : cours, leçon 1.1 lisible sans compte et proposée à Google | ~40 000 | ~0.24 $ |
 | #114 | 2026-11-20 | Recette du lancement du cours ; v0.39.2 : anecdote Cofomo-Nexio (leçon 11.2) | ~45 000 | ~0.27 $ |
-| #115 | 2026-11-20 | Anecdote titrée ; migration des diplômes appliquée ; v0.39.3 : exemples sourcés Québec et Côte d'Ivoire (leçon 11.3) ; v0.39.4 à v0.39.14 : idem leçons 10.1, 10.2, 11.1, 11.2, 12.1 à 13.3 et liens visibles | ~275 000 | ~1.65 $ |
-| **TOTAL** | | | **~24 090 000** (hors #71) | **~144.54 $** |
+| #115 | 2026-11-20 | Anecdote titrée ; migration des diplômes appliquée ; v0.39.3 : exemples sourcés Québec et Côte d'Ivoire (leçon 11.3) ; v0.39.4 à v0.39.15 : idem leçons 10.1 à 10.3, 11.1, 11.2, 12.1 à 13.3 et liens visibles | ~290 000 | ~1.74 $ |
+| **TOTAL** | | | **~24 105 000** (hors #71) | **~144.63 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

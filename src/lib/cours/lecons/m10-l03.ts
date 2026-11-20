@@ -8,8 +8,10 @@
  *               (suiveur technologique, pionnier local). Sources : livre, module 8
  *               (§ 8.6) ; Lieberman et Montgomery, 1988 ; Markides et Geroski, 2005.
  *               Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (BIXI et PBSC, Jumia Food).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -21,6 +23,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -110,6 +113,49 @@ export const M10_L03: ContenuLecon = [
     "Croire qu'il faut choisir une fois pour toutes. Une entreprise peut être pionnière " +
       "sur un marché local et suiveuse sur la technologie, ou pionnière sur un service et " +
       "suiveuse sur un autre.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Arriver le premier coûte cher et ne garantit rien. Voici deux entreprises " +
+      "arrivées tôt sur leur marché, au Québec et en Côte d'Ivoire, et ce que leur " +
+      "avance leur a vraiment rapporté. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Québec : BIXI, le pionnier qui a payé le défrichage",
+    p(
+      "Lancé à Montréal en mai 2009, BIXI a été présenté comme le premier grand " +
+        "système de vélos en libre-service d'Amérique du Nord. Le pionnier a porté " +
+        "tous les coûts d'apprentissage : malgré un prêt de 37 millions de dollars de " +
+        "la Ville, la société exploitante a demandé la protection contre la faillite en " +
+        "janvier 2014. Montréal a repris le service local et vendu la division " +
+        "internationale pour 4 millions de dollars. Celle-ci, devenue PBSC Urban " +
+        "Solutions, a été achetée en 2022 par Lyft pour 160 millions de dollars " +
+        "américains. Le premier entrant avait créé une vraie valeur ; d'autres l'ont " +
+        "récoltée. Sources : [MTL Times, la faillite de la société mère de BIXI]" +
+        "(https://mtltimes.ca/montreal/bixi-parent-company-files-for-bankruptcy-" +
+        "protection/) ; [WMC, Montréal reprend BIXI et vend l'international]" +
+        "(https://www.webmanagercenter.com/2014/02/20/146538/montreal-reprend-bixi-" +
+        "velos-en-libre-service-et-vend-l-international/) ; [Wikipédia, Lyft Urban " +
+        "Solutions](https://en.wikipedia.org/wiki/Lyft_Urban_Solutions).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : Jumia Food, arrivé tôt, reparti",
+    p(
+      "Jumia, fondée en 2012 à Lagos, est devenue en 2016 la première licorne du " +
+        "continent et s'est installée en Côte d'Ivoire. Son service de livraison de " +
+        "repas a été lancé dès 2013. Dix ans plus tard, en décembre 2023, " +
+        "Jumia l'a pourtant fermé dans sept pays, dont la Côte d'Ivoire, parce qu'il " +
+        "n'était pas rentable, pour se recentrer sur le commerce en ligne et le " +
+        "paiement. Être tôt sur un marché ne protège pas si le modèle ne gagne pas " +
+        "d'argent. Sources : [Jumia, communiqué sur la fin de la livraison de repas]" +
+        "(https://group.jumia.com/news/jumia-discontinues-food-delivery-across-seven-" +
+        "markets-shifts-focus-to-expanding-physical-goods-business) ; [We Are Tech " +
+        "Africa, fermeture de Jumia Food](https://www.wearetech.africa/fr/fils/" +
+        "actualites/tech/la-licorne-jumia-fermera-sa-branche-jumia-food-active-dans-" +
+        "7-pays-africains-d-ici-la-fin-de-ce-mois).",
+    ),
   ),
 
   titre("La position d'Infosystem"),
