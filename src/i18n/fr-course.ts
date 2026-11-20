@@ -5,9 +5,10 @@
  *  Description: Textes français du cours de stratégie : accueil, programme, page de
  *               leçon, encadrés, exercices, annotations, lecture à voix haute et
  *               messages d'erreur. Lus via getCourseDictionary() (course.ts).
+ *               v0.37.0 : quiz de module.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  * =============================================================
  */
 
@@ -81,6 +82,36 @@ const courseFr = {
       "s'ouvriront le {date}.",
     exerciceFerme: "Cet exercice s'ouvrira le {date}.",
     pasEncore: "Cette leçon n'est pas encore ouverte.",
+  },
+
+  // ==================== QUIZ DE MODULE (v0.37.0) ====================
+  quiz: {
+    titre: "Quiz du module {n}",
+    ligne: "Quiz du module",
+    intro:
+      "{n} questions. Le quiz est réussi à partir de {seuil} / 100. Les essais sont " +
+      "illimités : votre meilleure note compte.",
+    verrouille:
+      "Le quiz s'ouvrira quand toutes les leçons du module seront ouvertes.",
+    question: "Question {n}",
+    valider: "Valider le quiz",
+    envoi: "Correction…",
+    incomplet: "Répondez à toutes les questions avant de valider.",
+    score: "Votre note : {score} / 100",
+    reussi: "Quiz réussi. Le corrigé de chaque question s'affiche ci-dessous.",
+    echoue:
+      "Il faut {seuil} / 100 pour réussir. Relisez les leçons concernées, puis " +
+      "réessayez : le corrigé s'affichera une fois le quiz réussi.",
+    noteQuestion: "Question {n} : {score} / 100",
+    recommencer: "Recommencer le quiz",
+    voirCorrige: "Voir le corrigé",
+    masquerCorrige: "Masquer le corrigé",
+    meilleure: "Meilleure note : {score} / 100",
+    essais: "{n} essai(s)",
+    aFaire: "À faire",
+    reussiBadge: "Réussi",
+    passer: "Passer le quiz du module {n}",
+    erreur: "Le quiz n'a pas pu être enregistré. Réessayez.",
   },
 
   encadres: {
@@ -293,6 +324,8 @@ const courseFr = {
       moduleResume: "{terminees}/{total} · {duree}",
       etat: { terminee: "Terminée", enCours: "En cours", aFaire: "À faire" },
       note: "Exercice {n} : {score} / 100 ({essais} essai(s))",
+      quiz: "Quiz du module : {score} / 100 ({essais} essai(s))",
+      quizAucun: "Quiz du module : pas encore tenté",
       jours: "Temps par jour (90 derniers jours)",
       aucunJour: "Aucune activité enregistrée.",
     },

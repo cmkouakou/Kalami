@@ -7,10 +7,11 @@
  *               temps de formation), le lien « Reprendre » et l'état de chaque leçon.
  *               Le programme est public ; la partie personnelle est chargée à part.
  *               v0.33.0 : diffusion programmée (leçons à venir verrouillées, avec leur
- *               date ; prochaine leçon en lecture en avance).
+ *               date ; prochaine leçon en lecture en avance). v0.37.0 : ligne « Quiz du
+ *               module » sous chaque module (meilleure note, réussi ou à faire).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2 (v0.29.0 : achat du cours ; v0.33.0 : diffusion programmée)
- *  Date       : 2026-11-19
+ *  Version    : 1.3 (v0.29.0 : achat ; v0.33.0 : diffusion ; v0.37.0 : quiz)
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
  */
@@ -32,12 +33,18 @@ import {
   aAccesAuCours,
   diffusionApprenant,
   progressionApprenant,
+  resultatsQuizApprenant,
 } from "@/lib/cours/acces";
 import {
   dateLisible,
   type EtatDiffusion,
   type Fuseau,
 } from "@/lib/cours/calendrier";
+import {
+  estReussi,
+  quizOuvert,
+  type ResultatQuiz,
+} from "@/lib/cours/evaluation";
 import { estRedigee } from "@/lib/cours/lecons";
 import { LECONS, MODULES, adresseLecon, leconParId } from "@/lib/cours/modules";
 import {
@@ -84,13 +91,51 @@ function mentionDiffusion(
 
 // ==================== PROGRAMME ====================
 
+/** Ligne « Quiz du module » : lien si ouvert, meilleure note ou « à faire ». */
+function LigneQuiz({
+  mod,
+  resultat,
+  ouvert,
+}: {
+  mod: (typeof MODULES)[number];
+  resultat: ResultatQuiz | undefined;
+  ouvert: boolean;
+}) {
+  const libelle = interpolate(t.quiz.titre, { n: String(mod.numero) });
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-2 py-2">
+      {ouvert ? (
+        <Link
+          href={`/strategie/cours/${mod.slug}/quiz`}
+          className="font-semibold text-encre underline-offset-4 hover:underline"
+        >
+          {libelle}
+        </Link>
+      ) : (
+        <span className="text-ink-muted">{libelle}</span>
+      )}
+      <span className="flex items-center gap-2 text-small text-ink-muted">
+        {resultat && estReussi(resultat.meilleure) && (
+          <span className={BADGE}>{t.quiz.reussiBadge}</span>
+        )}
+        {resultat
+          ? interpolate(t.quiz.meilleure, { score: String(resultat.meilleure) })
+          : ouvert && t.quiz.aFaire}
+      </span>
+    </li>
+  );
+}
+
 /** Programme complet ; avec les états de l'apprenant quand ils sont connus. */
 function Programme({
   etats,
   diffusion,
+  quiz,
 }: {
   etats?: Map<string, Etat>;
   diffusion?: Diffusion;
+  /** Résultats aux quiz : présent seulement pour un apprenant qui a accès. */
+  quiz?: Map<string, ResultatQuiz>;
 }) {
   return (
     <ol className="flex flex-col gap-4">
@@ -136,6 +181,16 @@ function Programme({
                 </li>
               );
             })}
+            {quiz && (
+              <LigneQuiz
+                mod={m}
+                resultat={quiz.get(m.id)}
+                ouvert={quizOuvert(
+                  m.lecons.map((l) => l.id),
+                  diffusion?.etats ?? new Map(),
+                )}
+              />
+            )}
           </ol>
         </li>
       ))}
@@ -243,9 +298,10 @@ async function EspaceApprenant({
     );
   }
 
-  const [lignes, { calendrier, etats: etatsDiffusion }] = await Promise.all([
+  const [lignes, { calendrier, etats: etatsDiffusion }, quiz] = await Promise.all([
     progressionApprenant(),
     diffusionApprenant(),
+    resultatsQuizApprenant(),
   ]);
   const etats = new Map<string, Etat>(
     lignes.map((l) => [l.lesson_id, l.completed_at ? "terminee" : "enCours"]),
@@ -256,7 +312,7 @@ async function EspaceApprenant({
   return (
     <>
       <Progression lignes={lignes} diffusion={diffusion} />
-      <Programme etats={etats} diffusion={diffusion} />
+      <Programme etats={etats} diffusion={diffusion} quiz={quiz} />
     </>
   );
 }

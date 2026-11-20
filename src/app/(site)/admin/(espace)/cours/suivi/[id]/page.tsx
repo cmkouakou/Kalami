@@ -5,10 +5,10 @@
  *  Description: Fiche d'un apprenant (v0.29.0) : compte, cohorte et origine de l'accès,
  *               synthèse (achèvement, temps, moyenne), progression module par module
  *               avec l'état, le temps et les notes de chaque leçon, puis le temps de
- *               formation jour par jour (90 derniers jours).
+ *               formation jour par jour (90 derniers jours). v0.37.0 : note au quiz.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/admin-queries.ts, lib/cours/suivi.ts, lib/cours/notation.ts
  * =============================================================
  */
@@ -175,6 +175,14 @@ function BlocModule({ mod }: { mod: ModuleFiche }) {
               ))}
             </li>
           ))}
+          <li className="border-t border-line pt-2 text-small font-semibold">
+            {mod.quiz
+              ? interpolate(f.quiz, {
+                  score: NOMBRE.format(mod.quiz.meilleure),
+                  essais: String(mod.quiz.essais),
+                })
+              : f.quizAucun}
+          </li>
         </ul>
       </details>
     </li>

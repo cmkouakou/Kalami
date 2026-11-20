@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.37.0] - 2026-11-20 — Cours de stratégie, sprint 8b1 (quiz de module)
+### Ajouté
+- Un quiz de fin de module pour chacun des 13 modules : 8 questions chacun (104 au total),
+  rédigées pour le cours (QCM, vrai ou faux, classement), réussi à partir de 70 / 100.
+- Page `/strategie/cours/[module]/quiz` : ouverte quand toutes les leçons du module sont
+  ouvertes ; essais illimités, la meilleure note compte. En cas d'échec, seule la note de
+  chaque question s'affiche ; une fois le quiz réussi, le corrigé complet est consultable.
+- Correction côté serveur (`soumettreQuiz`) : le navigateur ne reçoit jamais les bonnes
+  réponses avant la réussite.
+- Accueil du cours : ligne « Quiz du module » sous chaque module (lien, meilleure note,
+  badge « Réussi »). Dernière leçon d'un module : bouton vers son quiz.
+- Admin, fiche apprenant : meilleure note et nombre d'essais au quiz de chaque module.
+- Tests unitaires du quiz (forme des 13 quiz, version publique sans réponses, correction,
+  ouverture, meilleures notes).
+
 ## [v0.36.0] - 2026-11-20 — Cours de stratégie, sprint 8a (module 13)
 ### Ajouté
 - Module 13 « Cas intégrateur » complet, le cours compte ses 52 leçons : 13.1 (le plan

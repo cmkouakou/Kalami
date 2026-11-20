@@ -6,9 +6,10 @@
  *               question ouverte. La réponse est corrigée par le serveur (actions.ts),
  *               qui renvoie la note et la justesse de chaque partie ; les explications
  *               s'affichent alors. Une question ouverte révèle son corrigé modèle.
+ *               v0.37.0 : composants de saisie exportés pour les quiz de module.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/actions.ts, lib/cours/content.ts, i18n/course.ts
  * =============================================================
  */
@@ -69,17 +70,17 @@ export function ExerciceCours({ leconId, numero, exercice, meilleure }: Props) {
 
 // ==================== EXERCICES NOTÉS ====================
 
-type Notable = QcmExercice | VraiFauxExercice | ClassementExercice;
+export type Notable = QcmExercice | VraiFauxExercice | ClassementExercice;
 
 /** Réponse vide de départ selon le type. */
-function reponseVide(ex: Notable): (number | boolean | null)[] {
+export function reponseVide(ex: Notable): (number | boolean | null)[] {
   if (ex.type === "qcm") return [null];
   if (ex.type === "vrai-faux") return ex.affirmations.map(() => null);
   return ex.elements.map(() => null);
 }
 
 /** Construit la réponse envoyée au serveur ; null si incomplète. */
-function construire(
+export function construire(
   ex: Notable,
   valeurs: (number | boolean | null)[],
 ): Reponse | null {
@@ -223,7 +224,7 @@ function Retour({ juste, children }: { juste: boolean; children: ReactNode }) {
 
 // ==================== QCM ====================
 
-function Qcm({
+export function Qcm({
   ex,
   valeur,
   correction,
@@ -272,7 +273,7 @@ function Qcm({
 
 // ==================== VRAI OU FAUX ====================
 
-function VraiFaux({
+export function VraiFaux({
   ex,
   valeurs,
   correction,
@@ -327,7 +328,7 @@ function VraiFaux({
 
 // ==================== CLASSEMENT ====================
 
-function Classement({
+export function Classement({
   ex,
   valeurs,
   correction,

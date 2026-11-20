@@ -7,10 +7,12 @@
  *               note). La note d'un exercice est calculée ici, d'après le corrigé du
  *               code, puis écrite avec la clé serveur : le navigateur ne peut pas
  *               s'attribuer une note. v0.33.0 : exercices refusés sur une leçon pas
- *               encore ouverte (diffusion programmée).
+ *               encore ouverte (diffusion programmée). v0.37.0 : quiz de module, corrigé
+ *               et enregistré ici ; les bonnes réponses ne sont renvoyées qu'en cas de
+ *               réussite.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-11-19
+ *  Version    : 1.2
+ *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/supabase/{server,admin}.ts, lib/cours/*,
  *               lib/reader/annotations.ts
  * =============================================================
@@ -28,10 +30,18 @@ import {
   versSurlignage,
   type LigneAnnotation,
 } from "@/lib/cours/acces";
-import { exercicesDe } from "@/lib/cours/content";
+import { exercicesDe, type QuestionQuiz } from "@/lib/cours/content";
+import {
+  corrigerQuiz,
+  estReussi,
+  idQuiz,
+  quizOuvert,
+  reponseNette,
+} from "@/lib/cours/evaluation";
 import { contenuLecon } from "@/lib/cours/lecons";
-import { leconParId } from "@/lib/cours/modules";
+import { MODULES, leconParId } from "@/lib/cours/modules";
 import { corriger, type Correction, type Reponse } from "@/lib/cours/notation";
+import { quizDe } from "@/lib/cours/quiz";
 import {
   cleanNote,
   cleanQuote,
@@ -152,6 +162,77 @@ export async function soumettreReponse(
   } catch {
     return { ok: false, error: t.exercices.erreur };
   }
+}
+
+// ==================== QUIZ DE MODULE ====================
+
+/**
+ * Résultat d'un essai de quiz. En cas d'échec, seule la note de chaque question est
+ * renvoyée (pas le détail par partie, qui trahirait les bonnes réponses). En cas de
+ * réussite, les questions complètes et leurs corrections permettent d'afficher le corrigé.
+ */
+export type ResultatQuiz =
+  | {
+      ok: true;
+      score: number;
+      reussi: boolean;
+      notes: number[];
+      questions?: QuestionQuiz[];
+      corrections?: Correction[];
+    }
+  | { ok: false; error: string };
+
+/**
+ * Corrige et enregistre un essai de quiz de module.
+ *
+ * @param moduleId - Identifiant du module (« m01 »)
+ * @param reponses - Réponses de l'apprenant, dans l'ordre des questions (non fiables)
+ * @returns Note globale, note par question et, si réussi, le corrigé complet
+ *
+ * Erreurs possibles : non connecté, quiz inconnu ou réponses invalides, pas d'accès,
+ * leçons du module pas toutes ouvertes, échec d'enregistrement.
+ */
+export async function soumettreQuiz(
+  moduleId: string,
+  reponses: unknown,
+): Promise<ResultatQuiz> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: t.erreurs.connexion };
+  const mod = MODULES.find((m) => m.id === moduleId);
+  const questions = mod ? quizDe(mod.id) : null;
+  const correction = questions ? corrigerQuiz([...questions], reponses) : null;
+  if (!mod || !questions || !correction) return { ok: false, error: t.erreurs.invalide };
+  if (!(await aAccesAuCours())) return { ok: false, error: t.erreurs.acces };
+  const { etats } = await diffusionApprenant();
+  if (!quizOuvert(mod.lecons.map((l) => l.id), etats)) {
+    return { ok: false, error: t.quiz.verrouille };
+  }
+
+  try {
+    const { error } = await createAdminClient()
+      .from("course_attempts")
+      .insert({
+        user_id: user.id,
+        exercise_id: idQuiz(mod.id),
+        score: correction.score,
+        answers: { reponses: (reponses as Reponse[]).map(reponseNette) },
+      });
+    if (error) return { ok: false, error: t.quiz.erreur };
+  } catch {
+    return { ok: false, error: t.quiz.erreur };
+  }
+
+  const reussi = estReussi(correction.score);
+  const notes = correction.corrections.map((c) => c.score);
+  if (!reussi) return { ok: true, score: correction.score, reussi, notes };
+  return {
+    ok: true,
+    score: correction.score,
+    reussi,
+    notes,
+    questions: [...questions],
+    corrections: correction.corrections,
+  };
 }
 
 // ==================== ANNOTATIONS ====================

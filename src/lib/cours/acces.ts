@@ -6,11 +6,12 @@
  *               courant, progression, meilleures notes et annotations d'une leçon.
  *               La RLS limite chaque lecture aux lignes de l'apprenant connecté.
  *               v0.33.0 : calendrier de diffusion de la cohorte et état de chaque leçon.
+ *               v0.37.0 : meilleure note et nombre d'essais de chaque quiz de module.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-11-19
+ *  Version    : 1.2
+ *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/notation.ts,
- *               lib/cours/calendrier.ts
+ *               lib/cours/calendrier.ts, lib/cours/evaluation.ts
  * =============================================================
  */
 
@@ -25,6 +26,7 @@ import {
   type Calendrier,
   type EtatDiffusion,
 } from "@/lib/cours/calendrier";
+import { resultatsQuiz, type ResultatQuiz } from "@/lib/cours/evaluation";
 import { estRedigee } from "@/lib/cours/lecons";
 import { LECONS } from "@/lib/cours/modules";
 import type { LigneProgression } from "@/lib/cours/notation";
@@ -126,6 +128,21 @@ export async function meilleuresNotes(
   }
   return notes;
 }
+
+/** Meilleure note et nombre d'essais de chaque quiz de module, pour l'apprenant connecté. */
+export const resultatsQuizApprenant = cache(
+  async (): Promise<Map<string, ResultatQuiz>> => {
+    const user = await getCurrentUser();
+    if (!user) return new Map();
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("course_attempts")
+      .select("exercise_id, score")
+      .eq("user_id", user.id)
+      .like("exercise_id", "%-quiz");
+    return error || !data ? new Map() : resultatsQuiz(data);
+  },
+);
 
 // ==================== ANNOTATIONS ====================
 

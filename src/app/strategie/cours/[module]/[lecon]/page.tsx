@@ -8,9 +8,10 @@
  *               vérifié, surlignages, meilleures notes et état « terminée » de l'apprenant.
  *               v0.33.0 : diffusion programmée (leçon fermée : date d'ouverture ; lecture
  *               en avance : contenu sans exercices ni bouton « terminé »).
+ *               v0.37.0 : lien vers le quiz du module sur la dernière leçon.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-11-19
+ *  Version    : 1.2
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/*, cours.css
  * =============================================================
  */
@@ -24,7 +25,7 @@ import { BlocsLecon } from "@/components/cours/blocs-lecon";
 import { BoutonTerminer } from "@/components/cours/bouton-terminer";
 import { LiseuseLecon } from "@/components/cours/liseuse-lecon";
 import { SansAcces } from "@/components/cours/sans-acces";
-import { BUTTON_TERTIARY, PANEL_SAND } from "@/components/ui/styles";
+import { BUTTON_SECONDARY, BUTTON_TERTIARY, PANEL_SAND } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import {
@@ -98,9 +99,12 @@ function LienVoisine({
 async function ContenuPrive({
   leconId,
   adresse,
+  quiz,
 }: {
   leconId: string;
   adresse: string;
+  /** Quiz du module, proposé seulement sur sa dernière leçon. */
+  quiz: { adresse: string; numero: number } | null;
 }) {
   const { user, acces } = await exigerConnexionCours(adresse);
   if (!acces) return <SansAcces email={user.email} />;
@@ -159,6 +163,11 @@ async function ContenuPrive({
         />
       </LiseuseLecon>
       {!apercu && <BoutonTerminer leconId={leconId} terminee={terminee} />}
+      {!apercu && quiz && (
+        <Link href={quiz.adresse} className={`${BUTTON_SECONDARY} self-start`}>
+          {interpolate(t.quiz.passer, { n: String(quiz.numero) })}
+        </Link>
+      )}
     </>
   );
 }
@@ -174,6 +183,10 @@ export default async function LeconPage({
   const { module: mod, lecon } = trouve;
   const adresse = adresseLecon(mod, lecon);
   const { avant, apres } = voisines(lecon.id);
+  const derniere = mod.lecons[mod.lecons.length - 1]?.id === lecon.id;
+  const quiz = derniere
+    ? { adresse: `/strategie/cours/${mod.slug}/quiz`, numero: mod.numero }
+    : null;
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8">
@@ -203,7 +216,7 @@ export default async function LeconPage({
       <Suspense
         fallback={<div aria-hidden="true" className="h-96 animate-pulse" />}
       >
-        <ContenuPrive leconId={lecon.id} adresse={adresse} />
+        <ContenuPrive leconId={lecon.id} adresse={adresse} quiz={quiz} />
       </Suspense>
 
       {/* ==================== LEÇONS VOISINES ==================== */}

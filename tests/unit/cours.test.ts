@@ -6,14 +6,25 @@
  *              mal formées), synthèse de la progression, durée lisible, et cohérence du
  *              contenu rédigé (identifiants d'exercices, bonnes réponses, catégories).
  * Auteur     : Claude Marcel
- * Version    : 1.0
- * Date       : 2026-11-19
+ * Version    : 1.1 (v0.37.0 : quiz de module)
+ * Date       : 2026-11-20
  */
 
 import { describe, expect, it } from "vitest";
 
 import { exercicesDe, type Exercice } from "@/lib/cours/content";
+import {
+  QUESTIONS_MAX,
+  QUESTIONS_MIN,
+  corrigerQuiz,
+  estReussi,
+  quizOuvert,
+  reponseModele,
+  resultatsQuiz,
+  versionPublique,
+} from "@/lib/cours/evaluation";
 import { contenuLecon, estRedigee } from "@/lib/cours/lecons";
+import { quizDe } from "@/lib/cours/quiz";
 import {
   LECONS,
   MODULES,
@@ -202,5 +213,85 @@ describe("leçons rédigées", () => {
           expect(el.categorie).toBeLessThan(e.categories.length);
       }
     }
+  });
+});
+
+// ==================== QUIZ DE MODULE (v0.37.0) ====================
+
+describe("quiz de module", () => {
+  it("chaque module a un quiz de 8 à 10 questions valides", () => {
+    for (const mod of MODULES) {
+      const quiz = quizDe(mod.id);
+      expect(quiz, mod.id).not.toBeNull();
+      const questions = quiz ?? [];
+      expect(questions.length).toBeGreaterThanOrEqual(QUESTIONS_MIN);
+      expect(questions.length).toBeLessThanOrEqual(QUESTIONS_MAX);
+      const ids = questions.map((q) => q.id);
+      expect(new Set(ids).size, mod.id).toBe(ids.length);
+      for (const q of questions) {
+        if (q.type === "qcm") {
+          expect(q.bonne).toBeGreaterThanOrEqual(0);
+          expect(q.bonne).toBeLessThan(q.choix.length);
+        } else if (q.type === "classement") {
+          for (const e of q.elements) {
+            expect(e.categorie).toBeGreaterThanOrEqual(0);
+            expect(e.categorie).toBeLessThan(q.categories.length);
+          }
+        } else {
+          expect(q.affirmations.length).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+
+  it("la version publique ne contient aucune réponse ni explication", () => {
+    for (const mod of MODULES) {
+      const json = JSON.stringify((quizDe(mod.id) ?? []).map(versionPublique));
+      expect(json).not.toMatch(/"(bonne|vrai|categorie|explication)"/);
+    }
+  });
+
+  it("corrigerQuiz donne 100 avec les réponses modèles et refuse le malformé", () => {
+    const quiz = [...(quizDe("m01") ?? [])];
+    const parfait = corrigerQuiz(quiz, quiz.map(reponseModele));
+    expect(parfait?.score).toBe(100);
+    expect(estReussi(parfait?.score ?? null)).toBe(true);
+    expect(corrigerQuiz(quiz, "x")).toBeNull();
+    expect(corrigerQuiz(quiz, quiz.slice(1).map(reponseModele))).toBeNull();
+    expect(corrigerQuiz(quiz, quiz.map(() => null))).toBeNull();
+    expect(corrigerQuiz([], [])).toBeNull();
+  });
+
+  it("une moitié juste donne 50, sous le seuil", () => {
+    const quiz = [...(quizDe("m02") ?? [])].filter((q) => q.type === "qcm").slice(0, 2);
+    const q0 = quiz[0];
+    const q1 = quiz[1];
+    if (q0?.type !== "qcm" || q1?.type !== "qcm") throw new Error("QCM attendus");
+    const r = corrigerQuiz(quiz, [
+      { type: "qcm", choix: q0.bonne },
+      { type: "qcm", choix: (q1.bonne + 1) % q1.choix.length },
+    ]);
+    expect(r?.score).toBe(50);
+    expect(estReussi(r?.score ?? null)).toBe(false);
+  });
+
+  it("quizOuvert exige que toutes les leçons du module soient ouvertes", () => {
+    const ids = ["m01-l01", "m01-l02"];
+    expect(quizOuvert(ids, new Map())).toBe(true);
+    const ouvre = { etat: "ouverte" as const, ouvreLe: null };
+    const apercu = { etat: "apercu" as const, ouvreLe: null };
+    expect(quizOuvert(ids, new Map([["m01-l01", ouvre], ["m01-l02", ouvre]]))).toBe(true);
+    expect(quizOuvert(ids, new Map([["m01-l02", apercu]]))).toBe(false);
+  });
+
+  it("resultatsQuiz garde la meilleure note et compte les essais", () => {
+    const r = resultatsQuiz([
+      { exercise_id: "m01-quiz", score: "62.5" },
+      { exercise_id: "m01-quiz", score: 87.5 },
+      { exercise_id: "m01-l01-e1", score: 100 },
+      { exercise_id: "examen", score: 90 },
+    ]);
+    expect(r.get("m01")).toEqual({ meilleure: 87.5, essais: 2 });
+    expect(r.size).toBe(1);
   });
 });

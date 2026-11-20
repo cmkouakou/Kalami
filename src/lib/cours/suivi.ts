@@ -5,9 +5,10 @@
  *  Description: Calculs purs de l'administration du cours (v0.29.0) : lecture d'une liste
  *               de courriels collée, synthèse et tri des apprenants, progression module
  *               par module et export CSV du suivi. Sans accès à la base : testable seul.
+ *               v0.37.0 : meilleure note et essais au quiz de chaque module.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/modules.ts
  * =============================================================
  */
@@ -222,6 +223,8 @@ export type ModuleFiche = {
   total: number;
   secondes: number;
   lecons: LeconFiche[];
+  /** Meilleure note et essais au quiz du module (null : jamais tenté). */
+  quiz: { meilleure: number; essais: number } | null;
 };
 
 /**
@@ -286,6 +289,7 @@ export function ficheParModule(
       total: lecons.length,
       secondes: lecons.reduce((s, l) => s + l.secondes, 0),
       lecons,
+      quiz: notes.get(`${mod.id}-quiz`) ?? null,
     };
   });
 }

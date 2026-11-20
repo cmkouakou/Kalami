@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.36.0 (cours de stratégie, sprint 8a : module 13, 52 leçons sur 52) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.37.0 (cours de stratégie, sprint 8b1 : 13 quiz de module) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -111,7 +111,8 @@ Version actuelle : v0.36.0 (cours de stratégie, sprint 8a : module 13, 52 leço
 | #105 | 2026-11-20 | v0.34.0 : cours, sprint 6 (10 leçons des modules 8 et 9, 7 schémas, 40 exercices) | ~230 000 | ~1.38 $ |
 | #106 | 2026-11-20 | v0.35.0 : cours, sprint 7 (11 leçons des modules 10 à 12, 5 schémas, 44 exercices) | ~260 000 | ~1.56 $ |
 | #107 | 2026-11-20 | v0.36.0 : cours, sprint 8a (3 leçons du module 13, 12 exercices) | ~180 000 | ~1.08 $ |
-| **TOTAL** | | | **~22 890 000** (hors #71) | **~137.34 $** |
+| #108 | 2026-11-20 | v0.37.0 : cours, sprint 8b1 (13 quiz de module, page, correction serveur, suivi admin) | ~260 000 | ~1.56 $ |
+| **TOTAL** | | | **~23 150 000** (hors #71) | **~138.90 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -289,6 +290,8 @@ Version actuelle : v0.36.0 (cours de stratégie, sprint 8a : module 13, 52 leço
 - [x] v0.34.0 — cours, sprint 6 : modules 8 et 9 rédigés (38 leçons sur 52), 7 schémas, 40 exercices ; tests 50/50, typecheck, lint et build OK
 - [x] v0.35.0 — cours, sprint 7 : modules 10, 11 et 12 rédigés (49 leçons sur 52), 5 schémas, 44 exercices ; tests 61/61, typecheck, lint et build OK
 - [x] v0.36.0 — cours, sprint 8a : module 13 rédigé (52 leçons sur 52), 12 exercices ; tests 64/64, typecheck, lint et build OK
+- [x] v0.37.0 — cours, sprint 8b1 : 13 quiz de module (104 questions), page du quiz, correction serveur, suivi admin ; typecheck, lint et build OK
+- [ ] S8b2 — examen final, note finale pondérée, réglages, diplôme PDF, page de vérification, admin des diplômes
 - [ ] Cours, sprint 8b : quiz de module, examen final, note finale, diplôme PDF et page de vérification
 - [ ] Cours, sprint 8c : page de vente du cours et référencement
 - [ ] Fixer les prix et le livre associé dans `/admin/cours/prix`

@@ -30,7 +30,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
   modules 1 à 7 rédigés (v0.32.0) ; calendrier de diffusion par cohorte, avec lecture en
   avance de la prochaine leçon (v0.33.0) ; modules 8 et 9 rédigés (v0.34.0) ;
   modules 10, 11 et 12 rédigés (v0.35.0) ; module 13, cas intégrateur, rédigé : 52 leçons
-  sur 52 (v0.36.0)
+  sur 52 (v0.36.0) ; un quiz de fin de module pour chacun des 13 modules, réussi à 70 / 100,
+  corrigé côté serveur (v0.37.0)
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)

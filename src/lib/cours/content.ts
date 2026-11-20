@@ -15,8 +15,8 @@
  *               tentatives sont enregistrées sous « <leçon>-<exercice> ». Ne jamais
  *               renommer un identifiant publié.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/strategy/steps.ts (numéros d'étape)
  * =============================================================
  */
@@ -157,6 +157,9 @@ export type OuvertExercice = {
 /** Un exercice, quel que soit son type. */
 export type Exercice =
   QcmExercice | VraiFauxExercice | ClassementExercice | OuvertExercice;
+
+/** Question de quiz de module : un exercice noté automatiquement (jamais ouvert). */
+export type QuestionQuiz = QcmExercice | VraiFauxExercice | ClassementExercice;
 
 /** Exercice placé dans la leçon. */
 export type ExerciceBlock = { kind: "exercice"; exercice: Exercice };
