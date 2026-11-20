@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.39.5] - 2026-11-20 — Cours : exemples réels (module 11, leçon 2)
+### Ajouté
+- « Fusions et acquisitions » : section « Des exemples au Québec et en Côte d'Ivoire »,
+  sources citées. Couche-Tard et Circle K (réussite), Lowe's et RONA (déception), fusion
+  Orange Côte d'Ivoire et Côte d'Ivoire Telecom, Attijariwafa bank et la SIB.
+
 ## [v0.39.4] - 2026-11-20 — Cours : exemples réels (module 11, leçon 1)
 ### Ajouté
 - « Croître seul : la croissance interne » : section « Des exemples au Québec et en Côte

@@ -10,8 +10,10 @@
  *               originaux.
  *               v1.1 (v0.39.2) : encadré « Sur le terrain » sur le rachat de Nexio par
  *               Cofomo (annoncé le 21 septembre 2021), vécu par l'auteur.
+ *               v1.2 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (Couche-Tard, RONA, Orange et CI-Telecom, Attijariwafa et SIB).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -23,6 +25,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -87,6 +90,67 @@ export const M11_L02: ContenuLecon = [
   retenir(
     "Une acquisition ne se joue pas à la signature, mais dans les mois qui suivent. Ce " +
       "qu'on achète vraiment, ce sont des personnes et des relations : il faut les garder.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Une même opération peut réussir ou décevoir. Voici deux cas par territoire : une " +
+      "acquisition et une fusion qui ont tenu leurs promesses, puis une acquisition qui " +
+      "a coûté cher. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Acquisitions : Couche-Tard achète Circle K ; Lowe's achète RONA",
+    p(
+      "**Québec, une réussite.** En décembre 2003, Alimentation Couche-Tard, née à " +
+        "Laval, a conclu l'achat de Circle K auprès de ConocoPhillips : environ 1 663 " +
+        "magasins dans 16 États américains, pour un prix annoncé de 830 millions de " +
+        "dollars américains. Couche-Tard a appris à intégrer ses achats, et Circle K " +
+        "est devenue plus tard sa marque mondiale. Sources : [Lexpert]" +
+        "(https://www.lexpert.ca/big-deals/alimentation-couche-tard-acquires-circle-k/" +
+        "344422) ; [CSP Daily News](https://www.cspdailynews.com/biggest-c-store-deals-" +
+        "so-far-century-2020/no-3-couche-tard-acquires-circle-k).",
+    ),
+    p(
+      "**Québec, une déception.** En 2016, l'américain Lowe's a acheté RONA, de " +
+        "Boucherville, pour environ 3,2 milliards de dollars canadiens. Six ans plus " +
+        "tard, il a vendu toutes ses activités canadiennes au fonds Sycamore Partners " +
+        "pour 400 millions de dollars américains comptant, plus un paiement différé lié " +
+        "aux résultats, et inscrit une dépréciation d'environ 2 milliards de dollars " +
+        "américains. Payer cher ne garantit pas la valeur : il faut ensuite savoir " +
+        "intégrer. Sources : [CTV News Montréal]" +
+        "(https://montreal.ctvnews.ca/lowe-s-to-sell-its-canadian-operations-including-" +
+        "rona-and-reno-depot-1.6138066) ; [MDM, vente conclue]" +
+        "(https://www.mdm.com/news/mergers-acquisitions/lowes-completes-400m-sale-of-" +
+        "canada-retail-unit-to-sycamore/).",
+    ),
+  ),
+  notion(
+    "Fusion et acquisition en Côte d'Ivoire : Orange et CI-Telecom ; Attijariwafa et la SIB",
+    p(
+      "**Une fusion.** En 2016, Orange Côte d'Ivoire (le mobile) et Côte d'Ivoire " +
+        "Telecom (l'opérateur historique du fixe) ont fusionné. L'absorption a été " +
+        "finalisée fin décembre 2016 : une seule société, Orange Côte d'Ivoire, offre " +
+        "désormais le fixe, le mobile, l'Internet et Orange Money sous une seule marque. " +
+        "En 2014, les deux sociétés réalisaient 370 et 175 milliards de F CFA de chiffre " +
+        "d'affaires. Sources : [Financial Afrik, 30 décembre 2016]" +
+        "(https://www.financialafrik.com/2016/12/30/orange-finalise-labsorption-de-" +
+        "loperateur-historique-cote-divoire-telecom/) ; [Financial Afrik, 3 mai 2016]" +
+        "(https://www.financialafrik.com/2016/05/03/cote-divoire-telecom-et-le-groupe-" +
+        "orange-finalisent-leur-fusion-pour-donner-naissance-a-un-geant-des-telecoms).",
+    ),
+    p(
+      "**Une acquisition.** Fin 2009, le marocain Attijariwafa bank a acheté au Crédit " +
+        "Agricole 51 % de la Société Ivoirienne de Banque (SIB), dans un ensemble de " +
+        "cinq banques africaines payé environ 250 millions d'euros. Plutôt que d'ouvrir " +
+        "une banque à partir de rien, il a acheté un réseau, des clients et des équipes " +
+        "déjà en place. En 2015, il a racheté une part de l'État. Sources : " +
+        "[Crédit Agricole, communiqué]" +
+        "(https://www.credit-agricole.com/en/press-releases/credit-agricole-s.a.-and-" +
+        "attijariwafa-bank-announce-agreement-concerning-changes-to-their-respective-" +
+        "investments-in-morocco-and-africa) ; [Financial Afrik, 9 septembre 2015]" +
+        "(https://www.financialafrik.com/2015/09/09/cote-divoire-attijariwafa-bank-" +
+        "prend-officiellement-39-de-la-sib/).",
+    ),
   ),
 
   titre("Trois temps"),
