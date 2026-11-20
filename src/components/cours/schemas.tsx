@@ -224,11 +224,238 @@ function Demarche() {
   );
 }
 
+/** Libellé d'axe ou de calque, plus discret que le texte des boîtes. */
+function Libelle({
+  x,
+  y,
+  texte,
+  ancre = "middle",
+  rotation,
+}: {
+  x: number;
+  y: number;
+  texte: string;
+  ancre?: "start" | "middle" | "end";
+  rotation?: number;
+}) {
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor={ancre}
+      dominantBaseline="middle"
+      fontSize={12}
+      fill="currentColor"
+      opacity={0.75}
+      transform={rotation ? `rotate(${rotation} ${x} ${y})` : undefined}
+    >
+      {texte}
+    </text>
+  );
+}
+
+/** Stratégique, tactique, opérationnel : horizon, réversibilité, décideur. */
+function NiveauxDecision() {
+  const niveaux = [
+    { nom: "Stratégique", details: ["Plusieurs années", "Difficile à défaire", "La direction"] },
+    { nom: "Tactique", details: ["Quelques mois", "Ajustable", "Les cadres"] },
+    { nom: "Opérationnel", details: ["Jour, semaine", "Facile à corriger", "Les équipes"] },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={200}>
+      {niveaux.map((n, i) => (
+        <g key={n.nom}>
+          <Boite
+            x={10 + i * 212}
+            y={10}
+            l={196}
+            h={46}
+            lignes={[n.nom]}
+            ton={i === 0 ? "encre" : i === 1 ? "ocre" : "neutre"}
+          />
+          <Fleche x1={108 + i * 212} y1={58} x2={108 + i * 212} y2={84} />
+          <Boite x={10 + i * 212} y={88} l={196} h={86} lignes={n.details} />
+        </g>
+      ))}
+      <Libelle x={320} y={190} texte="Horizon · réversibilité · qui décide" />
+    </Cadre>
+  );
+}
+
+/** Le noyau d'une bonne stratégie : diagnostic, politique directrice, actions. */
+function Noyau() {
+  const temps = [
+    ["Diagnostic", "quel est le défi ?"],
+    ["Politique directrice", "comment l'aborder"],
+    ["Actions cohérentes", "qui se renforcent"],
+  ];
+  return (
+    <Cadre largeur={640} hauteur={110}>
+      {temps.map(([nom, detail], i) => (
+        <Boite
+          key={nom}
+          x={10 + i * 215}
+          y={20}
+          l={190}
+          h={70}
+          lignes={[nom, detail]}
+          ton={i === 1 ? "ocre" : "encre"}
+        />
+      ))}
+      {[0, 1].map((i) => (
+        <Fleche key={i} x1={202 + i * 215} y1={55} x2={223 + i * 215} y2={55} />
+      ))}
+    </Cadre>
+  );
+}
+
+/** Les strates de l'environnement, de la plus large à l'entreprise. */
+function Strates() {
+  const calques = [
+    { texte: "Macroenvironnement (PESTEL)", x: 10, y: 10, l: 620, h: 280, fond: "var(--surface)" },
+    { texte: "Industrie", x: 55, y: 50, l: 530, h: 200, fond: "var(--sand)" },
+    { texte: "Concurrents et marchés", x: 100, y: 90, l: 440, h: 120, fond: "var(--surface)" },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={300}>
+      {calques.map((c) => (
+        <g key={c.texte}>
+          <rect
+            x={c.x}
+            y={c.y}
+            width={c.l}
+            height={c.h}
+            rx={14}
+            fill={c.fond}
+            stroke="var(--line)"
+            strokeWidth={1.5}
+          />
+          <Libelle x={c.x + 14} y={c.y + 20} texte={c.texte} ancre="start" />
+        </g>
+      ))}
+      <Boite x={220} y={125} l={200} h={50} lignes={["L'entreprise"]} ton="encre" />
+    </Cadre>
+  );
+}
+
+/** Les six dimensions du PESTEL autour de l'entreprise. */
+function Pestel() {
+  const dimensions = [
+    ["Politique", "programmes, fiscalité"],
+    ["Économique", "croissance, prix, taux"],
+    ["Socioculturel", "démographie, usages"],
+    ["Technologique", "innovations, ruptures"],
+    ["Environnemental", "climat, ressources"],
+    ["Légal", "lois, règlements"],
+  ];
+  return (
+    <Cadre largeur={640} hauteur={280}>
+      {dimensions.map(([nom, detail], i) => {
+        const gauche = i < 3;
+        const x = gauche ? 10 : 450;
+        const y = 15 + (i % 3) * 95;
+        return (
+          <g key={nom}>
+            <Boite x={x} y={y} l={180} h={60} lignes={[nom, detail]} ton="ocre" />
+            <Fleche
+              x1={gauche ? 192 : 448}
+              y1={y + 30}
+              x2={gauche ? 243 : 397}
+              y2={140}
+            />
+          </g>
+        );
+      })}
+      <Boite x={245} y={110} l={150} h={60} lignes={["L'entreprise"]} ton="encre" />
+    </Cadre>
+  );
+}
+
+/**
+ * Grille à deux axes commune aux schémas « impact-incertitude » et « scénarios ».
+ * Les cases se lisent de gauche à droite, puis de haut en bas.
+ */
+function Grille2x2({
+  cases,
+  axeVertical,
+  axeHorizontal,
+  tons,
+}: {
+  cases: string[][];
+  axeVertical: [string, string, string];
+  axeHorizontal: [string, string, string];
+  tons: ("neutre" | "encre" | "ocre")[];
+}) {
+  return (
+    <Cadre largeur={640} hauteur={310}>
+      {cases.map((lignes, i) => (
+        <Boite
+          key={lignes[0]}
+          x={95 + (i % 2) * 272}
+          y={10 + Math.floor(i / 2) * 124}
+          l={262}
+          h={114}
+          lignes={lignes}
+          ton={tons[i]}
+        />
+      ))}
+      <Fleche x1={80} y1={256} x2={80} y2={12} />
+      <Fleche x1={80} y1={256} x2={632} y2={256} />
+      <Libelle x={40} y={133} texte={axeVertical[0]} rotation={-90} />
+      <Libelle x={66} y={20} texte={axeVertical[2]} ancre="end" />
+      <Libelle x={66} y={246} texte={axeVertical[1]} ancre="end" />
+      <Libelle x={363} y={290} texte={axeHorizontal[0]} />
+      <Libelle x={95} y={272} texte={axeHorizontal[1]} ancre="start" />
+      <Libelle x={629} y={272} texte={axeHorizontal[2]} ancre="end" />
+    </Cadre>
+  );
+}
+
+/** Grille impact-incertitude : où se trouvent les variables pivots. */
+function ImpactIncertitude() {
+  return (
+    <Grille2x2
+      cases={[
+        ["Tendances lourdes", "à intégrer au plan"],
+        ["Variables pivots", "base des scénarios"],
+        ["Secondaires", "à noter, sans plus"],
+        ["À surveiller", "signaux à suivre"],
+      ]}
+      tons={["ocre", "encre", "neutre", "neutre"]}
+      axeVertical={["Impact", "faible", "fort"]}
+      axeHorizontal={["Incertitude", "faible", "forte"]}
+    />
+  );
+}
+
+/** Quatre scénarios d'Infosystem, nés du croisement de ses deux variables pivots. */
+function Scenarios() {
+  return (
+    <Grille2x2
+      cases={[
+        ["Goulot d'étranglement", "garder les techniciens"],
+        ["Course à l'expertise", "monter en compétence"],
+        ["Statu quo difficile", "fidéliser, gagner en efficacité"],
+        ["Compression", "se replier sur une niche"],
+      ]}
+      tons={["ocre", "encre", "neutre", "neutre"]}
+      axeVertical={["Demande des PME", "faible", "forte"]}
+      axeHorizontal={["Vitesse de l'IA dans le soutien", "lente", "rapide"]}
+    />
+  );
+}
+
 /** Correspondance identifiant → schéma. */
 const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   "choisir-renoncer": ChoisirRenoncer,
   "trois-niveaux": TroisNiveaux,
   demarche: Demarche,
+  "niveaux-decision": NiveauxDecision,
+  noyau: Noyau,
+  strates: Strates,
+  pestel: Pestel,
+  "impact-incertitude": ImpactIncertitude,
+  scenarios: Scenarios,
 };
 
 /** Schéma du cours d'après son identifiant. */

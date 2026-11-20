@@ -77,6 +77,12 @@ export const SCHEMA_IDS = [
   "choisir-renoncer",
   "trois-niveaux",
   "demarche",
+  "niveaux-decision",
+  "noyau",
+  "strates",
+  "pestel",
+  "impact-incertitude",
+  "scenarios",
 ] as const;
 
 export type SchemaId = (typeof SCHEMA_IDS)[number];

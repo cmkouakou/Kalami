@@ -1,5 +1,22 @@
 # Journal des modifications
 
+## [v0.30.0] - 2026-11-19 — Cours de stratégie, sprint 3 (modules 1 et 2)
+### Ajouté
+- Module 1 « Fondements » complet : leçons 1.2 (stratégique, tactique, opérationnel),
+  1.3 (trois niveaux de stratégie), 1.4 (la démarche en quatre temps et l'outil),
+  1.5 (bonne ou mauvaise stratégie : le noyau de Rumelt, trois tests).
+- Module 2 « Macroenvironnement » complet : leçons 2.1 (les strates de l'environnement),
+  2.2 (le PESTEL et ses pièges, encadré Ajinomoto sur les emballages plastiques),
+  2.3 (grille impact-incertitude, tendances lourdes et variables pivots),
+  2.4 (scénarios, actions robustes et paris).
+- Six schémas SVG : niveaux de décision, noyau, strates, PESTEL, grille
+  impact-incertitude, matrice des scénarios.
+- 32 exercices originaux (QCM, vrai-faux, classement, réponse ouverte), avec exemples
+  ivoiriens et ouest-africains.
+
+### Modifié
+- Leçon 2.4 renommée « Construire des scénarios » (le livre et l'outil en croisent quatre).
+
 ## [v0.29.0] - 2026-11-19 — Cours de stratégie, sprint 2 (administration et vente)
 ### Ajouté
 - Migration `20261125120000_course_admin.sql` (à appliquer) :

@@ -71,7 +71,7 @@ const PROGRAMME: {
       "Ce que l'entreprise ne contrôle pas",
       "Le PESTEL, sans en faire une liste d'épicerie",
       "Des facteurs aux variables pivots",
-      "Construire trois scénarios",
+      "Construire des scénarios",
     ],
   },
   {

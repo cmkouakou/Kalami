@@ -26,7 +26,8 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
 - **Cours de stratégie** (`/strategie/cours`, v0.28.0) : 13 modules, 52 leçons tirées du
   livre ; schémas, exercices notés côté serveur, surlignage, notes et lecture à voix haute ;
   accès acheté (Stripe ou Mobile Money, livre associé inclus) ou donné par l'administrateur ;
-  administration `/admin/cours` (v0.29.0) : apprenants, cohortes, suivi avec export CSV, prix
+  administration `/admin/cours` (v0.29.0) : apprenants, cohortes, suivi avec export CSV, prix ;
+  modules 1 et 2 rédigés (v0.30.0)
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)

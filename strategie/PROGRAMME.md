@@ -29,7 +29,7 @@ Légende des sources : **L** = chapitre du livre · **H** = module HEC qui couvr
 1. Ce que l'entreprise ne contrôle pas : les strates de l'environnement
 2. Le PESTEL, sans en faire une liste d'épicerie
 3. Des facteurs aux variables pivots ; réduire les erreurs de prévision
-4. Construire trois scénarios
+4. Construire des scénarios
 
 ### Module 3 — L'industrie et la concurrence (L3 · H4)
 1. Les cinq forces (+ la sixième : les compléments)
