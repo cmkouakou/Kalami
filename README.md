@@ -27,7 +27,7 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
   livre ; schémas, exercices notés côté serveur, surlignage, notes et lecture à voix haute ;
   accès acheté (Stripe ou Mobile Money, livre associé inclus) ou donné par l'administrateur ;
   administration `/admin/cours` (v0.29.0) : apprenants, cohortes, suivi avec export CSV, prix ;
-  modules 1 et 2 rédigés (v0.30.0)
+  modules 1 à 4 rédigés (v0.31.0)
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)

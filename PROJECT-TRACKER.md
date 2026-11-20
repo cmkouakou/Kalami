@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.30.0 (cours de stratégie, sprint 3 : modules 1 et 2) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.31.0 (cours de stratégie, sprint 4 : modules 3 et 4) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -105,7 +105,8 @@ Version actuelle : v0.30.0 (cours de stratégie, sprint 3 : modules 1 et 2) · S
 | #99 | 2026-11-19 | v0.28.0 : cours de stratégie, sprint 1 (migration, programme 52 leçons, leçon pilote, liseuse du cours, exercices notés, progression et temps) | ~250 000 | ~1.50 $ |
 | #100 | 2026-11-19 | v0.29.0 : cours, sprint 2 (achat Stripe et Mobile Money avec livre, admin apprenants, cohortes, suivi, export CSV, prix) | ~200 000 | ~1.20 $ |
 | #101 | 2026-11-19 | v0.30.0 : cours, sprint 3 (8 leçons des modules 1 et 2, 6 schémas, 32 exercices) | ~180 000 | ~1.08 $ |
-| **TOTAL** | | | **~21 640 000** (hors #71) | **~129.84 $** |
+| #102 | 2026-11-20 | v0.31.0 : cours, sprint 4 (9 leçons des modules 3 et 4, 8 schémas, 36 exercices) | ~200 000 | ~1.20 $ |
+| **TOTAL** | | | **~21 840 000** (hors #71) | **~131.04 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -279,4 +280,5 @@ Version actuelle : v0.30.0 (cours de stratégie, sprint 3 : modules 1 et 2) · S
 - [x] v0.29.0 — cours, sprint 2 : `/admin/cours` (apprenants et accès, cohortes, suivi, fiche, export CSV, prix) et achat du cours par Stripe ou Mobile Money (livre associé inclus) ; tests unitaires, typecheck, lint et build OK
 - [x] v0.29.0 — migration `20261125120000_course_admin.sql` appliquée par l'utilisateur (2026-11-19)
 - [x] v0.30.0 — cours, sprint 3 : modules 1 et 2 rédigés (9 leçons sur 52), schémas et exercices ; tests, typecheck, lint et build OK
+- [x] v0.31.0 — cours, sprint 4 : modules 3 et 4 rédigés (18 leçons sur 52), 8 schémas, 36 exercices ; typecheck, lint et build OK
 - [ ] Fixer les prix et le livre associé dans `/admin/cours/prix`

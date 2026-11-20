@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.31.0] - 2026-11-20 — Cours de stratégie, sprint 4 (modules 3 et 4)
+### Ajouté
+- Module 3 « L'industrie et la concurrence » complet : leçons 3.1 (les cinq forces et les
+  compléments, encadré Ajinomoto sur la rumeur du glutamate), 3.2 (barrières et cycle de
+  vie), 3.3 (concurrent ou substitut), 3.4 (facteurs clés de succès et grille de
+  comparaison).
+- Module 4 « L'analyse interne » complet : leçons 4.1 (ressources, compétences, seuils et
+  distinctives), 4.2 (chaîne de valeur de Porter et chaîne de services, encadré Ajinomoto
+  TPM/OEE), 4.3 (VRIO d'Infosystem, encadré NPSP-CI), 4.4 (cinq ratios financiers, sur
+  une entreprise fictive), 4.5 (capacités dynamiques, encadré sur la réforme commerciale
+  d'Ajinomoto).
+- Huit schémas SVG : cinq forces, cycle de vie, concurrent et substitut, seuils et
+  distinctives, chaîne de valeur, chaîne de services, VRIO, capacités dynamiques.
+- 36 exercices originaux (QCM, vrai-faux, classement, réponse ouverte).
+
 ## [v0.30.0] - 2026-11-19 — Cours de stratégie, sprint 3 (modules 1 et 2)
 ### Ajouté
 - Module 1 « Fondements » complet : leçons 1.2 (stratégique, tactique, opérationnel),

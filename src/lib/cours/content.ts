@@ -83,6 +83,14 @@ export const SCHEMA_IDS = [
   "pestel",
   "impact-incertitude",
   "scenarios",
+  "cinq-forces",
+  "cycle-vie",
+  "concurrent-substitut",
+  "seuils-distinctives",
+  "chaine-valeur",
+  "chaine-services",
+  "vrio",
+  "capacites-dynamiques",
 ] as const;
 
 export type SchemaId = (typeof SCHEMA_IDS)[number];

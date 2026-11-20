@@ -5,8 +5,8 @@
  *  Description: Registre des leçons rédigées, par identifiant stable. Une leçon absente
  *               du registre est affichée « bientôt » dans le programme.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-11-19
+ *  Version    : 1.2
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts, lecons/*.ts
  * =============================================================
  */
@@ -21,6 +21,15 @@ import { M02_L01 } from "@/lib/cours/lecons/m02-l01";
 import { M02_L02 } from "@/lib/cours/lecons/m02-l02";
 import { M02_L03 } from "@/lib/cours/lecons/m02-l03";
 import { M02_L04 } from "@/lib/cours/lecons/m02-l04";
+import { M03_L01 } from "@/lib/cours/lecons/m03-l01";
+import { M03_L02 } from "@/lib/cours/lecons/m03-l02";
+import { M03_L03 } from "@/lib/cours/lecons/m03-l03";
+import { M03_L04 } from "@/lib/cours/lecons/m03-l04";
+import { M04_L01 } from "@/lib/cours/lecons/m04-l01";
+import { M04_L02 } from "@/lib/cours/lecons/m04-l02";
+import { M04_L03 } from "@/lib/cours/lecons/m04-l03";
+import { M04_L04 } from "@/lib/cours/lecons/m04-l04";
+import { M04_L05 } from "@/lib/cours/lecons/m04-l05";
 
 /** Contenu des leçons rédigées. */
 const LECONS_REDIGEES: Readonly<Record<string, ContenuLecon>> = {
@@ -33,6 +42,15 @@ const LECONS_REDIGEES: Readonly<Record<string, ContenuLecon>> = {
   "m02-l02": M02_L02,
   "m02-l03": M02_L03,
   "m02-l04": M02_L04,
+  "m03-l01": M03_L01,
+  "m03-l02": M03_L02,
+  "m03-l03": M03_L03,
+  "m03-l04": M03_L04,
+  "m04-l01": M04_L01,
+  "m04-l02": M04_L02,
+  "m04-l03": M04_L03,
+  "m04-l04": M04_L04,
+  "m04-l05": M04_L05,
 };
 
 /** Contenu d'une leçon ; null si elle n'est pas encore rédigée. */

@@ -6,8 +6,8 @@
  *               (currentColor, --encre, --ocre, --line), donc lisibles en clair et en
  *               sombre. Chaque schéma est décrit par la légende du bloc (figcaption).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts (SchemaId)
  * =============================================================
  */
@@ -445,6 +445,280 @@ function Scenarios() {
   );
 }
 
+/** Les cinq forces : quatre forces externes poussent vers la rivalité, au centre. */
+function CinqForces() {
+  return (
+    <Cadre largeur={640} hauteur={300}>
+      <Boite x={230} y={10} l={180} h={56} lignes={["Nouveaux entrants", "menace"]} ton="ocre" />
+      <Boite x={10} y={122} l={170} h={56} lignes={["Fournisseurs", "pouvoir"]} ton="ocre" />
+      <Boite
+        x={230}
+        y={112}
+        l={180}
+        h={76}
+        lignes={["Rivalité entre", "concurrents existants"]}
+        ton="encre"
+      />
+      <Boite x={460} y={122} l={170} h={56} lignes={["Clients", "pouvoir"]} ton="ocre" />
+      <Boite x={230} y={234} l={180} h={56} lignes={["Substituts", "menace"]} ton="ocre" />
+      <Fleche x1={320} y1={68} x2={320} y2={109} />
+      <Fleche x1={182} y1={150} x2={227} y2={150} />
+      <Fleche x1={458} y1={150} x2={413} y2={150} />
+      <Fleche x1={320} y1={232} x2={320} y2={191} />
+    </Cadre>
+  );
+}
+
+/** Le cycle de vie d'une industrie : une courbe des ventes en quatre phases. */
+function CycleVie() {
+  const phases = [
+    ["Émergence", "convaincre"],
+    ["Croissance", "suivre la demande"],
+    ["Maturité", "défendre ses parts"],
+    ["Déclin", "se repositionner"],
+  ];
+  return (
+    <Cadre largeur={640} hauteur={280}>
+      <Fleche x1={40} y1={190} x2={40} y2={12} />
+      <Fleche x1={40} y1={190} x2={632} y2={190} />
+      <Libelle x={22} y={100} texte="Ventes" rotation={-90} />
+      <Libelle x={628} y={176} texte="Temps" ancre="end" />
+      {[188, 336, 484].map((x) => (
+        <line
+          key={x}
+          x1={x}
+          y1={20}
+          x2={x}
+          y2={190}
+          stroke="var(--line)"
+          strokeDasharray="4 4"
+        />
+      ))}
+      <path
+        d="M45,180 C120,178 150,165 188,140 C250,95 290,55 336,45 C400,32 440,32 484,48
+           C540,70 580,110 620,140"
+        fill="none"
+        stroke="var(--encre)"
+        strokeWidth={3}
+      />
+      {phases.map(([nom, enjeu], i) => (
+        <Boite
+          key={nom}
+          x={44 + i * 148}
+          y={204}
+          l={140}
+          h={60}
+          lignes={[nom, enjeu]}
+          ton={i % 2 === 0 ? "ocre" : "neutre"}
+        />
+      ))}
+    </Cadre>
+  );
+}
+
+/** Concurrents et substituts : deux façons de répondre au même besoin. */
+function ConcurrentSubstitut() {
+  return (
+    <Cadre largeur={640} hauteur={230}>
+      <rect
+        x={10}
+        y={10}
+        width={200}
+        height={210}
+        rx={14}
+        fill="var(--surface)"
+        stroke="var(--line)"
+        strokeWidth={1.5}
+      />
+      <Libelle x={110} y={30} texte="Même manière de répondre" />
+      <Boite x={30} y={50} l={160} h={56} lignes={["L'entreprise"]} ton="encre" />
+      <Boite x={30} y={130} l={160} h={56} lignes={["Ses concurrents"]} />
+      <Boite x={245} y={80} l={150} h={70} lignes={["Le besoin", "du client"]} ton="ocre" />
+      <rect
+        x={430}
+        y={10}
+        width={200}
+        height={210}
+        rx={14}
+        fill="var(--surface)"
+        stroke="var(--line)"
+        strokeWidth={1.5}
+      />
+      <Libelle x={530} y={30} texte="Autre manière de répondre" />
+      <Boite x={450} y={80} l={160} h={70} lignes={["Les substituts"]} />
+      <Fleche x1={212} y1={115} x2={242} y2={115} />
+      <Fleche x1={428} y1={115} x2={398} y2={115} />
+    </Cadre>
+  );
+}
+
+/** Ressources seuils (la base partagée) et distinctives (ce qui fait la différence). */
+function SeuilsDistinctives() {
+  return (
+    <Cadre largeur={640} hauteur={220}>
+      <Boite
+        x={170}
+        y={10}
+        l={300}
+        h={80}
+        lignes={["Distinctives", "faire mieux que les autres"]}
+        ton="encre"
+      />
+      <Boite
+        x={20}
+        y={120}
+        l={600}
+        h={80}
+        lignes={["Seuils", "nécessaires pour exister, partagées par tous"]}
+        ton="ocre"
+      />
+      <Fleche x1={320} y1={118} x2={320} y2={93} />
+    </Cadre>
+  );
+}
+
+/** La chaîne de valeur de Porter : soutien en haut, activités principales en bas. */
+function ChaineValeur() {
+  const soutien = [
+    "Infrastructure",
+    "Ressources humaines",
+    "Développement technologique",
+    "Approvisionnement",
+  ];
+  const principales = [
+    ["Logistique", "interne"],
+    ["Production"],
+    ["Logistique", "externe"],
+    ["Marketing", "et ventes"],
+    ["Services"],
+  ];
+  return (
+    <Cadre largeur={640} hauteur={270}>
+      <Libelle x={10} y={12} texte="Activités de soutien" ancre="start" />
+      {soutien.map((s, i) => (
+        <Boite key={s} x={10} y={24 + i * 38} l={530} h={32} lignes={[s]} ton="ocre" />
+      ))}
+      <Libelle x={10} y={186} texte="Activités principales" ancre="start" />
+      {principales.map((lignes, i) => (
+        <Boite
+          key={lignes[0] + i}
+          x={10 + i * 107}
+          y={198}
+          l={101}
+          h={62}
+          lignes={lignes}
+          ton="encre"
+        />
+      ))}
+      <Boite x={555} y={24} l={75} h={236} lignes={["Marge"]} />
+    </Cadre>
+  );
+}
+
+/** La chaîne d'Infosystem : le parcours du problème d'un client, lu fort / à renforcer. */
+function ChaineServices() {
+  const activites = [
+    { nom: "Attirer", fort: false },
+    { nom: "Diagnostic", fort: true },
+    { nom: "Mise en place", fort: true },
+    { nom: "Soutien", fort: false },
+    { nom: "Urgence", fort: true },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={230}>
+      <Boite
+        x={10}
+        y={10}
+        l={620}
+        h={50}
+        lignes={["Soutien : ressources humaines", "point faible critique"]}
+      />
+      {activites.map((a, i) => (
+        <Boite
+          key={a.nom}
+          x={10 + i * 126}
+          y={100}
+          l={114}
+          h={70}
+          lignes={[a.nom, a.fort ? "point fort" : "à renforcer"]}
+          ton={a.fort ? "encre" : "ocre"}
+        />
+      ))}
+      {[0, 1, 2, 3].map((i) => (
+        <Fleche key={i} x1={126 + i * 126} y1={135} x2={134 + i * 126} y2={135} />
+      ))}
+      <Libelle x={320} y={200} texte="Le parcours du problème du client, de gauche à droite" />
+    </Cadre>
+  );
+}
+
+/** Le VRIO : quatre tests successifs, et le résultat du premier « non ». */
+function Vrio() {
+  const tests = [
+    { test: "Valeur ?", non: ["Désavantage"] },
+    { test: "Rareté ?", non: ["Parité"] },
+    { test: "Inimitable ?", non: ["Avantage", "temporaire"] },
+    { test: "Organisée ?", non: ["Avantage", "non exploité"] },
+  ];
+  return (
+    <Cadre largeur={640} hauteur={230}>
+      {tests.map((t, i) => (
+        <g key={t.test}>
+          <Boite x={10 + i * 125} y={20} l={105} h={56} lignes={[t.test]} ton="ocre" />
+          <Fleche x1={62 + i * 125} y1={78} x2={62 + i * 125} y2={136} />
+          <Libelle x={70 + i * 125} y={106} texte="non" ancre="start" />
+          <Boite x={10 + i * 125} y={140} l={105} h={60} lignes={t.non} />
+          <Fleche x1={117 + i * 125} y1={48} x2={133 + i * 125} y2={48} />
+          <Libelle x={125 + i * 125} y={10} texte="oui" />
+        </g>
+      ))}
+      <Boite
+        x={510}
+        y={20}
+        l={120}
+        h={80}
+        lignes={["Avantage", "durable"]}
+        ton="encre"
+      />
+    </Cadre>
+  );
+}
+
+/** Les capacités dynamiques : percevoir, saisir, reconfigurer, en cycle. */
+function CapacitesDynamiques() {
+  return (
+    <Cadre largeur={640} hauteur={250}>
+      <Boite
+        x={230}
+        y={10}
+        l={180}
+        h={64}
+        lignes={["Percevoir", "les changements"]}
+        ton="ocre"
+      />
+      <Boite
+        x={420}
+        y={170}
+        l={200}
+        h={64}
+        lignes={["Saisir", "engager des ressources"]}
+        ton="encre"
+      />
+      <Boite
+        x={20}
+        y={170}
+        l={200}
+        h={64}
+        lignes={["Reconfigurer", "l'organisation"]}
+        ton="ocre"
+      />
+      <Fleche x1={412} y1={50} x2={500} y2={166} />
+      <Fleche x1={418} y1={202} x2={222} y2={202} />
+      <Fleche x1={140} y1={166} x2={228} y2={50} />
+    </Cadre>
+  );
+}
+
 /** Correspondance identifiant → schéma. */
 const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   "choisir-renoncer": ChoisirRenoncer,
@@ -456,6 +730,14 @@ const SCHEMAS: Record<SchemaId, () => ReactNode> = {
   pestel: Pestel,
   "impact-incertitude": ImpactIncertitude,
   scenarios: Scenarios,
+  "cinq-forces": CinqForces,
+  "cycle-vie": CycleVie,
+  "concurrent-substitut": ConcurrentSubstitut,
+  "seuils-distinctives": SeuilsDistinctives,
+  "chaine-valeur": ChaineValeur,
+  "chaine-services": ChaineServices,
+  vrio: Vrio,
+  "capacites-dynamiques": CapacitesDynamiques,
 };
 
 /** Schéma du cours d'après son identifiant. */
