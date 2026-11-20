@@ -9,8 +9,9 @@
  *               v0.33.0 : diffusion programmée (leçons à venir verrouillées, avec leur
  *               date ; prochaine leçon en lecture en avance). v0.37.0 : ligne « Quiz du
  *               module » sous chaque module (meilleure note, réussi ou à faire).
+ *               v0.38.0 : carte « Examen final et diplôme » ; seuil des quiz réglable.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3 (v0.29.0 : achat ; v0.33.0 : diffusion ; v0.37.0 : quiz)
+ *  Version    : 1.4 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen)
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
@@ -24,6 +25,7 @@ import { SansAcces } from "@/components/cours/sans-acces";
 import {
   BADGE,
   BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
   CARD,
   PANEL_SAND,
 } from "@/components/ui/styles";
@@ -31,8 +33,11 @@ import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import {
   aAccesAuCours,
+  bilanConnecte,
   diffusionApprenant,
+  diplomeApprenant,
   progressionApprenant,
+  reglagesEvaluation,
   resultatsQuizApprenant,
 } from "@/lib/cours/acces";
 import {
@@ -46,6 +51,7 @@ import {
   type ResultatQuiz,
 } from "@/lib/cours/evaluation";
 import { estRedigee } from "@/lib/cours/lecons";
+import type { Bilan } from "@/lib/cours/note-finale";
 import { LECONS, MODULES, adresseLecon, leconParId } from "@/lib/cours/modules";
 import {
   dureeLisible,
@@ -96,10 +102,12 @@ function LigneQuiz({
   mod,
   resultat,
   ouvert,
+  seuil,
 }: {
   mod: (typeof MODULES)[number];
   resultat: ResultatQuiz | undefined;
   ouvert: boolean;
+  seuil: number;
 }) {
   const libelle = interpolate(t.quiz.titre, { n: String(mod.numero) });
   return (
@@ -115,7 +123,7 @@ function LigneQuiz({
         <span className="text-ink-muted">{libelle}</span>
       )}
       <span className="flex items-center gap-2 text-small text-ink-muted">
-        {resultat && estReussi(resultat.meilleure) && (
+        {resultat && estReussi(resultat.meilleure, seuil) && (
           <span className={BADGE}>{t.quiz.reussiBadge}</span>
         )}
         {resultat
@@ -131,11 +139,14 @@ function Programme({
   etats,
   diffusion,
   quiz,
+  seuilQuiz = 70,
 }: {
   etats?: Map<string, Etat>;
   diffusion?: Diffusion;
   /** Résultats aux quiz : présent seulement pour un apprenant qui a accès. */
   quiz?: Map<string, ResultatQuiz>;
+  /** Seuil de réussite des quiz (réglages d'évaluation). */
+  seuilQuiz?: number;
 }) {
   return (
     <ol className="flex flex-col gap-4">
@@ -185,6 +196,7 @@ function Programme({
               <LigneQuiz
                 mod={m}
                 resultat={quiz.get(m.id)}
+                seuil={seuilQuiz}
                 ouvert={quizOuvert(
                   m.lecons.map((l) => l.id),
                   diffusion?.etats ?? new Map(),
@@ -269,6 +281,37 @@ function Progression({
   );
 }
 
+// ==================== EXAMEN ET DIPLÔME ====================
+
+/** Carte de fin de cours : quiz réussis, examen et diplôme. */
+function FinDuCours({ bilan, diplome }: { bilan: Bilan; diplome: boolean }) {
+  return (
+    <section className={`${CARD} flex flex-col gap-3 p-5`}>
+      <h2 className="font-serif text-h3">{t.examen.carte}</h2>
+      <p className="text-small text-ink-muted">
+        {interpolate(t.diplome.quizReussis, {
+          n: String(bilan.quizReussis),
+          total: String(bilan.quizTotal),
+        })}
+        {" · "}
+        {bilan.examenReussi ? t.diplome.examenFait : t.diplome.examenAFaire}
+      </p>
+      <div className="flex flex-wrap gap-3">
+        {!diplome && (
+          <Link href="/strategie/cours/examen" className={BUTTON_SECONDARY}>
+            {t.examen.lien}
+          </Link>
+        )}
+        {(bilan.admissible || diplome) && (
+          <Link href="/strategie/cours/diplome" className={BUTTON_PRIMARY}>
+            {t.diplome.lien}
+          </Link>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /** Partie personnelle : connexion, accès, progression et programme annoté. */
 async function EspaceApprenant({
   searchParams,
@@ -298,11 +341,15 @@ async function EspaceApprenant({
     );
   }
 
-  const [lignes, { calendrier, etats: etatsDiffusion }, quiz] = await Promise.all([
-    progressionApprenant(),
-    diffusionApprenant(),
-    resultatsQuizApprenant(),
-  ]);
+  const [lignes, { calendrier, etats: etatsDiffusion }, quiz, reglages, bilan, diplome] =
+    await Promise.all([
+      progressionApprenant(),
+      diffusionApprenant(),
+      resultatsQuizApprenant(),
+      reglagesEvaluation(),
+      bilanConnecte(),
+      diplomeApprenant(),
+    ]);
   const etats = new Map<string, Etat>(
     lignes.map((l) => [l.lesson_id, l.completed_at ? "terminee" : "enCours"]),
   );
@@ -312,7 +359,13 @@ async function EspaceApprenant({
   return (
     <>
       <Progression lignes={lignes} diffusion={diffusion} />
-      <Programme etats={etats} diffusion={diffusion} quiz={quiz} />
+      <Programme
+        etats={etats}
+        diffusion={diffusion}
+        quiz={quiz}
+        seuilQuiz={reglages.seuilQuiz}
+      />
+      <FinDuCours bilan={bilan} diplome={diplome !== null} />
     </>
   );
 }

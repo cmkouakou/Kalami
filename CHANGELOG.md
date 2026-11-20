@@ -1,5 +1,24 @@
 # Journal des modifications
 
+## [v0.38.0] - 2026-11-20 — Cours de stratégie, sprint 8b2 (examen final et diplôme)
+### Ajouté
+- Examen final `/strategie/cours/examen` : un court cas et 20 questions rédigées pour le
+  cours ; ouvert une fois les 13 quiz réussis ; 3 essais espacés de 24 h ; correction côté
+  serveur, seuls la note et les numéros des questions manquées s'affichent.
+- Note finale pondérée 40 / 20 / 40 (quiz, exercices, examen) ; exercices : moyenne des
+  meilleures notes de tous les exercices notés, un exercice non fait comptant 0.
+- Diplôme `/strategie/cours/diplome` : bilan de l'apprenant, confirmation unique du nom à
+  imprimer, délivrance (13 quiz et examen réussis), mention Réussite / Bien / Très bien
+  (70 / 80 / 90). PDF A4 paysage produit à la demande, jamais stocké.
+- Vérification publique `/strategie/cours/diplome/[numero]` (non indexée) : titulaire,
+  cours, date et mention, jamais la note.
+- Admin `/admin/cours/diplomes` : réglages d'évaluation (seuils, poids, mentions), liste des
+  diplômes, correction du nom imprimé, PDF et lien de vérification.
+- Migration `20261127120000_course_diplomas.sql` (réglages, table course_diplomas, fonctions
+  d'examen, de vérification et de correction du nom). Limite de 20 PDF par heure.
+- Tests unitaires : forme de l'examen, note finale, mentions, état de l'examen, numéro et nom
+  du diplôme.
+
 ## [v0.37.0] - 2026-11-20 — Cours de stratégie, sprint 8b1 (quiz de module)
 ### Ajouté
 - Un quiz de fin de module pour chacun des 13 modules : 8 questions chacun (104 au total),

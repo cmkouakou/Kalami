@@ -7,11 +7,12 @@
  *               La RLS limite chaque lecture aux lignes de l'apprenant connecté.
  *               v0.33.0 : calendrier de diffusion de la cohorte et état de chaque leçon.
  *               v0.37.0 : meilleure note et nombre d'essais de chaque quiz de module.
+ *               v0.38.0 : réglages d'évaluation, bilan (note finale) et diplôme.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/notation.ts,
- *               lib/cours/calendrier.ts, lib/cours/evaluation.ts
+ *               lib/cours/calendrier.ts, lib/cours/evaluation.ts, lib/cours/note-finale.ts
  * =============================================================
  */
 
@@ -30,6 +31,18 @@ import { resultatsQuiz, type ResultatQuiz } from "@/lib/cours/evaluation";
 import { estRedigee } from "@/lib/cours/lecons";
 import { LECONS } from "@/lib/cours/modules";
 import type { LigneProgression } from "@/lib/cours/notation";
+import {
+  COLONNES_REGLAGES,
+  bilanApprenant,
+  estMention,
+  etatExamen,
+  lireReglagesEvaluation,
+  type Bilan,
+  type EtatExamen,
+  type Mention,
+  type ReglagesEvaluation,
+  type TentativeCours,
+} from "@/lib/cours/note-finale";
 import type { Highlight, HighlightColor } from "@/lib/reader/types";
 import { createClient } from "@/lib/supabase/server";
 
@@ -143,6 +156,100 @@ export const resultatsQuizApprenant = cache(
     return error || !data ? new Map() : resultatsQuiz(data);
   },
 );
+
+// ==================== ÉVALUATION FINALE ====================
+
+/** Réglages d'évaluation (lecture publique de course_settings). */
+export const reglagesEvaluation = cache(async (): Promise<ReglagesEvaluation> => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("course_settings")
+      .select(Object.values(COLONNES_REGLAGES).join(", "))
+      .maybeSingle();
+    return lireReglagesEvaluation(error ? null : data);
+  } catch {
+    return lireReglagesEvaluation(null);
+  }
+});
+
+/** Toutes les tentatives de l'apprenant connecté (exercices, quiz, examen). */
+export const tentativesApprenant = cache(async (): Promise<TentativeCours[]> => {
+  const user = await getCurrentUser();
+  if (!user) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("course_attempts")
+    .select("exercise_id, score, created_at")
+    .eq("user_id", user.id);
+  return error || !data ? [] : (data as TentativeCours[]);
+});
+
+/** Bilan de l'apprenant connecté : moyennes, examen, note finale et mention. */
+export const bilanConnecte = cache(async (): Promise<Bilan> => {
+  const [tentatives, reglages] = await Promise.all([
+    tentativesApprenant(),
+    reglagesEvaluation(),
+  ]);
+  return bilanApprenant(tentatives, reglages);
+});
+
+/** Diplôme tel que lu par l'apprenant ou l'administrateur. */
+export type Diplome = {
+  id: string;
+  numero: string;
+  nom: string;
+  finale: number;
+  mention: Mention;
+  quiz: number;
+  exercices: number;
+  examen: number;
+  delivreLe: string;
+};
+
+/** Colonnes lues pour un diplôme. */
+export const COLONNES_DIPLOME =
+  "id, number, printed_name, final_score, honours, quiz_score, exercises_score, " +
+  "exam_score, issued_at";
+
+/**
+ * Convertit une ligne de course_diplomas ; null si elle est incomplète.
+ * @param l - Ligne brute
+ */
+export function versDiplome(l: Record<string, unknown> | null): Diplome | null {
+  if (!l || typeof l.id !== "string" || typeof l.number !== "string") return null;
+  if (typeof l.printed_name !== "string" || !estMention(l.honours)) return null;
+  return {
+    id: l.id,
+    numero: l.number,
+    nom: l.printed_name,
+    finale: Number(l.final_score),
+    mention: l.honours,
+    quiz: Number(l.quiz_score),
+    exercices: Number(l.exercises_score),
+    examen: Number(l.exam_score),
+    delivreLe: String(l.issued_at),
+  };
+}
+
+/** Diplôme de l'apprenant connecté ; null s'il n'est pas encore délivré. */
+export const diplomeApprenant = cache(async (): Promise<Diplome | null> => {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("course_diplomas")
+    .select(COLONNES_DIPLOME)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  return error ? null : versDiplome(data as Record<string, unknown> | null);
+});
+
+/** État de l'examen de l'apprenant connecté, à l'instant de la requête. */
+export const etatExamenConnecte = cache(async (): Promise<EtatExamen> => {
+  const [bilan, diplome] = await Promise.all([bilanConnecte(), diplomeApprenant()]);
+  return etatExamen(bilan, Date.now(), diplome !== null);
+});
 
 // ==================== ANNOTATIONS ====================
 

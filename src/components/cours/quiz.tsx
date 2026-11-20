@@ -6,9 +6,10 @@
  *               « publique » des questions (sans réponses) ; le serveur corrige
  *               (soumettreQuiz) et ne renvoie le corrigé complet qu'en cas de réussite.
  *               En cas d'échec, seule la note de chaque question s'affiche. Essais
- *               illimités ; la meilleure note compte.
+ *               illimités ; la meilleure note compte. v0.38.0 : squelette() et
+ *               Question exportés pour l'examen final.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: components/cours/exercices.tsx, lib/cours/actions.ts,
  *               lib/cours/evaluation.ts, i18n/course.ts
@@ -40,7 +41,7 @@ import type { Correction, Reponse } from "@/lib/cours/notation";
 
 const t = getCourseDictionary();
 
-type Valeurs = (number | boolean | null)[];
+export type Valeurs = (number | boolean | null)[];
 
 /** Corrigé affichable : questions complètes, réponses et corrections. */
 type Corrige = {
@@ -66,7 +67,7 @@ type Props = {
  * sont fictifs et ne sont jamais lus tant qu'aucune correction n'est affichée.
  * @param q - Question sans réponses
  */
-function squelette(q: QuestionPublique): Notable {
+export function squelette(q: QuestionPublique): Notable {
   if (q.type === "qcm") {
     return {
       type: "qcm",
@@ -119,7 +120,7 @@ function corrigeDepuisModele(questions: QuestionQuiz[]): Corrige {
 // ==================== QUESTION ====================
 
 /** Une question : saisie, ou corrigé quand une correction est fournie. */
-function Question({
+export function Question({
   ex,
   valeurs,
   correction,

@@ -6,9 +6,9 @@
  *               généré à la construction) ; le quiz est réservé aux inscrits : connexion
  *               exigée, accès vérifié, ouverture quand toutes les leçons du module sont
  *               ouvertes. Le navigateur ne reçoit les bonnes réponses que si le quiz a
- *               déjà été réussi.
+ *               déjà été réussi. v0.38.0 : seuil de réussite lu dans les réglages.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/quiz.tsx, cours.css
  * =============================================================
@@ -27,10 +27,10 @@ import { getCourseDictionary } from "@/i18n/course";
 import {
   diffusionApprenant,
   exigerConnexionCours,
+  reglagesEvaluation,
   resultatsQuizApprenant,
 } from "@/lib/cours/acces";
 import {
-  SEUIL_REUSSITE,
   estReussi,
   quizOuvert,
   versionPublique,
@@ -79,11 +79,21 @@ async function QuizPrive({ mod, adresse }: { mod: ModuleInfo; adresse: string })
     return <p className={`${PANEL_SAND} p-6`}>{t.quiz.verrouille}</p>;
   }
 
-  const resultat = (await resultatsQuizApprenant()).get(mod.id) ?? null;
+  const [quiz, { seuilQuiz }] = await Promise.all([
+    resultatsQuizApprenant(),
+    reglagesEvaluation(),
+  ]);
+  const resultat = quiz.get(mod.id) ?? null;
   const meilleure = resultat?.meilleure ?? null;
 
   return (
     <>
+      <p className="text-small text-ink-muted">
+        {interpolate(t.quiz.intro, {
+          n: String(questions.length),
+          seuil: String(seuilQuiz),
+        })}
+      </p>
       {resultat && (
         <p className="text-small text-ink-muted">
           {interpolate(t.quiz.essais, { n: String(resultat.essais) })}
@@ -92,9 +102,9 @@ async function QuizPrive({ mod, adresse }: { mod: ModuleInfo; adresse: string })
       <QuizModule
         moduleId={mod.id}
         questions={questions.map(versionPublique)}
-        seuil={SEUIL_REUSSITE}
+        seuil={seuilQuiz}
         meilleure={meilleure}
-        corrigeModele={estReussi(meilleure) ? [...questions] : null}
+        corrigeModele={estReussi(meilleure, seuilQuiz) ? [...questions] : null}
       />
     </>
   );
@@ -109,7 +119,6 @@ export default async function QuizPage({
   const mod = moduleDuQuiz(slug);
   if (!mod) notFound();
   const adresse = `/strategie/cours/${mod.slug}/quiz`;
-  const nombre = quizDe(mod.id)?.length ?? 0;
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8">
@@ -122,12 +131,6 @@ export default async function QuizPage({
         <h1 className="font-serif text-h1 font-semibold">
           {interpolate(t.quiz.titre, { n: String(mod.numero) })}
         </h1>
-        <p className="text-small text-ink-muted">
-          {interpolate(t.quiz.intro, {
-            n: String(nombre),
-            seuil: String(SEUIL_REUSSITE),
-          })}
-        </p>
       </header>
 
       {/* ==================== QUIZ ==================== */}

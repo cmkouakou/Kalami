@@ -5,12 +5,13 @@
  *  Description: Actions serveur de l'administration du cours (v0.29.0) : réglages de
  *               vente, cohortes (création, modification, suppression), accès accordés
  *               par liste de courriels, changement de cohorte et retrait d'un accès ;
- *               calendrier de diffusion d'une cohorte (v0.33.0).
+ *               calendrier de diffusion d'une cohorte (v0.33.0) ; réglages
+ *               d'évaluation et correction du nom d'un diplôme (v0.38.0).
  *               Les fonctions SQL vérifient le rôle administrateur (aal2) et écrivent
  *               le journal d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/admin-validation.ts
  * =============================================================
  */
@@ -28,6 +29,8 @@ import {
   lireAccord,
   lireCalendrierSaisi,
   lireCohorte,
+  lireEvaluation,
+  lireNomDiplome,
   lireReglages,
 } from "@/lib/cours/admin-validation";
 import { createClient } from "@/lib/supabase/server";
@@ -205,4 +208,50 @@ export async function retirerAcces(
   if (error) return { error: erreur(error.message) };
   refresh();
   return { message: a.liste.retire };
+}
+
+// ==================== ÉVALUATION ET DIPLÔMES (v0.38.0) ====================
+
+/** Enregistre les seuils, les poids de la note finale et les mentions. */
+export async function enregistrerEvaluation(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const lu = lireEvaluation(formData);
+  if (!lu.ok) return { error: erreur(lu.erreur) };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_course_save_evaluation", lu.valeur);
+  if (error) return { error: erreur(error.message) };
+  refresh();
+  return { message: a.diplomes.enregistre };
+}
+
+/**
+ * Corrige le nom imprimé d'un diplôme (le prochain PDF le reprend).
+ * @param id - Identifiant du diplôme (lié par .bind)
+ */
+export async function renommerDiplome(
+  id: string,
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  if (!isUuid(id)) return { error: erreur("diploma_not_found") };
+  const lu = lireNomDiplome(formData);
+  if (!lu.ok) return { error: erreur(lu.erreur) };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_course_rename_diploma", {
+    p_id: id,
+    p_name: lu.valeur,
+  });
+  if (error) {
+    // Le nom refusé par la base a son propre message (celui des cohortes ne convient pas)
+    const code = error.message === "invalid_name" ? "invalid_diploma_name" : error.message;
+    return { error: erreur(code) };
+  }
+  refresh();
+  return { message: a.diplomes.renomme };
 }

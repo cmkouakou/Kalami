@@ -5,9 +5,9 @@
  *  Description: Textes français du cours de stratégie : accueil, programme, page de
  *               leçon, encadrés, exercices, annotations, lecture à voix haute et
  *               messages d'erreur. Lus via getCourseDictionary() (course.ts).
- *               v0.37.0 : quiz de module.
+ *               v0.37.0 : quiz de module. v0.38.0 : examen final et diplôme.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
  * =============================================================
  */
@@ -114,6 +114,104 @@ const courseFr = {
     erreur: "Le quiz n'a pas pu être enregistré. Réessayez.",
   },
 
+  examen: {
+    titre: "Examen final",
+    lien: "Examen final",
+    carte: "Examen final et diplôme",
+    intro:
+      "Un cas court, puis {n} questions sur l'ensemble du cours. L'examen est réussi à " +
+      "partir de {seuil} / 100. Vous avez {essais} essais, espacés d'au moins 24 heures ; " +
+      "votre meilleure note compte.",
+    cas: "Le cas",
+    questions: "Les questions",
+    verrouille:
+      "L'examen s'ouvre quand les 13 quiz de module sont réussis. Quiz réussis : {n} / {total}.",
+    attente: "Prochain essai possible le {date}.",
+    epuise: "Vous avez utilisé vos {essais} essais.",
+    termine: "Votre diplôme est délivré : l'examen est clos.",
+    restants: "Essais restants : {n}",
+    valider: "Remettre l'examen",
+    continuer: "Revoir mes réponses",
+    envoi: "Correction…",
+    confirmer:
+      "Remettre l'examen ? Cet essai comptera parmi vos {essais} essais.",
+    incomplet: "Répondez à toutes les questions avant de remettre l'examen.",
+    score: "Votre note : {score} / 100",
+    reussi: "Examen réussi. Vous pouvez maintenant obtenir votre diplôme.",
+    echoue: "Il faut {seuil} / 100 pour réussir l'examen.",
+    manquees: "Questions à revoir : {liste}",
+    aucuneManquee: "Aucune question manquée.",
+    meilleure: "Meilleure note à l'examen : {score} / 100",
+    versDiplome: "Obtenir mon diplôme",
+    tropTot: "Il faut attendre 24 heures entre deux essais.",
+    plusDEssais: "Vous n'avez plus d'essai.",
+    erreur: "L'examen n'a pas pu être enregistré. Réessayez.",
+  },
+
+  diplome: {
+    titre: "Mon diplôme",
+    lien: "Mon diplôme",
+    bilan: "Votre bilan",
+    quiz: "Quiz de module (moyenne)",
+    exercices: "Exercices notés (moyenne)",
+    examen: "Examen final (meilleure note)",
+    finale: "Note finale",
+    poids: "{n} %",
+    note: "{score} / 100",
+    nonFait: "—",
+    conditions:
+      "Le diplôme est délivré quand les 13 quiz sont réussis ({seuilQuiz} / 100) et " +
+      "l'examen final est réussi ({seuilExamen} / 100).",
+    quizReussis: "Quiz réussis : {n} / {total}",
+    examenAFaire: "Examen final : à réussir",
+    examenFait: "Examen final : réussi",
+    nomTitre: "Le nom inscrit sur le diplôme",
+    nomAide:
+      "Vérifiez l'orthographe, les accents et l'ordre prénom-nom : vous ne pourrez plus " +
+      "le modifier vous-même ensuite.",
+    nomChamp: "Nom complet",
+    nomConfirmer: "Je confirme que ce nom est bien orthographié.",
+    delivrer: "Obtenir mon diplôme",
+    envoi: "Délivrance…",
+    nomInvalide: "Saisissez un nom de 2 à 120 caractères (lettres, espaces, - ' .).",
+    nonAdmissible: "Les conditions du diplôme ne sont pas encore réunies.",
+    erreur: "Le diplôme n'a pas pu être délivré. Réessayez.",
+    delivre: "Diplôme délivré le {date}",
+    numero: "Numéro : {numero}",
+    mention: "Mention : {mention}",
+    telecharger: "Télécharger le diplôme (PDF)",
+    verifier: "Page de vérification publique",
+    correction:
+      "Une erreur dans le nom ? Signalez-la à votre formateur en indiquant le numéro du " +
+      "diplôme : il peut la corriger.",
+    mentions: {
+      reussite: "Réussite",
+      bien: "Bien",
+      tres_bien: "Très bien",
+    },
+    pdf: {
+      surtitre: "Kalami Stratégie",
+      titre: "Diplôme",
+      decerne: "décerné à",
+      cours: "pour avoir suivi et réussi le cours",
+      intitule: "Le cours de stratégie d'entreprise",
+      mention: "Mention {mention}",
+      date: "Délivré le {date}",
+      numero: "N° {numero}",
+      verifier: "Vérification : {adresse}",
+      signature: "Claude Marcel, auteur du cours",
+    },
+    verification: {
+      titre: "Vérification d'un diplôme",
+      valide: "Ce diplôme est authentique.",
+      nom: "Titulaire",
+      cours: "Cours",
+      date: "Date de délivrance",
+      mention: "Mention",
+      introuvable: "Aucun diplôme ne correspond à ce numéro.",
+    },
+  },
+
   encadres: {
     retenir: "À retenir",
     piege: "Piège fréquent",
@@ -171,12 +269,14 @@ const courseFr = {
       cohortes: "Cohortes",
       suivi: "Suivi",
       prix: "Prix et vente",
+      diplomes: "Évaluation et diplômes",
     },
     aide: {
       apprenants: "Coller une liste de courriels, choisir la cohorte, retirer un accès.",
       cohortes: "Créer et modifier les groupes (pays, dates, note).",
       suivi: "Progression, temps de formation et notes ; export CSV.",
       prix: "Mettre le cours en vente, fixer ses prix et le livre associé.",
+      diplomes: "Seuils, poids de la note finale, mentions ; diplômes délivrés.",
     },
     chiffres: {
       apprenants: "{n} apprenant(s) actif(s)",
@@ -348,7 +448,49 @@ const courseFr = {
       maj: "Dernière modification : {date}",
     },
 
+    diplomes: {
+      titre: "Évaluation et diplômes",
+      intro:
+        "La note finale combine la moyenne des 13 quiz, celle des exercices notés (un " +
+        "exercice non fait compte pour 0) et la meilleure note de l'examen. Le diplôme " +
+        "exige tous les quiz et l'examen réussis. Les diplômes déjà délivrés gardent " +
+        "leurs notes et leur mention.",
+      evaluation: "Réglages d'évaluation",
+      seuilQuiz: "Seuil de réussite d'un quiz",
+      seuilExamen: "Seuil de réussite de l'examen",
+      aideSeuil: "Entre 50 et 100.",
+      poidsQuiz: "Poids des quiz (%)",
+      poidsExercices: "Poids des exercices (%)",
+      poidsExamen: "Poids de l'examen (%)",
+      aidePoids: "La somme des trois poids doit faire 100.",
+      mentionBien: "Mention Bien à partir de",
+      mentionTresBien: "Mention Très bien à partir de",
+      aideMention: "En dessous de « Bien » : mention Réussite.",
+      enregistrer: "Enregistrer",
+      enregistre: "Réglages d'évaluation enregistrés.",
+      delivres: "Diplômes délivrés",
+      aucun: "Aucun diplôme délivré pour l'instant.",
+      numero: "Numéro",
+      nom: "Nom imprimé",
+      mention: "Mention",
+      finale: "Note finale",
+      date: "Délivré le",
+      corrige: "Nom corrigé le {date}",
+      corriger: "Corriger le nom",
+      renomme: "Nom corrigé. Le prochain PDF le reprendra.",
+      pdf: "PDF",
+      verifier: "Vérification",
+    },
+
     erreursAdmin: {
+      invalid_threshold: "Seuil invalide : saisissez un entier entre 50 et 100.",
+      invalid_weights: "Poids invalides : trois entiers dont la somme fait 100.",
+      invalid_honours:
+        "Mentions invalides : « Bien » doit dépasser le seuil de l'examen et rester " +
+        "sous « Très bien » (100 au plus).",
+      invalid_diploma_name: "Nom invalide : 2 à 120 lettres (espaces, points, traits " +
+        "d'union et apostrophes permis).",
+      diploma_not_found: "Diplôme introuvable. Rechargez la page.",
       invalid_price: "Prix invalide : saisissez un montant positif (2 décimales au plus).",
       price_required: "Saisissez au moins un prix pour mettre le cours en vente.",
       book_not_found: "Livre introuvable.",

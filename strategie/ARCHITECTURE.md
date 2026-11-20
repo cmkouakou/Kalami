@@ -101,7 +101,7 @@ schémas. Les textes extraits des sources (`sources-extraites/`) ne sont jamais 
 | S7 | Modules 10, 11 et 12 | oui — fait, v0.35.0 |
 | S8a | Module 13 : plan en une page, cas Ajinomoto, votre propre plan | oui — fait, v0.36.0 |
 | S8b1 | Quiz de module (13 quiz, correction serveur, corrigé après réussite) | oui — fait, v0.37.0 |
-| S8b2 | Examen final, note finale, réglages, diplôme PDF, page de vérification | non |
+| S8b2 | Examen final, note finale, réglages, diplôme PDF, page de vérification | oui — fait, v0.38.0 |
 | S8c | Page de vente, référencement | non |
 
 Avec S1 et S2, la cohorte peut commencer dès la fin de S3 : les modules suivants s'ajoutent

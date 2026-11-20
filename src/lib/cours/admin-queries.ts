@@ -6,10 +6,10 @@
  *               cohortes, apprenants avec leur suivi (fonction SQL admin_course_learners)
  *               et fiche d'un apprenant (progression, notes, temps par jour, lus grâce aux
  *               politiques « ou administrateur ») ; calendrier de diffusion d'une
- *               cohorte (v0.33.0).
+ *               cohorte (v0.33.0) ; diplômes délivrés (v0.38.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/supabase/server.ts, lib/cours/suivi.ts,
  *               migrations 20261124120000_course.sql et 20261125120000_course_admin.sql
  * =============================================================
@@ -30,6 +30,7 @@ import {
   jourDansFuseau,
   type Fuseau,
 } from "@/lib/cours/calendrier";
+import { estMention, type Mention } from "@/lib/cours/note-finale";
 import { createClient } from "@/lib/supabase/server";
 
 // ==================== TYPES ====================
@@ -260,4 +261,43 @@ export async function lireFicheApprenant(
     tentatives: (tentatives.data ?? []) as Tentative[],
     jours: (jours.data ?? []) as JourActivite[],
   };
+}
+
+// ==================== DIPLÔMES (v0.38.0) ====================
+
+/** Diplôme délivré, tel que listé dans l'administration. */
+export type DiplomeAdmin = {
+  id: string;
+  numero: string;
+  nom: string;
+  mention: Mention;
+  finale: number;
+  delivreLe: string;
+  corrigeLe: string | null;
+};
+
+/** Diplômes délivrés, du plus récent au plus ancien (politique « ou administrateur »). */
+export async function listerDiplomes(): Promise<DiplomeAdmin[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("course_diplomas")
+    .select("id, number, printed_name, honours, final_score, issued_at, name_corrected_at")
+    .order("issued_at", { ascending: false })
+    .limit(500);
+  if (error) return echec("diplômes", error, []);
+  return (data ?? []).flatMap((l) =>
+    estMention(l.honours)
+      ? [
+          {
+            id: String(l.id),
+            numero: String(l.number),
+            nom: String(l.printed_name),
+            mention: l.honours,
+            finale: Number(l.final_score),
+            delivreLe: String(l.issued_at),
+            corrigeLe: l.name_corrected_at ? String(l.name_corrected_at) : null,
+          },
+        ]
+      : [],
+  );
 }

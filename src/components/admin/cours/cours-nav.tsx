@@ -3,10 +3,11 @@
  *  Fichier    : cours-nav.tsx (admin/cours)
  *  Projet     : Kalami Stratégie — le cours
  *  Description: En-tête commun aux pages d'administration du cours (v0.29.0) : titre,
- *               lien de retour et pastilles vers les quatre rubriques.
+ *               lien de retour et pastilles vers les rubriques (v0.38.0 : évaluation et
+ *               diplômes).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: i18n/course.ts
  * =============================================================
  */
@@ -24,6 +25,7 @@ export const RUBRIQUES = [
   { cle: "cohortes", href: "/admin/cours/cohortes" },
   { cle: "suivi", href: "/admin/cours/suivi" },
   { cle: "prix", href: "/admin/cours/prix" },
+  { cle: "diplomes", href: "/admin/cours/diplomes" },
 ] as const;
 
 export type Rubrique = (typeof RUBRIQUES)[number]["cle"];

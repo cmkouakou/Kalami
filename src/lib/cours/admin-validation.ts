@@ -4,11 +4,12 @@
  *  Projet     : Kalami Stratégie — le cours
  *  Description: Lecture et contrôle des formulaires de l'administration du cours
  *               (v0.29.0) : réglages de vente, cohorte, accès accordés ; calendrier de
- *               diffusion (v0.33.0). La base refait les mêmes contrôles ; ceux-ci donnent
+ *               diffusion (v0.33.0) ; évaluation et nom d'un diplôme (v0.38.0).
+ *               La base refait les mêmes contrôles ; ceux-ci donnent
  *               un message clair avant l'envoi.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-11-19
+ *  Version    : 1.2
+ *  Date       : 2026-11-20
  *  Dépendances: lib/admin/validation.ts, lib/cours/suivi.ts, lib/cours/calendrier.ts
  * =============================================================
  */
@@ -21,6 +22,7 @@ import {
   type Fuseau,
 } from "@/lib/cours/calendrier";
 import { MODULES } from "@/lib/cours/modules";
+import { nomImprime } from "@/lib/cours/note-finale";
 import { lireCourriels, MAX_COURRIELS } from "@/lib/cours/suivi";
 
 // ==================== TYPES ====================
@@ -240,4 +242,69 @@ export function lireAccord(fd: FormData): Resultat<AccordSaisi> {
       invalides,
     },
   };
+}
+
+// ==================== ÉVALUATION (v0.38.0) ====================
+
+export type EvaluationSaisie = {
+  p_quiz_threshold: number;
+  p_exam_threshold: number;
+  p_weight_quizzes: number;
+  p_weight_exercises: number;
+  p_weight_exam: number;
+  p_honours_good: number;
+  p_honours_very_good: number;
+};
+
+/** Entier de 0 à 100 (undefined si la saisie est invalide). */
+function entier(fd: FormData, nom: string): number | undefined {
+  const brut = texte(fd, nom);
+  if (!/^d{1,3}$/.test(brut)) return undefined;
+  const n = Number(brut);
+  return n <= 100 ? n : undefined;
+}
+
+/**
+ * Réglages d'évaluation : seuils (50 à 100), poids (somme 100), mentions (Bien < Très
+ * bien, au-dessus du seuil de l'examen).
+ * @param fd - Données du formulaire
+ */
+export function lireEvaluation(fd: FormData): Resultat<EvaluationSaisie> {
+  const quiz = entier(fd, "quiz_threshold");
+  const examen = entier(fd, "exam_threshold");
+  if (quiz === undefined || examen === undefined || quiz < 50 || examen < 50) {
+    return { ok: false, erreur: "invalid_threshold" };
+  }
+  const pq = entier(fd, "weight_quizzes");
+  const pe = entier(fd, "weight_exercises");
+  const px = entier(fd, "weight_exam");
+  if (pq === undefined || pe === undefined || px === undefined || pq + pe + px !== 100) {
+    return { ok: false, erreur: "invalid_weights" };
+  }
+  const bien = entier(fd, "honours_good");
+  const tresBien = entier(fd, "honours_very_good");
+  if (bien === undefined || tresBien === undefined || bien >= tresBien || bien <= examen) {
+    return { ok: false, erreur: "invalid_honours" };
+  }
+  return {
+    ok: true,
+    valeur: {
+      p_quiz_threshold: quiz,
+      p_exam_threshold: examen,
+      p_weight_quizzes: pq,
+      p_weight_exercises: pe,
+      p_weight_exam: px,
+      p_honours_good: bien,
+      p_honours_very_good: tresBien,
+    },
+  };
+}
+
+/**
+ * Correction du nom imprimé sur un diplôme.
+ * @param fd - Données du formulaire (champ « name »)
+ */
+export function lireNomDiplome(fd: FormData): Resultat<string> {
+  const nom = nomImprime(fd.get("name"));
+  return nom ? { ok: true, valeur: nom } : { ok: false, erreur: "invalid_diploma_name" };
 }

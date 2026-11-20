@@ -7,9 +7,10 @@
  *               stratégique, choix du bandeau des témoins (v1.1). Le sujet
  *               (adresse IP, compte, empreinte du courriel) est calculé ici, côté serveur ;
  *               le comptage est fait par la fonction SQL hit_rate_limit (rôle service).
+ *               v0.38.0 : compartiment diploma_pdf_user (PDF du diplôme).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-10-22
+ *  Version    : 1.2
+ *  Date       : 2026-11-20
  *  Dépendances: lib/supabase/admin.ts, migration 20261111120000_security.sql
  * =============================================================
  */
@@ -32,6 +33,7 @@ export const RATE_LIMITS = {
   promo_user: { limit: 10, windowSeconds: 10 * 60 },
   export_user: { limit: 5, windowSeconds: 60 * 60 },
   plan_export_user: { limit: 20, windowSeconds: 60 * 60 },
+  diploma_pdf_user: { limit: 20, windowSeconds: 60 * 60 },
   consent_ip: { limit: 30, windowSeconds: 60 * 60 },
 } as const;
 
