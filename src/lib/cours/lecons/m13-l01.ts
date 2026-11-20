@@ -6,8 +6,10 @@
  *               quoi sert un plan écrit, ses huit sections, le plan d'Infosystem résumé,
  *               ce qui rend un plan utile, la démarche entière en un tableau. Sources :
  *               livre, module 10 (§ 10.1 à 10.3). Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (PSO 2030 de la STM, Air Côte d'Ivoire).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -18,6 +20,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -101,6 +104,48 @@ export const M13_L01: ContenuLecon = [
       "40 heures de formation par technicien et par année, un quart du chiffre d'affaires " +
       "en sécurité et en conformité), les risques avec leur réponse prévue, et le rythme " +
       "du suivi.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Un plan écrit relie une vision à des objectifs, puis à des moyens et à leur " +
+      "financement. Voici deux organisations dont on peut suivre ce fil dans des " +
+      "documents publics. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Québec : le Plan stratégique organisationnel 2030 de la STM",
+    p(
+      "La Société de transport de Montréal publie son plan stratégique. Celui de 2030 " +
+        "tient en une vision courte, « être un leader en mobilité durable », trois " +
+        "objectifs (l'expérience des employés, l'expérience et l'attachement de la " +
+        "clientèle, la performance et l'agilité des activités) et trois leviers " +
+        "transversaux, dont le développement durable et l'accessibilité universelle. En " +
+        "2023, la STM a même invité le public à répondre à un sondage sur ses grandes " +
+        "orientations. Des plans plus détaillés, comme le Plan de développement durable " +
+        "2030, se rattachent ensuite au plan principal : une page qui dit l'essentiel, " +
+        "des annexes pour le détail. Sources : [STM, le PSO 2030]" +
+        "(https://stm.info/en/about/financial_and_corporate_information/our-2030-" +
+        "strategic-organizational-plan-sop) ; [STM, consultation de 2023]" +
+        "(https://stm.info/en/press/news/2023/the-stm-is-inviting-its-customers-to-" +
+        "participate-in-the-development-of-its-projects-and-service-offering-for-2030).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : Air Côte d'Ivoire et le long-courrier",
+    p(
+      "Air Côte d'Ivoire veut faire d'Abidjan un hub régional. Le fil du plan se lit " +
+        "dans ses décisions : un premier vol long-courrier, Abidjan-Paris, annoncé pour " +
+        "octobre 2025 ; un premier Airbus A330-900neo reçu en septembre 2025 ; une flotte " +
+        "de 12 avions qui doit passer à 18 d'ici 2031 ; et un financement trouvé pour " +
+        "chaque étape, dont un prêt de plus de 47 milliards de F CFA de la BADEA pour " +
+        "deux A330-900neo. Vision, objectif, moyens, financement : ce sont les sections " +
+        "d'un plan écrit. Sources : [Le360 Afrique, ligne Abidjan-Paris]" +
+        "(https://afrique.le360.ma/afrique-de-louest/cote-divoire/la-compagnie-air-cote-" +
+        "divoire-va-desservir-la-ligne-abidjan-paris-avant-fin-2025_Y74JIUOBMJEF5IRAO3" +
+        "BVP4BFFI/) ; [Fraternité Matin, prêt pour les long-courriers]" +
+        "(https://www.fratmat.info/article/2634085/economie/air-cote-divoire-bientot-" +
+        "sur-les-longs-courriers-un-pret-de-plus-de-47-milliards-fcfa-ratifie).",
+    ),
   ),
 
   titre("Ce qui rend un plan utile"),

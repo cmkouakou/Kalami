@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.10] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 13.1)
+### Ajouté
+- « Le plan stratégique d'Infosystem en une page » : exemples sourcés, PSO 2030 de la
+  STM et plan long-courrier d'Air Côte d'Ivoire.
+
 ## [v0.39.9] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 12.4)
 ### Ajouté
 - « Le suivi : un rendez-vous, pas un rapport » : exemples sourcés, Bombardier qui cède
