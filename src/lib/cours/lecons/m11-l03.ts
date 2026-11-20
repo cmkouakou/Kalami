@@ -7,8 +7,10 @@
  *               licence, franchise, impartition), pourquoi s'allier, les risques, les
  *               clés d'une alliance qui dure, les deux alliances d'Infosystem. Sources :
  *               livre, module 8 (§ 8.4). Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (pont Samuel-De Champlain, pont Henri-Konan-Bédié, deux par forme).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -21,6 +23,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -78,6 +81,177 @@ export const M11_L03: ContenuLecon = [
     "Coentreprise",
     "Une entreprise nouvelle créée et détenue par deux sociétés ou plus, qui y apportent " +
       "chacune des ressources et en partagent les résultats et le contrôle.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Chaque forme se retrouve autour de nous. Commençons par un ouvrage que tout " +
+      "Montréalais connaît, puis voyons deux exemples par forme : l'un au Québec, " +
+      "l'autre en Côte d'Ivoire. La source est indiquée sous chaque exemple.",
+  ),
+  p(
+    "**Le pont Samuel-De Champlain, à Montréal.** Pour remplacer l'ancien pont " +
+      "Champlain, le gouvernement du Canada n'a pas tout fait seul : il a choisi un " +
+      "**partenariat public-privé**. Le 19 juin 2015, il a signé l'entente de projet " +
+      "avec **Signature sur le Saint-Laurent**, un consortium de firmes dont ACS " +
+      "Infrastructure Canada, Dragados Canada, Flatiron et SNC-Lavalin (aujourd'hui " +
+      "AtkinsRéalis). Le consortium a conçu, construit et financé le corridor, puis il " +
+      "l'exploite et l'entretient pendant 30 ans. L'État fixe les exigences et paie ; " +
+      "les firmes apportent leur génie, leurs équipes et leur financement. Le pont a " +
+      "ouvert le 24 juin 2019 vers Montréal, puis le 1er juillet vers Brossard. " +
+      "Sources : [Infrastructure Canada, foire aux questions]" +
+      "(https://logement-infrastructure.canada.ca/nbsl-npsl/faq-fra.html) ; " +
+      "[Infrastructure Canada, ouverture du pont, juin 2019]" +
+      "(https://www.canada.ca/fr/bureau-infrastructure/nouvelles/2019/06/" +
+      "le-pont-samuel-de-champlain-ouvrira-a-la-circulation-le-24-juin.html).",
+  ),
+  notion(
+    "Consortium et PPP en Côte d'Ivoire : le pont Henri-Konan-Bédié",
+    p(
+      "À Abidjan, le pont Henri-Konan-Bédié (environ 1,5 km sur la lagune Ébrié, entre " +
+        "Riviera et Marcory) est lui aussi un partenariat public-privé. L'État a accordé " +
+        "une concession de 30 ans à la **SOCOPRIM**, société dont Bouygues est " +
+        "l'actionnaire principal : elle a conçu, financé et construit l'ouvrage, et elle " +
+        "l'exploite. Réunir le financement a pris des années ; le pont a été inauguré " +
+        "le 16 décembre 2014. Différence avec Champlain : à Abidjan, l'usager paie un " +
+        "**péage**, qui rembourse le concessionnaire ; à Montréal, le pont est sans " +
+        "péage et c'est l'État qui paie le consortium.",
+    ),
+    p(
+      "Sources : [Banque mondiale, fiche PPP du pont à péage]" +
+        "(https://ppp.worldbank.org/public-private-partnership/sites/default/files/" +
+        "2022-03/P3Briefs_CotedIvoireTollBridge.pdf) ; [Bouygues Construction]" +
+        "(https://www.bouygues-construction.com/en/achievements/henri-konan-bedie-bridge).",
+    ),
+  ),
+  notion(
+    "Accord de partenariat : STM et BIXI ; CIE, SODECI et Orange",
+    p(
+      "**Québec.** En 2015, la STM, BIXI Montréal et Communauto ont conclu une " +
+        "entente : les abonnés annuels OPUS obtenaient un rabais sur leur abonnement " +
+        "BIXI. En 2017, la carte OPUS est devenue utilisable dans les 540 stations BIXI. " +
+        "Chacun reste indépendant ; ils partagent une clientèle et un support de " +
+        "paiement, rien de plus. Sources : [STM, conseil d'administration, 2015]" +
+        "(https://www.stm.info/sites/default/files/pdf/fr/CA/150401/art._12.5.pdf) ; " +
+        "[communiqué BIXI–STM, 2017](https://www.newswire.ca/news-releases/" +
+        "les-540-stations-intelligentes-bixi-opus-en-service-des-aujourdhui-" +
+        "632892393.html).",
+    ),
+    p(
+      "**Côte d'Ivoire.** La CIE et la SODECI ont signé un protocole d'accord avec " +
+        "Orange Côte d'Ivoire et la BIAO-CI pour que leurs clients règlent les factures " +
+        "d'eau et d'électricité par paiement électronique. Les distributeurs encaissent " +
+        "plus vite ; l'opérateur et la banque gagnent des transactions. D'autres accords " +
+        "ont suivi, par exemple avec Wave en 2023. Sources : [Abidjan.net]" +
+        "(https://news.abidjan.net/articles/417037/reglement-des-factures-deau-et-" +
+        "delectricite-desormais-possible-par-paiement-electronique) ; [Digital Mag]" +
+        "(https://digitalmag.ci/wave-cote-divoire-integre-la-possibilite-de-payer-" +
+        "vos-factures-cie-et-sodeci/).",
+    ),
+  ),
+  notion(
+    "Alliance stratégique : Air Canada et Star Alliance ; Air France et Air Côte d'Ivoire",
+    p(
+      "**Québec.** Air Canada, dont le siège est à Montréal, est l'une des cinq " +
+        "compagnies fondatrices de **Star Alliance**, créée le 14 mai 1997 avec " +
+        "Lufthansa, SAS, Thai Airways et United. Les membres vendent les vols des " +
+        "autres et relient leurs réseaux, sans fusionner. Source : [Air Canada, " +
+        "transporteurs partenaires et Star Alliance]" +
+        "(https://www.aircanada.com/fr/travelinfo/airport/codeshare.html).",
+    ),
+    p(
+      "**Côte d'Ivoire.** Air France est actionnaire et partenaire stratégique d'Air " +
+        "Côte d'Ivoire depuis la création de la compagnie, en 2012. En octobre 2026, " +
+        "les deux compagnies ont signé un accord de partage de codes sur Paris–Abidjan, " +
+        "en vigueur le 25 octobre, et annoncé le rapprochement de leurs programmes de " +
+        "fidélité. Une alliance peut donc aller jusqu'à une part du capital. Source : " +
+        "[Air France, communiqué du 16 octobre 2026]" +
+        "(https://corporate.airfrance.com/fr/communiques-presse/air-france-et-air-" +
+        "cote-divoire-renforcent-leur-partenariat-strategique-avec-un).",
+    ),
+  ),
+  notion(
+    "Coentreprise : l'Aluminerie de Bécancour ; Orange Bank Africa",
+    p(
+      "**Québec.** L'Aluminerie de Bécancour (ABI) est une société détenue par Alcoa " +
+        "(74,95 %) et Rio Tinto (25,05 %). Deux concurrents partagent une usine, ses " +
+        "coûts et sa production, chacun selon sa part. Source : [Alcoa, fiche de " +
+        "l'Aluminerie de Bécancour](https://www.alcoa.com/canada/fr/pdf/Becancour.pdf).",
+    ),
+    p(
+      "**Côte d'Ivoire.** Le 23 juillet 2020, Orange et le groupe NSIA ont lancé à " +
+        "Abidjan **Orange Bank Africa**, une banque créée en commun : Orange apporte ses " +
+        "abonnés et Orange Money, NSIA son métier de banque et d'assurance. Premier " +
+        "produit : un microcrédit dès 5 000 F CFA, demandé depuis le téléphone. C'est " +
+        "l'exemple « une banque et un opérateur » du tableau, poussé jusqu'à la " +
+        "coentreprise. Sources : [Orange, communiqué du 23 juillet 2020]" +
+        "(https://newsroom.orange.com/orange-and-nsia-launch-orange-bank-africa-to-" +
+        "provide-greater-access-to-financial-services-and-improve-the-financial-" +
+        "inclusion-of-people-living-in-west-africa?lang=eng) ; [Koaci]" +
+        "(https://www.koaci.com/article/2020/07/23/cote-divoire/economie/cote-divoire-" +
+        "orange-et-nsia-lancent-orange-bank-africa_143434.html).",
+    ),
+  ),
+  notion(
+    "Licence et franchise : Jean Coutu ; Carrefour et CFAO",
+    p(
+      "**Québec.** Le Groupe Jean Coutu, né en 1969 dans l'est de Montréal, a grandi " +
+        "par un réseau de pharmacies affiliées. Au Québec, seul un pharmacien peut " +
+        "posséder une pharmacie : chaque succursale appartient donc à un pharmacien " +
+        "propriétaire, qui utilise l'enseigne, la publicité et l'approvisionnement du " +
+        "groupe contre rémunération. Metro a acquis le groupe en 2018. Sources : " +
+        "[Jean Coutu, historique](https://jeancoutu.com/en/corpo/about/history) ; " +
+        "[L'Express Franchise](https://lexpress-franchise.com/fr-ca/franchise/jean-coutu/).",
+    ),
+    p(
+      "**Côte d'Ivoire.** En mai 2013, Carrefour et CFAO ont créé une société commune " +
+        "(CFAO 55 %, Carrefour 45 %) qui détient le droit exclusif d'exploiter " +
+        "l'enseigne Carrefour dans huit pays d'Afrique de l'Ouest et centrale, dont la " +
+        "Côte d'Ivoire. CFAO construit les centres commerciaux et exploite les magasins ; " +
+        "Carrefour apporte sa marque et son savoir-faire. Le premier hypermarché a ouvert " +
+        "à PlaYce Marcory, à Abidjan, en décembre 2015. Le montage est mixte : une " +
+        "coentreprise créée pour exploiter une enseigne. Sources : [communiqué " +
+        "Carrefour–CFAO, 29 mai 2013]" +
+        "(https://echanges.dila.gouv.fr/OPENDATA/AMF/BWR/2013/05/" +
+        "FCBWR071254_20130529.pdf) ; [Financial Afrik, 18 décembre 2015]" +
+        "(https://www.financialafrik.com/2015/12/18/cote-divoire-playce-centre-" +
+        "commercial-de-nouvelle-generation-est-inaugure-ce-jour-a-abidjan/).",
+    ),
+  ),
+  notion(
+    "Impartition : Desjardins, IBM et CGI ; l'État ivoirien et la CIE",
+    p(
+      "**Québec.** En 2010, après un appel d'offres, Desjardins a confié à IBM Canada " +
+        "l'exploitation de son infrastructure informatique centralisée et " +
+        "l'hébergement de ses systèmes, pour cinq ans. Sa paie est confiée à CGI ; " +
+        "l'entente a été prolongée en 2021 pour dix ans. Desjardins garde la stratégie " +
+        "et ses clients ; les spécialistes font tourner la machine. Sources : " +
+        "[Insurance Canada, 5 mai 2010](https://insurance-canada.ca/2010/05/05/" +
+        "desjardins-selects-ibm-canada-for-its-centralized-it-infrastructure-" +
+        "operations-and-hosting/) ; [CGI, 28 juillet 2021](https://www.cgi.com/fr/" +
+        "2021-07-28-CGI-et-Desjardins-prolongent-leur-partenariat-pour-la-gestion-" +
+        "des-services-de-paie).",
+    ),
+    p(
+      "**Côte d'Ivoire.** En octobre 1990, l'État a confié à la Compagnie ivoirienne " +
+        "d'électricité (CIE), une société privée, l'exploitation du service public de " +
+        "l'électricité : production, transport, distribution et vente. L'État garde " +
+        "les ouvrages ; la CIE les exploite. Les juristes parlent d'**affermage** plutôt " +
+        "que de concession. La convention a été reconduite en 2005, puis renégociée " +
+        "pour 2021. Sources : [IFDD, Francophonie]" +
+        "(https://www.ifdd.francophonie.org/media/docs/publications/" +
+        "276_Fi_pol-mai-energ_ppp2_no11_jan2008.pdf) ; [Koaci, 30 septembre 2020]" +
+        "(https://www.koaci.com/index.php/article/2020/09/30/cote-divoire/economie/" +
+        "cote-divoire-electricite-letat-revoit-a-la-baisse-la-convention-de-" +
+        "concession-du-service-public-national-de-production-de-distribution-" +
+        "dexportation_145463.html).",
+    ),
+  ),
+  p(
+    "Remarquez que les frontières bougent : Air France est à la fois partenaire et " +
+      "actionnaire ; Carrefour et CFAO ont créé une coentreprise pour exploiter une " +
+      "enseigne. Ce qui compte n'est pas l'étiquette, mais ce qui est partagé : un " +
+      "contrat, des ressources, une société ou un grand projet.",
   ),
 
   titre("Pourquoi s'allier"),

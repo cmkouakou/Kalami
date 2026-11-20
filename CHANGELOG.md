@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## [v0.39.3] - 2026-11-20 — Cours : exemples réels (module 11, leçon 3)
+### Ajouté
+- « Alliances, partenariats et coentreprises » : section « Des exemples au Québec et en
+  Côte d'Ivoire », sources citées. Le pont Samuel-De Champlain (PPP, consortium Signature
+  sur le Saint-Laurent), puis deux exemples par forme : pont Henri-Konan-Bédié, STM-BIXI,
+  CIE-SODECI et Orange, Star Alliance, Air France-Air Côte d'Ivoire, Aluminerie de
+  Bécancour, Orange Bank Africa, Jean Coutu, Carrefour-CFAO, Desjardins-IBM-CGI, CIE.
+
+### Modifié
+- Leçon 11.2 : l'encadré Cofomo-Nexio est titré « Anecdote de l'auteur ».
+
 ## [v0.39.2] - 2026-11-20 — Cours : anecdote Cofomo-Nexio (module 11, leçon 2)
 ### Ajouté
 - Encadré « Sur le terrain » dans « Fusions et acquisitions » : le rachat de Nexio par
