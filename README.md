@@ -23,8 +23,9 @@ Un assistant d'analyse stratégique (Kalami Stratégie) s'y rattachera ensuite.
   sans crédit, par `POST /api/eac/etudes` (`EAC_API_SECRET`, `EAC_OWNER_ID`) ; en retour
   (v0.26.1), le bouton « Envoyer à Entrepreneur au Combat » transmet le plan (PDF et DOCX)
   au dossier, où le mentor le publie (`EAC_API_URL`)
-  ; retour du plan (v0.26.1) : bouton « Envoyer à Entrepreneur au Combat » qui transmet le
-  PDF et le DOCX au dossier, où le mentor le publie (`EAC_API_URL`)
+- **Cours de stratégie** (`/strategie/cours`, v0.28.0) : 13 modules, 52 leçons tirées du
+  livre ; schémas, exercices notés côté serveur, surlignage, notes et lecture à voix haute ;
+  accès donné par l'administrateur (cohorte), progression et temps de formation suivis
 
 ## 🛠️ Technologies utilisées
 - Next.js 16 (App Router), TypeScript, Tailwind CSS 4 (jetons de la charte Kalami)

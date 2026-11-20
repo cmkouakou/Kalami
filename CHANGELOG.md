@@ -1,5 +1,31 @@
 # Journal des modifications
 
+## [v0.28.0] - 2026-11-19 — Cours de stratégie, sprint 1 (leçons et progression)
+### Ajouté
+- Migration `20261124120000_course.sql` : cohortes, accès au cours, progression par leçon,
+  temps de formation (battements plafonnés côté serveur), tentatives d'exercices et
+  annotations ; fonctions `has_course_access`, `record_course_activity` et
+  `complete_course_lesson` ; RLS sur toutes les tables.
+- Programme du cours (`lib/cours/modules.ts`) : 13 modules, 52 leçons, adresses stables
+  `/strategie/cours/m1/l1`. Leçon pilote 1.1 rédigée ; les autres affichent « Bientôt ».
+- Page `/strategie/cours` : programme public et, pour l'apprenant inscrit, progression
+  (pourcentage, leçons terminées, temps de formation), « Commencer » ou « Reprendre », état
+  de chaque leçon.
+- Page de leçon : encadrés, notions dépliables, schémas SVG originaux (clair et sombre),
+  fiche de synthèse, lien « Appliquez-le » vers l'assistant, bouton « Leçon terminée »,
+  leçons voisines. Réservée aux inscrits (connexion exigée, accès vérifié).
+- Outils de la liseuse dans les leçons : surlignage en 5 couleurs, notes, lecture à voix
+  haute avec suivi du passage lu.
+- Exercices : QCM, vrai ou faux, classement (notés par le serveur, la note n'est jamais
+  fournie par le navigateur, meilleure note conservée) et question ouverte avec corrigé.
+
+### Modifié
+- `SelectionMenu` : « Citer » et « Partager » deviennent facultatifs (absents du cours).
+
+### Tests
+- `cours.test.ts` : programme, correction des exercices, réponses mal formées, synthèse
+  de la progression, durée lisible, cohérence des leçons rédigées.
+
 ## [v0.27.0] - 2026-11-19 — Liaison avec Entrepreneur au Combat (suppression d'étude)
 ### Ajouté
 - `DELETE /api/eac/etudes` (clé `EAC_API_SECRET`, corps `{ dossierId }`) : efface l'étude

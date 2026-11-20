@@ -1,0 +1,100 @@
+/*
+=============================================================
+  Fichier    : cours.css
+  Projet     : Kalami Stratégie — le cours
+  Description: Styles propres aux leçons du cours : surlignages, menu d'annotation et
+               fenêtre de note (composants de la liseuse, réglés ici sur les jetons de
+               la charte), passage en cours de lecture à voix haute.
+  Auteur     : Claude Marcel
+  Version    : 1.0
+  Date       : 2026-11-19
+  Dépend de  : globals.css (jetons --paper, --ink, --line, --hl-*)
+=============================================================
+*/
+
+/* ==================== VARIABLES DE LA LISEUSE ==================== */
+
+/* Le menu et la fenêtre de note viennent de la liseuse : on leur donne les jetons du site */
+.cours-lecon {
+  --liseuse-fond: var(--paper);
+  --liseuse-page: var(--surface);
+  --liseuse-texte: var(--ink);
+  --liseuse-doux: var(--ink-muted);
+  --liseuse-bordure: var(--line);
+  --liseuse-survol: var(--sand);
+}
+
+/* ==================== SURLIGNAGES ==================== */
+
+/* Texte foncé lisible sur toutes les couleurs, dans les deux thèmes */
+.cours-lecon .liseuse-annotation {
+  color: #1f1b16;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.cours-lecon .liseuse-annotation[data-couleur="jaune"],
+.cours-lecon .liseuse-pastille[data-couleur="jaune"] {
+  background: var(--hl-jaune);
+}
+
+.cours-lecon .liseuse-annotation[data-couleur="vert"],
+.cours-lecon .liseuse-pastille[data-couleur="vert"] {
+  background: var(--hl-vert);
+}
+
+.cours-lecon .liseuse-annotation[data-couleur="bleu"],
+.cours-lecon .liseuse-pastille[data-couleur="bleu"] {
+  background: var(--hl-bleu);
+}
+
+.cours-lecon .liseuse-annotation[data-couleur="rose"],
+.cours-lecon .liseuse-pastille[data-couleur="rose"] {
+  background: var(--hl-rose);
+}
+
+.cours-lecon .liseuse-annotation[data-couleur="orange"],
+.cours-lecon .liseuse-pastille[data-couleur="orange"] {
+  background: var(--hl-orange);
+}
+
+/* Passage annoté d'une note : souligné en pointillé */
+.cours-lecon .liseuse-annotation[data-note] {
+  text-decoration: underline dotted;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* ==================== MENU ET FENÊTRES ==================== */
+
+.cours-lecon .liseuse-menu,
+.cours-lecon .liseuse-dialogue {
+  background: var(--liseuse-fond);
+  color: var(--liseuse-texte);
+}
+
+.cours-lecon .liseuse-dialogue::backdrop {
+  background: var(--scrim);
+}
+
+.cours-lecon .liseuse-champ {
+  background: var(--liseuse-page);
+  color: var(--liseuse-texte);
+}
+
+/* ==================== LECTURE À VOIX HAUTE ==================== */
+
+/* Passage en cours de lecture : fond léger et repère à gauche */
+.cours-lecon [data-lu] {
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--encre) 10%, transparent);
+  box-shadow: -6px 0 0 0 var(--encre);
+}
+
+/* ==================== RESPONSIVE — MOBILE ==================== */
+
+@media (max-width: 480px) {
+  .cours-lecon [data-lu] {
+    box-shadow: -3px 0 0 0 var(--encre);
+  }
+}

@@ -8,8 +8,9 @@
  *  Auteur     : Claude Marcel
  *               v1.1 : au doigt, menu sous le passage (la barre d'Android est au-dessus)
  *               et décalé des poignées de sélection.
- *  Version    : 1.1
- *  Date       : 2026-10-22
+ *               v1.2 : « Citer » et « Partager » facultatifs (absents du cours).
+ *  Version    : 1.2
+ *  Date       : 2026-11-19
  *  Dépendances: components/ui, lib/reader/types.ts, i18n
  * =============================================================
  */
@@ -47,8 +48,9 @@ type SelectionMenuProps = {
   busy: boolean;
   onColor: (color: HighlightColor) => void;
   onNote: () => void;
-  onCite: () => void;
-  onShare: () => void;
+  /** Citer et partager : absents (boutons masqués) hors de la liseuse */
+  onCite?: () => void;
+  onShare?: () => void;
   onRemove: (() => void) | null;
 };
 
@@ -142,24 +144,28 @@ export function SelectionMenu({
           </button>
         </>
       )}
-      <button
-        type="button"
-        onClick={onCite}
-        aria-label={t.reader.selection.cite}
-        title={t.reader.selection.cite}
-        className={BUTTON_ICON}
-      >
-        <IconQuote />
-      </button>
-      <button
-        type="button"
-        onClick={onShare}
-        aria-label={t.reader.selection.share}
-        title={t.reader.selection.share}
-        className={BUTTON_ICON}
-      >
-        <IconShare />
-      </button>
+      {onCite && (
+        <button
+          type="button"
+          onClick={onCite}
+          aria-label={t.reader.selection.cite}
+          title={t.reader.selection.cite}
+          className={BUTTON_ICON}
+        >
+          <IconQuote />
+        </button>
+      )}
+      {onShare && (
+        <button
+          type="button"
+          onClick={onShare}
+          aria-label={t.reader.selection.share}
+          title={t.reader.selection.share}
+          className={BUTTON_ICON}
+        >
+          <IconShare />
+        </button>
+      )}
       {onRemove && (
         <button
           type="button"

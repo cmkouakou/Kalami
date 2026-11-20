@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.27.0 (liaison Entrepreneur au Combat : aller, retour, suppression) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.28.0 (cours de stratégie, sprint 1 : leçons, exercices, progression) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -102,7 +102,8 @@ Version actuelle : v0.27.0 (liaison Entrepreneur au Combat : aller, retour, supp
 | #96 | 2026-11-18 | v0.25.4 : Mobile Money en premier en FCFA, carte abandonnée masquée dans « Mes achats », page de commande mise à jour seule, avis de décision dans l'application | ~120 000 | ~0.72 $ |
 | #97 | 2026-11-17 | v0.26.0 : liaison Entrepreneur au Combat (API d'ouverture d'étude, compte EAC, invitations, panneau du dossier, contexte du coach) | ~120 000 | ~0.72 $ |
 | #98 | 2026-11-18 | v0.26.1 : retour du plan vers EAC (route d'envoi, client serveur à serveur, bouton dans le panneau du dossier, date du dernier envoi) | ~90 000 | ~0.54 $ |
-| **TOTAL** | | | **~21 010 000** (hors #71) | **~126.06 $** |
+| #99 | 2026-11-19 | v0.28.0 : cours de stratégie, sprint 1 (migration, programme 52 leçons, leçon pilote, liseuse du cours, exercices notés, progression et temps) | ~250 000 | ~1.50 $ |
+| **TOTAL** | | | **~21 260 000** (hors #71) | **~127.56 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation
@@ -269,5 +270,8 @@ Version actuelle : v0.27.0 (liaison Entrepreneur au Combat : aller, retour, supp
 - [x] v0.26.0 — liaison Entrepreneur au Combat (aller) : API, étude sans crédit, invitations, panneau, coach ; unitaires OK, typecheck et lint OK
 - [ ] v0.26.0 — appliquer la migration `20261123120000_strategy_eac_link.sql`, créer le compte « Entrepreneur au Combat » et définir EAC_API_SECRET / EAC_OWNER_ID dans Vercel
 - [x] v0.26.1 — retour du plan : bouton « Envoyer à Entrepreneur au Combat », route `POST /api/strategie/etudes/[id]/eac` ; unitaires, typecheck, lint et build OK
-- [ ] v0.26.1 — définir EAC_API_URL=https://entrepreneuraucombat.com dans Vercel (après le déploiement d'EAC v0.10.0)
+- [x] v0.26.1 — EAC_API_URL définie dans Vercel, migration EAC appliquée ; envoi du plan vers EAC vérifié en production (2026-11-19)
 - [x] Publier « La stratégie d'entreprise » pour que « Lire le chapitre » apparaisse (publié, vérifié le 2026-10-28)
+- [x] v0.28.0 — cours, sprint 1 : programme `/strategie/cours`, page de leçon (surlignage, notes, lecture à voix haute), exercices notés côté serveur, progression et temps ; 13 tests unitaires, typecheck, lint et build OK
+- [x] v0.28.0 — migration `20261124120000_course.sql` appliquée par l'utilisateur (2026-11-19)
+- [ ] Cours, sprint 2 : administration (cohortes, accès, suivi par apprenant, prix Mobile Money et Stripe)

@@ -1,6 +1,6 @@
 {
   "name": "kalami",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",
-    "@next/third-parties": "^16.4.2",
+    "@next/third-parties": "^16.4.6",
     "@sparticuz/chromium": "^153.0.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.2",
@@ -28,7 +28,7 @@
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
     "mammoth": "^1.13.0",
-    "next": "16.4.2",
+    "next": "16.4.6",
     "page-flip": "^2.0.7",
     "pdf-lib": "^1.17.1",
     "puppeteer-core": "^25.13.0",
@@ -48,7 +48,7 @@
     "@types/sanitize-html": "^2.16.2",
     "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^9",
-    "eslint-config-next": "16.4.2",
+    "eslint-config-next": "16.4.6",
     "supabase": "^2.120.0",
     "tailwindcss": "^4",
     "typescript": "^5",
