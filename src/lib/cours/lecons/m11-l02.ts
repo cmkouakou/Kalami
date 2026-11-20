@@ -8,8 +8,10 @@
  *               d'une petite firme et la vente d'Infosystem comme issue de relève.
  *               Sources : livre, module 8 (§ 8.4). Texte, exemples et exercices
  *               originaux.
+ *               v1.1 (v0.39.2) : encadré « Sur le terrain » sur le rachat de Nexio par
+ *               Cofomo (annoncé le 21 septembre 2021), vécu par l'auteur.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -25,6 +27,7 @@ import {
   piege,
   retenir,
   tableau,
+  terrain,
   titre,
   type ContenuLecon,
 } from "@/lib/cours/content";
@@ -99,6 +102,18 @@ export const M11_L02: ContenuLecon = [
     "Acheter une liste de clients en croyant acheter une entreprise. Dans une firme de " +
       "services, si les techniciens partent après la vente, les clients suivent souvent, " +
       "et l'acheteur a payé pour presque rien.",
+  ),
+  terrain(
+    "Racheté par l'employeur que je venais de quitter",
+    "En 2021, j'étais consultant à la STM pour Cofomo, une firme québécoise de conseil " +
+      "et de placement en TI. J'ai quitté Cofomo pour Nexio, une firme concurrente, qui " +
+      "m'a placé chez Hydro-Québec. Le 21 septembre 2021, Cofomo annonçait l'arrivée de " +
+      "Nexio dans son groupe. Le communiqué parlait de **partenariat** ; il s'agissait " +
+      "bien d'une **acquisition**. Sans changer de bureau, je me retrouvais chez " +
+      "l'employeur que je venais de quitter. Dans une firme de placement, ce qu'on " +
+      "achète, ce sont les consultants et leurs mandats chez les clients. Pour l'acheteur, " +
+      "la vraie question commence après la signature : ces consultants, dont certains " +
+      "étaient partis de chez lui, vont-ils rester ?",
   ),
 
   titre("Infosystem : acheter, ou être achetée"),

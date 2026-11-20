@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.39.1 (cours : leçon 1.1 lisible sans compte) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.39.2 (cours : anecdote Cofomo-Nexio, leçon 11.2) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -117,7 +117,8 @@ Version actuelle : v0.39.1 (cours : leçon 1.1 lisible sans compte) · Stratégi
 | #111 | 2026-11-20 | v0.38.2 : cours, page Mes annotations (recherche, filtre, retour au passage, retrait) | ~70 000 | ~0.42 $ |
 | #112 | 2026-11-20 | v0.39.0 : cours, page de vente, leçon 1.1 offerte, référencement (S8c) | ~150 000 | ~0.90 $ |
 | #113 | 2026-11-20 | v0.39.1 : cours, leçon 1.1 lisible sans compte et proposée à Google | ~40 000 | ~0.24 $ |
-| **TOTAL** | | | **~23 770 000** (hors #71) | **~142.62 $** |
+| #114 | 2026-11-20 | Recette du lancement du cours ; v0.39.2 : anecdote Cofomo-Nexio (leçon 11.2) | ~45 000 | ~0.27 $ |
+| **TOTAL** | | | **~23 815 000** (hors #71) | **~142.89 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

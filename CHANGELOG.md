@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.2] - 2026-11-20 — Cours : anecdote Cofomo-Nexio (module 11, leçon 2)
+### Ajouté
+- Encadré « Sur le terrain » dans « Fusions et acquisitions » : le rachat de Nexio par
+  Cofomo, annoncé le 21 septembre 2021, vécu de l'intérieur par l'auteur.
+
 ## [v0.39.1] - 2026-11-20 — Cours : leçon 1.1 lisible sans compte
 ### Modifié
 - La leçon offerte (1.1) se lit sans compte : texte complet servi aux visiteurs et à
