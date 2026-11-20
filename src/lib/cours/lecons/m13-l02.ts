@@ -8,8 +8,10 @@
  *               puis l'épilogue (Promasidor en 2016, dissolution en 2021), à lire après
  *               l'analyse. Sources : livre, module 11 et ses annexes (communiqués du
  *               groupe, presse, document interne). Texte et exercices originaux.
+ *               v1.1 : points de comparaison réels, sources citées (Maggi à
+ *               Yopougon, Vidéotron dans le mobile).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -127,6 +129,46 @@ export const M13_L02: ContenuLecon = [
       "dans ce tableau. Pendant ce temps, les grossistes invoquent la mauvaise réputation " +
       "du produit pour obtenir de meilleures conditions, et le siège fixe un objectif " +
       "ambitieux pour 2016.",
+  ),
+
+  titre("Des points de comparaison au Québec et en Côte d'Ivoire"),
+  p(
+    "Avant de faire la mission, deux cas réels aident à situer le problème : un " +
+      "concurrent bien installé sur le même marché ivoirien, et un nouvel entrant " +
+      "face à des leaders au Québec. Ils ne donnent pas la réponse ; ils donnent des " +
+      "questions à se poser. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Côte d'Ivoire : Maggi, le concurrent déjà installé",
+    p(
+      "Nestlé est présent en Côte d'Ivoire depuis 1961, et son usine Maggi de la zone " +
+        "industrielle de Yopougon fabrique sur place les bouillons culinaires. Selon les " +
+        "sources de presse, la Maggi Tablette reste le bouillon le plus vendu du pays. " +
+        "L'entreprise investit aussi dans le produit lui-même : depuis mai 2013, les " +
+        "bouillons Maggi faits à Yopougon sont enrichis en fer. Question pour le cas : " +
+        "que faut-il pour déloger un leader qui produit sur place, connaît ses clients " +
+        "et améliore son produit ? Sources : [Abidjan.net, fortification des bouillons " +
+        "Maggi](https://news.abidjan.net/articles/459794/nutrition-et-sante-nestle-lance-" +
+        "le-projet-de-fortification-des-bouillons-culinaires-maggi) ; [AIP, l'usine " +
+        "Maggi ouvre ses portes](https://www.aip.ci/aip-nestle-cote-divoire-ouvre-les-" +
+        "portes-de-son-usine-maggi-a-ses-consommateurs-communique/?amp=1).",
+    ),
+  ),
+  notion(
+    "Québec : Vidéotron entre dans la téléphonie mobile",
+    p(
+      "Le 9 septembre 2010, Vidéotron a lancé son propre réseau mobile face aux trois " +
+        "grands opérateurs déjà installés. Son atout : des clients qu'il avait déjà, " +
+        "à qui il pouvait offrir le mobile en forfait avec le câble et Internet. La " +
+        "croissance a pourtant été lente : 95 400 abonnés à l'automne 2010, et un " +
+        "million de connexions mobiles seulement en novembre 2017. Question pour le " +
+        "cas : un nouvel entrant a-t-il un accès direct à ses clients, et combien de " +
+        "temps peut-il financer la conquête ? Sources : [MobileSyrup, résultats du " +
+        "3e trimestre 2010](https://mobilesyrup.com/2010/11/10/videotron-q3-results-" +
+        "subscriber-base-grows-to-95400/) ; [Vidéotron, millionième client mobile]" +
+        "(https://newswire.ca/news-releases/videotron-celebrates-millionth-mobile-" +
+        "customer-656120203.html).",
+    ),
   ),
 
   titre("Votre mission"),

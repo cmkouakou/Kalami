@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.39.11] - 2026-11-20 — Cours : points de comparaison (leçon 13.2)
+### Ajouté
+- « Le cas Ajinomoto Afrique de l'Ouest » : points de comparaison sourcés avant la
+  mission, Maggi à Yopougon (le leader installé) et Vidéotron dans le mobile (le nouvel
+  entrant).
+
 ## [v0.39.10] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 13.1)
 ### Ajouté
 - « Le plan stratégique d'Infosystem en une page » : exemples sourcés, PSO 2030 de la
