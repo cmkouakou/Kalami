@@ -6,9 +6,10 @@
                fenêtre de note (composants de la liseuse, réglés ici sur les jetons de
                la charte), passage en cours de lecture à voix haute.
   Auteur     : Claude Marcel
-  Version    : 1.0
+  Version    : 1.1
   Date       : 2026-11-19
   Dépend de  : globals.css (jetons --paper, --ink, --line, --hl-*)
+  v1.1       : liens vers les sources bien visibles (couleur, soulignement, ↗).
 =============================================================
 */
 
@@ -103,4 +104,24 @@
   .cours-lecon [data-lu] {
     box-shadow: -3px 0 0 0 var(--encre);
   }
+}
+
+/* ==================== LIENS VERS LES SOURCES ==================== */
+
+/* Un lien externe doit se voir : couleur d'accent, soulignement net et flèche ↗ */
+.cours-lecon a[href^="https://"] {
+  color: var(--encre);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.cours-lecon a[href^="https://"]::after {
+  content: " ↗";
+  font-size: 0.85em;
+}
+.cours-lecon a[href^="https://"]:hover,
+.cours-lecon a[href^="https://"]:focus-visible {
+  text-decoration-thickness: 3px;
+  background: var(--sand);
 }

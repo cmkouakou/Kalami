@@ -7,8 +7,10 @@
  *               l'énoncé de stratégie et ce qu'il écarte, le cas AjiGoût sur la
  *               pertinence. Sources : livre, modules 8 (§ 8.5) et 13 ; Whittington et
  *               al., Stratégique, 2023. Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (GNL Québec, Northvolt Six, ligne 1 du métro d'Abidjan).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -20,6 +22,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -64,6 +67,67 @@ export const M12_L01: ContenuLecon = [
     "Une bonne option est à la fois pertinente, acceptable et faisable. Une option forte " +
       "sur deux critères et nulle sur le troisième est une option à transformer ou à " +
       "reporter, pas à retenir.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Les grands projets publics et industriels montrent bien les trois critères, parce " +
+      "que leurs décisions sont publiques et documentées. La source est indiquée sous " +
+      "chaque exemple.",
+  ),
+  notion(
+    "Acceptabilité : le projet Énergie Saguenay de GNL Québec",
+    p(
+      "GNL Québec voulait construire à Saguenay une usine de liquéfaction de gaz " +
+        "naturel destiné à l'exportation. Après une audience du BAPE (septembre 2020 à " +
+        "mars 2021), la consultation des communautés innues et l'analyse du ministère " +
+        "de l'Environnement, le gouvernement du Québec a refusé le projet le 21 juillet " +
+        "2021 : le promoteur ne pouvait pas démontrer une baisse nette des gaz à effet " +
+        "de serre, et « les risques du projet dépassent ses avantages ». Ottawa l'a " +
+        "refusé à son tour en février 2022. Le projet pouvait être rentable ; il n'était " +
+        "pas acceptable pour ceux qui décidaient. Sources : [gouvernement du Québec, " +
+        "21 juillet 2021](https://www.quebec.ca/nouvelles/actualites/details/le-" +
+        "gouvernement-du-quebec-nautorise-pas-le-projet-de-liquefaction-de-gaz-" +
+        "naturel-energie-saguenay-33572) ; [gouvernement du Canada, février 2022]" +
+        "(https://www.canada.ca/en/impact-assessment-agency/news/2022/02/government-" +
+        "of-canada-releases-the-final-decision-on-the-energie-saguenay-project.html).",
+    ),
+  ),
+  notion(
+    "Faisabilité : l'usine Northvolt Six, en Montérégie",
+    p(
+      "Le projet d'usine de batteries de Northvolt à McMasterville et Saint-Basile-le-" +
+        "Grand répondait à une stratégie de filière (pertinent) et avait l'appui de " +
+        "l'État (acceptable). Mais la société mère suédoise a manqué d'argent et déposé " +
+        "son bilan en Suède en mars 2025. Le 2 septembre 2025, Québec a mis fin à tout " +
+        "financement et passé en perte 270 millions de dollars investis dans la société " +
+        "mère. La faisabilité ne se juge pas seulement chez soi : elle dépend aussi de la " +
+        "solidité du partenaire. Sources : [gouvernement du Québec, 2 septembre 2025]" +
+        "(https://www.quebec.ca/nouvelles/actualites/details/quebec-met-fin-au-projet-" +
+        "avec-northvolt-64856) ; [Electric Autonomy, 4 septembre 2025]" +
+        "(https://electricautonomy.ca/ev-supply-chain/batteries/2025-09-04/quebec-" +
+        "northvolt-factory-pulls-funding/).",
+    ),
+  ),
+  notion(
+    "Faisabilité et acceptabilité : la ligne 1 du métro d'Abidjan",
+    p(
+      "Personne ne doute de la pertinence d'un métro dans une ville engorgée : 37,4 km, " +
+        "18 stations, environ 540 000 voyageurs par jour attendus. La difficulté est la " +
+        "faisabilité. Porté depuis 2014, le projet a vu son financement bouclé seulement " +
+        "en décembre 2022, son coût revu à la hausse, et sa mise en service repoussée " +
+        "plusieurs fois : prévue d'abord en 2024, elle est annoncée pour janvier 2029, " +
+        "avec 66 % de l'infrastructure réalisée en novembre 2026. L'acceptabilité compte " +
+        "aussi : les habitants déplacés pour le chantier, les « déguerpis », " +
+        "s'impatientent. Sources : [Koaci, 11 novembre 2026]" +
+        "(https://www.koaci.com/article/2026/11/11/cote-divoire/societe/cote-divoire-" +
+        "ligne-1-du-metro-dabidjan-mise-en-service-prevue-en-janvier-2029_202516.html) ; " +
+        "[Le360 Afrique, financement bouclé](https://afrique.le360.ma/economie/cote-" +
+        "divoire-le-cout-du-metro-dabidjan-fortement-revu-a-la-hausse-et-le-financement-" +
+        "boucle_7Z2C74T2HFHLZGSVPRIBNYVWW4/) ; [Le360 Afrique, les déguerpis]" +
+        "(https://afrique.le360.ma/afrique-de-louest/metro-dabidjan-la-mise-sur-rails-" +
+        "tarde-limpatience-des-deguerpis-saccelere_5SAIEUQPPRFMTA2L7TWQB5QCYU/).",
+    ),
   ),
 
   titre("Les options d'Infosystem"),

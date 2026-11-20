@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## [v0.39.6] - 2026-11-20 — Cours : liens des sources visibles, exemples (leçon 12.1)
+### Ajouté
+- « Évaluer les options » : exemples sourcés, GNL Québec (acceptabilité), Northvolt Six
+  (faisabilité), ligne 1 du métro d'Abidjan (faisabilité et acceptabilité).
+
+### Modifié
+- Leçons : les liens externes (sources) sont en couleur, soulignés et suivis de « ↗ ».
+
 ## [v0.39.5] - 2026-11-20 — Cours : exemples réels (module 11, leçon 2)
 ### Ajouté
 - « Fusions et acquisitions » : section « Des exemples au Québec et en Côte d'Ivoire »,
