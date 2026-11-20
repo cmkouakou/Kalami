@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.14] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 10.2)
+### Ajouté
+- « La diffusion de l'innovation » : exemples sourcés, la voiture électrique au Québec
+  (ventes contre parc) et le décollage de l'argent mobile en Côte d'Ivoire.
+
 ## [v0.39.13] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 10.1)
 ### Ajouté
 - « Innover de l'intérieur : l'intrapreneuriat » : exemples sourcés, les batteries de

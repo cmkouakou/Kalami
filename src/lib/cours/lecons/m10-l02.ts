@@ -8,8 +8,10 @@
  *               le lancement du forfait par poste d'Infosystem. Sources : livre, module 8
  *               (§ 8.6) ; Rogers, 1962 ; Moore, 1991. Texte, exemples et exercices
  *               originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (voiture électrique au Québec, argent mobile en Côte d'Ivoire).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -108,6 +110,45 @@ export const M10_L02: ContenuLecon = [
         "possédait déjà, des kiosques de quartier pour essayer avec de petites sommes, et " +
         "un effet de réseau puissant, puisque chaque nouvel utilisateur pouvait recevoir " +
         "de l'argent des autres.",
+    ),
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "La courbe en S et le fossé se voient dans les chiffres publics. Voici une " +
+      "innovation qui franchit le fossé au Québec, puis une autre qui a mis plusieurs " +
+      "années à décoller en Côte d'Ivoire. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Québec : la voiture électrique passe chez les pragmatiques",
+    p(
+      "Selon le ministère de l'Environnement, 32,8 % des véhicules légers neufs " +
+        "immatriculés au Québec au troisième trimestre de 2024 étaient électriques. " +
+        "Pourtant, selon l'Institut de la statistique du Québec, les véhicules " +
+        "électriques ne représentaient que 4,4 % des véhicules légers en circulation " +
+        "en 2023. Les deux chiffres ne se contredisent pas : les ventes montrent que " +
+        "la majorité précoce achète déjà, tandis que le parc, renouvelé lentement, " +
+        "reste en bas de la courbe en S. Sources : [Gouvernement du Québec, rapport " +
+        "sur la norme VZE](https://www.environnement.gouv.qc.ca/changementsclimatiques/" +
+        "VZE/rapport-application-norme-vze.pdf) ; [Institut de la statistique du " +
+        "Québec, véhicules électriques en circulation]" +
+        "(https://statistique.quebec.ca/vitrine/developpement-durable/strategie-2023-" +
+        "2028/economie-verte-et-responsable/vehicules-electriques-circulation).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : l'argent mobile, un départ lent puis un décollage",
+    p(
+      "L'argent mobile est arrivé en Côte d'Ivoire en 2008, mais il a longtemps " +
+        "plafonné. Selon une étude de la GSMA, l'association mondiale des opérateurs, " +
+        "les fournisseurs du pays comptaient ensemble près de 5 millions de comptes en " +
+        "juin 2013, dont seulement 35 % actifs : beaucoup avaient essayé, peu " +
+        "s'en servaient. La GSMA parle d'un « revirement de situation » à partir de " +
+        "2012, quand l'usage a gagné les clients ordinaires. Ouvrir un compte ne suffit " +
+        "pas ; l'adoption se mesure à l'usage. Source : [GSMA, l'argent mobile en " +
+        "Côte d'Ivoire, histoire d'un revirement de situation]" +
+        "(https://www.gsma.com/mobilefordevelopment/region/sub-saharan-africa-region/" +
+        "mobile-money-in-cote-divoire-a-turnaround-story/).",
     ),
   ),
 
