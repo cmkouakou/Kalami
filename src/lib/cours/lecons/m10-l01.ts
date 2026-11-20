@@ -8,8 +8,10 @@
  *               obstacles et les conditions qui les lèvent, les trois innovations
  *               d'Infosystem. Sources : livre, module 8 (§ 8.6). Texte, exemples et
  *               exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (IREQ d'Hydro-Québec, YUP de Société Générale).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -21,6 +23,7 @@ import {
   exercice,
   fiche,
   liste,
+  notion,
   p,
   piege,
   retenir,
@@ -131,6 +134,50 @@ export const M10_L01: ContenuLecon = [
     "La boîte à idées sans suite. Demander des idées puis ne jamais répondre décourage " +
       "plus que de ne rien demander. Chaque idée mérite une réponse : oui, non, ou pas " +
       "maintenant, avec la raison.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "L'intrapreneuriat n'est pas réservé aux start-up de la Silicon Valley. Voici une " +
+      "innovation de procédé née dans une société d'État québécoise, puis une " +
+      "innovation de modèle d'affaires née dans une banque établie en Côte d'Ivoire. " +
+      "La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Québec : les batteries à l'IREQ d'Hydro-Québec",
+    p(
+      "Hydro-Québec produit de l'électricité ; rien ne l'obligeait à devenir une " +
+        "référence des matériaux de batterie. Pourtant, son institut de recherche, " +
+        "l'IREQ, y est arrivé de l'intérieur. Des chercheurs y ont lancé les travaux " +
+        "sur les batteries lithium-ion au milieu des années 1990 ; en 2017, l'entreprise " +
+        "en a fait un Centre d'excellence en électrification des transports et en " +
+        "stockage d'énergie, chargé de vendre ces technologies. Selon Hydro-Québec, " +
+        "l'IREQ détient plus de 800 brevets sur les matériaux de batterie. Un " +
+        "intrapreneur a besoin de temps, de " +
+        "moyens et d'une structure qui transforme ses idées en revenus, ici par les " +
+        "licences. Sources : [Hydro-Québec, Centre d'excellence]" +
+        "(https://www.hydroquebec.com/ce-transportation-electrification-energy-storage/" +
+        "about-us.html) ; [Hydro-Québec, liste des brevets]" +
+        "(https://hydroquebec.com/ce-transportation-electrification-energy-storage/" +
+        "patents.html).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : YUP, la banque sans agence de Société Générale",
+    p(
+      "Une grande banque vit de ses agences et de ses clients salariés. Le 14 septembre " +
+        "2017, Société Générale a pourtant annoncé YUP, un modèle « alternatif à la " +
+        "banque traditionnelle », lancé en Côte d'Ivoire et au Sénégal : un " +
+        "porte-monnaie sur téléphone mobile et un réseau d'agents de proximité, pour " +
+        "les clients que les agences ne touchent pas. Selon un communiqué du groupe, " +
+        "YUP comptait déjà plus de 30 000 porte-monnaie ouverts et près de 600 agents. " +
+        "Innover de l'intérieur, c'est parfois accepter de concurrencer son propre " +
+        "modèle. Sources : [Société Générale, communiqué de lancement]" +
+        "(https://societegenerale.com/sites/default/files/17099communique-de-presse-" +
+        "lancement-yup-fr.pdf) ; [Financial Afrik, février 2017]" +
+        "(https://www.financialafrik.com/2017/02/21/cote-divoire-youp-la-banque-" +
+        "alternative-de-societe-generale).",
+    ),
   ),
 
   titre("Chez Infosystem"),

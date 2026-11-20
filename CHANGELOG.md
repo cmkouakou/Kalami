@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.13] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 10.1)
+### Ajouté
+- « Innover de l'intérieur : l'intrapreneuriat » : exemples sourcés, les batteries de
+  l'IREQ d'Hydro-Québec et YUP, la banque sans agence de Société Générale.
+
 ## [v0.39.12] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 13.3)
 ### Ajouté
 - « Votre propre plan dans Kalami Stratégie » : exemples sourcés, la STM du PSO 2025 au
