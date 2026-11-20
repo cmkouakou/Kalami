@@ -104,7 +104,7 @@ export const M11_L02: ContenuLecon = [
       "et l'acheteur a payé pour presque rien.",
   ),
   terrain(
-    "Racheté par l'employeur que je venais de quitter",
+    "Anecdote de l'auteur : racheté par l'employeur que je venais de quitter",
     "En 2021, j'étais consultant à la STM pour Cofomo, une firme québécoise de conseil " +
       "et de placement en TI. J'ai quitté Cofomo pour Nexio, une firme concurrente, qui " +
       "m'a placé chez Hydro-Québec. Le 21 septembre 2021, Cofomo annonçait l'arrivée de " +
