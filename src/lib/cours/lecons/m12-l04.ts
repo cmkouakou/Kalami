@@ -7,8 +7,10 @@
  *               quand un indicateur déforme les comportements, les risques et leurs
  *               réponses prévues, réagir à un signal. Sources : livre, module 9 ;
  *               Mintzberg et Waters, 1985. Texte, exemples et exercices originaux.
+ *               v1.1 : exemples réels au Québec et en Côte d'Ivoire, sources citées
+ *               (Bombardier et Airbus, Orange Money face à Wave).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
@@ -20,6 +22,7 @@ import {
   etapes,
   exercice,
   fiche,
+  notion,
   p,
   piege,
   retenir,
@@ -126,6 +129,48 @@ export const M12_L04: ContenuLecon = [
   p(
     "Une réponse préparée à l'avance se met en place en quelques jours ; une réponse " +
       "improvisée prend des semaines, au pire moment.",
+  ),
+
+  titre("Des exemples au Québec et en Côte d'Ivoire"),
+  p(
+    "Un suivi utile ne se contente pas de constater : il fait changer le plan quand un " +
+      "signal fort arrive. Voici deux réactions documentées, l'une au Québec, l'autre en " +
+      "Côte d'Ivoire. La source est indiquée sous chaque exemple.",
+  ),
+  notion(
+    "Québec : Bombardier confie la CSeries à Airbus",
+    p(
+      "La stratégie délibérée de Bombardier était de vendre seul son nouvel avion, la " +
+        "CSeries, assemblé à Mirabel. En 2017, à la suite d'une plainte de Boeing, le " +
+        "département du Commerce des États-Unis a annoncé des droits préliminaires " +
+        "totalisant environ 300 % sur l'appareil. En octobre 2017, Bombardier a cédé " +
+        "50,01 % du programme à Airbus, sans contrepartie en argent ; Bombardier gardait " +
+        "environ 31 % et Investissement Québec environ 19 %, et l'assemblage restait à " +
+        "Mirabel. L'avion est devenu l'A220, et Bombardier a vendu le reste de sa part " +
+        "en 2020. Une stratégie émergente : le plan a changé sous la pression des faits. " +
+        "Sources : [gouvernement du Québec, communiqué]" +
+        "(https://www.quebec.ca/nouvelles/actualites/details/developpement-du-" +
+        "programme-de-la-cseries-le-gouvernement-du-quebec-enterine-la-venue-dairbus-" +
+        "comme-nouveau-partenaire-strategique) ; [CNBC, 16 octobre 2017]" +
+        "(https://www.cnbc.com/2017/10/16/airbus-teams-up-with-bombardier-on-c-series-" +
+        "program.html).",
+    ),
+  ),
+  notion(
+    "Côte d'Ivoire : Orange Money répond à Wave",
+    p(
+      "En 2021, la fintech Wave est arrivée en Côte d'Ivoire avec un tarif simple : 1 % " +
+        "sur les transferts. Le signal était clair, les clients partaient. Orange Money, " +
+        "le leader, a revu ses prix : à partir du 20 octobre 2021, les retraits sont " +
+        "passés à 1 % (environ 3 % auparavant) et les transferts entre clients sont " +
+        "devenus gratuits. MTN et Moov ont aussi baissé leurs frais. Réagir vite à un " +
+        "signal coûte des marges, mais ne pas réagir aurait coûté des clients. " +
+        "Sources : [CIO Mag, Orange Money s'adapte à Wave]" +
+        "(https://cio-mag.com/orange-money-cote-divoire-sadapte-a-wave-retrait-dargent-" +
+        "a-1-a-compter-du-20-octobre) ; [Sika Finance, Wave fait plier Orange Money et " +
+        "MTN MoMo](https://www.sikafinance.com/marches/cote-divoire-wave-fait--plier--" +
+        "orange-money-et-mtn-momo_30853).",
+    ),
   ),
 
   titre("Réagir à un signal"),

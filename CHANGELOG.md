@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.39.9] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 12.4)
+### Ajouté
+- « Le suivi : un rendez-vous, pas un rapport » : exemples sourcés, Bombardier qui cède
+  la CSeries à Airbus (2017) et Orange Money qui répond à Wave (2021).
+
 ## [v0.39.8] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 12.3)
 ### Ajouté
 - « La feuille de route et le tableau de bord équilibré » : exemples sourcés, Plan
