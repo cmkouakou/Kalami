@@ -7,9 +7,10 @@
  *               /strategie) ; seul un lien discret mène au livre guide, s'il est publié.
  *               La cloche (S9b) mène aux notifications et compte celles non lues.
  *               Pied de page : « Installer l'application » (PWA Kalami Stratégie).
+ *               v1.3 (v0.39.0) : lien « Le cours » dans la navigation.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
- *  Date       : 2026-10-16
+ *  Version    : 1.3
+ *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/auth/actions.ts, lib/catalog/queries.ts,
  *               lib/strategy/comments-queries.ts, i18n
  * =============================================================
@@ -39,6 +40,7 @@ const s = getStrategyDictionary();
 const LINKS = [
   { href: STRATEGY_HOME, label: s.nav.home },
   { href: `${STRATEGY_HOME}#mes-etudes`, label: s.nav.studies },
+  { href: `${STRATEGY_HOME}/cours`, label: s.nav.course },
 ];
 
 // ==================== EN-TÊTE ====================

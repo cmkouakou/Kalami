@@ -10,9 +10,11 @@
  *               date ; prochaine leçon en lecture en avance). v0.37.0 : ligne « Quiz du
  *               module » sous chaque module (meilleure note, réussi ou à faire).
  *               v0.38.0 : carte « Examen final et diplôme » ; seuil des quiz réglable.
+ *               v0.39.0 : page de vente pour les visiteurs et les non-inscrits, chiffres
+ *               clés, leçon offerte, métadonnées de partage et données structurées Course.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen ;
- *               v0.38.2 : lien vers « Mes annotations »)
+ *  Version    : 1.6 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen ;
+ *               v0.38.2 : lien vers « Mes annotations » ; v0.39.0 : page de vente)
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
@@ -22,7 +24,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { SansAcces } from "@/components/cours/sans-acces";
+import { HEURES_COURS, VenteCours } from "@/components/cours/vente-cours";
 import {
   BADGE,
   BUTTON_PRIMARY,
@@ -53,24 +55,65 @@ import {
 } from "@/lib/cours/evaluation";
 import { estRedigee } from "@/lib/cours/lecons";
 import type { Bilan } from "@/lib/cours/note-finale";
-import { LECONS, MODULES, adresseLecon, leconParId } from "@/lib/cours/modules";
+import {
+  DUREE_TOTALE_MINUTES,
+  LECONS,
+  LECON_OFFERTE,
+  MODULES,
+  adresseLecon,
+  leconParId,
+} from "@/lib/cours/modules";
 import {
   dureeLisible,
   synthese,
   type LigneProgression,
 } from "@/lib/cours/notation";
 import { getCurrentUser } from "@/lib/auth/dal";
-import { authPath } from "@/lib/auth/routes";
+import { APP_URL } from "@/lib/config";
+import { serializeJsonLd } from "@/lib/seo/book-json-ld";
+import { CHEMIN_COURS, coursJsonLd } from "@/lib/seo/course-json-ld";
 
 const t = getCourseDictionary();
 
 /** Adresse de cette page (retour après connexion). */
-const ACCUEIL = "/strategie/cours";
+const ACCUEIL = CHEMIN_COURS;
 
 export const metadata: Metadata = {
   title: t.title,
-  description: t.description,
+  description: t.vente.meta,
+  alternates: { canonical: ACCUEIL },
+  openGraph: {
+    title: t.title,
+    description: t.vente.meta,
+    url: ACCUEIL,
+    type: "website",
+    locale: "fr_FR",
+  },
 };
+
+/** Données structurées « Course » (identiques pour tous les visiteurs). */
+const JSON_LD = serializeJsonLd(
+  coursJsonLd(
+    {
+      titre: t.diplome.pdf.intitule,
+      description: t.vente.meta,
+      auteur: t.lecon.citation.auteur,
+      plateforme: t.lecon.citation.plateforme,
+      diplome: t.diplome.pdf.titre,
+      modules: MODULES,
+      minutes: DUREE_TOTALE_MINUTES,
+    },
+    APP_URL,
+  ),
+);
+
+/** Chiffres clés affichés sous le titre. */
+const CHIFFRES = [
+  { valeur: String(MODULES.length), libelle: t.vente.chiffres.modules },
+  { valeur: String(LECONS.length), libelle: t.vente.chiffres.lecons },
+  { valeur: HEURES_COURS, libelle: t.vente.chiffres.heures },
+  { valeur: String(MODULES.length), libelle: t.vente.chiffres.quiz },
+];
 
 /** État d'une leçon pour l'apprenant. */
 type Etat = "terminee" | "enCours";
@@ -186,6 +229,9 @@ function Programme({
                   )}
                   <span className="flex items-center gap-2 text-small text-ink-muted">
                     {etat && <span className={BADGE}>{t.accueil[etat]}</span>}
+                    {!etats && l.id === LECON_OFFERTE && (
+                      <span className={BADGE}>{t.lecon.offerte}</span>
+                    )}
                     {mention && <span className={BADGE}>{mention}</span>}
                     {!estRedigee(l.id) && <span>{t.accueil.bientot}</span>}
                     {interpolate(t.accueil.minutes, { n: String(l.minutes) })}
@@ -322,25 +368,14 @@ async function EspaceApprenant({
   searchParams: PageProps<"/strategie/cours">["searchParams"];
 }) {
   const [user, query] = await Promise.all([getCurrentUser(), searchParams]);
-  if (!user) {
+  // Visiteur ou membre non inscrit : page de vente
+  if (!user || !(await aAccesAuCours())) {
     return (
-      <>
-        <Link
-          href={authPath("connexion", ACCUEIL)}
-          className={`${BUTTON_PRIMARY} self-start`}
-        >
-          {t.erreurs.connexion}
-        </Link>
-        <Programme />
-      </>
-    );
-  }
-  if (!(await aAccesAuCours())) {
-    return (
-      <>
-        <SansAcces email={user.email} paiementAnnule={query.paiement === "annule"} />
-        <Programme />
-      </>
+      <VenteCours
+        user={user}
+        paiementAnnule={query.paiement === "annule"}
+        programme={<Programme />}
+      />
     );
   }
 
@@ -378,13 +413,25 @@ async function EspaceApprenant({
 export default function CoursPage({ searchParams }: PageProps<"/strategie/cours">) {
   return (
     <main className="flex flex-col gap-10">
+      {/* Données structurées « Course » pour Google (JSON-LD, « < » échappé) */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON_LD }} />
+
       {/* ==================== PRÉSENTATION ==================== */}
       <header className="flex flex-col gap-3">
         <p className="text-caption uppercase text-ink-muted">
           {t.accueil.eyebrow}
         </p>
         <h1 className="font-serif text-h1 font-semibold">{t.title}</h1>
+        <p className="max-w-2xl font-serif text-h3 font-normal">{t.vente.accroche}</p>
         <p className="max-w-2xl text-ink-muted">{t.description}</p>
+        <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {CHIFFRES.map((c) => (
+            <div key={c.libelle} className={`${CARD} flex flex-col-reverse gap-1 p-4`}>
+              <dt className="text-small text-ink-muted">{c.libelle}</dt>
+              <dd className="font-serif text-h2 font-semibold text-encre">{c.valeur}</dd>
+            </div>
+          ))}
+        </dl>
       </header>
 
       {/* ==================== PROGRESSION ET PROGRAMME ==================== */}

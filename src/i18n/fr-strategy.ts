@@ -14,9 +14,10 @@
  *               d'une étude et forfaits du coach (v0.11.1), achat des études, des lots et
  *               des forfaits (v0.10.2).
  *               Lus via getStrategyDictionary() (strategy.ts).
+ *               v2.9 (v0.39.0) : lien et encart vers le cours de stratégie.
  *  Auteur     : Claude Marcel
- *  Version    : 2.8
- *  Date       : 2026-11-17
+ *  Version    : 2.9
+ *  Date       : 2026-11-20
  * =============================================================
  */
 
@@ -30,6 +31,7 @@ const strategyFr = {
   nav: {
     home: "Présentation",
     studies: "Mes études",
+    course: "Le cours",
     signIn: "Se connecter",
     signOut: "Se déconnecter",
     signedInAs: "Connecté : {name}",
@@ -57,6 +59,11 @@ const strategyFr = {
     coachNote:
       "Un coach IA relit vos analyses, pose des questions et signale les erreurs classiques. " +
       "Vous gardez toujours la décision.",
+    courseTitle: "Le cours de stratégie",
+    courseText:
+      "Apprenez la démarche pas à pas : 13 modules, des exercices corrigés, des quiz et un " +
+      "diplôme vérifiable. La première leçon est offerte.",
+    courseLink: "Découvrir le cours",
   },
 
   // ==================== ÉTUDES ====================

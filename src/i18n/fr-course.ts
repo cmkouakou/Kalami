@@ -6,8 +6,9 @@
  *               leçon, encadrés, exercices, annotations, lecture à voix haute et
  *               messages d'erreur. Lus via getCourseDictionary() (course.ts).
  *               v0.37.0 : quiz de module. v0.38.0 : examen final et diplôme.
+ *               v0.39.0 : page de vente, leçon offerte en aperçu, référencement.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  * =============================================================
  */
@@ -50,7 +51,117 @@ const courseFr = {
     compte: "Courriel de votre compte : {email}",
   },
 
+  // ==================== PAGE DE VENTE (v0.39.0) ====================
+  vente: {
+    /** Description pour Google et les aperçus de liens (160 caractères environ). */
+    meta:
+      "Cours en ligne de stratégie d'entreprise en 13 modules : analyse, choix et mise en " +
+      "œuvre, exercices corrigés, quiz, examen final et diplôme vérifiable.",
+    accroche:
+      "Apprenez à analyser une entreprise, à choisir sa stratégie et à la mettre en œuvre, " +
+      "à votre rythme, avec des exercices corrigés et un diplôme à la clé.",
+    chiffres: {
+      modules: "modules",
+      lecons: "leçons courtes",
+      heures: "heures de lecture",
+      quiz: "quiz et un examen",
+    },
+    apercu: "Lire la leçon 1.1 gratuitement",
+    voirOffre: "Voir l'offre",
+    apprendreTitre: "Ce que vous saurez faire",
+    apprendre: [
+      "Lire l'environnement d'une entreprise : macroenvironnement (PESTEL), industrie et " +
+        "concurrence (cinq forces).",
+      "Faire le diagnostic interne : ressources, compétences, chaîne de valeur.",
+      "Bâtir une SWOT utile, puis en tirer des options avec la TOWS.",
+      "Formuler vision, mission, valeurs et objectifs qui tiennent.",
+      "Choisir une stratégie concurrentielle et corporative, innover, croître.",
+      "Mettre la stratégie en œuvre et la suivre : un plan en une page, des indicateurs.",
+    ],
+    formatTitre: "Comment se déroule le cours",
+    format: [
+      {
+        titre: "Des leçons courtes et denses",
+        texte:
+          "Chaque leçon se lit en quelques minutes, avec des schémas et des exemples " +
+          "d'entreprises réelles. Vous pouvez aussi l'écouter à voix haute.",
+      },
+      {
+        titre: "Des exercices corrigés",
+        texte:
+          "Chaque leçon propose des exercices corrigés pour vérifier que l'outil est " +
+          "acquis avant de passer à la suite.",
+      },
+      {
+        titre: "Votre propre étude",
+        texte:
+          "Le cours est relié à l'assistant Kalami Stratégie : vous appliquez chaque outil à " +
+          "l'entreprise de votre choix, jusqu'à votre propre plan stratégique.",
+      },
+      {
+        titre: "Quiz, examen et diplôme",
+        texte:
+          "Un quiz clôt chaque module. L'examen final ouvre droit à un diplôme en PDF, avec " +
+          "une mention et un numéro que tout employeur peut vérifier en ligne.",
+      },
+    ],
+    offreTitre: "S'inscrire au cours",
+    offreTexte:
+      "Accès complet aux 13 modules, aux exercices, aux quiz et à l'examen, " +
+      "avec le livre « La stratégie d'entreprise » qui accompagne le cours.",
+    paiement:
+      "Par carte bancaire (accès immédiat) ou par Mobile Money en FCFA (validé sous 24 h).",
+    bientot:
+      "L'inscription en ligne ouvrira prochainement. En attendant, la leçon 1.1 est offerte.",
+    connexion: "Connectez-vous ou créez un compte gratuit pour lire la leçon offerte.",
+    auteurTitre: "L'auteur",
+    auteur:
+      "Claude Marcel Kouakou, bachelier en gestion (HEC Montréal), auteur de « La " +
+      "stratégie d'entreprise : mise en œuvre par l'exemple ». Le cours suit la démarche " +
+      "du livre, chapitre par chapitre.",
+    programmeTitre: "Le programme",
+    faqTitre: "Questions fréquentes",
+    faq: [
+      {
+        question: "Faut-il des connaissances préalables ?",
+        reponse:
+          "Non. Le cours part des fondements et explique chaque outil avant de l'utiliser. " +
+          "Il convient aux étudiants, aux entrepreneurs et aux cadres.",
+      },
+      {
+        question: "Combien de temps faut-il pour suivre le cours ?",
+        reponse:
+          "Les leçons représentent environ {heures} heures de lecture, sans compter les " +
+          "exercices. Vous avancez à votre rythme.",
+      },
+      {
+        question: "Comment payer ?",
+        reponse:
+          "Par carte bancaire, avec un accès immédiat ; ou en FCFA par Mobile Money (Wave, " +
+          "Orange Money, MTN MoMo, Moov Money), validé sous 24 heures.",
+      },
+      {
+        question: "Le diplôme est-il vérifiable ?",
+        reponse:
+          "Oui. Chaque diplôme porte un numéro unique : son adresse de vérification, " +
+          "imprimée sur le PDF, confirme le nom, la mention et la date de délivrance.",
+      },
+      {
+        question: "Puis-je essayer avant de m'inscrire ?",
+        reponse:
+          "Oui : la première leçon est offerte à tout membre connecté. Créer un compte " +
+          "Kalami est gratuit.",
+      },
+    ],
+  },
+
   lecon: {
+    /** Leçon offerte lue sans inscription (v0.39.0). */
+    offerte: "Leçon offerte",
+    offerteTexte:
+      "Cette leçon est offerte. Inscrivez-vous pour faire ses exercices, suivre votre " +
+      "progression et accéder aux 51 autres leçons.",
+    exerciceReserve: "Les exercices sont réservés aux inscrits.",
     retour: "Programme du cours",
     moduleLecon: "Module {m} · Leçon {l}",
     /** Référence d'un passage cité (le cours tient lieu d'ouvrage). */

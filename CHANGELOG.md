@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## [v0.39.0] - 2026-11-20 — Cours : page de vente et référencement (S8c)
+### Ajouté
+- `/strategie/cours` devient la page de vente pour les visiteurs et les membres non
+  inscrits : accroche, chiffres clés, ce que vous saurez faire, format, programme, offre
+  avec prix (devise du visiteur) et bouton d'achat, auteur, questions fréquentes. Les
+  inscrits gardent leur tableau de bord à la même adresse.
+- Leçon 1.1 offerte : lisible par tout membre connecté, sans exercices ni progression,
+  avec un lien vers l'offre.
+- Référencement : description, adresse canonique, Open Graph, image d'aperçu du cours,
+  données structurées « Course » et « FAQPage », page du cours dans le plan du site.
+- Lien « Le cours » dans le menu de Kalami Stratégie et encart sur son accueil.
+
+### Modifié
+- robots.txt : annotations, examen et diplômes du cours fermés aux robots.
+
 ## [v0.38.2] - 2026-11-20 — Cours : page « Mes annotations »
 ### Ajouté
 - Page `/strategie/cours/annotations` (inscrits, non indexée) : surlignages et notes de

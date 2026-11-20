@@ -10,8 +10,10 @@
  *               en avance : contenu sans exercices ni bouton « terminé »).
  *               v0.37.0 : lien vers le quiz du module sur la dernière leçon.
  *               v0.38.2 : lien vers « Mes annotations » dans l'en-tête.
+ *               v0.39.0 : leçon offerte (1.1) lisible par un membre non inscrit, sans
+ *               exercices ni progression, avec un lien vers l'offre.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/*, cours.css
  * =============================================================
@@ -26,7 +28,12 @@ import { BlocsLecon } from "@/components/cours/blocs-lecon";
 import { BoutonTerminer } from "@/components/cours/bouton-terminer";
 import { LiseuseLecon } from "@/components/cours/liseuse-lecon";
 import { SansAcces } from "@/components/cours/sans-acces";
-import { BUTTON_SECONDARY, BUTTON_TERTIARY, PANEL_SAND } from "@/components/ui/styles";
+import {
+  BUTTON_PRIMARY,
+  BUTTON_SECONDARY,
+  BUTTON_TERTIARY,
+  PANEL_SAND,
+} from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import {
@@ -39,6 +46,7 @@ import {
 import { dateLisible } from "@/lib/cours/calendrier";
 import { contenuLecon } from "@/lib/cours/lecons";
 import {
+  LECON_OFFERTE,
   MODULES,
   adresseLecon,
   leconParId,
@@ -94,6 +102,44 @@ function LienVoisine({
   );
 }
 
+// ==================== LEÇON OFFERTE ====================
+
+/** Leçon offerte lue par un membre non inscrit : texte seul, exercices fermés. */
+function LeconOfferte({
+  leconId,
+  adresse,
+  contenu,
+}: {
+  leconId: string;
+  adresse: string;
+  contenu: NonNullable<ReturnType<typeof contenuLecon>>;
+}) {
+  const appel = (
+    <aside className={`${PANEL_SAND} flex flex-col gap-3 p-5`}>
+      <p>
+        <span className="font-semibold">{t.lecon.offerte}.</span> {t.lecon.offerteTexte}
+      </p>
+      <Link href="/strategie/cours#offre" className={`${BUTTON_PRIMARY} self-start`}>
+        {t.vente.voirOffre}
+      </Link>
+    </aside>
+  );
+  return (
+    <>
+      {appel}
+      <LiseuseLecon leconId={leconId} adresse={adresse} connecte surlignages={[]}>
+        <BlocsLecon
+          leconId={leconId}
+          contenu={contenu}
+          meilleures={{}}
+          exercicesFermes={t.lecon.exerciceReserve}
+        />
+      </LiseuseLecon>
+      {appel}
+    </>
+  );
+}
+
 // ==================== CONTENU PRIVÉ ====================
 
 /** Contenu de la leçon pour l'apprenant connecté. */
@@ -108,11 +154,15 @@ async function ContenuPrive({
   quiz: { adresse: string; numero: number } | null;
 }) {
   const { user, acces } = await exigerConnexionCours(adresse);
-  if (!acces) return <SansAcces email={user.email} />;
+  const offerte = !acces && leconId === LECON_OFFERTE;
+  if (!acces && !offerte) return <SansAcces email={user.email} />;
 
   const contenu = contenuLecon(leconId);
   if (!contenu) {
     return <p className={`${PANEL_SAND} p-6`}>{t.lecon.bientot}</p>;
+  }
+  if (offerte) {
+    return <LeconOfferte leconId={leconId} adresse={adresse} contenu={contenu} />;
   }
 
   // Diffusion programmée : leçon fermée (rien n'est servi) ou lue en avance

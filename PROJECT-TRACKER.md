@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.38.2 (cours : page Mes annotations) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.39.0 (cours : page de vente et référencement) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -115,7 +115,8 @@ Version actuelle : v0.38.2 (cours : page Mes annotations) · Stratégie v0.11.4 
 | #109 | 2026-11-20 | v0.38.0 : cours, sprint 8b2 (examen final, note finale, réglages, diplôme PDF, vérification, admin des diplômes) | ~300 000 | ~1.80 $ |
 | #110 | 2026-11-20 | v0.38.1 : cours, citation et partage d'un passage dans les leçons | ~60 000 | ~0.36 $ |
 | #111 | 2026-11-20 | v0.38.2 : cours, page Mes annotations (recherche, filtre, retour au passage, retrait) | ~70 000 | ~0.42 $ |
-| **TOTAL** | | | **~23 580 000** (hors #71) | **~141.48 $** |
+| #112 | 2026-11-20 | v0.39.0 : cours, page de vente, leçon 1.1 offerte, référencement (S8c) | ~150 000 | ~0.90 $ |
+| **TOTAL** | | | **~23 730 000** (hors #71) | **~142.38 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

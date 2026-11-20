@@ -6,9 +6,10 @@
  *               Chaque leçon a un identifiant stable « mXX-lYY » utilisé en base
  *               (progression, temps, annotations). Une leçon sans contenu rédigé est
  *               affichée « bientôt » : le programme complet reste visible.
+ *               v1.1 (v0.39.0) : leçon offerte en aperçu et durée totale du cours.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/strategy/steps.ts
  * =============================================================
  */
@@ -225,6 +226,12 @@ export const MODULES: readonly ModuleInfo[] = PROGRAMME.map((m, i) => {
 
 /** Toutes les leçons, dans l'ordre du cours. */
 export const LECONS: readonly LeconInfo[] = MODULES.flatMap((m) => m.lecons);
+
+/** Leçon offerte : lisible par tout membre connecté, sans inscription (exercices exclus). */
+export const LECON_OFFERTE = "m01-l01";
+
+/** Durée totale estimée des leçons, en minutes. */
+export const DUREE_TOTALE_MINUTES = LECONS.reduce((total, l) => total + l.minutes, 0);
 
 // ==================== RECHERCHE ====================
 

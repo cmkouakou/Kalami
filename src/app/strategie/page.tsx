@@ -12,9 +12,10 @@
  *               chaque cas du compte, à côté de « Nouvelle étude » (v0.14.4) ; aussi vers
  *               les cas en vente, dont la page demande le paiement (v0.14.5).
  *               Adresse de référence pour Google (v0.15.10).
+ *               Encart vers le cours de stratégie (v0.39.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.8
- *  Date       : 2026-10-28
+ *  Version    : 1.9
+ *  Date       : 2026-11-20
  *  Dépendances: lib/strategy/queries.ts, lib/strategy/team-queries.ts,
  *               lib/strategy/class-queries.ts, lib/auth/dal.ts
  * =============================================================
@@ -81,6 +82,20 @@ export default function StrategyHomePage() {
           ))}
         </ol>
         <p className={`${PANEL_SAND} p-4 text-small`}>{s.landing.coachNote}</p>
+      </section>
+
+      {/* ==================== LE COURS ==================== */}
+      <section
+        aria-labelledby="titre-cours"
+        className={`${CARD} flex flex-col items-start gap-3 p-5`}
+      >
+        <h2 id="titre-cours" className="font-serif text-h3 font-semibold">
+          {s.landing.courseTitle}
+        </h2>
+        <p className="max-w-2xl text-ink-muted">{s.landing.courseText}</p>
+        <Link href="/strategie/cours" className={BUTTON_SECONDARY}>
+          {s.landing.courseLink}
+        </Link>
       </section>
 
       {/* ==================== MES ÉTUDES ==================== */}

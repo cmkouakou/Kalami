@@ -2,16 +2,19 @@
  * Fichier    : seo.test.ts
  * Projet     : Kalami
  * Description: Tests du référencement : plan du site, règles des robots et données
- *              structurées « Book » (JSON-LD).
+ *              structurées « Book » (JSON-LD). v1.4 : page de vente du cours, « Course »
+ *              et « FAQPage ».
  * Auteur     : Claude Marcel
- * Version    : 1.3
- * Date       : 2026-11-09
+ * Version    : 1.4
+ * Date       : 2026-11-20
  */
 
 import { describe, expect, it } from "vitest";
 
 import type { BookDetail } from "@/lib/catalog/types";
+import { MODULES } from "@/lib/cours/modules";
 import { bookJsonLd, serializeJsonLd } from "@/lib/seo/book-json-ld";
+import { coursJsonLd, faqJsonLd } from "@/lib/seo/course-json-ld";
 import {
   buildRobots,
   buildSitemap,
@@ -125,5 +128,46 @@ describe("bookJsonLd", () => {
     const json = serializeJsonLd(bookJsonLd(book, APP, null));
     expect(json).not.toContain("</script>");
     expect(JSON.parse(json).name).toBe(book.title);
+  });
+});
+
+// ==================== COURS (v0.39.0) ====================
+
+describe("cours de stratégie", () => {
+  it("propose la page de vente à Google et ferme les espaces personnels", () => {
+    const urls = buildSitemap(APP, { books: [], categories: [] }).map((e) => e.url);
+    expect(urls).toContain(`${APP}/strategie/cours`);
+    expect(DISALLOWED_PATHS).toEqual(
+      expect.arrayContaining(["/strategie/cours/annotations", "/strategie/cours/examen"]),
+    );
+    expect(DISALLOWED_PATHS).not.toContain("/strategie/cours");
+  });
+
+  it("décrit le cours (programme, durée, mode en ligne)", () => {
+    const data = coursJsonLd(
+      {
+        titre: "Cours",
+        description: "Desc",
+        auteur: "Auteur",
+        plateforme: "Kalami Stratégie",
+        diplome: "Diplôme",
+        modules: MODULES,
+        minutes: 936,
+      },
+      APP,
+    );
+    expect(data["@type"]).toBe("Course");
+    expect(data.url).toBe(`${APP}/strategie/cours`);
+    expect(data.syllabusSections).toHaveLength(13);
+    expect(data.hasCourseInstance).toEqual([
+      expect.objectContaining({ courseMode: "Online", courseWorkload: "PT16H" }),
+    ]);
+  });
+
+  it("transforme les questions fréquentes en FAQPage", () => {
+    const data = faqJsonLd([{ question: "Q ?", reponse: "R." }]);
+    expect(data.mainEntity).toEqual([
+      { "@type": "Question", name: "Q ?", acceptedAnswer: { "@type": "Answer", text: "R." } },
+    ]);
   });
 });

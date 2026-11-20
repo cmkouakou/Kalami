@@ -5,9 +5,11 @@
  *  Description: Référencement Google : entrées du plan du site (sitemap.xml) et règles
  *               des robots (robots.txt). Fonctions pures, lues par app/sitemap.ts et
  *               app/robots.ts.
+ *               v1.4 (v0.39.0) : page de vente du cours dans le plan du site ; espaces
+ *               personnels du cours (annotations, examen, diplômes) fermés aux robots.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-11-09
+ *  Version    : 1.4
+ *  Date       : 2026-11-20
  *  Dépendances: lib/catalog/types.ts, lib/legal/kinds.ts
  * =============================================================
  */
@@ -41,6 +43,9 @@ export const DISALLOWED_PATHS = [
   "/strategie/invitation",
   "/strategie/classe",
   "/strategie/hors-ligne",
+  "/strategie/cours/annotations",
+  "/strategie/cours/examen",
+  "/strategie/cours/diplome/",
 ];
 
 // ==================== TYPES ====================
@@ -54,7 +59,8 @@ export type SitemapSource = {
 // ==================== FONCTIONS ====================
 
 /**
- * Entrées du plan du site : accueil, Kalami Stratégie, page Découvrir, catégories ayant au moins un livre
+ * Entrées du plan du site : accueil, Kalami Stratégie, son cours, page Découvrir,
+ * catégories ayant au moins un livre
  * publié (une catégorie vide n'est pas proposée à Google), livres publiés,
  * auteurs ayant au moins un livre publié, textes légaux.
  * @param appUrl - URL publique sans « / » final
@@ -65,6 +71,7 @@ export function buildSitemap(appUrl: string, source: SitemapSource): MetadataRou
   const entries: MetadataRoute.Sitemap = [
     { url: appUrl, changeFrequency: "daily", priority: 1 },
     { url: `${appUrl}/strategie`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${appUrl}/strategie/cours`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${appUrl}/decouvrir`, changeFrequency: "monthly", priority: 0.7 },
   ];
   for (const category of source.categories) {
