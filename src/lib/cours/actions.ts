@@ -108,6 +108,9 @@ export async function terminerLecon(leconId: string): Promise<Resultat> {
       if (error.message === "lesson_locked") {
         return { ok: false, error: t.diffusion.pasEncore };
       }
+      if (error.message === "lesson_closed") {
+        return { ok: false, error: t.diffusion.plusOuverte };
+      }
       const refuse = error.code === "42501";
       return {
         ok: false,
@@ -154,9 +157,9 @@ export async function soumettreReponse(
   if (!exercice || !correction) return { ok: false, error: t.erreurs.invalide };
   if (!(await aAccesAuCours())) return { ok: false, error: t.erreurs.acces };
   const { etats } = await diffusionApprenant();
-  if (etats.get(leconId)?.etat !== "ouverte") {
-    return { ok: false, error: t.diffusion.pasEncore };
-  }
+  const etatLecon = etats.get(leconId)?.etat;
+  if (etatLecon === "expiree") return { ok: false, error: t.diffusion.plusOuverte };
+  if (etatLecon !== "ouverte") return { ok: false, error: t.diffusion.pasEncore };
 
   // Une question ouverte n'est pas notée : rien à enregistrer
   if (exercice.type === "ouvert") return { ok: true, correction };

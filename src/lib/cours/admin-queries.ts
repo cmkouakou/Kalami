@@ -6,9 +6,10 @@
  *               cohortes, apprenants avec leur suivi (fonction SQL admin_course_learners)
  *               et fiche d'un apprenant (progression, notes, temps par jour, lus grâce aux
  *               politiques « ou administrateur ») ; calendrier de diffusion d'une
- *               cohorte (v0.33.0) ; diplômes délivrés (v0.38.0).
+ *               cohorte (v0.33.0) ; diplômes délivrés (v0.38.0) ; dates individuelles
+ *               d'ouverture et de fermeture par apprenant (v0.42.0).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
  *  Dépendances: lib/supabase/server.ts, lib/cours/suivi.ts,
  *               migrations 20261124120000_course.sql et 20261125120000_course_admin.sql
@@ -30,6 +31,7 @@ import {
   jourDansFuseau,
   type Fuseau,
 } from "@/lib/cours/calendrier";
+import type { DateIndividuelle } from "@/lib/cours/liste-apprenants";
 import { estMention, type Mention } from "@/lib/cours/note-finale";
 import { createClient } from "@/lib/supabase/server";
 
@@ -219,6 +221,42 @@ export async function listerApprenants(
   });
   if (error) return echec("apprenants", error, []);
   return enrichir((data ?? []) as LigneApprenant[]);
+}
+
+type LigneDateIndividuelle = {
+  user_id: string;
+  item_id: string;
+  opens_at: string | null;
+  closes_at: string | null;
+  timezone: string;
+};
+
+/**
+ * Dates individuelles de tous les apprenants, regroupées par compte.
+ * @returns Dates par identifiant de compte (vide en cas d'erreur)
+ */
+export async function listerDatesIndividuelles(): Promise<
+  Record<string, DateIndividuelle[]>
+> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("course_learner_schedule")
+    .select("user_id, item_id, opens_at, closes_at, timezone")
+    .order("item_id")
+    .limit(20000);
+  if (error) return echec("dates individuelles", error, {});
+  const parCompte: Record<string, DateIndividuelle[]> = {};
+  for (const l of (data ?? []) as LigneDateIndividuelle[]) {
+    const fuseau: Fuseau = estFuseau(l.timezone) ? l.timezone : FUSEAUX[0];
+    const jour = (iso: string | null) => (iso ? jourDansFuseau(iso, fuseau) : null);
+    (parCompte[l.user_id] ??= []).push({
+      item: l.item_id,
+      ouvre: jour(l.opens_at),
+      ferme: jour(l.closes_at),
+      fuseau,
+    });
+  }
+  return parCompte;
 }
 
 /**

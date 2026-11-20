@@ -6,11 +6,12 @@
  *               vente, cohortes (création, modification, suppression), accès accordés
  *               par liste de courriels, changement de cohorte et retrait d'un accès ;
  *               calendrier de diffusion d'une cohorte (v0.33.0) ; réglages
- *               d'évaluation et correction du nom d'un diplôme (v0.38.0).
+ *               d'évaluation et correction du nom d'un diplôme (v0.38.0) ; dates
+ *               individuelles d'ouverture et de fermeture, en lot (v0.42.0).
  *               Les fonctions SQL vérifient le rôle administrateur (aal2) et écrivent
  *               le journal d'audit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/admin-validation.ts
  * =============================================================
@@ -29,9 +30,11 @@ import {
   lireAccord,
   lireCalendrierSaisi,
   lireCohorte,
+  lireDiffusionSaisie,
   lireEvaluation,
   lireNomDiplome,
   lireReglages,
+  lireRetraitDiffusion,
 } from "@/lib/cours/admin-validation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -208,6 +211,49 @@ export async function retirerAcces(
   if (error) return { error: erreur(error.message) };
   refresh();
   return { message: a.liste.retire };
+}
+
+// ==================== DATES INDIVIDUELLES (v0.42.0) ====================
+
+/**
+ * Pose des dates d'ouverture et/ou de fermeture pour les apprenants et les modules ou
+ * leçons cochés ; elles l'emportent sur le calendrier de leur cohorte.
+ */
+export async function poserDiffusion(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const lu = lireDiffusionSaisie(formData);
+  if (!lu.ok) return { error: erreur(lu.erreur) };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "admin_course_set_learner_schedule",
+    lu.valeur,
+  );
+  if (error) return { error: erreur(error.message) };
+  refresh();
+  return { message: interpolate(a.diffusionPerso.pose, { n: String(data ?? 0) }) };
+}
+
+/** Retire les dates individuelles des apprenants cochés (éléments cochés, ou toutes). */
+export async function retirerDiffusion(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const lu = lireRetraitDiffusion(formData);
+  if (!lu.ok) return { error: erreur(lu.erreur) };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc(
+    "admin_course_clear_learner_schedule",
+    lu.valeur,
+  );
+  if (error) return { error: erreur(error.message) };
+  refresh();
+  return { message: interpolate(a.diffusionPerso.retire, { n: String(data ?? 0) }) };
 }
 
 // ==================== ÉVALUATION ET DIPLÔMES (v0.38.0) ====================

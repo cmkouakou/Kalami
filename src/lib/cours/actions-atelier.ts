@@ -89,9 +89,9 @@ export async function corrigerAtelier(
   if (!saisie) return { ok: false, error: t.erreurs.invalide };
   if (!(await aAccesAuCours())) return { ok: false, error: t.erreurs.acces };
   const { etats } = await diffusionApprenant();
-  if (etats.get(leconId)?.etat !== "ouverte") {
-    return { ok: false, error: t.diffusion.pasEncore };
-  }
+  const etatLecon = etats.get(leconId)?.etat;
+  if (etatLecon === "expiree") return { ok: false, error: t.diffusion.plusOuverte };
+  if (etatLecon !== "ouverte") return { ok: false, error: t.diffusion.pasEncore };
   if (!isCoachConfigured()) return { ok: false, error: t.ateliers.indisponible };
 
   const admin = createAdminClient();

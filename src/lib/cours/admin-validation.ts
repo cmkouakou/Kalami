@@ -4,11 +4,12 @@
  *  Projet     : Kalami Stratégie — le cours
  *  Description: Lecture et contrôle des formulaires de l'administration du cours
  *               (v0.29.0) : réglages de vente, cohorte, accès accordés ; calendrier de
- *               diffusion (v0.33.0) ; évaluation et nom d'un diplôme (v0.38.0).
+ *               diffusion (v0.33.0) ; évaluation et nom d'un diplôme (v0.38.0) ;
+ *               dates individuelles d'ouverture et de fermeture (v0.42.0).
  *               La base refait les mêmes contrôles ; ceux-ci donnent
  *               un message clair avant l'envoi.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  *  Dépendances: lib/admin/validation.ts, lib/cours/suivi.ts, lib/cours/calendrier.ts
  * =============================================================
@@ -307,4 +308,100 @@ export function lireEvaluation(fd: FormData): Resultat<EvaluationSaisie> {
 export function lireNomDiplome(fd: FormData): Resultat<string> {
   const nom = nomImprime(fd.get("name"));
   return nom ? { ok: true, valeur: nom } : { ok: false, erreur: "invalid_diploma_name" };
+}
+
+// ==================== DATES INDIVIDUELLES (v0.42.0) ====================
+
+/** Apprenants et éléments traités en une fois, au plus (mêmes limites qu'en base). */
+export const MAX_APPRENANTS_DIFFUSION = 500;
+export const MAX_ELEMENTS_DIFFUSION = 200;
+
+/** Paramètres de admin_course_set_learner_schedule. */
+export type DiffusionSaisie = {
+  p_user_ids: string[];
+  p_items: string[];
+  p_opens: string | null;
+  p_closes: string | null;
+  p_timezone: Fuseau;
+};
+
+/**
+ * Apprenants cochés (champs « user », sans doublon).
+ * @param fd - Données du formulaire
+ * @returns Identifiants, ou null si l'un est invalide ou si la liste est vide ou trop longue
+ */
+function apprenantsCoches(fd: FormData): string[] | null {
+  const ids = [...new Set(fd.getAll("user").filter((v) => typeof v === "string"))];
+  if (ids.length === 0 || ids.length > MAX_APPRENANTS_DIFFUSION) return null;
+  return ids.every(isUuid) ? ids : null;
+}
+
+/**
+ * Modules et leçons cochés (champs « item », sans doublon).
+ * @param fd - Données du formulaire
+ * @returns Identifiants, ou null si l'un est inconnu ou si la liste est trop longue
+ */
+function elementsCoches(fd: FormData): string[] | null {
+  const ids = [...new Set(fd.getAll("item").filter((v) => typeof v === "string"))];
+  if (ids.length > MAX_ELEMENTS_DIFFUSION) return null;
+  return ids.every((id) => ELEMENTS.has(id)) ? ids : null;
+}
+
+/**
+ * Jour facultatif AAAA-MM-JJ.
+ * @returns Jour, null si vide, undefined si invalide
+ */
+function jourFacultatif(fd: FormData, nom: string): string | null | undefined {
+  const jour = texte(fd, nom);
+  if (jour === "") return null;
+  return estJour(jour) ? jour : undefined;
+}
+
+/**
+ * Dates individuelles à poser : apprenants et éléments cochés, ouverture et/ou
+ * fermeture (fermeture après l'ouverture), fuseau.
+ * @param fd - Données du formulaire
+ */
+export function lireDiffusionSaisie(fd: FormData): Resultat<DiffusionSaisie> {
+  const users = apprenantsCoches(fd);
+  if (!users) return { ok: false, erreur: "no_learners" };
+  const items = elementsCoches(fd);
+  if (!items || items.length === 0) return { ok: false, erreur: "no_items" };
+  const fuseau = texte(fd, "timezone");
+  if (!estFuseau(fuseau)) return { ok: false, erreur: "invalid_timezone" };
+  const ouvre = jourFacultatif(fd, "opens");
+  const ferme = jourFacultatif(fd, "closes");
+  if (ouvre === undefined || ferme === undefined) {
+    return { ok: false, erreur: "invalid_schedule" };
+  }
+  if (!ouvre && !ferme) return { ok: false, erreur: "no_dates" };
+  if (ouvre && ferme && ferme <= ouvre) return { ok: false, erreur: "invalid_window" };
+  return {
+    ok: true,
+    valeur: {
+      p_user_ids: users,
+      p_items: items,
+      p_opens: ouvre,
+      p_closes: ferme,
+      p_timezone: fuseau,
+    },
+  };
+}
+
+/**
+ * Dates individuelles à retirer : apprenants cochés, éléments cochés (aucun : toutes
+ * leurs dates).
+ * @param fd - Données du formulaire
+ */
+export function lireRetraitDiffusion(
+  fd: FormData,
+): Resultat<{ p_user_ids: string[]; p_items: string[] | null }> {
+  const users = apprenantsCoches(fd);
+  if (!users) return { ok: false, erreur: "no_learners" };
+  const items = elementsCoches(fd);
+  if (!items) return { ok: false, erreur: "no_items" };
+  return {
+    ok: true,
+    valeur: { p_user_ids: users, p_items: items.length > 0 ? items : null },
+  };
 }

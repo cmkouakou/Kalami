@@ -294,8 +294,8 @@ describe("quiz de module", () => {
   it("quizOuvert exige que toutes les leçons du module soient ouvertes", () => {
     const ids = ["m01-l01", "m01-l02"];
     expect(quizOuvert(ids, new Map())).toBe(true);
-    const ouvre = { etat: "ouverte" as const, ouvreLe: null };
-    const apercu = { etat: "apercu" as const, ouvreLe: null };
+    const ouvre = { etat: "ouverte" as const, ouvreLe: null, fermeLe: null };
+    const apercu = { etat: "apercu" as const, ouvreLe: null, fermeLe: null };
     expect(quizOuvert(ids, new Map([["m01-l01", ouvre], ["m01-l02", ouvre]]))).toBe(true);
     expect(quizOuvert(ids, new Map([["m01-l02", apercu]]))).toBe(false);
   });

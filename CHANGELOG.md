@@ -1,5 +1,32 @@
 # Journal des modifications
 
+## [v0.42.0] - 2026-11-20 — Cours : liste des inscrits et dates individuelles
+### Ajouté
+- Administration > Cours > Apprenants : liste de tous les inscrits avec recherche (courriel
+  ou nom, sans tenir compte des accents), filtres par cohorte (ou « sans cohorte ») et par
+  origine, cohorte affichée sur chaque ligne, dates individuelles déjà posées.
+- Sélection des inscrits (un à un ou tous les inscrits affichés) et panneau « Ouvrir ou
+  fermer des modules et des leçons » : modules entiers ou leçons à cocher, date
+  d'ouverture et/ou de fermeture (à minuit, fuseau Abidjan ou Montréal), « Appliquer »
+  ou « Retirer » (éléments cochés, ou toutes les dates de l'inscrit).
+- Les dates individuelles l'emportent sur le calendrier de la cohorte : leçon de
+  l'apprenant, module de l'apprenant, puis leçon et module de la cohorte. Elles
+  fonctionnent aussi pour un inscrit sans cohorte.
+- Nouvel état « fermée » côté apprenant : la leçon n'est plus servie, le sommaire indique
+  « Fermée depuis le … » ou « Ouverte jusqu'au … » ; exercices, ateliers, présence et
+  « J'ai terminé » sont refusés, et le quiz du module reste fermé.
+- Migration `20261129120000_course_learner_schedule.sql` : table
+  `course_learner_schedule` (lecture administrateur), fonctions
+  `admin_course_set_learner_schedule` et `admin_course_clear_learner_schedule` (journal
+  d'audit) ; `course_my_calendar`, `course_lesson_window`, `record_course_activity` et
+  `complete_course_lesson` tiennent compte des dates individuelles.
+- 15 tests unitaires (`tests/unit/cours-dates-individuelles.test.ts`).
+
+### Modifié
+- Prix du cours en dollars canadiens et en euros saisis : un visiteur canadien voit le prix
+  en CAD (carte via Stripe), un visiteur ivoirien en FCFA (Mobile Money, dont Orange Money
+  et Wave, ou carte).
+
 ## [v0.41.0] - 2026-11-20 — Stratégie : le cours comme source du coach
 ### Ajouté
 - Le coach de Kalami Stratégie s'appuie sur le cours au même titre que le livre : à chaque

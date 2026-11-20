@@ -6,8 +6,10 @@
  *               chaque leçon (ouverte, lecture en avance, fermée) d'après le calendrier
  *               de la cohorte, dates dans le fuseau de la cohorte, générateur de
  *               calendrier (date de départ et rythme). Sans calendrier, tout est ouvert.
+ *               v0.42.0 : dates individuelles de l'apprenant (ouverture et fermeture),
+ *               prioritaires sur la cohorte ; état « expirée » une fois la fermeture passée.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/modules.ts
  * =============================================================
@@ -27,12 +29,20 @@ export type Calendrier = {
   lectureAvance: boolean;
   /** Instant d'ouverture (ISO) par module « m05 » ou leçon « m05-l02 ». */
   dates: Record<string, string>;
+  /** Dates propres à l'apprenant (v0.42.0), prioritaires sur celles de la cohorte. */
+  perso: Record<string, DatesPerso>;
 };
 
-export type Etat = "ouverte" | "apercu" | "fermee";
+/** Dates individuelles d'un module ou d'une leçon (instants ISO). */
+export type DatesPerso = { ouvre: string | null; ferme: string | null };
 
-/** État d'une leçon pour l'apprenant ; ouvreLe : instant ISO, null si sans date. */
-export type EtatDiffusion = { etat: Etat; ouvreLe: string | null };
+export type Etat = "ouverte" | "apercu" | "fermee" | "expiree";
+
+/**
+ * État d'une leçon pour l'apprenant ; ouvreLe et fermeLe : instants ISO, null si sans
+ * date.
+ */
+export type EtatDiffusion = { etat: Etat; ouvreLe: string | null; fermeLe: string | null };
 
 /** Préfixe des champs de date du formulaire d'admin : « date:m05 », « date:m05-l02 ». */
 export const PREFIXE_DATE = "date:";
@@ -47,38 +57,81 @@ export function estFuseau(valeur: unknown): valeur is Fuseau {
   return typeof valeur === "string" && (FUSEAUX as readonly string[]).includes(valeur);
 }
 
+/** Instant ISO valide, sinon null. */
+function instant(valeur: unknown): string | null {
+  return typeof valeur === "string" && !Number.isNaN(Date.parse(valeur)) ? valeur : null;
+}
+
+/**
+ * Dates individuelles lues en base ({ "m05": { opens, closes } }) ; les entrées sans
+ * aucune date valide sont écartées.
+ * @param brut - Champ « personal » de course_my_calendar
+ */
+function lirePerso(brut: unknown): Record<string, DatesPerso> {
+  const perso: Record<string, DatesPerso> = {};
+  if (typeof brut !== "object" || brut === null) return perso;
+  for (const [cle, valeur] of Object.entries(brut)) {
+    if (typeof valeur !== "object" || valeur === null) continue;
+    const { opens, closes } = valeur as Record<string, unknown>;
+    const dates = { ouvre: instant(opens), ferme: instant(closes) };
+    if (dates.ouvre || dates.ferme) perso[cle] = dates;
+  }
+  return perso;
+}
+
 /**
  * Convertit la réponse de course_my_calendar ; null (ou réponse inattendue) : pas de
  * calendrier, donc tout est ouvert.
- * @param brut - Objet { timezone, read_ahead, items } renvoyé par la base
+ * @param brut - Objet { timezone, read_ahead, items, personal } renvoyé par la base
  */
 export function lireCalendrier(brut: unknown): Calendrier | null {
   if (typeof brut !== "object" || brut === null) return null;
-  const { timezone, read_ahead, items } = brut as Record<string, unknown>;
+  const { timezone, read_ahead, items, personal } = brut as Record<string, unknown>;
   if (!estFuseau(timezone) || typeof items !== "object" || items === null) return null;
   const dates: Record<string, string> = {};
   for (const [cle, valeur] of Object.entries(items)) {
-    if (typeof valeur === "string" && !Number.isNaN(Date.parse(valeur))) {
-      dates[cle] = valeur;
-    }
+    const iso = instant(valeur);
+    if (iso) dates[cle] = iso;
   }
-  return { fuseau: timezone, lectureAvance: read_ahead === true, dates };
+  return {
+    fuseau: timezone,
+    lectureAvance: read_ahead === true,
+    dates,
+    perso: lirePerso(personal),
+  };
 }
 
 // ==================== ÉTATS ====================
 
 /**
- * Date d'ouverture effective d'une leçon : la sienne, sinon celle de son module.
- * @param cal     - Calendrier de la cohorte
+ * Date d'ouverture effective d'une leçon : leçon puis module de l'apprenant, puis leçon
+ * et module de la cohorte (même ordre qu'en base).
+ * @param cal     - Calendrier de l'apprenant
  * @param leconId - Identifiant « m05-l02 »
  */
 export function dateOuverture(cal: Calendrier, leconId: string): string | null {
-  return cal.dates[leconId] ?? cal.dates[leconId.slice(0, 3)] ?? null;
+  const mod = leconId.slice(0, 3);
+  return (
+    cal.perso[leconId]?.ouvre ??
+    cal.perso[mod]?.ouvre ??
+    cal.dates[leconId] ??
+    cal.dates[mod] ??
+    null
+  );
 }
 
 /**
- * État de chaque leçon. Une leçon est ouverte sans date ou une fois sa date passée.
- * Avec la lecture en avance, la prochaine leçon à ouvrir (date la plus proche, puis
+ * Date de fermeture d'une leçon (dates individuelles seulement) : leçon, puis module.
+ * @param cal     - Calendrier de l'apprenant
+ * @param leconId - Identifiant « m05-l02 »
+ */
+export function dateFermeture(cal: Calendrier, leconId: string): string | null {
+  return cal.perso[leconId]?.ferme ?? cal.perso[leconId.slice(0, 3)]?.ferme ?? null;
+}
+
+/**
+ * État de chaque leçon. Une leçon est ouverte sans date ou une fois sa date passée, et
+ * « expirée » une fois sa date de fermeture passée. Avec la lecture en avance, la prochaine leçon à ouvrir (date la plus proche, puis
  * ordre du programme) parmi les candidates passe en « aperçu ».
  *
  * @param cal        - Calendrier, ou null (tout est ouvert)
@@ -99,9 +152,12 @@ export function etatsDiffusion(
   let prochaine: { id: string; quand: number } | null = null;
   for (const id of lecons) {
     const ouvreLe = cal ? dateOuverture(cal, id) : null;
+    const fermeLe = cal ? dateFermeture(cal, id) : null;
     const quand = ouvreLe ? Date.parse(ouvreLe) : Number.NaN;
-    const fermee = ouvreLe !== null && quand > maintenant;
-    etats.set(id, { etat: fermee ? "fermee" : "ouverte", ouvreLe });
+    const expiree = fermeLe !== null && Date.parse(fermeLe) <= maintenant;
+    const fermee = !expiree && ouvreLe !== null && quand > maintenant;
+    const etat: Etat = expiree ? "expiree" : fermee ? "fermee" : "ouverte";
+    etats.set(id, { etat, ouvreLe, fermeLe });
     if (fermee && candidate(id) && (!prochaine || quand < prochaine.quand)) {
       prochaine = { id, quand };
     }
@@ -113,7 +169,24 @@ export function etatsDiffusion(
   return etats;
 }
 
+/**
+ * Vrai si la leçon ne peut pas être lue : pas encore ouverte ou déjà fermée.
+ * @param d - État de la leçon (absent : ouverte)
+ */
+export function estVerrouillee(d: EtatDiffusion | undefined): boolean {
+  return d?.etat === "fermee" || d?.etat === "expiree";
+}
+
 // ==================== DATES ====================
+
+/**
+ * Instant juste avant celui donné : la fermeture tombe à minuit, le dernier jour ouvert
+ * est donc la veille (« ouverte jusqu'au 14 » pour une fermeture le 15 à 0 h).
+ * @param iso - Instant de fermeture
+ */
+export function veille(iso: string): string {
+  return new Date(Date.parse(iso) - 1000).toISOString();
+}
 
 /** Formats de date par fuseau, créés une seule fois. */
 const FORMATS = new Map<string, Intl.DateTimeFormat>();

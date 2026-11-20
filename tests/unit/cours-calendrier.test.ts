@@ -30,8 +30,12 @@ const FUTUR = "2026-12-20T00:00:00Z";
 const ID = "3f2b8a1e-4c5d-4e6f-8a7b-9c0d1e2f3a4b";
 
 /** Calendrier de test, Abidjan, avec lecture en avance au choix. */
-function cal(dates: Record<string, string>, lectureAvance = false): Calendrier {
-  return { fuseau: "Africa/Abidjan", lectureAvance, dates };
+function cal(
+  dates: Record<string, string>,
+  lectureAvance = false,
+  perso: Calendrier["perso"] = {},
+): Calendrier {
+  return { fuseau: "Africa/Abidjan", lectureAvance, dates, perso };
 }
 
 describe("lireCalendrier", () => {
@@ -50,6 +54,7 @@ describe("lireCalendrier", () => {
       fuseau: "America/Toronto",
       lectureAvance: true,
       dates: { m01: PASSE },
+      perso: {},
     });
   });
 });
@@ -71,7 +76,7 @@ describe("etatsDiffusion", () => {
     expect(etats.get("m01-l01")?.etat).toBe("ouverte");
     expect(etats.get("m01-l02")?.etat).toBe("fermee");
     expect(etats.get("m02-l01")?.etat).toBe("ouverte");
-    expect(etats.get("m02-l02")).toEqual({ etat: "fermee", ouvreLe: FUTUR });
+    expect(etats.get("m02-l02")).toEqual({ etat: "fermee", ouvreLe: FUTUR, fermeLe: null });
   });
 
   it("met en aperçu la prochaine leçon seulement avec la lecture en avance", () => {

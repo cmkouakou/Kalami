@@ -201,6 +201,14 @@ const courseFr = {
       "s'ouvriront le {date}.",
     exerciceFerme: "Cet exercice s'ouvrira le {date}.",
     pasEncore: "Cette leçon n'est pas encore ouverte.",
+    // Dates individuelles (v0.42.0) : leçon fermée par le formateur
+    fermeeLe: "Fermée depuis le {date}",
+    fermeLe: "Ouverte jusqu'au {date}",
+    expireeTitre: "Cette leçon est fermée",
+    expireeTexte:
+      "Votre formateur a fermé cette leçon le {date}. Écrivez-lui si vous avez besoin " +
+      "d'y revenir.",
+    plusOuverte: "Cette leçon est fermée.",
   },
 
   // ==================== QUIZ DE MODULE (v0.37.0) ====================
@@ -505,6 +513,53 @@ const courseFr = {
       achatNote:
         "Accès acheté : le retirer ne rembourse pas la commande. Un remboursement (page " +
         "Commandes) retire l'accès de lui-même.",
+      // Recherche, filtres et sélection (v0.42.0)
+      recherche: "Rechercher (courriel ou nom)",
+      filtreCohorte: "Cohorte",
+      toutesCohortes: "Toutes les cohortes",
+      filtreOrigine: "Origine",
+      toutesOrigines: "Toutes les origines",
+      affiches: "{n} affiché(s) sur {total}",
+      aucunResultat: "Aucun inscrit ne correspond à la recherche.",
+      selectionnes: "{n} sélectionné(s)",
+      toutSelectionner: "Sélectionner tous les inscrits affichés",
+      selectionner: "Sélectionner {email}",
+      effacerSelection: "Effacer la sélection",
+      choisir: "Choix",
+      dates: "Dates individuelles",
+      aucuneDate: "Aucune",
+      autres: "+ {n} autre(s)",
+    },
+
+    // ==================== DATES INDIVIDUELLES (v0.42.0) ====================
+    diffusionPerso: {
+      titre: "Ouvrir ou fermer des modules et des leçons",
+      intro:
+        "Pour les inscrits sélectionnés, ces dates remplacent celles de leur cohorte. " +
+        "Ouverture et fermeture se font à minuit dans le fuseau choisi ; laissez une date " +
+        "vide pour ne fixer que l'autre.",
+      aucuneSelection:
+        "Cochez d'abord un ou plusieurs inscrits dans la liste ci-dessous.",
+      pour: "Pour {n} inscrit(s) sélectionné(s)",
+      elements: "Modules et leçons",
+      toutLeModule: "Module {n} en entier — {titre}",
+      lecons: "Leçons du module {n} ({k})",
+      ouverture: "Ouverture le",
+      fermeture: "Fermeture le (à 0 h)",
+      fuseau: "Fuseau horaire",
+      appliquer: "Appliquer les dates",
+      retirer: "Retirer les dates individuelles",
+      aideRetirer:
+        "Retirer agit sur les éléments cochés, ou sur toutes les dates individuelles des " +
+        "inscrits sélectionnés si rien n'est coché. Ils retrouvent alors le calendrier " +
+        "de leur cohorte.",
+      decocher: "Tout décocher",
+      pose: "{n} date(s) individuelle(s) enregistrée(s).",
+      retire: "{n} date(s) individuelle(s) retirée(s).",
+      module: "Module {n}",
+      lecon: "Leçon {m}.{l}",
+      ouvre: "ouvre le {date}",
+      ferme: "ferme le {date}",
     },
 
     cohortes: {
@@ -684,6 +739,10 @@ const courseFr = {
       access_not_found: "Accès introuvable. Rechargez la page.",
       invalid_timezone: "Fuseau horaire invalide.",
       invalid_schedule: "Une date du calendrier est invalide (format AAAA-MM-JJ).",
+      no_learners: "Sélectionnez au moins un inscrit (500 au plus à la fois).",
+      no_items: "Cochez au moins un module ou une leçon (200 au plus).",
+      no_dates: "Saisissez une date d'ouverture, une date de fermeture, ou les deux.",
+      invalid_window: "La fermeture doit suivre l'ouverture.",
       generique: "L'opération a échoué. Réessayez.",
     },
   },

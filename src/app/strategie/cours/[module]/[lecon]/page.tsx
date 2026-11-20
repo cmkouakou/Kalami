@@ -14,8 +14,9 @@
  *               exercices ni progression, avec un lien vers l'offre.
  *               v0.39.1 : leçon offerte lisible sans compte (proposée à Google).
  *               v0.40.0 : corrections déjà obtenues aux ateliers corrigés par l'IA.
+ *               v0.42.0 : leçon fermée par une date individuelle (rien n'est servi).
  *  Auteur     : Claude Marcel
- *  Version    : 1.6
+ *  Version    : 1.7
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/*, cours.css
  * =============================================================
@@ -207,6 +208,18 @@ async function ContenuPrive({
     calendrier && diffusion?.ouvreLe
       ? dateLisible(diffusion.ouvreLe, calendrier.fuseau)
       : "";
+  if (diffusion?.etat === "expiree" && calendrier && diffusion.fermeLe) {
+    return (
+      <section className={`${PANEL_SAND} flex flex-col gap-2 p-6`}>
+        <h2 className="font-serif text-h3">{t.diffusion.expireeTitre}</h2>
+        <p>
+          {interpolate(t.diffusion.expireeTexte, {
+            date: dateLisible(diffusion.fermeLe, calendrier.fuseau),
+          })}
+        </p>
+      </section>
+    );
+  }
   if (diffusion?.etat === "fermee") {
     return (
       <section className={`${PANEL_SAND} flex flex-col gap-2 p-6`}>

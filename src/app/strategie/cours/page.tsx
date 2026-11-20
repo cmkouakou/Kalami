@@ -12,9 +12,11 @@
  *               v0.38.0 : carte « Examen final et diplôme » ; seuil des quiz réglable.
  *               v0.39.0 : page de vente pour les visiteurs et les non-inscrits, chiffres
  *               clés, leçon offerte, métadonnées de partage et données structurées Course.
+ *               v0.42.0 : dates individuelles (leçon fermée, ouverte jusqu'au …).
  *  Auteur     : Claude Marcel
- *  Version    : 1.6 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen ;
- *               v0.38.2 : lien vers « Mes annotations » ; v0.39.0 : page de vente)
+ *  Version    : 1.7 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen ;
+ *               v0.38.2 : lien vers « Mes annotations » ; v0.39.0 : page de vente ;
+ *               v0.42.0 : dates individuelles)
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
@@ -45,6 +47,8 @@ import {
 } from "@/lib/cours/acces";
 import {
   dateLisible,
+  estVerrouillee,
+  veille,
   type EtatDiffusion,
   type Fuseau,
 } from "@/lib/cours/calendrier";
@@ -122,7 +126,8 @@ type Etat = "terminee" | "enCours";
 type Diffusion = { etats: Map<string, EtatDiffusion>; fuseau: Fuseau };
 
 /**
- * Mention de diffusion d'une leçon : date d'ouverture si fermée, lecture en avance.
+ * Mention de diffusion d'une leçon : date d'ouverture si fermée, lecture en avance,
+ * date de fermeture (passée ou à venir) posée par le formateur.
  * @param d - État de la leçon et fuseau de la cohorte
  */
 function mentionDiffusion(
@@ -134,6 +139,14 @@ function mentionDiffusion(
   if (d.etat === "fermee" && d.ouvreLe) {
     return interpolate(t.diffusion.disponibleLe, {
       date: dateLisible(d.ouvreLe, fuseau),
+    });
+  }
+  if (d.etat === "expiree" && d.fermeLe) {
+    return interpolate(t.diffusion.fermeeLe, { date: dateLisible(d.fermeLe, fuseau) });
+  }
+  if (d.etat === "ouverte" && d.fermeLe) {
+    return interpolate(t.diffusion.fermeLe, {
+      date: dateLisible(veille(d.fermeLe), fuseau),
     });
   }
   return null;
@@ -209,7 +222,7 @@ function Programme({
               const etat = etats?.get(l.id);
               const d = diffusion?.etats.get(l.id);
               const mention = mentionDiffusion(d, diffusion?.fuseau);
-              const lisible = estRedigee(l.id) && d?.etat !== "fermee";
+              const lisible = estRedigee(l.id) && !estVerrouillee(d);
               return (
                 <li
                   key={l.id}
@@ -272,7 +285,7 @@ function aReprendre(lignes: LigneProgression[], diffusion?: Diffusion) {
     (l) =>
       !terminees.has(l.id) &&
       estRedigee(l.id) &&
-      diffusion?.etats.get(l.id)?.etat !== "fermee",
+      !estVerrouillee(diffusion?.etats.get(l.id)),
   );
   const lecon = restantes.find((l) => commencees.has(l.id)) ?? restantes[0];
   return lecon ? leconParId(lecon.id) : null;
