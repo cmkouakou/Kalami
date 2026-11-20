@@ -8,8 +8,9 @@
  *               v0.37.0 : quiz de module. v0.38.0 : examen final et diplôme.
  *               v0.39.0 : page de vente, leçon offerte en aperçu, référencement.
  *               v0.39.1 : leçon offerte lisible sans compte.
+ *               v0.40.0 : ateliers corrigés par l'IA.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.5
  *  Date       : 2026-11-20
  * =============================================================
  */
@@ -359,6 +360,49 @@ const courseFr = {
     voirCorrige: "Voir le corrigé",
     masquerCorrige: "Masquer le corrigé",
     corrige: "Corrigé modèle",
+  },
+
+  // ==================== ATELIERS CORRIGÉS PAR L'IA (v0.40.0) ====================
+  ateliers: {
+    badge: "Atelier corrigé par l'IA",
+    corriger: "Correction",
+    envoi: "Correction en cours…",
+    restantes: "Corrections restantes : {n} / {max}",
+    epuise:
+      "Vous avez utilisé vos {max} corrections pour cet atelier. Relisez les corrections " +
+      "ci-dessous : elles restent disponibles.",
+    incomplet:
+      "Remplissez chaque champ (au moins {min} caractères) et choisissez une conclusion " +
+      "avant de demander une correction.",
+    caracteres: "{n} / {max} caractères",
+    choisir: "Choisissez…",
+    avertissement:
+      "Chaque clic sur Correction utilise une de vos {max} corrections, sauf en cas " +
+      "de panne. N'écrivez aucune donnée confidentielle : votre réponse est envoyée à " +
+      "Claude (Anthropic) pour être corrigée.",
+    indisponible: "La correction par l'IA n'est pas disponible pour le moment.",
+    erreur:
+      "La correction n'a pas abouti. Elle ne vous a pas été comptée : réessayez dans " +
+      "un instant.",
+    titreCorrection: "Correction",
+    historique: "Vos corrections précédentes ({n})",
+    correctionDu: "Correction du {date}",
+    votreDecision: "Votre réponse",
+    familleRetenue: "Classement retenu par le correcteur : {famille}",
+    conseil: "Pour progresser",
+    juste: "Juste",
+    aRevoir: "À revoir",
+    verdicts: {
+      valide: "Raisonnement validé",
+      partiel: "Raisonnement en partie juste",
+      "a-corriger": "Raisonnement à corriger",
+    },
+    familles: {
+      strategique: "stratégique",
+      tactique: "tactique",
+      operationnelle: "opérationnelle",
+    },
+    ferme: "Connectez-vous avec un accès au cours pour faire cet atelier.",
   },
 
   annotations: {

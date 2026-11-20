@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## [v0.40.0] - 2026-11-20 — Cours : atelier corrigé par l'IA (leçon 1.2)
+### Ajouté
+- Atelier « Votre décision passe-t-elle les quatre questions ? » : l'apprenant décrit une
+  décision réelle, répond aux quatre questions (horizon, réversibilité, ampleur, position),
+  la classe (stratégique, tactique ou opérationnelle) et demande une correction à Claude
+  Haiku 5.5 (verdict, points justes ou à revoir, famille retenue, conseil).
+- 5 corrections par apprenant et par atelier, plafond vérifié en SQL sous verrou ; une
+  correction en panne n'est pas comptée. Historique des corrections sous l'atelier.
+- Migration `20261128120000_course_ai_workshops.sql` (table `course_ai_feedback`, fonction
+  `course_reserve_ai_feedback`, RLS : lecture par l'apprenant seul).
+
 ## [v0.39.16] - 2026-11-20 — Cours : exemples Québec et Côte d'Ivoire (leçon 10.4)
 ### Ajouté
 - « Le dilemme de l'innovateur et les ruptures » : exemples sourcés, la valeur des permis

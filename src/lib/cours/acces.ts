@@ -9,8 +9,9 @@
  *               v0.37.0 : meilleure note et nombre d'essais de chaque quiz de module.
  *               v0.38.0 : réglages d'évaluation, bilan (note finale) et diplôme.
  *               v0.38.2 : toutes les annotations de l'apprenant (page Mes annotations).
+ *               v0.40.0 : corrections par l'IA des ateliers d'une leçon.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.5
  *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/notation.ts,
  *               lib/cours/calendrier.ts, lib/cours/evaluation.ts, lib/cours/note-finale.ts
@@ -20,6 +21,12 @@
 import "server-only";
 
 import { cache } from "react";
+
+import {
+  lireCorrection,
+  type HistoriqueAtelier,
+  type Saisie,
+} from "@/lib/cours/atelier-ia";
 
 import { getCurrentUser, requireUser, type CurrentUser } from "@/lib/auth/dal";
 import {
@@ -141,6 +148,55 @@ export async function meilleuresNotes(
     notes[local] = Math.max(notes[local] ?? 0, Number(ligne.score));
   }
   return notes;
+}
+
+/**
+ * Corrections par l'IA déjà obtenues aux ateliers d'une leçon (les terminées seules).
+ * Silencieux en cas d'échec : l'atelier s'affiche alors sans historique.
+ * @param leconId - Identifiant stable « m01-l02 »
+ * @returns Historique par identifiant local d'atelier (« a1 »), le plus récent d'abord
+ */
+export async function correctionsAteliers(
+  leconId: string,
+): Promise<Record<string, HistoriqueAtelier[]>> {
+  const user = await getCurrentUser();
+  if (!user) return {};
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("course_ai_feedback")
+    .select("id, workshop_id, input, output, created_at")
+    .eq("user_id", user.id)
+    .eq("status", "done")
+    .like("workshop_id", `${leconId}-a%`)
+    .order("created_at", { ascending: false });
+  if (error || !data) return {};
+  const ateliers: Record<string, HistoriqueAtelier[]> = {};
+  for (const ligne of data as {
+    id: string;
+    workshop_id: string;
+    input: unknown;
+    output: unknown;
+    created_at: string;
+  }[]) {
+    const correction = lireCorrection(ligne.output);
+    if (!correction) continue;
+    const local = ligne.workshop_id.slice(leconId.length + 1);
+    (ateliers[local] ??= []).push({
+      id: ligne.id,
+      saisie: lireSaisie(ligne.input),
+      correction,
+      creeLe: ligne.created_at,
+    });
+  }
+  return ateliers;
+}
+
+/** Relit une saisie enregistrée : seules les valeurs texte sont gardées. */
+function lireSaisie(valeur: unknown): Saisie {
+  if (typeof valeur !== "object" || valeur === null) return {};
+  return Object.fromEntries(
+    Object.entries(valeur).filter(([, v]) => typeof v === "string"),
+  ) as Saisie;
 }
 
 /** Meilleure note et nombre d'essais de chaque quiz de module, pour l'apprenant connecté. */

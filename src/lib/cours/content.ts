@@ -14,8 +14,11 @@
  *               Les identifiants d'exercice (« e1 », « e2 »…) sont stables : les
  *               tentatives sont enregistrées sous « <leçon>-<exercice> ». Ne jamais
  *               renommer un identifiant publié.
+ *
+ *               v1.2 (v0.40.0) : bloc « atelier corrigé par l'IA » ; sa définition
+ *               (champs, consignes) est dans lib/cours/atelier-ia.ts, sous « <leçon>-a<n> ».
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
  *  Dépendances: lib/strategy/steps.ts (numéros d'étape)
  * =============================================================
@@ -176,6 +179,9 @@ export type AppliquezBlock = {
 /** Fiche de fin de leçon : l'essentiel en quelques points. */
 export type FicheBlock = { kind: "fiche"; points: string[] };
 
+/** Atelier corrigé par l'IA ; id local stable (« a1 »), défini dans atelier-ia.ts. */
+export type AtelierIABlock = { kind: "atelier-ia"; id: string };
+
 /** Un bloc de contenu, quel que soit son type. */
 export type CoursBlock =
   | TitreBlock
@@ -187,7 +193,8 @@ export type CoursBlock =
   | SchemaBlock
   | ExerciceBlock
   | AppliquezBlock
-  | FicheBlock;
+  | FicheBlock
+  | AtelierIABlock;
 
 /** Contenu complet d'une leçon. */
 export type ContenuLecon = CoursBlock[];
@@ -294,7 +301,15 @@ export const fiche = (...points: string[]): FicheBlock => ({
   points,
 });
 
+/** Atelier corrigé par l'IA (identifiant local « a1 »). */
+export const atelierIA = (id: string): AtelierIABlock => ({ kind: "atelier-ia", id });
+
 // ==================== OUTILS ====================
+
+/** Vrai si la leçon contient l'atelier d'identifiant local donné. */
+export function atelierPresent(contenu: ContenuLecon, id: unknown): boolean {
+  return contenu.some((bloc) => bloc.kind === "atelier-ia" && bloc.id === id);
+}
 
 /** Exercices d'une leçon, dans l'ordre. */
 export function exercicesDe(contenu: ContenuLecon): Exercice[] {

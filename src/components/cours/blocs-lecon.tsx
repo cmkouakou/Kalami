@@ -8,9 +8,11 @@
  *               l'ordre du contenu) : ancrage des surlignages et unité de la lecture à
  *               voix haute. Les exercices n'en portent pas (pas annotables) ; en lecture
  *               en avance (v0.33.0), ils sont remplacés par leur date d'ouverture.
+ *               v0.40.0 : ateliers corrigés par l'IA (sans data-bloc, comme les
+ *               exercices).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
- *  Date       : 2026-11-19
+ *  Version    : 1.2
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts, schemas.tsx, exercices.tsx, i18n/course.ts
  * =============================================================
  */
@@ -23,6 +25,7 @@ import { BUTTON_SECONDARY } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import { STRATEGY_HOME } from "@/lib/auth/routes";
+import { atelierParId, type HistoriqueAtelier } from "@/lib/cours/atelier-ia";
 import type {
   AppliquezBlock,
   CoursBlock,
@@ -33,6 +36,7 @@ import type {
   TexteBlock,
 } from "@/lib/cours/content";
 
+import { AtelierIACours } from "./atelier-ia";
 import { ExerciceCours } from "./exercices";
 import { Schema } from "./schemas";
 
@@ -186,6 +190,8 @@ type Contexte = {
   exercicesFermes?: string;
   /** Numéro du prochain exercice (1, 2, 3…), indépendant des indices de blocs. */
   exercice: () => number;
+  /** Corrections déjà obtenues par atelier (« a1 »). */
+  ateliers: Record<string, HistoriqueAtelier[]>;
 };
 
 /** Rend un bloc et consomme ses indices dans l'ordre. */
@@ -259,6 +265,28 @@ function rendreBloc(
         />
       );
     }
+    case "atelier-ia": {
+      // Pas de data-bloc : l'atelier n'est pas annotable
+      const atelier = atelierParId(`${ctx.leconId}-${bloc.id}`);
+      if (!atelier) return null;
+      if (ctx.exercicesFermes) {
+        return (
+          <section key={cle} className="flex flex-col gap-1 rounded-lg bg-sand p-5">
+            <h3 className="font-serif text-h3">{atelier.titre}</h3>
+            <p className="text-small text-ink-muted">{ctx.exercicesFermes}</p>
+          </section>
+        );
+      }
+      return (
+        <AtelierIACours
+          key={cle}
+          leconId={ctx.leconId}
+          localId={bloc.id}
+          atelier={atelier}
+          historique={ctx.ateliers[bloc.id] ?? []}
+        />
+      );
+    }
     case "appliquez":
       return rendreAppliquez(bloc, suivant, cle);
     case "fiche":
@@ -292,6 +320,8 @@ type Props = {
   meilleures: Record<string, number>;
   /** Lecture en avance : message remplaçant chaque exercice (v0.33.0). */
   exercicesFermes?: string;
+  /** Corrections d'ateliers déjà obtenues (v0.40.0). */
+  ateliers?: Record<string, HistoriqueAtelier[]>;
 };
 
 /**
@@ -303,6 +333,7 @@ export function BlocsLecon({
   contenu,
   meilleures,
   exercicesFermes,
+  ateliers = {},
 }: Props) {
   let bloc = 0;
   let exercice = 0;
@@ -312,6 +343,7 @@ export function BlocsLecon({
     meilleures,
     exercicesFermes,
     exercice: () => ++exercice,
+    ateliers,
   };
   return (
     <div className="flex flex-col gap-5 leading-relaxed">

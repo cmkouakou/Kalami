@@ -13,8 +13,9 @@
  *               v0.39.0 : leçon offerte (1.1) lisible par un membre non inscrit, sans
  *               exercices ni progression, avec un lien vers l'offre.
  *               v0.39.1 : leçon offerte lisible sans compte (proposée à Google).
+ *               v0.40.0 : corrections déjà obtenues aux ateliers corrigés par l'IA.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
+ *  Version    : 1.6
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/*, cours.css
  * =============================================================
@@ -41,6 +42,7 @@ import { getCourseDictionary } from "@/i18n/course";
 import {
   aAccesAuCours,
   annotationsLecon,
+  correctionsAteliers,
   diffusionApprenant,
   exigerConnexionCours,
   meilleuresNotes,
@@ -215,10 +217,11 @@ async function ContenuPrive({
   }
   const apercu = diffusion?.etat === "apercu";
 
-  const [surlignages, meilleures, progression] = await Promise.all([
+  const [surlignages, meilleures, progression, ateliers] = await Promise.all([
     annotationsLecon(leconId),
     meilleuresNotes(leconId),
     progressionApprenant(),
+    correctionsAteliers(leconId),
   ]);
   const terminee = progression.some(
     (p) => p.lesson_id === leconId && p.completed_at,
@@ -241,6 +244,7 @@ async function ContenuPrive({
           leconId={leconId}
           contenu={contenu}
           meilleures={meilleures}
+          ateliers={ateliers}
           exercicesFermes={
             apercu ? interpolate(t.diffusion.exerciceFerme, { date }) : undefined
           }

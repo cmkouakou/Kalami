@@ -6,15 +6,17 @@
  *               tactique, opérationnel ». Sources : livre, module 1 (Infosystem, ses
  *               quatre services et ses défis) ; expérience de l'auteur chez Ajinomoto
  *               (démarche TPM). Texte, exemples et exercices originaux.
+ *               v1.1 : atelier corrigé par l'IA (« a1 ») après les quatre questions.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
  */
 
 import {
   appliquez,
+  atelierIA,
   definition,
   exercice,
   fiche,
@@ -83,6 +85,7 @@ export const M01_L02: ContenuLecon = [
     ],
   ),
 
+  atelierIA("a1"),
   titre("Appliqué à Infosystem"),
   tableau(
     ["Décision", "Famille", "Pourquoi"],
