@@ -297,6 +297,6 @@ Version actuelle : v0.39.1 (cours : leçon 1.1 lisible sans compte) · Stratégi
 - [x] v0.36.0 — cours, sprint 8a : module 13 rédigé (52 leçons sur 52), 12 exercices ; tests 64/64, typecheck, lint et build OK
 - [x] v0.37.0 — cours, sprint 8b1 : 13 quiz de module (104 questions), page du quiz, correction serveur, suivi admin ; typecheck, lint et build OK
 - [x] S8b2 — examen final, note finale pondérée, réglages, diplôme PDF, page de vérification, admin des diplômes
-- [ ] Cours, sprint 8b : quiz de module, examen final, note finale, diplôme PDF et page de vérification
-- [ ] Cours, sprint 8c : page de vente du cours et référencement
+- [x] Cours, sprint 8b : quiz de module, examen final, note finale, diplôme PDF et page de vérification
+- [x] Cours, sprint 8c : page de vente du cours et référencement (v0.39.0, leçon 1.1 publique v0.39.1)
 - [ ] Fixer les prix et le livre associé dans `/admin/cours/prix`
