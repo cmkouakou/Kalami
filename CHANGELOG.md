@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.38.1] - 2026-11-20 — Cours : citer et partager un passage
+### Ajouté
+- Menu de sélection des leçons : « Citer » (références APA, MLA et Chicago, la leçon tenant
+  lieu de chapitre) et « Partager » (extrait en image), comme dans la liseuse des livres.
+  Le surlignage (5 couleurs) et les notes existaient déjà.
+
 ## [v0.38.0] - 2026-11-20 — Cours de stratégie, sprint 8b2 (examen final et diplôme)
 ### Ajouté
 - Examen final `/strategie/cours/examen` : un court cas et 20 questions rédigées pour le

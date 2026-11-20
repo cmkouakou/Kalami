@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.38.0 (cours de stratégie, sprint 8b2 : examen final et diplôme) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.38.1 (cours : citer et partager un passage) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -113,7 +113,8 @@ Version actuelle : v0.38.0 (cours de stratégie, sprint 8b2 : examen final et di
 | #107 | 2026-11-20 | v0.36.0 : cours, sprint 8a (3 leçons du module 13, 12 exercices) | ~180 000 | ~1.08 $ |
 | #108 | 2026-11-20 | v0.37.0 : cours, sprint 8b1 (13 quiz de module, page, correction serveur, suivi admin) | ~260 000 | ~1.56 $ |
 | #109 | 2026-11-20 | v0.38.0 : cours, sprint 8b2 (examen final, note finale, réglages, diplôme PDF, vérification, admin des diplômes) | ~300 000 | ~1.80 $ |
-| **TOTAL** | | | **~23 450 000** (hors #71) | **~140.70 $** |
+| #110 | 2026-11-20 | v0.38.1 : cours, citation et partage d'un passage dans les leçons | ~60 000 | ~0.36 $ |
+| **TOTAL** | | | **~23 510 000** (hors #71) | **~141.06 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

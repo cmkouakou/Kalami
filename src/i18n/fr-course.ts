@@ -53,6 +53,12 @@ const courseFr = {
   lecon: {
     retour: "Programme du cours",
     moduleLecon: "Module {m} · Leçon {l}",
+    /** Référence d'un passage cité (le cours tient lieu d'ouvrage). */
+    citation: {
+      auteur: "Claude Marcel Kouakou",
+      plateforme: "Kalami Stratégie",
+      annee: 2026,
+    },
     duree: "Environ {n} min",
     precedente: "Leçon précédente",
     suivante: "Leçon suivante",
