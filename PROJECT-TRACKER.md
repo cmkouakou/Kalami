@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.47.0 (exercice en grille à glisser-déposer, leçon 2.3) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.48.0 (grille des scénarios, leçon 2.4) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -125,8 +125,8 @@ Version actuelle : v0.47.0 (exercice en grille à glisser-déposer, leçon 2.3) 
 | #119 | 2026-11-20 | v0.44.0 : réponses gardées en brouillon (exercices, questions ouvertes, quiz, examen, ateliers IA) malgré une fermeture brusque | ~70 000 | ~0.42 $ |
 | #120 | 2026-11-20 | v0.45.0 : total des tentatives dans la liste des inscrits et le suivi (tri, export CSV), migration admin_course_learners ; v0.45.1 : mot manquant leçon 1.5 | ~50 000 | ~0.30 $ |
 | #121 | 2026-11-20 | v0.46.0 : fin de quiz (module terminé, module suivant ou examen, leçon précédente), pastille « Module terminé » au sommaire | ~60 000 | ~0.36 $ |
-| #122 | 2026-11-21 | v0.46.1 : leçon 2.2, exemple Ajinomoto réécrit ; v0.47.0 : exercice 1 de la leçon 2.3 en grille impact-incertitude à glisser-déposer | ~75 000 | ~0.45 $ |
-| **TOTAL** | | | **~24 760 000** (hors #71) | **~148.56 $** |
+| #122 | 2026-11-21 | v0.46.1 : leçon 2.2, exemple Ajinomoto réécrit ; v0.47.0 : exercice 1 de la leçon 2.3 en grille impact-incertitude à glisser-déposer ; v0.48.0 : exercice 1 de la leçon 2.4 dans la grille des quatre scénarios | ~110 000 | ~0.66 $ |
+| **TOTAL** | | | **~24 795 000** (hors #71) | **~148.77 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

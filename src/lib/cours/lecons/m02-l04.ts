@@ -150,6 +150,17 @@ export const M02_L04: ContenuLecon = [
       "Justin hésite à embaucher trois techniciens de soutien de base dès cette année. " +
       "Dans quels scénarios cette décision est-elle payante ou risquée ?",
     categories: ["Payante", "Risquée"],
+    grilleElements: {
+      axeVertical: ["Demande des PME", "faible", "forte"],
+      axeHorizontal: ["Vitesse de l'IA", "lente", "rapide"],
+      cases: [0, 1, 2, 3],
+      rappels: [
+        "Les demandes affluent, l'équipe ne suffit pas.",
+        "L'IA absorbe le soutien de base ; besoin d'experts.",
+        "Le marché ralentit sans se transformer.",
+        "Moins de demandes, soutien de base en recul.",
+      ],
+    },
     elements: [
       {
         texte: "Goulot d'étranglement",

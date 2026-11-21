@@ -387,7 +387,9 @@ const courseFr = {
     tousPlaces: "Tous les énoncés sont placés. Vous pouvez encore les déplacer.",
     placerIci: "Placer ici",
     remettre: "Remettre en bas",
-    grilleCorrection: "Correction, énoncé par énoncé",
+    grilleCorrection: "Correction, case par case",
+    // Grille dont chaque case est un élément (v0.48.0)
+    casesAide: "Dans chaque case de la grille, choisissez votre réponse.",
   },
 
   // ==================== ATELIERS CORRIGÉS PAR L'IA (v0.40.0) ====================

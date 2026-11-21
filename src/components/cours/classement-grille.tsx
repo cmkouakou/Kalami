@@ -8,8 +8,9 @@
  *               la case (écran tactile, clavier). Après correction, chaque énoncé reste
  *               dans la case choisie, bordé de vert ou de rouge, et les explications
  *               suivent la grille.
+ *               v0.48.0 : cadre à axes et correction exportés (classement-cases.tsx).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-21
  *  Dépendances: lib/cours/content.ts, lib/cours/notation.ts, i18n/course.ts
  * =============================================================
@@ -17,7 +18,7 @@
 
 "use client";
 
-import { useState, type DragEvent } from "react";
+import { useState, type DragEvent, type ReactNode } from "react";
 
 import { InlineText } from "@/components/powerbi/inline-text";
 import { getCourseDictionary } from "@/i18n/course";
@@ -147,7 +148,6 @@ export function ClassementGrille({ ex, valeurs, correction, onChoix }: Props) {
   };
 
   const restants = ex.elements.flatMap((_, i) => (valeurs[i] === null ? [i] : []));
-  const axe = "text-caption uppercase text-ink-muted";
 
   return (
     <div className="flex flex-col gap-3">
@@ -156,26 +156,16 @@ export function ClassementGrille({ ex, valeurs, correction, onChoix }: Props) {
       </p>
       {actif && <p className="text-small text-ink-muted">{t.exercices.grilleAide}</p>}
 
-      {/* Grille : impact en lignes (fort en haut), incertitude en colonnes */}
-      <div className="grid grid-cols-[1.5rem_1fr_1fr] gap-2">
-        <span aria-hidden="true" />
-        <p className={`${axe} text-center`}>
-          {axeHorizontal[0]} {axeHorizontal[1]}
-        </p>
-        <p className={`${axe} text-center`}>
-          {axeHorizontal[0]} {axeHorizontal[2]} →
-        </p>
-        <p className={`${axe} rotate-180 text-center [writing-mode:vertical-rl]`}>
-          ↑ {axeVertical[0]} {axeVertical[2]}
-        </p>
-        {caseGrille(cases[0])}
-        {caseGrille(cases[1])}
-        <p className={`${axe} rotate-180 text-center [writing-mode:vertical-rl]`}>
-          {axeVertical[0]} {axeVertical[1]}
-        </p>
-        {caseGrille(cases[2])}
-        {caseGrille(cases[3])}
-      </div>
+      <CadreGrille
+        axeVertical={axeVertical}
+        axeHorizontal={axeHorizontal}
+        cellules={[
+          caseGrille(cases[0]),
+          caseGrille(cases[1]),
+          caseGrille(cases[2]),
+          caseGrille(cases[3]),
+        ]}
+      />
 
       {/* Réserve des énoncés à placer, sous la grille */}
       {actif && (
@@ -196,32 +186,90 @@ export function ClassementGrille({ ex, valeurs, correction, onChoix }: Props) {
         </div>
       )}
 
-      {/* Correction : catégorie attendue et explication de chaque énoncé */}
-      {correction && (
-        <div className="flex flex-col gap-2">
-          <p className="font-semibold">{t.exercices.grilleCorrection}</p>
-          <ol className="flex flex-col gap-2">
-            {ex.elements.map((e, i) => (
-              <li key={e.texte} className="text-small">
-                <span className="font-semibold text-ink-muted">{i + 1}. </span>
-                <span className={correction.justes[i] ? "text-success" : "text-danger"}>
-                  <span className="font-semibold">
-                    {correction.justes[i] ? t.exercices.juste : t.exercices.faux}
-                  </span>
-                  {" — "}
-                </span>
-                {ex.categories[e.categorie]}
-                {e.explication ? (
-                  <>
-                    {" "}
-                    : <InlineText texte={e.explication} />
-                  </>
-                ) : null}
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
+      {correction && <CorrectionGrille ex={ex} correction={correction} numeros />}
+    </div>
+  );
+}
+
+// ==================== PIÈCES COMMUNES ====================
+
+/**
+ * Cadre 2 × 2 avec ses axes : axe vertical à gauche (haut en premier), axe horizontal
+ * au-dessus. Les cellules se lisent haut-gauche, haut-droite, bas-gauche, bas-droite.
+ */
+export function CadreGrille({
+  axeVertical,
+  axeHorizontal,
+  cellules,
+}: {
+  axeVertical: [string, string, string];
+  axeHorizontal: [string, string, string];
+  cellules: [ReactNode, ReactNode, ReactNode, ReactNode];
+}) {
+  const axe = "text-caption uppercase text-ink-muted";
+  const vertical = `${axe} rotate-180 text-center [writing-mode:vertical-rl]`;
+  return (
+    <div className="grid grid-cols-[1.5rem_1fr_1fr] gap-2">
+      <span aria-hidden="true" />
+      <p className={`${axe} text-center`}>
+        {axeHorizontal[0]} {axeHorizontal[1]}
+      </p>
+      <p className={`${axe} text-center`}>
+        {axeHorizontal[0]} {axeHorizontal[2]} →
+      </p>
+      <p className={vertical}>
+        ↑ {axeVertical[0]} {axeVertical[2]}
+      </p>
+      {cellules[0]}
+      {cellules[1]}
+      <p className={vertical}>
+        {axeVertical[0]} {axeVertical[1]}
+      </p>
+      {cellules[2]}
+      {cellules[3]}
+    </div>
+  );
+}
+
+/**
+ * Correction sous une grille : pour chaque élément, juste ou non, la catégorie attendue
+ * et l'explication.
+ * @param numeros - Vrai pour préfixer chaque ligne du numéro de l'élément
+ */
+export function CorrectionGrille({
+  ex,
+  correction,
+  numeros = false,
+}: {
+  ex: ClassementExercice;
+  correction: Correction;
+  numeros?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="font-semibold">{t.exercices.grilleCorrection}</p>
+      <ol className="flex flex-col gap-2">
+        {ex.elements.map((e, i) => (
+          <li key={e.texte} className="text-small">
+            <span className="font-semibold text-ink-muted">
+              {numeros ? `${i + 1}. ` : `${e.texte} : `}
+            </span>
+            <span className={correction.justes[i] ? "text-success" : "text-danger"}>
+              <span className="font-semibold">
+                {correction.justes[i] ? t.exercices.juste : t.exercices.faux}
+              </span>
+              {" — "}
+            </span>
+            {ex.categories[e.categorie]}
+            {e.explication ? (
+              <>
+                {" "}
+                : <InlineText texte={e.explication} />
+              </>
+            ) : null}
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

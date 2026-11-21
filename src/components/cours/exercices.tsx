@@ -11,8 +11,9 @@
  *               v0.44.0 : réponses et texte des questions ouvertes gardés en brouillon
  *               dans le navigateur (use-brouillon.ts) jusqu'à l'envoi.
  *               v0.47.0 : classement en grille à glisser-déposer (classement-grille.tsx).
+ *               v0.48.0 : grille dont chaque case est un élément (classement-cases.tsx).
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
+ *  Version    : 1.5
  *  Date       : 2026-11-21
  *  Dépendances: lib/cours/actions.ts, lib/cours/content.ts, lib/cours/tentatives.ts,
  *               lib/cours/brouillon.ts, use-brouillon.ts, classement-grille.tsx,
@@ -51,6 +52,7 @@ import type {
 import type { Correction, Reponse } from "@/lib/cours/notation";
 import { rangTentative } from "@/lib/cours/tentatives";
 
+import { ClassementCases } from "./classement-cases";
 import { ClassementGrille } from "./classement-grille";
 import { useBrouillon } from "./use-brouillon";
 
@@ -214,7 +216,15 @@ function Note({
           onChoix={choisir}
         />
       )}
-      {exercice.type === "classement" && !exercice.grille && (
+      {exercice.type === "classement" && exercice.grilleElements && (
+        <ClassementCases
+          ex={{ ...exercice, grilleElements: exercice.grilleElements }}
+          valeurs={valeurs as (number | null)[]}
+          correction={correction}
+          onChoix={choisir}
+        />
+      )}
+      {exercice.type === "classement" && !exercice.grille && !exercice.grilleElements && (
         <Classement
           ex={exercice}
           valeurs={valeurs as (number | null)[]}

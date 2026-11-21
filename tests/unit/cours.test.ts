@@ -252,6 +252,14 @@ describe("leçons rédigées", () => {
           expect(e.categories).toHaveLength(4);
           expect([...e.grille.cases].sort()).toEqual([0, 1, 2, 3]);
         }
+        // Grille d'éléments : chaque élément occupe exactement une case (v0.48.0)
+        if (e.grilleElements) {
+          expect(e.grille).toBeUndefined();
+          expect(e.elements).toHaveLength(4);
+          expect([...e.grilleElements.cases].sort()).toEqual([0, 1, 2, 3]);
+          if (e.grilleElements.rappels)
+            expect(e.grilleElements.rappels).toHaveLength(4);
+        }
       }
     }
   });
@@ -259,6 +267,11 @@ describe("leçons rédigées", () => {
   it("m02-l03 : le premier exercice se fait dans la grille impact-incertitude", () => {
     const e1 = exercicesDe(contenuLecon("m02-l03")!).find((e) => e.id === "e1");
     expect(e1?.type === "classement" && e1.grille?.cases).toEqual([0, 1, 3, 2]);
+  });
+
+  it("m02-l04 : les quatre scénarios de l'exercice 1 sont placés dans la grille", () => {
+    const e1 = exercicesDe(contenuLecon("m02-l04")!).find((e) => e.id === "e1");
+    expect(e1?.type === "classement" && e1.grilleElements?.cases).toEqual([0, 1, 2, 3]);
   });
 });
 

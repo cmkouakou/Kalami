@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.48.0] - 2026-11-21 — Cours : grille des scénarios (leçon 2.4)
+### Ajouté
+- Grille dont chaque case est un élément (`grilleElements` dans ClassementExercice,
+  composant classement-cases.tsx) : la grille et ses axes restent sous les yeux, la
+  réponse se choisit dans la case. Case bordée de vert ou de rouge après correction.
+- 2 tests unitaires (cohérence de la grille d'éléments, exercice 1 de la leçon 2.4).
+
+### Modifié
+- Leçon 2.4, exercice 1 (embauche de trois techniciens) : les quatre scénarios sont
+  placés dans la grille Demande des PME × Vitesse de l'IA, avec un rappel d'une ligne
+  sous chacun ; « Payante » ou « Risquée » se choisit dans la case.
+- classement-grille.tsx : cadre à axes et correction mis en commun (CadreGrille,
+  CorrectionGrille).
+
 ## [v0.47.0] - 2026-11-21 — Cours : exercice en grille à glisser-déposer (leçon 2.3)
 ### Ajouté
 - Classement en grille 2 × 2 (`grille` dans ClassementExercice, composant

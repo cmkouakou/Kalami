@@ -151,6 +151,21 @@ export type GrilleClassement = {
   cases: [number, number, number, number];
 };
 
+/**
+ * Grille dont chaque case est un élément (v0.48.0), par exemple quatre scénarios :
+ * l'apprenant choisit la catégorie dans la case elle-même.
+ */
+export type GrilleElements = {
+  /** Axe vertical : nom, libellé du bas, libellé du haut. */
+  axeVertical: [string, string, string];
+  /** Axe horizontal : nom, libellé de gauche, libellé de droite. */
+  axeHorizontal: [string, string, string];
+  /** Indice d'élément de chaque case : haut-gauche, haut-droite, bas-gauche, bas-droite. */
+  cases: [number, number, number, number];
+  /** Rappel court sous le nom de chaque élément (même ordre que `elements`). */
+  rappels?: string[];
+};
+
 /** Classement : ranger des éléments dans des catégories. */
 export type ClassementExercice = {
   type: "classement";
@@ -161,6 +176,8 @@ export type ClassementExercice = {
   elements: { texte: string; categorie: number; explication?: string }[];
   /** Présentation en grille à glisser-déposer (quatre catégories). */
   grille?: GrilleClassement;
+  /** Présentation où chacun des quatre éléments occupe une case de la grille. */
+  grilleElements?: GrilleElements;
 };
 
 /** Question ouverte : l'apprenant répond pour lui, puis révèle le corrigé modèle. */
