@@ -1,5 +1,17 @@
 # Journal des modifications
 
+## [v0.46.0] - 2026-11-20 — Cours : suite après le quiz d'un module
+### Ajouté
+- Quiz de module, après une réussite : « Module N terminé. » (ou le nombre de leçons
+  qu'il reste à valider avec « J'ai terminé cette leçon ») et un bouton « Passer au
+  module N+1 → » (ou « Passer à l'examen final → » après le dernier module).
+- Bas de la page du quiz : lien vers la leçon précédente (dernière leçon du module) et
+  vers le module suivant (sa première leçon) ou l'examen final.
+- Quiz déjà réussi et leçons terminées : pastille verte « Module N terminé » en haut.
+- Sommaire du cours : pastille verte « Module terminé » sur chaque module dont toutes
+  les leçons sont terminées et le quiz réussi.
+- 2 tests unitaires (suiteDuQuiz, moduleTermine).
+
 ## [v0.45.1] - 2026-11-20 — Cours : mot manquant (leçon 1.5)
 ### Corrigé
 - Leçon 1.5, tableau des trois tests, ligne « Acceptabilité » : « renoncent à leurs

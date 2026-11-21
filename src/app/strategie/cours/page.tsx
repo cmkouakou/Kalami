@@ -14,9 +14,10 @@
  *               clés, leçon offerte, métadonnées de partage et données structurées Course.
  *               v0.42.0 : dates individuelles (leçon fermée, ouverte jusqu'au …).
  *  Auteur     : Claude Marcel
- *  Version    : 1.7 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen ;
+ *  Version    : 1.8 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen ;
  *               v0.38.2 : lien vers « Mes annotations » ; v0.39.0 : page de vente ;
- *               v0.42.0 : dates individuelles ; v0.42.1 : « Terminée » en vert)
+ *               v0.42.0 : dates individuelles ; v0.42.1 : « Terminée » en vert ;
+ *               v0.46.0 : « Module terminé » (leçons terminées et quiz réussi))
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
@@ -65,6 +66,7 @@ import {
   LECONS,
   LECON_OFFERTE,
   MODULES,
+  moduleTermine,
   adresseLecon,
   leconParId,
 } from "@/lib/cours/modules";
@@ -217,6 +219,13 @@ function Programme({
               {interpolate(t.accueil.chapitre, { n: String(m.chapitreLivre) })}
             </p>
             <h2 className="font-serif text-h3">{m.titre}</h2>
+            {etats &&
+              quiz &&
+              moduleTermine(
+                m,
+                new Set(m.lecons.filter((l) => etats.get(l.id) === "terminee").map((l) => l.id)),
+                estReussi(quiz.get(m.id)?.meilleure ?? null, seuilQuiz),
+              ) && <span className={`${BADGE_SUCCES} self-start`}>{t.accueil.moduleTermine}</span>}
           </div>
           <ol className="flex flex-col divide-y divide-line">
             {m.lecons.map((l) => {

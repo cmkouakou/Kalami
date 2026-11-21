@@ -6,8 +6,9 @@
  *              mal formées), synthèse de la progression, durée lisible, et cohérence du
  *              contenu rédigé (identifiants d'exercices, bonnes réponses, catégories).
  *              v0.38.0 : examen final, note finale, mentions, numéro et nom du diplôme.
+ *              v0.46.0 : suite d'un quiz et module terminé.
  * Auteur     : Claude Marcel
- * Version    : 1.3 (v0.38.0 : examen et diplôme ; v0.38.2 : libellés des annotations)
+ * Version    : 1.4 (v0.38.0 : examen et diplôme ; v0.38.2 : annotations ; v0.46.0 : suite)
  * Date       : 2026-11-20
  */
 
@@ -46,6 +47,8 @@ import {
   MODULES,
   adresseLecon,
   leconParId,
+  moduleTermine,
+  suiteDuQuiz,
   trouverLecon,
   voisines,
 } from "@/lib/cours/modules";
@@ -85,6 +88,23 @@ describe("programme du cours", () => {
     const fin = MODULES[0].lecons.at(-1)!;
     expect(voisines(fin.id).apres?.id).toBe(MODULES[1].lecons[0].id);
     expect(voisines(LECONS.at(-1)!.id).apres).toBeNull();
+  });
+
+  it("donne la suite d'un quiz : dernière leçon, module suivant ou examen (v0.46.0)", () => {
+    const { precedente, suivant } = suiteDuQuiz(MODULES[0]);
+    expect(precedente?.id).toBe(MODULES[0].lecons.at(-1)!.id);
+    expect(suivant?.module.id).toBe(MODULES[1].id);
+    expect(suivant?.lecon.id).toBe(MODULES[1].lecons[0].id);
+    expect(suiteDuQuiz(MODULES.at(-1)!).suivant).toBeNull();
+  });
+
+  it("tient un module pour terminé : toutes ses leçons et son quiz réussi (v0.46.0)", () => {
+    const mod = MODULES[0];
+    const toutes = new Set(mod.lecons.map((l) => l.id));
+    const moinsUne = new Set(mod.lecons.slice(1).map((l) => l.id));
+    expect(moduleTermine(mod, toutes, true)).toBe(true);
+    expect(moduleTermine(mod, toutes, false)).toBe(false);
+    expect(moduleTermine(mod, moinsUne, true)).toBe(false);
   });
 });
 

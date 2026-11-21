@@ -8,8 +8,9 @@
  *               affichée « bientôt » : le programme complet reste visible.
  *               v1.1 (v0.39.0) : leçon offerte en aperçu et durée totale du cours.
  *               v1.2 (v0.39.1) : adresse publique de la leçon offerte.
+ *               v1.3 (v0.46.0) : suite d'un quiz et module terminé.
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  *  Dépendances: lib/strategy/steps.ts
  * =============================================================
@@ -262,6 +263,45 @@ export function adresseLecon(mod: ModuleInfo, lecon: LeconInfo): string {
   return `/strategie/cours/${mod.slug}/${lecon.slug}`;
 }
 
+
+/** Ce qui précède et suit le quiz d'un module. */
+export type SuiteQuiz = {
+  /** Dernière leçon du module (null si le module n'a pas de leçon). */
+  precedente: LeconInfo | null;
+  /** Module suivant et sa première leçon ; null après le dernier module (examen). */
+  suivant: { module: ModuleInfo; lecon: LeconInfo } | null;
+};
+
+/**
+ * Leçon précédente et module suivant, pour la navigation en bas d'un quiz.
+ * @param mod - Module du quiz
+ *
+ * Exemple d'utilisation :
+ *   const { precedente, suivant } = suiteDuQuiz(MODULES[0]); // 1.5 et module 2, leçon 1
+ */
+export function suiteDuQuiz(mod: ModuleInfo): SuiteQuiz {
+  const i = MODULES.findIndex((m) => m.id === mod.id);
+  const prochain = i === -1 ? undefined : MODULES[i + 1];
+  const premiere = prochain?.lecons[0];
+  return {
+    precedente: mod.lecons[mod.lecons.length - 1] ?? null,
+    suivant: prochain && premiere ? { module: prochain, lecon: premiere } : null,
+  };
+}
+
+/**
+ * Vrai si toutes les leçons du module sont terminées et son quiz réussi.
+ * @param mod       - Module
+ * @param terminees - Identifiants des leçons terminées par l'apprenant
+ * @param quizReussi - Quiz du module réussi (meilleure note au seuil)
+ */
+export function moduleTermine(
+  mod: ModuleInfo,
+  terminees: ReadonlySet<string>,
+  quizReussi: boolean,
+): boolean {
+  return quizReussi && mod.lecons.every((l) => terminees.has(l.id));
+}
 /** Leçons précédente et suivante dans l'ordre du cours. */
 export function voisines(id: string): {
   avant: LeconInfo | null;

@@ -9,8 +9,10 @@
  *               déjà été réussi. v0.38.0 : seuil de réussite lu dans les réglages.
  *               v0.43.0 : nombre de tentatives transmis au quiz (décompte en bas).
  *               v0.44.0 : compte transmis au quiz (brouillon des réponses).
+ *               v0.46.0 : « Module N terminé », leçon précédente et module suivant (ou
+ *               examen final) en bas du quiz.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/quiz.tsx, cours.css
  * =============================================================
@@ -23,12 +25,13 @@ import { Suspense } from "react";
 
 import { QuizModule } from "@/components/cours/quiz";
 import { SansAcces } from "@/components/cours/sans-acces";
-import { BUTTON_TERTIARY, PANEL_SAND } from "@/components/ui/styles";
+import { BADGE_SUCCES, BUTTON_TERTIARY, PANEL_SAND } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import {
   diffusionApprenant,
   exigerConnexionCours,
+  progressionApprenant,
   reglagesEvaluation,
   resultatsQuizApprenant,
 } from "@/lib/cours/acces";
@@ -37,7 +40,13 @@ import {
   quizOuvert,
   versionPublique,
 } from "@/lib/cours/evaluation";
-import { MODULES, type ModuleInfo } from "@/lib/cours/modules";
+import {
+  adresseLecon,
+  MODULES,
+  moduleTermine,
+  suiteDuQuiz,
+  type ModuleInfo,
+} from "@/lib/cours/modules";
 import { quizDe } from "@/lib/cours/quiz";
 
 import "../../cours.css";
@@ -81,15 +90,32 @@ async function QuizPrive({ mod, adresse }: { mod: ModuleInfo; adresse: string })
     return <p className={`${PANEL_SAND} p-6`}>{t.quiz.verrouille}</p>;
   }
 
-  const [quiz, { seuilQuiz }] = await Promise.all([
+  const [quiz, { seuilQuiz }, progression] = await Promise.all([
     resultatsQuizApprenant(),
     reglagesEvaluation(),
+    progressionApprenant(),
   ]);
   const resultat = quiz.get(mod.id) ?? null;
   const meilleure = resultat?.meilleure ?? null;
+  const terminees = new Set(
+    progression.filter((l) => l.completed_at).map((l) => l.lesson_id),
+  );
+  const restantes = mod.lecons.filter((l) => !terminees.has(l.id)).length;
+  const { suivant } = suiteDuQuiz(mod);
+  const suite = suivant
+    ? {
+        adresse: adresseLecon(suivant.module, suivant.lecon),
+        libelle: interpolate(t.quiz.allerModule, { n: String(suivant.module.numero) }),
+      }
+    : { adresse: "/strategie/cours/examen", libelle: t.quiz.allerExamen };
 
   return (
     <>
+      {moduleTermine(mod, terminees, estReussi(meilleure, seuilQuiz)) && (
+        <p className={`${BADGE_SUCCES} self-start`}>
+          {interpolate(t.quiz.moduleTermine, { n: String(mod.numero) })}
+        </p>
+      )}
       <p className="text-small text-ink-muted">
         {interpolate(t.quiz.intro, {
           n: String(questions.length),
@@ -104,8 +130,44 @@ async function QuizPrive({ mod, adresse }: { mod: ModuleInfo; adresse: string })
         essais={resultat?.essais ?? 0}
         compte={user.id}
         corrigeModele={estReussi(meilleure, seuilQuiz) ? [...questions] : null}
+        numero={mod.numero}
+        leconsRestantes={restantes}
+        suite={suite}
       />
     </>
+  );
+}
+
+// ==================== NAVIGATION ====================
+
+/**
+ * Lien de bas de page (leçon précédente, module suivant ou examen).
+ * @param href      - Adresse visée
+ * @param etiquette - Petite ligne au-dessus (« Leçon précédente »)
+ * @param titre     - Titre de la cible
+ * @param droite    - Aligné à droite (lien « suivant »)
+ */
+function LienSuite({
+  href,
+  etiquette,
+  titre,
+  droite = false,
+}: {
+  href: string;
+  etiquette: string;
+  titre: string;
+  droite?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`flex flex-col gap-1 ${droite ? "items-end text-right" : ""}`}
+    >
+      <span className="text-caption uppercase text-ink-muted">{etiquette}</span>
+      <span className="font-semibold text-encre underline-offset-4 hover:underline">
+        {titre}
+      </span>
+    </Link>
   );
 }
 
@@ -118,6 +180,7 @@ export default async function QuizPage({
   const mod = moduleDuQuiz(slug);
   if (!mod) notFound();
   const adresse = `/strategie/cours/${mod.slug}/quiz`;
+  const { precedente, suivant } = suiteDuQuiz(mod);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8">
@@ -136,6 +199,37 @@ export default async function QuizPage({
       <Suspense fallback={<div aria-hidden="true" className="h-96 animate-pulse" />}>
         <QuizPrive mod={mod} adresse={adresse} />
       </Suspense>
+
+      {/* ==================== NAVIGATION ==================== */}
+      <nav
+        aria-label={t.lecon.retour}
+        className="grid grid-cols-2 gap-4 border-t border-line pt-6"
+      >
+        {precedente ? (
+          <LienSuite
+            href={adresseLecon(mod, precedente)}
+            etiquette={t.lecon.precedente}
+            titre={precedente.titre}
+          />
+        ) : (
+          <span />
+        )}
+        {suivant ? (
+          <LienSuite
+            href={adresseLecon(suivant.module, suivant.lecon)}
+            etiquette={t.quiz.moduleSuivant}
+            titre={`${suivant.module.numero}. ${suivant.module.titre}`}
+            droite
+          />
+        ) : (
+          <LienSuite
+            href="/strategie/cours/examen"
+            etiquette={t.quiz.etapeSuivante}
+            titre={t.examen.lien}
+            droite
+          />
+        )}
+      </nav>
     </main>
   );
 }

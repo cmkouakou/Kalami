@@ -36,6 +36,7 @@ const courseFr = {
     bientot: "Bientôt",
     terminee: "Terminée",
     enCours: "En cours",
+    moduleTermine: "Module terminé",
     minutes: "{n} min",
   },
 
@@ -238,6 +239,14 @@ const courseFr = {
     reussiBadge: "Réussi",
     passer: "Passer le quiz du module {n}",
     erreur: "Le quiz n'a pas pu être enregistré. Réessayez.",
+    moduleTermine: "Module {n} terminé.",
+    lecons:
+      "Pour terminer le module, il reste {n} leçon(s) à valider avec le bouton " +
+      "« J'ai terminé cette leçon ».",
+    moduleSuivant: "Module suivant",
+    etapeSuivante: "Étape suivante",
+    allerModule: "Passer au module {n} →",
+    allerExamen: "Passer à l'examen final →",
   },
 
   examen: {

@@ -10,8 +10,10 @@
  *               Question exportés pour l'examen final.
  *               v0.43.0 : rang de la tentative en bas du quiz (« 3e tentative »).
  *               v0.44.0 : réponses gardées en brouillon jusqu'à l'envoi.
+ *               v0.46.0 : après une réussite, « Module N terminé » (ou leçons restantes)
+ *               et lien vers le module suivant ou l'examen.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
+ *  Version    : 1.4
  *  Date       : 2026-11-20
  *  Dépendances: components/cours/exercices.tsx, lib/cours/actions.ts,
  *               lib/cours/evaluation.ts, lib/cours/brouillon.ts, use-brouillon.ts,
@@ -21,6 +23,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 
 import {
@@ -73,6 +76,12 @@ type Props = {
   essais: number;
   /** Corrigé modèle, fourni seulement si le quiz a déjà été réussi. */
   corrigeModele: QuestionQuiz[] | null;
+  /** Numéro du module (message « Module N terminé »). */
+  numero?: number;
+  /** Leçons du module pas encore terminées (0 : toutes terminées). */
+  leconsRestantes?: number;
+  /** Étape suivante proposée après une réussite (module suivant ou examen). */
+  suite?: { adresse: string; libelle: string } | null;
 };
 
 // ==================== FONCTIONS UTILITAIRES ====================
@@ -187,6 +196,9 @@ export function QuizModule({
   compte,
   essais,
   corrigeModele,
+  numero,
+  leconsRestantes = 0,
+  suite = null,
 }: Props) {
   const [squelettes] = useState(() => questions.map(squelette));
   const [valeurs, setValeurs] = useState<Valeurs[]>(() => squelettes.map(reponseVide));
@@ -322,6 +334,18 @@ export function QuizModule({
               ? t.quiz.reussi
               : interpolate(t.quiz.echoue, { seuil: String(seuil) })}
           </p>
+          {corrige && numero !== undefined && (
+            <p className="mt-2 text-small font-semibold">
+              {leconsRestantes === 0
+                ? interpolate(t.quiz.moduleTermine, { n: String(numero) })
+                : interpolate(t.quiz.lecons, { n: String(leconsRestantes) })}
+            </p>
+          )}
+          {corrige && suite && (
+            <Link href={suite.adresse} className={`${BUTTON_PRIMARY} mt-3 inline-flex`}>
+              {suite.libelle}
+            </Link>
+          )}
         </div>
       )}
 
