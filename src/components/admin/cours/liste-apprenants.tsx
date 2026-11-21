@@ -7,8 +7,9 @@
  *               chaque inscrit, dates individuelles déjà posées, cases à cocher (une à
  *               une ou tous les inscrits affichés) qui alimentent le panneau des dates.
  *               Changer de cohorte et retirer l'accès restent sur chaque ligne.
+ *               v0.45.0 : colonne « Tentatives » (exercices + quiz).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/liste-apprenants.ts, components/admin/cours/*
  * =============================================================
@@ -235,6 +236,7 @@ export function ListeApprenants({ lignes, cohortes, dates }: ListeApprenantsProp
                   <th scope="col" className="py-2 pr-4">{a.liste.courriel}</th>
                   <th scope="col" className="py-2 pr-4">{a.liste.origine}</th>
                   <th scope="col" className="py-2 pr-4">{a.liste.depuis}</th>
+                  <th scope="col" className="py-2 pr-4">{a.liste.tentatives}</th>
                   <th scope="col" className="py-2 pr-4">{a.liste.cohorte}</th>
                   <th scope="col" className="py-2 pr-4">{a.liste.dates}</th>
                   <th scope="col" className="py-2">
@@ -269,6 +271,7 @@ export function ListeApprenants({ lignes, cohortes, dates }: ListeApprenantsProp
                       </td>
                       <td className="py-3 pr-4">{a.source[ap.source]}</td>
                       <td className="py-3 pr-4">{ap.depuis}</td>
+                      <td className="py-3 pr-4">{ap.tentatives ?? "—"}</td>
                       <td className="py-3 pr-4">
                         <div className="flex flex-col gap-2">
                           <span className={`${BADGE} self-start`}>

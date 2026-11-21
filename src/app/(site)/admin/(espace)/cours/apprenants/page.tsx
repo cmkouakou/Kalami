@@ -7,8 +7,9 @@
  *               origine, le changement de cohorte et le retrait de l'accès.
  *               v0.42.0 : recherche et filtres, cohorte affichée, sélection et dates
  *               individuelles d'ouverture et de fermeture par module ou leçon.
+ *               v0.45.0 : total des tentatives transmis à la liste.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/admin-queries.ts, components/admin/cours/*
  * =============================================================
@@ -71,6 +72,7 @@ async function Contenu() {
     depuis: DATE_FORMAT.format(new Date(ap.granted_at)),
     cohorteId: ap.cohort_id,
     cohorteNom: ap.cohort_name,
+    tentatives: ap.tentatives,
   }));
 
   return (

@@ -7,8 +7,9 @@
  *               par module et export CSV du suivi. Sans accès à la base : testable seul.
  *               v0.37.0 : meilleure note et essais au quiz de chaque module.
  *               v0.43.0 : décompte des tentatives repris de tentatives.ts.
+ *               v0.45.0 : total des tentatives par apprenant (liste, tri, export CSV).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/modules.ts, lib/cours/tentatives.ts
  * =============================================================
@@ -35,6 +36,9 @@ export type LigneApprenant = {
   last_seen_at: string | null;
   average_score: number | string | null;
   exercises: number | null;
+  /** Tentatives aux exercices et aux quiz (absentes avant la migration v0.45.0). */
+  attempts_exercises?: number | null;
+  attempts_quiz?: number | null;
 };
 
 /** Apprenant enrichi pour l'affichage et l'export. */
@@ -43,9 +47,17 @@ export type ApprenantSuivi = LigneApprenant & {
   enCours: number;
   pourcentage: number;
   moyenne: number | null;
+  /** Tentatives aux exercices et aux quiz, examen exclu (null : inconnu). */
+  tentatives: number | null;
 };
 
-export type CleTri = "email" | "pourcentage" | "temps" | "derniere" | "moyenne";
+export type CleTri =
+  | "email"
+  | "pourcentage"
+  | "temps"
+  | "derniere"
+  | "moyenne"
+  | "tentatives";
 
 /** Nombre maximal de courriels par envoi (même limite que la fonction SQL). */
 export const MAX_COURRIELS = 200;
@@ -108,8 +120,19 @@ function moyenneDe(valeur: number | string | null): number | null {
 }
 
 /**
+ * Total des tentatives d'un apprenant (exercices + quiz), ou null si la fonction SQL
+ * ne renvoie pas encore ces colonnes (migration v0.45.0 non appliquée).
+ * @param ligne - Ligne de admin_course_learners
+ */
+function totalDe(ligne: LigneApprenant): number | null {
+  const { attempts_exercises: ex, attempts_quiz: quiz } = ligne;
+  if (typeof ex !== "number" || typeof quiz !== "number") return null;
+  return ex + quiz;
+}
+
+/**
  * Ajoute à chaque apprenant ses leçons terminées et en cours (programme actuel
- * seulement), son pourcentage d'achèvement et sa moyenne.
+ * seulement), son pourcentage d'achèvement, sa moyenne et son total de tentatives.
  * @param lignes - Lignes de admin_course_learners
  */
 export function enrichir(lignes: LigneApprenant[]): ApprenantSuivi[] {
@@ -127,6 +150,7 @@ export function enrichir(lignes: LigneApprenant[]): ApprenantSuivi[] {
       enCours: Math.max(0, ouvertes - terminees),
       pourcentage: total === 0 ? 0 : Math.floor((terminees / total) * 100),
       moyenne: moyenneDe(ligne.average_score),
+      tentatives: totalDe(ligne),
     };
   });
 }
@@ -142,6 +166,7 @@ function valeurTri(a: ApprenantSuivi, cle: CleTri): string | number | null {
   if (cle === "temps") return a.seconds ?? 0;
   if (cle === "derniere")
     return a.last_seen_at ? Date.parse(a.last_seen_at) : null;
+  if (cle === "tentatives") return a.tentatives;
   return a.moyenne;
 }
 
@@ -185,6 +210,7 @@ export function lireTri(
     "temps",
     "derniere",
     "moyenne",
+    "tentatives",
   ];
   const cle = cles.find((c) => c === tri) ?? "email";
   const parDefaut = cle === "email" ? "asc" : "desc";
@@ -305,6 +331,8 @@ export const ENTETES_CSV = [
   "Dernière activité",
   "Moyenne (/100)",
   "Exercices notés",
+  "Tentatives aux exercices",
+  "Tentatives aux quiz",
 ] as const;
 
 /**
@@ -328,6 +356,8 @@ export function exporterCsv(apprenants: ApprenantSuivi[]): string {
       jour(a.last_seen_at),
       a.moyenne === null ? null : String(a.moyenne).replace(".", ","),
       a.exercises ?? 0,
+      a.attempts_exercises ?? null,
+      a.attempts_quiz ?? null,
     ]
       .map(celluleCsv)
       .join(";"),

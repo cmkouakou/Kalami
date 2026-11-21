@@ -5,9 +5,10 @@
  *  Description: Suivi des apprenants (v0.29.0) : tableau par cohorte (achèvement,
  *               leçons, temps de formation, dernière activité, moyenne), tri par
  *               colonne (?tri=…&sens=…), export CSV et lien vers la fiche de chacun.
+ *               v0.45.0 : colonne « Tentatives » (exercices + quiz), triable.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/admin-queries.ts, lib/cours/suivi.ts
  * =============================================================
  */
@@ -157,7 +158,7 @@ async function Tableau({ searchParams }: Props) {
         <p className="text-ink-muted">{a.aucunApprenant}</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[60rem] text-left text-sm">
+          <table className="w-full min-w-[66rem] text-left text-sm">
             <thead className="border-b border-line text-ink-muted">
               <tr>
                 {entete("email", s.apprenant)}
@@ -171,6 +172,7 @@ async function Tableau({ searchParams }: Props) {
                 {entete("temps", s.temps)}
                 {entete("derniere", s.derniere)}
                 {entete("moyenne", s.moyenne)}
+                {entete("tentatives", s.tentatives)}
               </tr>
             </thead>
             <tbody>
@@ -215,6 +217,21 @@ async function Tableau({ searchParams }: Props) {
                     {l.moyenne === null
                       ? "—"
                       : `${NOMBRE.format(l.moyenne)} / 100`}
+                  </td>
+                  <td className="py-3 pr-4">
+                    {l.tentatives === null ? (
+                      "—"
+                    ) : (
+                      <>
+                        {l.tentatives}
+                        <span className="block text-small text-ink-muted">
+                          {interpolate(s.detailTentatives, {
+                            exercices: String(l.attempts_exercises ?? 0),
+                            quiz: String(l.attempts_quiz ?? 0),
+                          })}
+                        </span>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

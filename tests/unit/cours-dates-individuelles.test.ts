@@ -215,6 +215,7 @@ describe("filtrerInscrits", () => {
     depuis: "1 déc. 2026",
     cohorteId: null,
     cohorteNom: null,
+    tentatives: null,
     ...p,
   });
   const lignes = [

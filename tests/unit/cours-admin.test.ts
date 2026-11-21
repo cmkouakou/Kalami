@@ -7,8 +7,8 @@
  *              validation des formulaires (prix, cohorte, accès) et demande d'achat
  *              du cours.
  * Auteur     : Claude Marcel
- * Version    : 1.0
- * Date       : 2026-11-19
+ * Version    : 1.1
+ * Date       : 2026-11-20
  */
 
 import { describe, expect, it } from "vitest";
@@ -119,6 +119,22 @@ describe("enrichir et trier", () => {
     expect(trier(lignes, "email", "asc")[0].email).toBe("a@x.ci");
   });
 
+  it("additionne les tentatives aux exercices et aux quiz (v0.45.0)", () => {
+    const lignes = enrichir([
+      ligne({ email: "a@x.ci", attempts_exercises: 8, attempts_quiz: 4 }),
+      ligne({ email: "b@x.ci", attempts_exercises: 20, attempts_quiz: 1 }),
+      // Fonction SQL sans les colonnes (migration non appliquée) : total inconnu
+      ligne({ email: "c@x.ci" }),
+    ]);
+    expect(lignes.map((l) => l.tentatives)).toEqual([12, 21, null]);
+    expect(trier(lignes, "tentatives", "desc").map((l) => l.email)).toEqual([
+      "b@x.ci",
+      "a@x.ci",
+      "c@x.ci",
+    ]);
+    expect(lireTri("tentatives", undefined)).toEqual({ cle: "tentatives", sens: "desc" });
+  });
+
   it("lit un tri d'adresse avec des valeurs par défaut sûres", () => {
     expect(lireTri("moyenne", undefined)).toEqual({ cle: "moyenne", sens: "desc" });
     expect(lireTri("n'importe", "asc")).toEqual({ cle: "email", sens: "asc" });
@@ -180,7 +196,15 @@ describe("export CSV", () => {
 
   it("produit un fichier lisible par Excel en français", () => {
     const csv = exporterCsv(
-      enrichir([ligne({ average_score: 72.5, seconds: 3600, source: "purchase" })]),
+      enrichir([
+        ligne({
+          average_score: 72.5,
+          seconds: 3600,
+          source: "purchase",
+          attempts_exercises: 8,
+          attempts_quiz: 4,
+        }),
+      ]),
     );
     expect(csv.startsWith("﻿Courriel;")).toBe(true);
     expect(csv.endsWith("\r\n")).toBe(true);
@@ -189,6 +213,7 @@ describe("export CSV", () => {
     expect(donnees[3]).toBe("Achat");
     expect(donnees[7]).toBe("60");
     expect(donnees[9]).toBe("72,5");
+    expect(donnees.slice(11)).toEqual(["8", "4"]);
   });
 });
 

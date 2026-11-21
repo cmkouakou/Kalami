@@ -6,8 +6,9 @@
  *               recherche sur le courriel et le nom (sans tenir compte des accents ni
  *               des majuscules), filtres par cohorte (ou « sans cohorte ») et par
  *               origine, libellé court d'un module ou d'une leçon.
+ *               v0.45.0 : total des tentatives de chaque inscrit.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: (aucune)
  * =============================================================
@@ -26,6 +27,8 @@ export type LigneInscrit = {
   depuis: string;
   cohorteId: string | null;
   cohorteNom: string | null;
+  /** Tentatives aux exercices et aux quiz (null : inconnu, migration v0.45.0). */
+  tentatives: number | null;
 };
 
 /** Date individuelle d'un apprenant sur un module ou une leçon. */

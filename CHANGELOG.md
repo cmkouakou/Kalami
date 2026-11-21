@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.45.0] - 2026-11-20 — Cours : total des tentatives dans la liste des inscrits
+### Ajouté
+- Administration > Cours > Apprenants : colonne « Tentatives » (total aux exercices et
+  aux quiz de module, examen exclu) pour chaque inscrit.
+- Administration > Cours > Suivi : colonne « Tentatives », triable, avec le détail
+  « N exercices · N quiz » ; deux colonnes ajoutées à l'export CSV (« Tentatives aux
+  exercices », « Tentatives aux quiz »).
+- 1 test unitaire (total, tri, valeur inconnue) ; test de l'export CSV complété.
+
+### Migration
+- `supabase/migrations/20261130120000_course_learner_attempts.sql` : la fonction
+  `admin_course_learners` renvoie `attempts_exercises` et `attempts_quiz`. Tant qu'elle
+  n'est pas appliquée, les colonnes affichent « — » (aucune page ne casse).
+
 ## [v0.44.0] - 2026-11-20 — Cours : réponses gardées en brouillon
 ### Ajouté
 - Exercices notés, questions ouvertes, quiz de module, examen final et ateliers corrigés
