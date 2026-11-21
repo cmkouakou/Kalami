@@ -1,5 +1,11 @@
 # Journal des modifications
 
+## [v0.46.1] - 2026-11-21 — Cours : exemple Ajinomoto (leçon 2.2)
+### Modifié
+- Leçon 2.2, encadré « Un film plastique et trois dimensions » : texte révisé par
+  l'auteur (approvisionnement compliqué et plus cher, décision de passer à un fournisseur
+  local, décret gouvernemental ivoirien contre les déchets plastiques).
+
 ## [v0.46.0] - 2026-11-20 — Cours : suite après le quiz d'un module
 ### Ajouté
 - Quiz de module, après une réussite : « Module N terminé. » (ou le nombre de leçons

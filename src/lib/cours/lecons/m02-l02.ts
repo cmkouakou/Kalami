@@ -117,9 +117,11 @@ export const M02_L02: ContenuLecon = [
   terrain(
     "Un film plastique et trois dimensions",
     "À l'usine d'Ajinomoto à Abidjan, l'emballage reposait sur un film plastique importé " +
-      "du Japon. Quand le gouvernement ivoirien a adopté des règles contre les déchets " +
-      "plastiques, cet approvisionnement est devenu plus compliqué et plus cher. Il a " +
-      "fallu trouver un fournisseur local d'emballages conformes, puis réajuster les " +
+      "du Japon. Cet approvisionnement est devenu plus compliqué (délais, douanes) et plus " +
+      "cher. Lorsque la direction a pris la décision d'optimiser ses approvisionnements en " +
+      "trouvant un fournisseur local, il a fallu tenir compte du décret gouvernemental " +
+      "ivoirien adopté contre les déchets plastiques. Il a fallu trouver un fournisseur " +
+      "local d'emballages conformes, puis réajuster les " +
       "machines de conditionnement, car le nouveau film ne se comportait pas comme " +
       "l'ancien. Un seul facteur touchait trois dimensions : **environnementale** par son " +
       "origine, **légale** par sa forme, **économique** par ses coûts. Et ses effets sont " +
