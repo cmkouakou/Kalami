@@ -238,6 +238,11 @@ export const M13_L02: ContenuLecon = [
     id: "e2",
     consigne: "Dans la SWOT d'AAO, où ranger chacun de ces faits ?",
     categories: ["Force", "Faiblesse", "Opportunité", "Menace"],
+    grille: {
+      axeVertical: ["", "Externe (on subit)", "Interne (on agit)"],
+      axeHorizontal: ["", "Aide aux objectifs", "Nuit aux objectifs"],
+      cases: [0, 1, 2, 3],
+    },
     elements: [
       {
         texte: "Une usine parmi les dix plus performantes du groupe.",

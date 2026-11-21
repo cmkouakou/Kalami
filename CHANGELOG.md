@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## [v0.49.0] - 2026-11-21 — Cours : les matrices 2 × 2 en grille
+### Ajouté
+- Grille à glisser-déposer pour sept exercices de classement dont la leçon repose sur
+  une matrice 2 × 2, disposée comme le schéma de la leçon : SWOT (leçons 5.1 et 13.2),
+  TOWS (5.2), pouvoir-intérêt (6.1 et 6.2), BCG (9.4), intégration-adaptation (9.5).
+- Catégorie hors grille (`horsGrille`), en bande sous la grille : « N'a pas sa place »
+  de la SWOT de la leçon 5.1.
+- Axes de catégories sans nom ni flèche (Interne / Externe, Forces / Faiblesses).
+- 1 test unitaire (disposition des sept grilles) ; test de cohérence étendu à la
+  catégorie hors grille.
+
 ## [v0.48.0] - 2026-11-21 — Cours : grille des scénarios (leçon 2.4)
 ### Ajouté
 - Grille dont chaque case est un élément (`grilleElements` dans ClassementExercice,

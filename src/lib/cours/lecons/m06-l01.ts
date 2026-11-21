@@ -156,6 +156,11 @@ export const M06_L01: ContenuLecon = [
       "Une compagnie de cars de Bamako veut supprimer une ligne peu rentable. Placez chaque " +
       "partie prenante dans son quadrant.",
     categories: ["Gérer de près", "Garder satisfaits", "Tenir informés", "Surveiller"],
+    grille: {
+      axeVertical: ["Pouvoir", "faible", "fort"],
+      axeHorizontal: ["Intérêt", "faible", "fort"],
+      cases: [1, 0, 3, 2],
+    },
     elements: [
       {
         texte: "Le syndicat des chauffeurs, qui menace de grève.",

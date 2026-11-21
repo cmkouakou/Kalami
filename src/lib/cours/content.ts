@@ -143,12 +143,14 @@ export type VraiFauxExercice = {
  * lieu d'être choisis dans une liste.
  */
 export type GrilleClassement = {
-  /** Axe vertical : nom, libellé du bas, libellé du haut. */
+  /** Axe vertical : nom, libellé du bas, libellé du haut (nom vide : axe sans flèche). */
   axeVertical: [string, string, string];
-  /** Axe horizontal : nom, libellé de gauche, libellé de droite. */
+  /** Axe horizontal : nom, libellé de gauche, libellé de droite (nom vide : sans flèche). */
   axeHorizontal: [string, string, string];
   /** Indice de catégorie de chaque case : haut-gauche, haut-droite, bas-gauche, bas-droite. */
   cases: [number, number, number, number];
+  /** Cinquième catégorie éventuelle, en bande sous la grille (« N'a pas sa place »). */
+  horsGrille?: number;
 };
 
 /**

@@ -9,8 +9,9 @@
  *               dans la case choisie, bordé de vert ou de rouge, et les explications
  *               suivent la grille.
  *               v0.48.0 : cadre à axes et correction exportés (classement-cases.tsx).
+ *               v0.49.0 : axes de catégories sans flèche (SWOT, TOWS), case hors grille.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-21
  *  Dépendances: lib/cours/content.ts, lib/cours/notation.ts, i18n/course.ts
  * =============================================================
@@ -47,7 +48,7 @@ export function ClassementGrille({ ex, valeurs, correction, onChoix }: Props) {
   const [selection, setSelection] = useState<number | null>(null);
   const [survol, setSurvol] = useState<Zone | null>(null);
   const actif = correction === null;
-  const { axeVertical, axeHorizontal, cases } = ex.grille;
+  const { axeVertical, axeHorizontal, cases, horsGrille } = ex.grille;
 
   /** Dépose l'élément i dans une zone et efface la sélection. */
   const deposer = (i: number, zone: Zone) => {
@@ -166,6 +167,8 @@ export function ClassementGrille({ ex, valeurs, correction, onChoix }: Props) {
           caseGrille(cases[3]),
         ]}
       />
+      {/* Catégorie hors grille (« N'a pas sa place »), en bande sous la grille */}
+      {horsGrille !== undefined && <div className="pl-8">{caseGrille(horsGrille)}</div>}
 
       {/* Réserve des énoncés à placer, sous la grille */}
       {actif && (
@@ -208,23 +211,26 @@ export function CadreGrille({
 }) {
   const axe = "text-caption uppercase text-ink-muted";
   const vertical = `${axe} rotate-180 text-center [writing-mode:vertical-rl]`;
+  // Axe sans nom : deux catégories (SWOT, TOWS), sans flèche de progression
+  const flecheH = axeHorizontal[0] ? " →" : "";
+  const flecheV = axeVertical[0] ? "↑ " : "";
+  /** Libellé d'une extrémité d'axe : « Nom valeur », ou la valeur seule. */
+  const libelle = (a: [string, string, string], k: 1 | 2) => `${a[0]} ${a[k]}`.trim();
   return (
     <div className="grid grid-cols-[1.5rem_1fr_1fr] gap-2">
       <span aria-hidden="true" />
+      <p className={`${axe} text-center`}>{libelle(axeHorizontal, 1)}</p>
       <p className={`${axe} text-center`}>
-        {axeHorizontal[0]} {axeHorizontal[1]}
-      </p>
-      <p className={`${axe} text-center`}>
-        {axeHorizontal[0]} {axeHorizontal[2]} →
+        {libelle(axeHorizontal, 2)}
+        {flecheH}
       </p>
       <p className={vertical}>
-        ↑ {axeVertical[0]} {axeVertical[2]}
+        {flecheV}
+        {libelle(axeVertical, 2)}
       </p>
       {cellules[0]}
       {cellules[1]}
-      <p className={vertical}>
-        {axeVertical[0]} {axeVertical[1]}
-      </p>
+      <p className={vertical}>{libelle(axeVertical, 1)}</p>
       {cellules[2]}
       {cellules[3]}
     </div>

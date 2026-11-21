@@ -135,6 +135,11 @@ export const M06_L02: ContenuLecon = [
       "Une école privée de Lomé prépare l'ouverture d'un cycle secondaire. Associez chaque " +
       "action au quadrant qu'elle sert.",
     categories: ["Gérer de près", "Garder satisfaits", "Tenir informés", "Surveiller"],
+    grille: {
+      axeVertical: ["Pouvoir", "faible", "fort"],
+      axeHorizontal: ["Intérêt", "faible", "fort"],
+      cases: [1, 0, 3, 2],
+    },
     elements: [
       {
         texte: "Réunir les enseignants pour construire le programme avec eux.",

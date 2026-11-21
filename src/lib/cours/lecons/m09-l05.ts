@@ -131,6 +131,11 @@ export const M09_L05: ContenuLecon = [
     id: "e1",
     consigne: "Placez chaque entreprise dans la stratégie internationale qui la décrit.",
     categories: ["Exportation", "Multidomestique", "Globale", "Transnationale"],
+    grille: {
+      axeVertical: ["Intégration mondiale", "faible", "forte"],
+      axeHorizontal: ["Adaptation locale", "faible", "forte"],
+      cases: [2, 3, 0, 1],
+    },
     elements: [
       {
         texte: "Un tisserand de pagnes qui expédie ses pièces à des clients d'Europe.",

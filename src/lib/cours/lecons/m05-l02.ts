@@ -138,6 +138,11 @@ export const M05_L02: ContenuLecon = [
       "Une clinique privée de Cotonou a construit sa TOWS. Rangez chaque piste dans sa " +
       "famille.",
     categories: ["Attaquer", "Se renforcer", "Défendre", "Se protéger"],
+    grille: {
+      axeVertical: ["", "Menaces", "Opportunités"],
+      axeHorizontal: ["", "Forces", "Faiblesses"],
+      cases: [0, 1, 2, 3],
+    },
     elements: [
       {
         texte:

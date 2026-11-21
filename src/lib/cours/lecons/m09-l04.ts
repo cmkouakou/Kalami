@@ -122,6 +122,11 @@ export const M09_L04: ContenuLecon = [
       "Un groupe ivoirien fictif possède quatre activités. Placez chacune dans sa famille " +
       "de la matrice BCG.",
     categories: ["Vedette", "Vache à lait", "Dilemme", "Poids mort"],
+    grille: {
+      axeVertical: ["Croissance du marché", "faible", "forte"],
+      axeHorizontal: ["Part de marché relative", "faible", "forte"],
+      cases: [2, 0, 3, 1],
+    },
     elements: [
       {
         texte: "Leader national du sucre, un marché qui progresse de 1 % par an.",

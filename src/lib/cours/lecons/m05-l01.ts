@@ -150,6 +150,12 @@ export const M05_L01: ContenuLecon = [
       "Une boulangerie de Ouagadougou prépare sa SWOT. Rangez chaque élément dans la " +
       "bonne case, ou dans « N'a pas sa place ».",
     categories: ["Force", "Faiblesse", "Opportunité", "Menace", "N'a pas sa place"],
+    grille: {
+      axeVertical: ["", "Externe (on subit)", "Interne (on agit)"],
+      axeHorizontal: ["", "Aide aux objectifs", "Nuit aux objectifs"],
+      cases: [0, 1, 2, 3],
+      horsGrille: 4,
+    },
     elements: [
       {
         texte: "Son pain est réputé dans tout le quartier comme le plus croustillant.",

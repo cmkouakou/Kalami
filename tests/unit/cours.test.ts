@@ -247,10 +247,12 @@ describe("leçons rédigées", () => {
       if (e.type === "classement") {
         for (const el of e.elements)
           expect(el.categorie).toBeLessThan(e.categories.length);
-        // Grille : chaque catégorie occupe exactement une des quatre cases (v0.47.0)
+        // Grille : chaque catégorie occupe exactement une case (v0.47.0), la cinquième
+        // éventuelle en bande sous la grille (v0.49.0)
         if (e.grille) {
-          expect(e.categories).toHaveLength(4);
-          expect([...e.grille.cases].sort()).toEqual([0, 1, 2, 3]);
+          const occupees = [...e.grille.cases];
+          if (e.grille.horsGrille !== undefined) occupees.push(e.grille.horsGrille);
+          expect(occupees.sort()).toEqual(e.categories.map((_, k) => k));
         }
         // Grille d'éléments : chaque élément occupe exactement une case (v0.48.0)
         if (e.grilleElements) {
@@ -272,6 +274,23 @@ describe("leçons rédigées", () => {
   it("m02-l04 : les quatre scénarios de l'exercice 1 sont placés dans la grille", () => {
     const e1 = exercicesDe(contenuLecon("m02-l04")!).find((e) => e.id === "e1");
     expect(e1?.type === "classement" && e1.grilleElements?.cases).toEqual([0, 1, 2, 3]);
+  });
+
+  it("les matrices 2 × 2 du cours ont leur exercice en grille (v0.49.0)", () => {
+    // Leçon, exercice, cases attendues (haut-gauche, haut-droite, bas-gauche, bas-droite)
+    const attendues: [string, string, number[]][] = [
+      ["m05-l01", "e1", [0, 1, 2, 3]], // SWOT, plus « N'a pas sa place »
+      ["m05-l02", "e1", [0, 1, 2, 3]], // TOWS
+      ["m06-l01", "e1", [1, 0, 3, 2]], // pouvoir-intérêt
+      ["m06-l02", "e1", [1, 0, 3, 2]],
+      ["m09-l04", "e1", [2, 0, 3, 1]], // BCG
+      ["m09-l05", "e1", [2, 3, 0, 1]], // intégration-adaptation
+      ["m13-l02", "e2", [0, 1, 2, 3]], // SWOT
+    ];
+    for (const [lecon, id, cases] of attendues) {
+      const ex = exercicesDe(contenuLecon(lecon)!).find((e) => e.id === id);
+      expect(ex?.type === "classement" && ex.grille?.cases, lecon).toEqual(cases);
+    }
   });
 });
 
