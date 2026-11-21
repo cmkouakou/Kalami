@@ -43,6 +43,11 @@ import {
 } from "@/lib/cours/note-finale";
 import { quizDe } from "@/lib/cours/quiz";
 import {
+  LECONS_A_REVOIR_MAX,
+  LECONS_DES_QUESTIONS,
+  leconsARevoir,
+} from "@/lib/cours/quiz/lecons";
+import {
   LECONS,
   MODULES,
   adresseLecon,
@@ -371,6 +376,31 @@ describe("quiz de module", () => {
     ]);
     expect(r.get("m01")).toEqual({ meilleure: 87.5, essais: 2 });
     expect(r.size).toBe(1);
+  });
+
+  // v0.50.0 : leçons à revoir après des échecs répétés
+  it("chaque question de quiz renvoie à une leçon existante de son module", () => {
+    for (const mod of MODULES) {
+      const carte = LECONS_DES_QUESTIONS[mod.id];
+      expect(carte?.length, mod.id).toBe(quizDe(mod.id)?.length);
+      const numeros = mod.lecons.map((l) => l.numero);
+      for (const n of (carte ?? []).flat()) expect(numeros, mod.id).toContain(n);
+    }
+  });
+
+  it("leconsARevoir désigne les leçons des questions manquées, la pire d'abord", () => {
+    const mod = MODULES[1];
+    // q2 et q8 (PESTEL, leçon 2) ratées, q3 (leçon 3) à moitié
+    const r = leconsARevoir("m02", [100, 0, 50, 100, 100, 100, 100, 0]);
+    expect(r.map((l) => l.numero)).toEqual([2, 3]);
+    expect(r[0]).toEqual({
+      numero: 2,
+      titre: mod.lecons[1].titre,
+      adresse: adresseLecon(mod, mod.lecons[1]),
+    });
+    expect(leconsARevoir("m02", Array(8).fill(0)).length).toBe(LECONS_A_REVOIR_MAX);
+    expect(leconsARevoir("m02", Array(8).fill(100))).toEqual([]);
+    expect(leconsARevoir("m99", [0])).toEqual([]);
   });
 });
 

@@ -9,9 +9,10 @@
  *               v0.39.0 : page de vente, leçon offerte en aperçu, référencement.
  *               v0.39.1 : leçon offerte lisible sans compte.
  *               v0.40.0 : ateliers corrigés par l'IA.
+ *               v0.50.0 : quiz, leçons à revoir après trois échecs.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
- *  Date       : 2026-11-20
+ *  Version    : 1.6
+ *  Date       : 2026-11-21
  * =============================================================
  */
 
@@ -230,7 +231,10 @@ const courseFr = {
     echoue:
       "Il faut {seuil} / 100 pour réussir. Relisez les leçons concernées, puis " +
       "réessayez : le corrigé s'affichera une fois le quiz réussi.",
-    noteQuestion: "Question {n} : {score} / 100",
+    aRevoir:
+      "Plusieurs essais sous le seuil : ces parties du module semblent moins " +
+      "claires. Relisez-les avant le prochain essai :",
+    leconARevoir: "Leçon {n} : {titre}",
     recommencer: "Recommencer le quiz",
     voirCorrige: "Voir le corrigé",
     masquerCorrige: "Masquer le corrigé",

@@ -1,5 +1,18 @@
 # Journal des modifications
 
+## [v0.50.0] - 2026-11-21 — Cours : quiz, leçons à revoir après trois échecs
+### Ajouté
+- Après trois essais sous le seuil, le quiz d'un module renvoie vers la ou les leçons
+  (deux au plus) qui semblent mal comprises, avec un lien direct vers chacune. Elles
+  sont déduites des questions manquées à l'essai en cours.
+- Correspondance question → leçon pour les 13 quiz (lib/cours/quiz/lecons.ts, côté
+  serveur), et le choix des leçons à revoir (`leconsARevoir`).
+- 2 tests unitaires (correspondance complète, choix des leçons).
+
+### Modifié
+- Le quiz n'affiche plus la note de chaque question sous les réponses : seule la note
+  globale s'affiche après l'envoi. Le serveur ne renvoie plus ces notes en cas d'échec.
+
 ## [v0.49.0] - 2026-11-21 — Cours : les matrices 2 × 2 en grille
 ### Ajouté
 - Grille à glisser-déposer pour sept exercices de classement dont la leçon repose sur

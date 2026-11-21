@@ -5,16 +5,18 @@
  *  Description: Quiz de module interactif. Le navigateur ne reçoit que la version
  *               « publique » des questions (sans réponses) ; le serveur corrige
  *               (soumettreQuiz) et ne renvoie le corrigé complet qu'en cas de réussite.
- *               En cas d'échec, seule la note de chaque question s'affiche. Essais
+ *               En cas d'échec, seule la note globale s'affiche. Essais
  *               illimités ; la meilleure note compte. v0.38.0 : squelette() et
  *               Question exportés pour l'examen final.
  *               v0.43.0 : rang de la tentative en bas du quiz (« 3e tentative »).
  *               v0.44.0 : réponses gardées en brouillon jusqu'à l'envoi.
  *               v0.46.0 : après une réussite, « Module N terminé » (ou leçons restantes)
  *               et lien vers le module suivant ou l'examen.
+ *               v0.50.0 : plus de note par question sous les réponses ; à partir du
+ *               3e échec, les leçons à revoir s'affichent avec leur lien.
  *  Auteur     : Claude Marcel
- *  Version    : 1.4
- *  Date       : 2026-11-20
+ *  Version    : 1.5
+ *  Date       : 2026-11-21
  *  Dépendances: components/cours/exercices.tsx, lib/cours/actions.ts,
  *               lib/cours/evaluation.ts, lib/cours/brouillon.ts, use-brouillon.ts,
  *               i18n/course.ts
@@ -52,6 +54,7 @@ import {
 
 import { useBrouillon } from "./use-brouillon";
 import type { Correction, Reponse } from "@/lib/cours/notation";
+import type { LeconARevoir } from "@/lib/cours/quiz/lecons";
 
 const t = getCourseDictionary();
 
@@ -202,7 +205,7 @@ export function QuizModule({
 }: Props) {
   const [squelettes] = useState(() => questions.map(squelette));
   const [valeurs, setValeurs] = useState<Valeurs[]>(() => squelettes.map(reponseVide));
-  const [notes, setNotes] = useState<number[] | null>(null);
+  const [aRevoir, setARevoir] = useState<LeconARevoir[]>([]);
   const [score, setScore] = useState<number | null>(null);
   const [corrige, setCorrige] = useState<Corrige | null>(null);
   const [record, setRecord] = useState(meilleure);
@@ -247,7 +250,7 @@ export function QuizModule({
       }
       effacerBrouillon();
       setScore(r.score);
-      setNotes(r.notes);
+      setARevoir(r.aRevoir ?? []);
       setRecord((m) => Math.max(m ?? 0, r.score));
       setNbEssais((n) => n + 1);
       if (r.reussi && r.questions && r.corrections) {
@@ -261,7 +264,7 @@ export function QuizModule({
   const recommencer = () => {
     setValeurs(squelettes.map(reponseVide));
     setScore(null);
-    setNotes(null);
+    setARevoir([]);
     setCorrige(null);
     setMessage(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -285,7 +288,6 @@ export function QuizModule({
 
       <ol className="flex flex-col gap-5">
         {squelettes.map((ex, i) => {
-          const note = notes?.[i];
           return (
             <li key={ex.id}>
               <section
@@ -293,12 +295,7 @@ export function QuizModule({
                 aria-label={interpolate(t.quiz.question, { n: String(i + 1) })}
               >
                 <p className="text-caption font-semibold uppercase text-encre">
-                  {note !== undefined && !corrige
-                    ? interpolate(t.quiz.noteQuestion, {
-                        n: String(i + 1),
-                        score: String(note),
-                      })
-                    : interpolate(t.quiz.question, { n: String(i + 1) })}
+                  {interpolate(t.quiz.question, { n: String(i + 1) })}
                 </p>
                 {affiche ? (
                   <Question
@@ -334,6 +331,23 @@ export function QuizModule({
               ? t.quiz.reussi
               : interpolate(t.quiz.echoue, { seuil: String(seuil) })}
           </p>
+          {!corrige && aRevoir.length > 0 && (
+            <div className="mt-3 flex flex-col gap-2">
+              <p className="text-small font-semibold">{t.quiz.aRevoir}</p>
+              <ul className="flex flex-col gap-1">
+                {aRevoir.map((l) => (
+                  <li key={l.adresse}>
+                    <Link href={l.adresse} className="text-small text-encre underline">
+                      {interpolate(t.quiz.leconARevoir, {
+                        n: String(l.numero),
+                        titre: l.titre,
+                      })}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {corrige && numero !== undefined && (
             <p className="mt-2 text-small font-semibold">
               {leconsRestantes === 0

@@ -12,9 +12,10 @@
  *               réussite. v0.38.0 : examen final (3 essais espacés de 24 h, verrou en
  *               base ; seules la note et les questions manquées sont renvoyées),
  *               délivrance du diplôme ; seuil des quiz lu dans les réglages.
+ *               v0.50.0 : quiz échoué, note globale seule ; leçons à revoir dès le 3e échec.
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-11-20
+ *  Version    : 1.4
+ *  Date       : 2026-11-21
  *  Dépendances: lib/auth/dal.ts, lib/supabase/{server,admin}.ts, lib/cours/*,
  *               lib/reader/annotations.ts
  * =============================================================
@@ -55,6 +56,11 @@ import {
 } from "@/lib/cours/note-finale";
 import { corriger, type Correction, type Reponse } from "@/lib/cours/notation";
 import { quizDe } from "@/lib/cours/quiz";
+import {
+  ESSAIS_AVANT_RENVOI,
+  leconsARevoir,
+  type LeconARevoir,
+} from "@/lib/cours/quiz/lecons";
 import {
   cleanNote,
   cleanQuote,
@@ -183,16 +189,17 @@ export async function soumettreReponse(
 // ==================== QUIZ DE MODULE ====================
 
 /**
- * Résultat d'un essai de quiz. En cas d'échec, seule la note de chaque question est
- * renvoyée (pas le détail par partie, qui trahirait les bonnes réponses). En cas de
- * réussite, les questions complètes et leurs corrections permettent d'afficher le corrigé.
+ * Résultat d'un essai de quiz. En cas d'échec, seule la note globale est renvoyée : ni la
+ * note de chaque question ni le détail, qui trahiraient les bonnes réponses (v0.50.0).
+ * À partir du 3e échec, les leçons à revoir (déduites des questions manquées) suivent.
+ * En cas de réussite, les questions complètes et leurs corrections donnent le corrigé.
  */
 export type ResultatQuiz =
   | {
       ok: true;
       score: number;
       reussi: boolean;
-      notes: number[];
+      aRevoir?: LeconARevoir[];
       questions?: QuestionQuiz[];
       corrections?: Correction[];
     }
@@ -203,7 +210,7 @@ export type ResultatQuiz =
  *
  * @param moduleId - Identifiant du module (« m01 »)
  * @param reponses - Réponses de l'apprenant, dans l'ordre des questions (non fiables)
- * @returns Note globale, note par question et, si réussi, le corrigé complet
+ * @returns Note globale ; si réussi, le corrigé complet ; après 3 échecs, les leçons à revoir
  *
  * Erreurs possibles : non connecté, quiz inconnu ou réponses invalides, pas d'accès,
  * leçons du module pas toutes ouvertes, échec d'enregistrement.
@@ -240,16 +247,38 @@ export async function soumettreQuiz(
 
   const { seuilQuiz } = await reglagesEvaluation();
   const reussi = estReussi(correction.score, seuilQuiz);
-  const notes = correction.corrections.map((c) => c.score);
-  if (!reussi) return { ok: true, score: correction.score, reussi, notes };
+  if (!reussi) {
+    const echecs = await echecsQuiz(user.id, mod.id, seuilQuiz);
+    const notes = correction.corrections.map((c) => c.score);
+    return echecs >= ESSAIS_AVANT_RENVOI
+      ? { ok: true, score: correction.score, reussi, aRevoir: leconsARevoir(mod.id, notes) }
+      : { ok: true, score: correction.score, reussi };
+  }
   return {
     ok: true,
     score: correction.score,
     reussi,
-    notes,
     questions: [...questions],
     corrections: correction.corrections,
   };
+}
+
+/**
+ * Nombre d'essais du quiz d'un module restés sous le seuil (essai en cours compris).
+ * En cas d'erreur de lecture, 0 : le renvoi vers les leçons attend le prochain essai.
+ */
+async function echecsQuiz(userId: string, moduleId: string, seuil: number): Promise<number> {
+  try {
+    const { count, error } = await createAdminClient()
+      .from("course_attempts")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("exercise_id", idQuiz(moduleId))
+      .lt("score", seuil);
+    return error ? 0 : (count ?? 0);
+  } catch {
+    return 0;
+  }
 }
 
 // ==================== EXAMEN FINAL ====================
