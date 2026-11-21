@@ -15,8 +15,9 @@
  *               v0.39.1 : leçon offerte lisible sans compte (proposée à Google).
  *               v0.40.0 : corrections déjà obtenues aux ateliers corrigés par l'IA.
  *               v0.42.0 : leçon fermée par une date individuelle (rien n'est servi).
+ *               v0.44.0 : compte transmis aux exercices (brouillons des réponses).
  *  Auteur     : Claude Marcel
- *  Version    : 1.7
+ *  Version    : 1.8
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/*, cours.css
  * =============================================================
@@ -258,6 +259,7 @@ async function ContenuPrive({
           contenu={contenu}
           meilleures={meilleures}
           ateliers={ateliers}
+          compte={user.id}
           exercicesFermes={
             apercu ? interpolate(t.diffusion.exerciceFerme, { date }) : undefined
           }

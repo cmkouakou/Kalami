@@ -10,8 +10,9 @@
  *               v0.38.0 : réglages d'évaluation, bilan (note finale) et diplôme.
  *               v0.38.2 : toutes les annotations de l'apprenant (page Mes annotations).
  *               v0.40.0 : corrections par l'IA des ateliers d'une leçon.
+ *               v0.43.0 : nombre de tentatives de chaque exercice d'une leçon.
  *  Auteur     : Claude Marcel
- *  Version    : 1.5
+ *  Version    : 1.6
  *  Date       : 2026-11-20
  *  Dépendances: lib/auth/dal.ts, lib/supabase/server.ts, lib/cours/notation.ts,
  *               lib/cours/calendrier.ts, lib/cours/evaluation.ts, lib/cours/note-finale.ts
@@ -38,6 +39,10 @@ import {
 import { resultatsQuiz, type ResultatQuiz } from "@/lib/cours/evaluation";
 import { estRedigee } from "@/lib/cours/lecons";
 import { LECONS } from "@/lib/cours/modules";
+import {
+  resultatsParExercice,
+  type ResultatTentatives,
+} from "@/lib/cours/tentatives";
 import type { LigneProgression } from "@/lib/cours/notation";
 import {
   COLONNES_REGLAGES,
@@ -126,13 +131,13 @@ export const progressionApprenant = cache(
 );
 
 /**
- * Meilleure note obtenue à chaque exercice d'une leçon.
+ * Meilleure note et nombre de tentatives à chaque exercice d'une leçon.
  * @param leconId - Identifiant stable « m01-l01 »
- * @returns Note sur 100 par identifiant d'exercice local (« e1 »)
+ * @returns Résultat par identifiant d'exercice local (« e1 »)
  */
 export async function meilleuresNotes(
   leconId: string,
-): Promise<Record<string, number>> {
+): Promise<Record<string, ResultatTentatives>> {
   const user = await getCurrentUser();
   if (!user) return {};
   const supabase = await createClient();
@@ -142,12 +147,11 @@ export async function meilleuresNotes(
     .eq("user_id", user.id)
     .like("exercise_id", `${leconId}-e%`);
   if (error || !data) return {};
-  const notes: Record<string, number> = {};
-  for (const ligne of data as { exercise_id: string; score: number }[]) {
-    const local = ligne.exercise_id.slice(leconId.length + 1);
-    notes[local] = Math.max(notes[local] ?? 0, Number(ligne.score));
+  const resultats: Record<string, ResultatTentatives> = {};
+  for (const [id, r] of resultatsParExercice(data)) {
+    resultats[id.slice(leconId.length + 1)] = r;
   }
-  return notes;
+  return resultats;
 }
 
 /**

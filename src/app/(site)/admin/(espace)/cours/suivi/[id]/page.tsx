@@ -6,10 +6,12 @@
  *               synthèse (achèvement, temps, moyenne), progression module par module
  *               avec l'état, le temps et les notes de chaque leçon, puis le temps de
  *               formation jour par jour (90 derniers jours). v0.37.0 : note au quiz.
+ *               v0.43.0 : nombre de tentatives par exercice et par quiz, et total.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
- *  Dépendances: lib/cours/admin-queries.ts, lib/cours/suivi.ts, lib/cours/notation.ts
+ *  Dépendances: lib/cours/admin-queries.ts, lib/cours/suivi.ts, lib/cours/notation.ts,
+ *               lib/cours/tentatives.ts
  * =============================================================
  */
 
@@ -29,6 +31,7 @@ import {
 import { LECONS } from "@/lib/cours/modules";
 import { dureeLisible } from "@/lib/cours/notation";
 import { ficheParModule, type ModuleFiche } from "@/lib/cours/suivi";
+import { nombreTentatives, totalTentatives } from "@/lib/cours/tentatives";
 import { DATE_FORMAT } from "@/lib/format/date";
 
 const a = getCourseDictionary().admin;
@@ -89,6 +92,7 @@ async function Fiche({ params }: Props) {
 /** Compte, cohorte, origine et synthèse chiffrée. */
 function Identite({ fiche }: { fiche: FicheApprenant }) {
   const ap = fiche.apprenant;
+  const total = totalTentatives(fiche.tentatives);
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
@@ -105,7 +109,7 @@ function Identite({ fiche }: { fiche: FicheApprenant }) {
           })}
         </p>
       </div>
-      <ul className="grid gap-3 sm:grid-cols-3">
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <li className={`${PANEL_SAND} p-4`}>
           {interpolate(f.progression, {
             terminees: String(ap.terminees),
@@ -123,6 +127,12 @@ function Identite({ fiche }: { fiche: FicheApprenant }) {
                 moyenne: NOMBRE.format(ap.moyenne),
                 n: String(ap.exercises ?? 0),
               })}
+        </li>
+        <li className={`${PANEL_SAND} p-4`}>
+          {interpolate(f.tentatives, {
+            exercices: String(total.exercices),
+            quiz: String(total.quiz),
+          })}
         </li>
       </ul>
     </section>
@@ -169,7 +179,7 @@ function BlocModule({ mod }: { mod: ModuleFiche }) {
                   {interpolate(f.note, {
                     n: n.exercice.split("-e")[1] ?? n.exercice,
                     score: NOMBRE.format(n.meilleure),
-                    essais: String(n.essais),
+                    essais: nombreTentatives(n.essais),
                   })}
                 </p>
               ))}
@@ -179,7 +189,7 @@ function BlocModule({ mod }: { mod: ModuleFiche }) {
             {mod.quiz
               ? interpolate(f.quiz, {
                   score: NOMBRE.format(mod.quiz.meilleure),
-                  essais: String(mod.quiz.essais),
+                  essais: nombreTentatives(mod.quiz.essais),
                 })
               : f.quizAucun}
           </li>

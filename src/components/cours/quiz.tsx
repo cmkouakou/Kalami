@@ -8,11 +8,14 @@
  *               En cas d'échec, seule la note de chaque question s'affiche. Essais
  *               illimités ; la meilleure note compte. v0.38.0 : squelette() et
  *               Question exportés pour l'examen final.
+ *               v0.43.0 : rang de la tentative en bas du quiz (« 3e tentative »).
+ *               v0.44.0 : réponses gardées en brouillon jusqu'à l'envoi.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  *  Dépendances: components/cours/exercices.tsx, lib/cours/actions.ts,
- *               lib/cours/evaluation.ts, i18n/course.ts
+ *               lib/cours/evaluation.ts, lib/cours/brouillon.ts, use-brouillon.ts,
+ *               i18n/course.ts
  * =============================================================
  */
 
@@ -22,6 +25,7 @@ import { useState, useTransition } from "react";
 
 import {
   Classement,
+  Decompte,
   Qcm,
   VraiFaux,
   construire,
@@ -32,11 +36,18 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import { soumettreQuiz } from "@/lib/cours/actions";
+import {
+  brouillonReponses,
+  cleBrouillon,
+  lireReponses,
+} from "@/lib/cours/brouillon";
 import type { QuestionQuiz } from "@/lib/cours/content";
 import {
   reponseModele,
   type QuestionPublique,
 } from "@/lib/cours/evaluation";
+
+import { useBrouillon } from "./use-brouillon";
 import type { Correction, Reponse } from "@/lib/cours/notation";
 
 const t = getCourseDictionary();
@@ -56,6 +67,10 @@ type Props = {
   seuil: number;
   /** Meilleure note déjà obtenue (null : jamais tenté). */
   meilleure: number | null;
+  /** Compte connecté : clé du brouillon (absent : rien n'est gardé). */
+  compte?: string;
+  /** Tentatives déjà enregistrées (0 : jamais tenté). */
+  essais: number;
   /** Corrigé modèle, fourni seulement si le quiz a déjà été réussi. */
   corrigeModele: QuestionQuiz[] | null;
 };
@@ -169,6 +184,8 @@ export function QuizModule({
   questions,
   seuil,
   meilleure,
+  compte,
+  essais,
   corrigeModele,
 }: Props) {
   const [squelettes] = useState(() => questions.map(squelette));
@@ -177,10 +194,20 @@ export function QuizModule({
   const [score, setScore] = useState<number | null>(null);
   const [corrige, setCorrige] = useState<Corrige | null>(null);
   const [record, setRecord] = useState(meilleure);
+  const [nbEssais, setNbEssais] = useState(essais);
   const [modele, setModele] = useState(corrigeModele);
   const [voirModele, setVoirModele] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [envoi, startEnvoi] = useTransition();
+  const effacerBrouillon = useBrouillon(
+    compte ? cleBrouillon(compte, `${moduleId}-quiz`) : null,
+    valeurs,
+    {
+      lire: (brut) => lireReponses(brut, squelettes),
+      appliquer: setValeurs,
+      aGarder: (v) => brouillonReponses(squelettes, v),
+    },
+  );
 
   const termine = score !== null;
 
@@ -206,9 +233,11 @@ export function QuizModule({
         setMessage(r.error);
         return;
       }
+      effacerBrouillon();
       setScore(r.score);
       setNotes(r.notes);
       setRecord((m) => Math.max(m ?? 0, r.score));
+      setNbEssais((n) => n + 1);
       if (r.reussi && r.questions && r.corrections) {
         setCorrige({ questions: r.questions, valeurs, corrections: r.corrections });
         setModele(r.questions);
@@ -319,6 +348,7 @@ export function QuizModule({
           </span>
         )}
       </div>
+      <Decompte essais={nbEssais} corrige={termine} />
       <p
         role="alert"
         aria-live="polite"

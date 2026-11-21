@@ -7,10 +7,13 @@
  *               clique sur Correction. Compteur de corrections restantes (5 par
  *               atelier), correction affichée (verdict, points juste / à revoir,
  *               conseil) et historique des corrections précédentes.
+ *               v0.44.0 : saisie gardée en brouillon dans le navigateur ; elle remplace
+ *               la dernière saisie corrigée à la réouverture.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
- *  Dépendances: lib/cours/atelier-ia.ts, lib/cours/actions-atelier.ts, i18n/course.ts
+ *  Dépendances: lib/cours/atelier-ia.ts, lib/cours/actions-atelier.ts,
+ *               lib/cours/brouillon.ts, use-brouillon.ts, i18n/course.ts
  * =============================================================
  */
 
@@ -22,6 +25,7 @@ import { BUTTON_PRIMARY, CARD, CONTROL } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import { corrigerAtelier } from "@/lib/cours/actions-atelier";
+import { cleBrouillon, lireSaisieAtelier } from "@/lib/cours/brouillon";
 import {
   MAX_CORRECTIONS,
   validerSaisie,
@@ -31,6 +35,8 @@ import {
   type HistoriqueAtelier,
   type Saisie,
 } from "@/lib/cours/atelier-ia";
+
+import { useBrouillon } from "./use-brouillon";
 
 const t = getCourseDictionary();
 
@@ -48,6 +54,8 @@ type Props = {
   atelier: AtelierIA;
   /** Corrections déjà obtenues, la plus récente d'abord. */
   historique: HistoriqueAtelier[];
+  /** Compte connecté : clé du brouillon (absent : rien n'est gardé). */
+  compte?: string;
 };
 
 // ==================== FONCTIONS UTILITAIRES ====================
@@ -185,7 +193,13 @@ function VueCorrection({
  * Atelier corrigé par l'IA, avec son compteur de corrections.
  * Chaque clic sur Correction consomme une correction, sauf en cas d'échec technique.
  */
-export function AtelierIACours({ leconId, localId, atelier, historique }: Props) {
+export function AtelierIACours({
+  leconId,
+  localId,
+  atelier,
+  historique,
+  compte,
+}: Props) {
   const [saisie, setSaisie] = useState<Saisie>(() => saisieInitiale(atelier, historique));
   const [passees, setPassees] = useState<HistoriqueAtelier[]>(historique);
   const [restantes, setRestantes] = useState(
@@ -193,6 +207,19 @@ export function AtelierIACours({ leconId, localId, atelier, historique }: Props)
   );
   const [erreur, setErreur] = useState<string | null>(null);
   const [envoi, demarrer] = useTransition();
+  const effacerBrouillon = useBrouillon(
+    compte ? cleBrouillon(compte, `${leconId}-${localId}`) : null,
+    saisie,
+    {
+      lire: (brut) =>
+        lireSaisieAtelier(brut, atelier.champs, saisieInitiale(atelier, historique)),
+      appliquer: setSaisie,
+      aGarder: (s) => {
+        const depart = saisieInitiale(atelier, historique);
+        return atelier.champs.some((c) => s[c.id] !== depart[c.id]) ? s : null;
+      },
+    },
+  );
 
   const derniere = passees[0] ?? null;
   const anciennes = passees.slice(1);
@@ -219,6 +246,7 @@ export function AtelierIACours({ leconId, localId, atelier, historique }: Props)
           ...p,
         ]);
         setRestantes(res.restantes);
+        effacerBrouillon();
       } catch {
         setErreur(t.ateliers.erreur);
       }

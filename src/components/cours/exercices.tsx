@@ -7,10 +7,14 @@
  *               qui renvoie la note et la justesse de chaque partie ; les explications
  *               s'affichent alors. Une question ouverte révèle son corrigé modèle.
  *               v0.37.0 : composants de saisie exportés pour les quiz de module.
+ *               v0.43.0 : rang de la tentative (« 2e tentative ») sous chaque exercice.
+ *               v0.44.0 : réponses et texte des questions ouvertes gardés en brouillon
+ *               dans le navigateur (use-brouillon.ts) jusqu'à l'envoi.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.3
  *  Date       : 2026-11-20
- *  Dépendances: lib/cours/actions.ts, lib/cours/content.ts, i18n/course.ts
+ *  Dépendances: lib/cours/actions.ts, lib/cours/content.ts, lib/cours/tentatives.ts,
+ *               lib/cours/brouillon.ts, use-brouillon.ts, i18n/course.ts
  * =============================================================
  */
 
@@ -28,6 +32,13 @@ import {
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import { soumettreReponse } from "@/lib/cours/actions";
+import {
+  brouillonReponses,
+  cleBrouillon,
+  lireReponses,
+  lireTexte,
+  TEXTE_MAX,
+} from "@/lib/cours/brouillon";
 import type {
   ClassementExercice,
   Exercice,
@@ -36,6 +47,9 @@ import type {
   VraiFauxExercice,
 } from "@/lib/cours/content";
 import type { Correction, Reponse } from "@/lib/cours/notation";
+import { rangTentative } from "@/lib/cours/tentatives";
+
+import { useBrouillon } from "./use-brouillon";
 
 const t = getCourseDictionary();
 
@@ -45,12 +59,24 @@ type Props = {
   exercice: Exercice;
   /** Meilleure note déjà obtenue (null : jamais tenté). */
   meilleure: number | null;
+  /** Compte connecté : clé du brouillon (absent : rien n'est gardé). */
+  compte?: string;
+  /** Tentatives déjà enregistrées (0 : jamais tenté). */
+  essais: number;
 };
 
 // ==================== CADRE ====================
 
 /** Exercice affiché dans sa carte, avec son numéro. */
-export function ExerciceCours({ leconId, numero, exercice, meilleure }: Props) {
+export function ExerciceCours({
+  leconId,
+  numero,
+  exercice,
+  meilleure,
+  compte,
+  essais,
+}: Props) {
+  const cle = compte ? cleBrouillon(compte, `${leconId}-${exercice.id}`) : null;
   return (
     <section
       className={`${CARD} flex flex-col gap-4 p-5`}
@@ -60,9 +86,15 @@ export function ExerciceCours({ leconId, numero, exercice, meilleure }: Props) {
         {interpolate(t.exercices.exercice, { n: String(numero) })}
       </p>
       {exercice.type === "ouvert" ? (
-        <Ouvert exercice={exercice} />
+        <Ouvert exercice={exercice} cle={cle} />
       ) : (
-        <Note leconId={leconId} exercice={exercice} meilleure={meilleure} />
+        <Note
+          leconId={leconId}
+          exercice={exercice}
+          meilleure={meilleure}
+          cle={cle}
+          essais={essais}
+        />
       )}
     </section>
   );
@@ -96,16 +128,28 @@ function Note({
   leconId,
   exercice,
   meilleure,
+  cle,
+  essais,
 }: {
   leconId: string;
   exercice: Notable;
   meilleure: number | null;
+  /** Clé du brouillon (null : rien n'est gardé). */
+  cle: string | null;
+  /** Tentatives déjà enregistrées (0 : jamais tenté). */
+  essais: number;
 }) {
   const [valeurs, setValeurs] = useState(() => reponseVide(exercice));
   const [correction, setCorrection] = useState<Correction | null>(null);
   const [record, setRecord] = useState(meilleure);
+  const [nbEssais, setNbEssais] = useState(essais);
   const [message, setMessage] = useState<string | null>(null);
   const [envoi, startEnvoi] = useTransition();
+  const effacerBrouillon = useBrouillon(cle, valeurs, {
+    lire: (brut) => lireReponses(brut, [exercice])?.[0] ?? null,
+    appliquer: setValeurs,
+    aGarder: (v) => brouillonReponses([exercice], [v]),
+  });
 
   /** Change la réponse d'une partie (désactivé une fois corrigé). */
   const choisir = (i: number, v: number | boolean) => {
@@ -127,8 +171,10 @@ function Note({
         setMessage(r.error);
         return;
       }
+      effacerBrouillon();
       setCorrection(r.correction);
       setRecord((m) => Math.max(m ?? 0, r.correction.score));
+      setNbEssais((n) => n + 1);
     });
   };
 
@@ -198,6 +244,7 @@ function Note({
           </span>
         )}
       </div>
+      <Decompte essais={nbEssais} corrige={correction !== null} />
       <p
         role="status"
         aria-live="polite"
@@ -206,6 +253,23 @@ function Note({
         {message}
       </p>
     </>
+  );
+}
+
+/**
+ * Décompte affiché en bas d'un exercice ou d'un quiz : le rang de la tentative qui
+ * vient d'être corrigée (« 2e tentative »), sinon le nombre de tentatives déjà faites.
+ * @param essais - Tentatives enregistrées, celle qui vient d'être corrigée comprise
+ * @param corrige - Vrai si une correction est affichée
+ */
+export function Decompte({ essais, corrige }: { essais: number; corrige: boolean }) {
+  if (essais < 1) return null;
+  return (
+    <p className="text-small text-ink-muted">
+      {corrige
+        ? interpolate(t.exercices.tentative, { rang: rangTentative(essais) })
+        : interpolate(t.exercices.tentativesFaites, { n: String(essais) })}
+    </p>
   );
 }
 
@@ -391,8 +455,14 @@ export function Classement({
 // ==================== QUESTION OUVERTE ====================
 
 /** Question ouverte : brouillon local, puis corrigé modèle à la demande. */
-function Ouvert({ exercice }: { exercice: OuvertExercice }) {
+function Ouvert({ exercice, cle }: { exercice: OuvertExercice; cle: string | null }) {
   const [ouvert, setOuvert] = useState(false);
+  const [texte, setTexte] = useState("");
+  useBrouillon(cle, texte, {
+    lire: lireTexte,
+    appliquer: setTexte,
+    aGarder: (v) => (v.trim() ? v : null),
+  });
   return (
     <div className="flex flex-col gap-3">
       <p className="font-semibold">
@@ -400,7 +470,13 @@ function Ouvert({ exercice }: { exercice: OuvertExercice }) {
       </p>
       <label className="flex flex-col gap-1 text-small text-ink-muted">
         {t.exercices.votreReponse}
-        <textarea rows={4} className={`${CONTROL} text-ink`} />
+        <textarea
+          rows={4}
+          value={texte}
+          maxLength={TEXTE_MAX}
+          onChange={(e) => setTexte(e.target.value)}
+          className={`${CONTROL} text-ink`}
+        />
       </label>
       <button
         type="button"

@@ -7,8 +7,10 @@
  *               exigée, accès vérifié, ouverture quand toutes les leçons du module sont
  *               ouvertes. Le navigateur ne reçoit les bonnes réponses que si le quiz a
  *               déjà été réussi. v0.38.0 : seuil de réussite lu dans les réglages.
+ *               v0.43.0 : nombre de tentatives transmis au quiz (décompte en bas).
+ *               v0.44.0 : compte transmis au quiz (brouillon des réponses).
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.3
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, components/cours/quiz.tsx, cours.css
  * =============================================================
@@ -94,16 +96,13 @@ async function QuizPrive({ mod, adresse }: { mod: ModuleInfo; adresse: string })
           seuil: String(seuilQuiz),
         })}
       </p>
-      {resultat && (
-        <p className="text-small text-ink-muted">
-          {interpolate(t.quiz.essais, { n: String(resultat.essais) })}
-        </p>
-      )}
       <QuizModule
         moduleId={mod.id}
         questions={questions.map(versionPublique)}
         seuil={seuilQuiz}
         meilleure={meilleure}
+        essais={resultat?.essais ?? 0}
+        compte={user.id}
         corrigeModele={estReussi(meilleure, seuilQuiz) ? [...questions] : null}
       />
     </>

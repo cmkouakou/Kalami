@@ -1,5 +1,42 @@
 # Journal des modifications
 
+## [v0.44.0] - 2026-11-20 — Cours : réponses gardées en brouillon
+### Ajouté
+- Exercices notés, questions ouvertes, quiz de module, examen final et ateliers corrigés
+  par l'IA : chaque choix et chaque frappe est gardé dans le navigateur. Après un
+  rechargement, une fermeture brusque ou une coupure, la page rouvre avec les réponses en
+  cours. Le brouillon s'efface une fois la réponse envoyée et corrigée. La question ouverte
+  n'est jamais envoyée, donc son texte reste gardé.
+- Le brouillon est propre à chaque compte (un appareil partagé ne montre pas les réponses
+  d'un autre apprenant). Il est écarté s'il ne correspond plus aux questions, par exemple
+  après une modification du contenu. Sans stockage disponible (navigation privée
+  stricte), la page marche comme avant.
+- `src/lib/cours/brouillon.ts` (clés et validation), `src/components/cours/use-brouillon.ts`
+  (enregistrement et remise en place) et 10 tests unitaires
+  (`tests/unit/cours-brouillon.test.ts`).
+
+### Modifié
+- Atelier IA : à la réouverture, un brouillon non corrigé remplace la dernière saisie
+  corrigée.
+- Aucune migration : rien n'est envoyé au serveur avant la soumission.
+
+## [v0.43.0] - 2026-11-20 — Cours : décompte des tentatives
+### Ajouté
+- Exercices notés et quiz de module : en bas de chaque exercice et de chaque quiz, le rang
+  de la tentative qui vient d'être corrigée (« 1re tentative », « 2e tentative »…), ou
+  « Tentatives faites : N » avant de recommencer. Le compteur part des tentatives déjà
+  enregistrées et avance à chaque envoi.
+- Administration > Cours > fiche de l'inscrit : encadré « Tentatives : N aux exercices,
+  N aux quiz » ; chaque exercice et chaque quiz affiche sa meilleure note et son nombre de
+  tentatives (« meilleure note 80 / 100 · 3 tentatives »).
+- `src/lib/cours/tentatives.ts` (rang, accord, cumul) et 7 tests unitaires
+  (`tests/unit/cours-tentatives.test.ts`).
+
+### Modifié
+- Page du quiz : la ligne « N essai(s) » du haut est remplacée par le décompte en bas.
+- Aucune migration : les tentatives étaient déjà enregistrées une à une
+  (`course_attempts`).
+
 ## [v0.42.1] - 2026-11-20 — Cours : « Terminée » en vert
 ### Modifié
 - Sommaire du cours : le badge « Terminée » des leçons est vert (`BADGE_SUCCES`), les

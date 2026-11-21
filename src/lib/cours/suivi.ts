@@ -6,14 +6,16 @@
  *               de courriels collée, synthèse et tri des apprenants, progression module
  *               par module et export CSV du suivi. Sans accès à la base : testable seul.
  *               v0.37.0 : meilleure note et essais au quiz de chaque module.
+ *               v0.43.0 : décompte des tentatives repris de tentatives.ts.
  *  Auteur     : Claude Marcel
- *  Version    : 1.1
+ *  Version    : 1.2
  *  Date       : 2026-11-20
- *  Dépendances: lib/cours/modules.ts
+ *  Dépendances: lib/cours/modules.ts, lib/cours/tentatives.ts
  * =============================================================
  */
 
 import { LECONS, MODULES } from "@/lib/cours/modules";
+import { resultatsParExercice } from "@/lib/cours/tentatives";
 
 // ==================== TYPES ====================
 
@@ -228,26 +230,6 @@ export type ModuleFiche = {
 };
 
 /**
- * Meilleure note et nombre d'essais par exercice.
- * @param tentatives - Tentatives de l'apprenant
- */
-function meilleuresNotes(
-  tentatives: Tentative[],
-): Map<string, { meilleure: number; essais: number }> {
-  const parExercice = new Map<string, { meilleure: number; essais: number }>();
-  for (const t of tentatives) {
-    const score = Number(t.score);
-    if (!Number.isFinite(score)) continue;
-    const actuel = parExercice.get(t.exercise_id);
-    parExercice.set(t.exercise_id, {
-      meilleure: Math.max(actuel?.meilleure ?? 0, score),
-      essais: (actuel?.essais ?? 0) + 1,
-    });
-  }
-  return parExercice;
-}
-
-/**
  * Progression module par module d'un apprenant : état et temps de chaque leçon, et
  * meilleure note de chaque exercice (« m01-l01-e2 » est rattaché à « m01-l01 »).
  *
@@ -259,7 +241,7 @@ export function ficheParModule(
   tentatives: Tentative[],
 ): ModuleFiche[] {
   const parLecon = new Map(progression.map((p) => [p.lesson_id, p]));
-  const notes = meilleuresNotes(tentatives);
+  const notes = resultatsParExercice(tentatives);
 
   return MODULES.map((mod) => {
     const lecons: LeconFiche[] = mod.lecons.map((lecon) => {

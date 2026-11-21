@@ -6,8 +6,9 @@
  *               inscrits (connexion exigée, accès vérifié) et ne s'ouvre qu'après les
  *               13 quiz réussis. 3 essais espacés de 24 h ; fermé une fois le diplôme
  *               délivré. Le navigateur ne reçoit jamais les bonnes réponses.
+ *               v0.44.0 : compte transmis à l'examen (brouillon des réponses).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/{acces,examen,note-finale,evaluation}.ts,
  *               components/cours/examen.tsx, cours.css
@@ -148,6 +149,7 @@ async function ExamenPrive() {
         questions={QUESTIONS_EXAMEN.map(versionPublique)}
         seuil={reglages.seuilExamen}
         essais={ESSAIS_EXAMEN}
+        compte={user.id}
       />
     </>
   );

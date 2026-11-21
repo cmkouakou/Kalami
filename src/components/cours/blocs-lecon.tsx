@@ -10,8 +10,10 @@
  *               en avance (v0.33.0), ils sont remplacés par leur date d'ouverture.
  *               v0.40.0 : ateliers corrigés par l'IA (sans data-bloc, comme les
  *               exercices).
+ *               v0.43.0 : nombre de tentatives transmis à chaque exercice.
+ *               v0.44.0 : compte transmis aux exercices et ateliers (brouillons).
  *  Auteur     : Claude Marcel
- *  Version    : 1.2
+ *  Version    : 1.4
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts, schemas.tsx, exercices.tsx, i18n/course.ts
  * =============================================================
@@ -35,6 +37,7 @@ import type {
   TableauBlock,
   TexteBlock,
 } from "@/lib/cours/content";
+import type { ResultatTentatives } from "@/lib/cours/tentatives";
 
 import { AtelierIACours } from "./atelier-ia";
 import { ExerciceCours } from "./exercices";
@@ -185,9 +188,11 @@ function rendreAppliquez(
 
 type Contexte = {
   leconId: string;
-  meilleures: Record<string, number>;
+  meilleures: Record<string, ResultatTentatives>;
   /** Message affiché à la place des exercices (lecture en avance), sinon absent. */
   exercicesFermes?: string;
+  /** Compte connecté : clé des brouillons (absent : rien n'est gardé). */
+  compte?: string;
   /** Numéro du prochain exercice (1, 2, 3…), indépendant des indices de blocs. */
   exercice: () => number;
   /** Corrections déjà obtenues par atelier (« a1 »). */
@@ -261,7 +266,9 @@ function rendreBloc(
           leconId={ctx.leconId}
           numero={ctx.exercice()}
           exercice={bloc.exercice}
-          meilleure={ctx.meilleures[id] ?? null}
+          meilleure={ctx.meilleures[id]?.meilleure ?? null}
+          essais={ctx.meilleures[id]?.essais ?? 0}
+          compte={ctx.compte}
         />
       );
     }
@@ -284,6 +291,7 @@ function rendreBloc(
           localId={bloc.id}
           atelier={atelier}
           historique={ctx.ateliers[bloc.id] ?? []}
+          compte={ctx.compte}
         />
       );
     }
@@ -316,10 +324,12 @@ function SchemaSur({ id }: { id: Parameters<typeof Schema>[0]["id"] }) {
 type Props = {
   leconId: string;
   contenu: CoursBlock[];
-  /** Meilleures notes par exercice (« e1 » → 80). */
-  meilleures: Record<string, number>;
+  /** Meilleure note et tentatives par exercice (« e1 » → { 80, 2 }). */
+  meilleures: Record<string, ResultatTentatives>;
   /** Lecture en avance : message remplaçant chaque exercice (v0.33.0). */
   exercicesFermes?: string;
+  /** Compte connecté : brouillons des réponses (v0.44.0 ; absent en aperçu). */
+  compte?: string;
   /** Corrections d'ateliers déjà obtenues (v0.40.0). */
   ateliers?: Record<string, HistoriqueAtelier[]>;
 };
@@ -334,6 +344,7 @@ export function BlocsLecon({
   meilleures,
   exercicesFermes,
   ateliers = {},
+  compte,
 }: Props) {
   let bloc = 0;
   let exercice = 0;
@@ -344,6 +355,7 @@ export function BlocsLecon({
     exercicesFermes,
     exercice: () => ++exercice,
     ateliers,
+    compte,
   };
   return (
     <div className="flex flex-col gap-5 leading-relaxed">

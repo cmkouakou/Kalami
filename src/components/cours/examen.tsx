@@ -7,10 +7,12 @@
  *               renvoie que la note et les numéros des questions manquées, jamais les
  *               bonnes réponses. La remise se fait en deux temps (confirmation dans la
  *               page) puisque chaque essai compte.
+ *               v0.44.0 : réponses gardées en brouillon jusqu'à la remise.
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
+ *  Version    : 1.1
  *  Date       : 2026-11-20
- *  Dépendances: components/cours/{exercices,quiz}.tsx, lib/cours/actions.ts
+ *  Dépendances: components/cours/{exercices,quiz}.tsx, lib/cours/actions.ts,
+ *               lib/cours/brouillon.ts, use-brouillon.ts
  * =============================================================
  */
 
@@ -25,7 +27,14 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, CARD } from "@/components/ui/styles";
 import { interpolate } from "@/i18n";
 import { getCourseDictionary } from "@/i18n/course";
 import { soumettreExamen } from "@/lib/cours/actions";
+import {
+  brouillonReponses,
+  cleBrouillon,
+  lireReponses,
+} from "@/lib/cours/brouillon";
 import type { QuestionPublique } from "@/lib/cours/evaluation";
+
+import { useBrouillon } from "./use-brouillon";
 
 const t = getCourseDictionary();
 
@@ -34,6 +43,8 @@ type Props = {
   seuil: number;
   /** Nombre d'essais permis (affiché dans la confirmation). */
   essais: number;
+  /** Compte connecté : clé du brouillon (absent : rien n'est gardé). */
+  compte?: string;
 };
 
 /** Résultat affiché après la remise. */
@@ -42,12 +53,21 @@ type Bilan = { score: number; reussi: boolean; manquees: number[] };
 // ==================== EXAMEN ====================
 
 /** Examen final : saisie, confirmation, remise, note et questions manquées. */
-export function ExamenFinal({ questions, seuil, essais }: Props) {
+export function ExamenFinal({ questions, seuil, essais, compte }: Props) {
   const [squelettes] = useState(() => questions.map(squelette));
   const [valeurs, setValeurs] = useState<Valeurs[]>(() => squelettes.map(reponseVide));
   const [confirmation, setConfirmation] = useState(false);
   const [bilan, setBilan] = useState<Bilan | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const effacerBrouillon = useBrouillon(
+    compte ? cleBrouillon(compte, "examen") : null,
+    valeurs,
+    {
+      lire: (brut) => lireReponses(brut, squelettes),
+      appliquer: setValeurs,
+      aGarder: (v) => brouillonReponses(squelettes, v),
+    },
+  );
   const [envoi, startEnvoi] = useTransition();
 
   /** Change la réponse d'une partie d'une question (bloqué après la remise). */
@@ -80,6 +100,7 @@ export function ExamenFinal({ questions, seuil, essais }: Props) {
         setMessage(r.error);
         return;
       }
+      effacerBrouillon();
       setBilan({ score: r.score, reussi: r.reussi, manquees: r.manquees });
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
