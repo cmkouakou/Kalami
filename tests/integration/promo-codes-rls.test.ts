@@ -63,13 +63,13 @@ describe.skipIf(!ready)("RLS — codes promo", () => {
     promoIds.push(data.id);
   }
 
-  /** Commande d'un lot de 10 en CAD, avec ou sans code. */
+  /** Commande d'une étude (offre toujours en vente) en CAD, avec ou sans code. */
   function orderLot(code: string | null) {
     return buyer
       .rpc("create_strategy_order", {
         p_kind: "study_offer",
         p_currency: "CAD",
-        p_code: "lot_10",
+        p_code: "study",
         p_pack_id: null,
         p_study_id: null,
         p_promo_code: code,

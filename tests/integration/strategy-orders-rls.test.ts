@@ -2,8 +2,8 @@
  * Fichier    : strategy-orders-rls.test.ts
  * Projet     : Kalami
  * Description: Tests d'intégration des paiements Kalami Stratégie (Sprint 5b, v0.10.2) :
- *              offres lisibles par tous mais table réservée à l'admin, lot de 10 au prix de
- *              la base livré en 10 crédits achetés, forfait du coach réservé au propriétaire
+ *              offres lisibles par tous mais table réservée à l'admin, offre « study »
+ *              (toujours en vente) au prix de la base livrée en crédits achetés, forfait du coach réservé au propriétaire
  *              (ou à l'enseignant), fonctions d'administration refusées aux utilisateurs.
  *              Ignorés si les clés manquent ou si la migration n'est pas appliquée.
  * Auteur     : Claude Marcel
@@ -132,23 +132,24 @@ describe.skipIf(!ready)("RLS — paiements Kalami Stratégie", () => {
     const { data, error } = await anon.rpc("strategy_offer_list");
     expect(error).toBeNull();
     const codes = (data as { code: string }[]).map((row) => row.code);
-    expect(codes).toEqual(expect.arrayContaining(["study", "lot_10", "lot_30"]));
+    // Les lots peuvent être retirés de la vente : seule l'étude à l'unité est garantie
+    expect(codes).toContain("study");
 
     const direct = await buyer.from("strategy_offers").select("code");
     expect(direct.data).toEqual([]);
   });
 
-  it("vend un lot de 10 au prix de la base et livre 10 crédits achetés", async () => {
+  it("vend une offre au prix de la base et livre ses crédits achetés", async () => {
     const offer = await service
       .from("strategy_offers")
       .select("price_cad, credits")
-      .eq("code", "lot_10")
+      .eq("code", "study")
       .single();
     const { data, error } = await buyer
       .rpc("create_strategy_order", {
         p_kind: "study_offer",
         p_currency: "CAD",
-        p_code: "lot_10",
+        p_code: "study",
         p_pack_id: null,
         p_study_id: null,
       })
@@ -166,7 +167,7 @@ describe.skipIf(!ready)("RLS — paiements Kalami Stratégie", () => {
     expect(credits.data?.every((row) => row.order_id === data!.order_id)).toBe(true);
 
     const items = await buyer.from("order_items").select("kind, credits");
-    expect(items.data).toEqual([{ kind: "study_lot", credits: 10 }]);
+    expect(items.data).toEqual([{ kind: "study", credits: 1 }]);
   });
 
   it("réserve le forfait du coach au propriétaire, sans remise enseignant", async () => {

@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## [v0.42.1] - 2026-11-20 — Cours : « Terminée » en vert
+### Modifié
+- Sommaire du cours : le badge « Terminée » des leçons est vert (`BADGE_SUCCES`), les
+  autres badges restent neutres.
+- Tests d'intégration des paiements Stratégie et des codes promo : ils commandent
+  l'étude à l'unité (toujours en vente) au lieu du lot de 10, retiré de la vente.
+
 ## [v0.42.0] - 2026-11-20 — Cours : liste des inscrits et dates individuelles
 ### Ajouté
 - Administration > Cours > Apprenants : liste de tous les inscrits avec recherche (courriel

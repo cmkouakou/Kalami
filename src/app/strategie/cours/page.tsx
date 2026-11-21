@@ -16,7 +16,7 @@
  *  Auteur     : Claude Marcel
  *  Version    : 1.7 (v0.33.0 : diffusion ; v0.37.0 : quiz ; v0.38.0 : examen ;
  *               v0.38.2 : lien vers « Mes annotations » ; v0.39.0 : page de vente ;
- *               v0.42.0 : dates individuelles)
+ *               v0.42.0 : dates individuelles ; v0.42.1 : « Terminée » en vert)
  *  Date       : 2026-11-20
  *  Dépendances: lib/cours/*, lib/auth/dal.ts, components/cours/sans-acces.tsx
  * =============================================================
@@ -29,6 +29,7 @@ import { Suspense } from "react";
 import { HEURES_COURS, VenteCours } from "@/components/cours/vente-cours";
 import {
   BADGE,
+  BADGE_SUCCES,
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
   CARD,
@@ -241,7 +242,11 @@ function Programme({
                     </span>
                   )}
                   <span className="flex items-center gap-2 text-small text-ink-muted">
-                    {etat && <span className={BADGE}>{t.accueil[etat]}</span>}
+                    {etat && (
+                      <span className={etat === "terminee" ? BADGE_SUCCES : BADGE}>
+                        {t.accueil[etat]}
+                      </span>
+                    )}
                     {!etats && l.id === LECON_OFFERTE && (
                       <span className={BADGE}>{t.lecon.offerte}</span>
                     )}

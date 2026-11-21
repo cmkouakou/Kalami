@@ -1,5 +1,5 @@
 # 📊 Suivi — Kalami (plateforme de lecture)
-Version actuelle : v0.42.0 (liste des inscrits filtrable, dates individuelles d'ouverture et de fermeture) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
+Version actuelle : v0.42.1 (« Terminée » en vert dans le sommaire) · Stratégie v0.11.4 | Statut : 🟡 En cours (projet 1 en pause ; Stratégie S0-S10a et forfaits du coach livrés)
 
 ## 💰 Coûts cumulés
 | Session | Date | Travaux | Tokens est. | Coût |
@@ -120,8 +120,8 @@ Version actuelle : v0.42.0 (liste des inscrits filtrable, dates individuelles d'
 | #114 | 2026-11-20 | Recette du lancement du cours ; v0.39.2 : anecdote Cofomo-Nexio (leçon 11.2) | ~45 000 | ~0.27 $ |
 | #115 | 2026-11-20 | Anecdote titrée ; migration des diplômes appliquée ; v0.39.3 : exemples sourcés Québec et Côte d'Ivoire (leçon 11.3) ; v0.39.4 à v0.39.16 : idem leçons 10.1 à 10.4, 11.1, 11.2, 12.1 à 13.3 et liens visibles | ~305 000 | ~1.83 $ |
 | #116 | 2026-11-20 | v0.40.0 : cours, atelier corrigé par l'IA (leçon 1.2), repris après le plantage de VS Code ; v0.41.0 : le cours, source du coach | ~160 000 | ~0.96 $ |
-| #117 | 2026-11-20 | Prix CAD/EUR saisis (devise par pays) ; v0.42.0 : liste des inscrits filtrable, dates individuelles d'ouverture et de fermeture | ~150 000 | ~0.90 $ |
-| **TOTAL** | | | **~24 430 000** (hors #71) | **~146.58 $** |
+| #117 | 2026-11-20 | Prix CAD/EUR saisis (devise par pays) ; v0.42.0 : liste des inscrits filtrable, dates individuelles d'ouverture et de fermeture ; tests not_for_sale corrigés ; v0.42.1 : « Terminée » en vert | ~165 000 | ~0.99 $ |
+| **TOTAL** | | | **~24 445 000** (hors #71) | **~146.67 $** |
 
 ## ✅ Fonctionnalités
 - [x] Sprint 0 — socle Next.js, configuration, redirections, CI, documentation

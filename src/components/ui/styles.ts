@@ -51,6 +51,11 @@ export const PILL_ACTIVE = `${PILL_BASE} bg-encre-soft text-encre`;
 export const BADGE =
   "inline-flex items-center rounded-full bg-sand px-3 py-1 text-caption uppercase text-ink-muted";
 
+/** Badge vert : état réussi ou terminé (contraste vérifié en clair et en sombre). */
+export const BADGE_SUCCES =
+  "inline-flex items-center rounded-full bg-success/15 px-3 py-1 text-caption font-semibold " +
+  "uppercase text-success";
+
 // ==================== SURFACES ====================
 
 /** Carte : surface bordée, sans ombre. */
