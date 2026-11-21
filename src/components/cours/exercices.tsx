@@ -10,11 +10,13 @@
  *               v0.43.0 : rang de la tentative (« 2e tentative ») sous chaque exercice.
  *               v0.44.0 : réponses et texte des questions ouvertes gardés en brouillon
  *               dans le navigateur (use-brouillon.ts) jusqu'à l'envoi.
+ *               v0.47.0 : classement en grille à glisser-déposer (classement-grille.tsx).
  *  Auteur     : Claude Marcel
- *  Version    : 1.3
- *  Date       : 2026-11-20
+ *  Version    : 1.4
+ *  Date       : 2026-11-21
  *  Dépendances: lib/cours/actions.ts, lib/cours/content.ts, lib/cours/tentatives.ts,
- *               lib/cours/brouillon.ts, use-brouillon.ts, i18n/course.ts
+ *               lib/cours/brouillon.ts, use-brouillon.ts, classement-grille.tsx,
+ *               i18n/course.ts
  * =============================================================
  */
 
@@ -49,6 +51,7 @@ import type {
 import type { Correction, Reponse } from "@/lib/cours/notation";
 import { rangTentative } from "@/lib/cours/tentatives";
 
+import { ClassementGrille } from "./classement-grille";
 import { useBrouillon } from "./use-brouillon";
 
 const t = getCourseDictionary();
@@ -151,8 +154,8 @@ function Note({
     aGarder: (v) => brouillonReponses([exercice], [v]),
   });
 
-  /** Change la réponse d'une partie (désactivé une fois corrigé). */
-  const choisir = (i: number, v: number | boolean) => {
+  /** Change la réponse d'une partie (désactivé une fois corrigé ; null : la retire). */
+  const choisir = (i: number, v: number | boolean | null) => {
     if (correction) return;
     setValeurs((prev) => prev.map((x, j) => (j === i ? v : x)));
     setMessage(null);
@@ -203,7 +206,15 @@ function Note({
           onChoix={choisir}
         />
       )}
-      {exercice.type === "classement" && (
+      {exercice.type === "classement" && exercice.grille && (
+        <ClassementGrille
+          ex={{ ...exercice, grille: exercice.grille }}
+          valeurs={valeurs as (number | null)[]}
+          correction={correction}
+          onChoix={choisir}
+        />
+      )}
+      {exercice.type === "classement" && !exercice.grille && (
         <Classement
           ex={exercice}
           valeurs={valeurs as (number | null)[]}

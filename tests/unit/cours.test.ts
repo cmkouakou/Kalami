@@ -247,8 +247,18 @@ describe("leçons rédigées", () => {
       if (e.type === "classement") {
         for (const el of e.elements)
           expect(el.categorie).toBeLessThan(e.categories.length);
+        // Grille : chaque catégorie occupe exactement une des quatre cases (v0.47.0)
+        if (e.grille) {
+          expect(e.categories).toHaveLength(4);
+          expect([...e.grille.cases].sort()).toEqual([0, 1, 2, 3]);
+        }
       }
     }
+  });
+
+  it("m02-l03 : le premier exercice se fait dans la grille impact-incertitude", () => {
+    const e1 = exercicesDe(contenuLecon("m02-l03")!).find((e) => e.id === "e1");
+    expect(e1?.type === "classement" && e1.grille?.cases).toEqual([0, 1, 3, 2]);
   });
 });
 

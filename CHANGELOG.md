@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## [v0.47.0] - 2026-11-21 — Cours : exercice en grille à glisser-déposer (leçon 2.3)
+### Ajouté
+- Classement en grille 2 × 2 (`grille` dans ClassementExercice, composant
+  classement-grille.tsx) : la grille et ses axes restent sous les yeux, les énoncés à
+  placer attendent en dessous. Glisser-déposer à la souris ; sur écran tactile ou au
+  clavier, toucher l'énoncé puis la case (« Placer ici », « Remettre en bas »).
+- Après correction : énoncés bordés de vert ou de rouge dans leur case, puis la case
+  attendue et l'explication de chacun.
+- 2 tests unitaires (cohérence des cases de la grille, exercice 1 de la leçon 2.3).
+
+### Modifié
+- Leçon 2.3, exercice 1 (clinique privée d'Abidjan) : grille impact-incertitude au lieu
+  des listes déroulantes. Correction serveur et brouillon inchangés.
+
 ## [v0.46.1] - 2026-11-21 — Cours : exemple Ajinomoto (leçon 2.2)
 ### Modifié
 - Leçon 2.2, encadré « Un film plastique et trois dimensions » : texte révisé par

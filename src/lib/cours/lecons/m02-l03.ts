@@ -132,6 +132,11 @@ export const M02_L03: ContenuLecon = [
       "Pour une clinique privée d'Abidjan, dans quelle case de la grille placeriez-vous " +
       "chaque facteur ?",
     categories: ["Tendance lourde", "Variable pivot", "À surveiller", "Secondaire"],
+    grille: {
+      axeVertical: ["Impact", "faible", "fort"],
+      axeHorizontal: ["Incertitude", "faible", "forte"],
+      cases: [0, 1, 3, 2],
+    },
     elements: [
       {
         texte:

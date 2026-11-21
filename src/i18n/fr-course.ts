@@ -379,6 +379,15 @@ const courseFr = {
     voirCorrige: "Voir le corrigé",
     masquerCorrige: "Masquer le corrigé",
     corrige: "Corrigé modèle",
+    // Classement en grille à glisser-déposer (v0.47.0)
+    grilleAide:
+      "Glissez chaque énoncé dans une case de la grille. Sur écran tactile ou au " +
+      "clavier : touchez l'énoncé, puis la case.",
+    aPlacer: "Énoncés à placer",
+    tousPlaces: "Tous les énoncés sont placés. Vous pouvez encore les déplacer.",
+    placerIci: "Placer ici",
+    remettre: "Remettre en bas",
+    grilleCorrection: "Correction, énoncé par énoncé",
   },
 
   // ==================== ATELIERS CORRIGÉS PAR L'IA (v0.40.0) ====================

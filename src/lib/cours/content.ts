@@ -138,6 +138,19 @@ export type VraiFauxExercice = {
   affirmations: { texte: string; vrai: boolean; explication: string }[];
 };
 
+/**
+ * Grille 2 × 2 d'un classement (v0.47.0) : les éléments se glissent dans les cases au
+ * lieu d'être choisis dans une liste.
+ */
+export type GrilleClassement = {
+  /** Axe vertical : nom, libellé du bas, libellé du haut. */
+  axeVertical: [string, string, string];
+  /** Axe horizontal : nom, libellé de gauche, libellé de droite. */
+  axeHorizontal: [string, string, string];
+  /** Indice de catégorie de chaque case : haut-gauche, haut-droite, bas-gauche, bas-droite. */
+  cases: [number, number, number, number];
+};
+
 /** Classement : ranger des éléments dans des catégories. */
 export type ClassementExercice = {
   type: "classement";
@@ -146,6 +159,8 @@ export type ClassementExercice = {
   categories: string[];
   /** Chaque élément porte l'indice de sa catégorie dans `categories`. */
   elements: { texte: string; categorie: number; explication?: string }[];
+  /** Présentation en grille à glisser-déposer (quatre catégories). */
+  grille?: GrilleClassement;
 };
 
 /** Question ouverte : l'apprenant répond pour lui, puis révèle le corrigé modèle. */
