@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## [v0.45.1] - 2026-11-20 — Cours : mot manquant (leçon 1.5)
+### Corrigé
+- Leçon 1.5, tableau des trois tests, ligne « Acceptabilité » : « renoncent à leurs
+  dividendes pendant trois ans » (le mot « pendant » manquait).
+
 ## [v0.45.0] - 2026-11-20 — Cours : total des tentatives dans la liste des inscrits
 ### Ajouté
 - Administration > Cours > Apprenants : colonne « Tentatives » (total aux exercices et

@@ -7,9 +7,10 @@
  *               (le noyau : diagnostic, politique directrice, actions cohérentes) ;
  *               Whittington et coll., « Stratégique », 2023 (pertinence, acceptabilité,
  *               faisabilité). Texte, exemples et exercices originaux.
+ *               v0.45.1 : « pendant trois ans » (mot manquant, test d'acceptabilité).
  *  Auteur     : Claude Marcel
- *  Version    : 1.0
- *  Date       : 2026-11-19
+ *  Version    : 1.1
+ *  Date       : 2026-11-20
  *  Dépendances: lib/cours/content.ts
  * =============================================================
  */
@@ -136,7 +137,7 @@ export const M01_L05: ContenuLecon = [
       [
         "Acceptabilité",
         "Les parties prenantes clés l'accepteront-elles ?",
-        "Elle suppose que les actionnaires renoncent à leurs dividendes trois ans.",
+        "Elle suppose que les actionnaires renoncent à leurs dividendes pendant trois ans.",
       ],
       [
         "Faisabilité",
